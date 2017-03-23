@@ -58,46 +58,6 @@ class euiComboTable extends euiInput {
 		// TODO The addClearBtn extension seems to break the setText method, so that it also sets the value. Perhaps we can find a better way some time
 		// $output .= "$('#" . $this->get_id() . "').combogrid('addClearBtn', 'icon-clear');";
 		
-		$output .= '
-			function ' . $this->build_js_function_prefix() . 'setValue(value) {
-				var ' . $this->get_id() . '_cg = $("#' . $this->get_id() . '");
-				var valueArray;
-				if (' . $this->get_id() . '_cg.data("combogrid")) {
-					if (value) {
-						switch ($.type(value)) {
-							case "number":
-								valueArray = [value]; break;
-							case "string":
-								valueArray = $.map(value.split(","), $.trim); break;
-							case "array":
-								valueArray = value; break;
-							default:
-								valueArray = [];
-						}
-					} else {
-						valueArray = [];
-					}
-					if (!' . $this->get_id() . '_cg.combogrid("getValues").equals(valueArray)) {';
-		
-		if ($this->get_widget()->get_multi_select()) {
-			$output .= '
-						' . $this->get_id() . '_cg.combogrid("setValues", valueArray);';
-		} else {
-			$output .= '
-						if (valueArray.length <= 1) {
-							' . $this->get_id() . '_cg.combogrid("setValues", valueArray);
-						}';
-		}
-		
-		$output .= '
-						' . $this->get_id() . '_cg.combogrid("grid").datagrid("options").queryParams.jsValueSetterUpdate = true;
-						' . $this->get_id() . '_cg.combogrid("grid").datagrid("reload");
-					}
-				} else {
-					$("#' . $this->get_id() . '").val(value).trigger("change");
-				}
-			}';
-		
 		return $output;
 	}
 	
@@ -186,7 +146,48 @@ class euiComboTable extends euiInput {
 	 * @see \exface\AbstractAjaxTemplate\Template\Elements\AbstractJqueryElement::build_js_value_setter($value)
 	 */
 	function build_js_value_setter($value){
-		$output = $this->build_js_function_prefix().'setValue(' . $value . ')';
+		$widget = $this->get_widget();
+		
+		$output = '
+							(function() {
+								var ' . $this->get_id() . '_cg = $("#' . $this->get_id() . '");
+								var value = ' . $value . ', valueArray;
+								if (' . $this->get_id() . '_cg.data("combogrid")) {
+									if (value) {
+										switch ($.type(value)) {
+											case "number":
+												valueArray = [value]; break;
+											case "string":
+												valueArray = $.map(value.split(","), $.trim); break;
+											case "array":
+												valueArray = value; break;
+											default:
+												valueArray = [];
+										}
+									} else {
+										valueArray = [];
+									}
+									if (!' . $this->get_id() . '_cg.combogrid("getValues").equals(valueArray)) {';
+		
+		if ($this->get_widget()->get_multi_select()) {
+			$output .= '
+										' . $this->get_id() . '_cg.combogrid("setValues", valueArray);';
+		} else {
+			$output .= '
+										if (valueArray.length <= 1) {
+											' . $this->get_id() . '_cg.combogrid("setValues", valueArray);
+										}';
+		}
+		
+		$output .= '
+										' . $this->get_id() . '_cg.combogrid("grid").datagrid("options").queryParams.jsValueSetterUpdate = true;
+										' . $this->get_id() . '_cg.combogrid("grid").datagrid("reload");
+									}
+								} else {
+									$("#' . $this->get_id() . '").val(value).trigger("change");
+								}
+							})()';
+		
 		return $output;
 	}
 	
