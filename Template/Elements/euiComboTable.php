@@ -54,17 +54,10 @@ class euiComboTable extends euiInput {
 		$output .= $this->build_js_init_options();
 		$output .= '});';
 		
-		// If the ComboTable looses focus before an entry is selected, the input is cleared.
-		$output .= '
-				$("#' . $this->get_id() . '").parent().on("focusout", function(event) {
-					var ' . $this->get_id() . '_cg = $("#' . $this->get_id() . '");
-					var row = ' . $this->get_id() . '_cg.combogrid("grid").datagrid("getSelected");
-					var dataUrlParams = ' . $this->get_id() . '_cg.combogrid("grid").datagrid("options").queryParams;
-					if (row == null && !(dataUrlParams._firstLoad == undefined) && !dataUrlParams._firstLoad) {
-						' . $this->get_id() . '_cg.combogrid("clear");
-						//' . $this->get_id() . '_cg.combogrid("grid").datagrid("loadData", []);
-					}
-				});';
+		// Wenn die ComboTable den Fokus verliert bevor ein Eintrag selektiert wird, waere es
+		// gut wenn die Eingabe geloescht wuerde. Leider laesst sich nicht unterscheiden ob
+		// eine ComboTable manuell oder mittels setText (beim prefill) ausgefuellt wurde. Das
+		// Leeren beim Verlassen wenn keine Auswahl getroffen wurde ist somit nicht praktikabel.
 		
 		// Add a clear icon to each combo grid - a small cross to the right, that resets the value
 		// TODO The addClearBtn extension seems to break the setText method, so that it also sets the value. Perhaps we can find a better way some time
@@ -368,7 +361,7 @@ JS;
 					var rows = ' . $this->get_id() . '_cg.combogrid("grid").datagrid("getData");
 					if (rows["total"] == 1) {
 						var selectedrow = ' . $this->get_id() . '_cg.combogrid("grid").datagrid("getSelected");
-						if (selectedrow == null || selectedrow["' . $uidColumnName . '"] != row["' . $uidColumnName . '"]) {
+						if (selectedrow == null || selectedrow["' . $uidColumnName . '"] != rows["rows"][0]["' . $uidColumnName . '"]) {
 							' . $this->get_id() . '_cg.combogrid("grid").datagrid("selectRow", 0);
 						}
 					}';
