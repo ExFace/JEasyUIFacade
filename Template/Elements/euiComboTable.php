@@ -54,6 +54,18 @@ class euiComboTable extends euiInput {
 		$output .= $this->build_js_init_options();
 		$output .= '});';
 		
+		// If the ComboTable looses focus before an entry is selected, the input is cleared.
+		$output .= '
+				$("#' . $this->get_id() . '").parent().on("focusout", function(event) {
+					var ' . $this->get_id() . '_cg = $("#' . $this->get_id() . '");
+					var row = ' . $this->get_id() . '_cg.combogrid("grid").datagrid("getSelected");
+					var dataUrlParams = ' . $this->get_id() . '_cg.combogrid("grid").datagrid("options").queryParams;
+					if (row == null && !(dataUrlParams._firstLoad == undefined) && !dataUrlParams._firstLoad) {
+						' . $this->get_id() . '_cg.combogrid("clear");
+						//' . $this->get_id() . '_cg.combogrid("grid").datagrid("loadData", []);
+					}
+				});';
+		
 		// Add a clear icon to each combo grid - a small cross to the right, that resets the value
 		// TODO The addClearBtn extension seems to break the setText method, so that it also sets the value. Perhaps we can find a better way some time
 		// $output .= "$('#" . $this->get_id() . "').combogrid('addClearBtn', 'icon-clear');";
@@ -81,6 +93,8 @@ class euiComboTable extends euiInput {
 		$table->set_on_before_load($this->build_js_on_beforeload_live_reference());
 		$table->add_on_load_success($this->build_js_on_load_sucess_live_reference());
 		$table->add_on_load_error($this->build_js_on_load_error_live_reference());
+		
+		$table->add_on_load_success($this->build_js_on_load_success_autoselect());
 		$inherited_options .= $table->build_js_init_options_head();
 		
 		$inherited_options = trim($inherited_options, "\r\n\t,");
@@ -214,24 +228,6 @@ JS;
 	function build_js_on_beforeload_live_reference() {
 		$widget = $this->get_widget();
 		
-		// Prevent loading data from backend if the value and value_text are set already or there is
-		// no value and thus no need to search for anything.
-		// The trouble here is, that if the first loading is prevented, the next time the user clicks on the dropdown button,
-		// an empty table will be shown, because the last result is cached. To fix this, we bind a reload of the table to
-		// onShowPanel in case the grid is empty (see below).
-		if (!is_null($this->get_value_with_defaults()) && $this->get_value_with_defaults() !== ''){
-			if ($widget->get_value_text()){
-				// If the text is already known, set it an prevent initial backend request
-				$first_load_script = "$('#" . $this->get_id() ."')." . $this->get_element_type() . '("setText", "' . str_replace('"', '\"', $widget->get_value_text()) . '"); return false;';
-			} else {
-				// If there is a value, but no text, add a filter over the UID column with this value and do not prevent the initial autoload
-				$first_load_script = "param.fltr01_" . $widget->get_value_column()->get_data_column_name() . " = '" . $this->get_value_with_defaults() . "';";
-			}
-		} else {
-			// If no value set, just supress initial autoload
-			$first_load_script = "return false;";
-		}
-		
 		// If the value is set data is loaded from the backend. Same if also value-text is set, because otherwise
 		// live-references don't work at the beginning. If no value is set, loading from the backend is prevented.
 		// The trouble here is, that if the first loading is prevented, the next time the user clicks on the dropdown button,
@@ -240,7 +236,8 @@ JS;
 		if (!is_null($this->get_value_with_defaults()) && $this->get_value_with_defaults() !== ''){
 			if ($widget->get_value_text()){
 				// If the text is already known, set it and prevent initial backend request
-				$first_load_script = "$('#" . $this->get_id() ."')." . $this->get_element_type() . '("setText", "' . str_replace('"', '\"', $widget->get_value_text()) . '"); return false;';
+				$first_load_script = '
+						$("#' . $this->get_id() .'").' . $this->get_element_type() . '("setText", "' . str_replace('"', '\"', $widget->get_value_text()) . '"); return false;';
 			} else {
 				$first_load_script = '
 						paramGlobal._jsValueSetterUpdate = true;
@@ -278,9 +275,9 @@ JS;
 					var paramGlobal = $(this).datagrid("options").queryParams;
 					
 					if (paramGlobal._firstLoad == undefined){
-						paramGlobal._firstLoad = 1;
-					} else if (parseInt(paramGlobal._firstLoad) == 1) {
-						paramGlobal._firstLoad = 0;
+						paramGlobal._firstLoad = true;
+					} else if (paramGlobal._firstLoad == true) {
+						paramGlobal._firstLoad = false;
 					}
 					
 					if (paramGlobal._jsValueSetterUpdate) {
@@ -289,7 +286,7 @@ JS;
 						' . $filters_script . '
 						' . $value_filters_script . '
 					} else if (paramGlobal._firstLoad) {
-						paramGlobal._firstLoad = 0;
+						paramGlobal._firstLoad = false;
 						' . $first_load_script . '
 					} else {
 						' . $filters_script . '
@@ -312,7 +309,7 @@ JS;
 	 *
 	 * @return string
 	 */
-	function build_js_on_load_sucess_live_reference() {
+	private function build_js_on_load_live_reference($jsValueSetterScript = null) {
 		$output = '
 					var dataUrlParams = $("#' . $this->get_id() . '").combogrid("grid").datagrid("options").queryParams;
 					
@@ -325,7 +322,7 @@ JS;
 						delete dataUrlParams.q;
 					}
 					if (dataUrlParams._firstLoad) {
-						dataUrlParams._firstLoad = 0;
+						dataUrlParams._firstLoad = false;
 					}
 					if (dataUrlParams._jsFilterSetterUpdate) {
 						delete dataUrlParams._jsFilterSetterUpdate;
@@ -338,7 +335,7 @@ JS;
 						//$("#' . $this->get_id() . '").combogrid("clear");
 						//$("#' . $this->get_id() . '").combogrid("setValues", value);
 						
-						' . $this->get_on_change_script() . '
+						' . $jsValueSetterScript . '
 						
 						delete dataUrlParams._jsValueSetterUpdate;
 					}';
@@ -346,34 +343,36 @@ JS;
 		return $output;
 	}
 	
+	function build_js_on_load_sucess_live_reference() {
+		$output = $this->build_js_on_load_live_reference($this->get_on_change_script());
+		return $output;
+	}
+	
 	function build_js_on_load_error_live_reference() {
-		$output = '
-					var dataUrlParams = $("#' . $this->get_id() . '").combogrid("grid").datagrid("options").queryParams;
-					
-					for (key in dataUrlParams) {
-						if (key.substring(0, 4) == "fltr") {
-							delete dataUrlParams[key];
+		$output = $this->build_js_on_load_live_reference();
+		return $output;
+	}
+	
+	/**
+	 * 
+	 * @return string
+	 */
+	function build_js_on_load_success_autoselect() {
+		$widget = $this->get_widget();
+		
+		$output = '';
+		$uidColumnName = $widget->get_table()->get_uid_column()->get_data_column_name();
+		if ($widget->get_autoselect_single_result()) {
+			$output = '
+					var ' . $this->get_id() . '_cg = $("#' . $this->get_id() . '");
+					var rows = ' . $this->get_id() . '_cg.combogrid("grid").datagrid("getData");
+					if (rows["total"] == 1) {
+						var selectedrow = ' . $this->get_id() . '_cg.combogrid("grid").datagrid("getSelected");
+						if (selectedrow == null || selectedrow["' . $uidColumnName . '"] != row["' . $uidColumnName . '"]) {
+							' . $this->get_id() . '_cg.combogrid("grid").datagrid("selectRow", 0);
 						}
-					}
-					if (dataUrlParams.q) {
-						delete dataUrlParams.q;
-					}
-					if (dataUrlParams._firstLoad) {
-						dataUrlParams._firstLoad = 0;
-					}
-					if (dataUrlParams._jsFilterSetterUpdate) {
-						delete dataUrlParams._jsFilterSetterUpdate;
-					}
-					if (dataUrlParams._jsValueSetterUpdate) {
-						// es gibt sonst Konstellationen, in denen nur die Oid angezeigt wird
-						// (Tastatureingabe, dann aber keine Auswahl, anschliessend value-Setter update)
-						// Update: leider wird hierbei zweimal onChange getriggert
-						//var value = $("#' . $this->get_id() . '").combogrid("getValues");
-						//$("#' . $this->get_id() . '").combogrid("clear");
-						//$("#' . $this->get_id() . '").combogrid("setValues", value);
-						
-						delete dataUrlParams._jsValueSetterUpdate;
 					}';
+		}
 		
 		return $output;
 	}
