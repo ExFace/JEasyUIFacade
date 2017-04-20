@@ -58,6 +58,19 @@ class euiComboTable extends euiInput {
 		// gut wenn die Eingabe geloescht wuerde. Leider laesst sich nicht unterscheiden ob
 		// eine ComboTable manuell oder mittels setText (beim prefill) ausgefuellt wurde. Das
 		// Leeren beim Verlassen wenn keine Auswahl getroffen wurde ist somit nicht praktikabel.
+		$output .= '
+				$("#' . $this->get_id() . '").parent().on("focusout", function(event) {
+					var ' . $this->get_id() . '_cg = $("#' . $this->get_id() . '");
+					var row = ' . $this->get_id() . '_cg.combogrid("grid").datagrid("getSelected");
+					var lastValidValue = ' . $this->get_id() . '_cg.data("lastValidValue");
+					var currentValue = ' . $this->get_id() . '_cg.combogrid("getValues").join();
+					var lastValidText = ' . $this->get_id() . '_cg.data("lastValidText");
+					var currentText =' . $this->get_id() . '_cg.combogrid("getText");
+					if (row == null && value != inputText) {
+						' . $this->get_id() . '_cg.combogrid("clear");
+						//' . $this->get_id() . '_cg.combogrid("grid").datagrid("loadData", []);
+					}
+				});';
 		
 		// Add a clear icon to each combo grid - a small cross to the right, that resets the value
 		// TODO The addClearBtn extension seems to break the setText method, so that it also sets the value. Perhaps we can find a better way some time
@@ -230,11 +243,15 @@ JS;
 			if ($widget->get_value_text()){
 				// If the text is already known, set it and prevent initial backend request
 				$first_load_script = '
-						$("#' . $this->get_id() .'").' . $this->get_element_type() . '("setText", "' . str_replace('"', '\"', $widget->get_value_text()) . '"); return false;';
+						$("#' . $this->get_id() .'").' . $this->get_element_type() . '("setText", "' . str_replace('"', '\"', $widget->get_value_text()) . '");
+						$("#' . $this->get_id() .'").data("lastValidValue", ' . $this->get_value_with_defaults() . ');
+						$("#' . $this->get_id() .'").data("lastValidText", "' . str_replace('"', '\"', $widget->get_value_text()) . '");
+						return false;';
 			} else {
 				$first_load_script = '
 						paramGlobal._jsValueSetterUpdate = true;
-						param.fltr01_' . $widget->get_value_column()->get_data_column_name() . ' = "' . $this->get_value_with_defaults() . '";';
+						param.fltr01_' . $widget->get_value_column()->get_data_column_name() . ' = "' . $this->get_value_with_defaults() . '";
+						$("#' . $this->get_id() .'").data("lastValidValue", ' . $this->get_value_with_defaults() . ');';
 			}
 		} else {
 			// If no value set, just supress initial autoload
@@ -303,6 +320,9 @@ JS;
 	 * @return string
 	 */
 	private function build_js_on_load_live_reference($jsValueSetterScript = null) {
+		$widget = $this->get_widget();
+		$textColumnName = $widget->get_text_column()->get_data_column_name();
+		
 		$output = '
 					var dataUrlParams = $("#' . $this->get_id() . '").combogrid("grid").datagrid("options").queryParams;
 					
@@ -327,6 +347,11 @@ JS;
 						//var value = $("#' . $this->get_id() . '").combogrid("getValues");
 						//$("#' . $this->get_id() . '").combogrid("clear");
 						//$("#' . $this->get_id() . '").combogrid("setValues", value);
+						
+						var selectedrow = $("#' . $this->get_id() .'").combogrid("grid").datagrid("getSelected");
+						if (selectedrow != null) {
+							$("#' . $this->get_id() .'").data("lastValidText", selectedrow["' . $textColumnName . '"]);
+						}
 						
 						' . $jsValueSetterScript . '
 						
