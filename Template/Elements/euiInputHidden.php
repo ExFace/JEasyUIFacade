@@ -27,4 +27,8 @@ class euiInputHidden extends euiInput {
 	function build_js_value_getter_method(){
 		return  'val()';
 	}
+	
+	function build_js_validator(){
+		return 'true';
+	}
 }

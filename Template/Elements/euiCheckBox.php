@@ -44,5 +44,9 @@ class euiCheckBox extends euiInput {
 				. ($this->get_widget()->is_disabled() ? ', disabled: true' : '');
 		return $options;
 	}
+	
+	function build_js_validator(){
+		return 'true';
+	}
 }
 ?>

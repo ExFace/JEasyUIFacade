@@ -108,5 +108,9 @@ class euiInput extends euiAbstractElement {
 			return parent::build_js_data_getter($action);
 		}
 	}
+	
+	function build_js_validator(){
+		return '$("#' . $this->get_id() . '").' . $this->get_element_type() . '("isValid")';
+	}
 }
 ?>

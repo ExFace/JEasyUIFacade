@@ -155,4 +155,8 @@ JS;
 		}
 		return $output;
 	}
+	
+	function build_js_validator(){
+		return 'true';
+	}
 }

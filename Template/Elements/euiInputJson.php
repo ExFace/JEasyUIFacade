@@ -41,4 +41,8 @@ JS;
 		$includes[] = '<script type="text/javascript" src="exface/vendor/bower-asset/jsoneditor/dist/jsoneditor.min.js"></script>';
 		return $includes;
 	}
+	
+	function build_js_validator(){
+		return 'true';
+	}
 }
