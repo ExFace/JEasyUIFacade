@@ -210,7 +210,7 @@ JS;
 	}
 	
 	/**
-	 * Erzeugt den JavaScript-Code welcher vor dem Laden des MagicSuggest-Inhalts
+	 * Erzeugt den JavaScript-Code welcher vor dem Laden des AutoSuggest-Inhalts
 	 * ausgefuehrt wird. Wurde programmatisch ein Wert gesetzt, wird als Filter
 	 * nur dieser Wert hinzugefuegt, um das Label ordentlich anzuzeigen. Sonst werden
 	 * die am Widget definierten Filter gesetzt. Die Filter werden nach dem Laden
@@ -293,7 +293,7 @@ JS;
 	}
 	
 	/**
-	 * Erzeugt den JavaScript-Code welcher nach dem Laden des MagicSuggest-Inhalts
+	 * Erzeugt den JavaScript-Code welcher nach dem Laden des AutoSuggest-Inhalts
 	 * ausgefuehrt wird. Alle gesetzten Filter werden entfernt, da sich die Werte
 	 * durch Live-Referenzen aendern koennen (werden vor dem naechsten Laden wieder
 	 * hinzugefuegt). Wurde der Wert zuvor programmatisch gesetzt, wird er neu
@@ -354,8 +354,10 @@ JS;
 		$widget = $this->get_widget();
 		
 		$output = '';
-		$uidColumnName = $widget->get_table()->get_uid_column()->get_data_column_name();
 		if ($widget->get_autoselect_single_result()) {
+			$uidColumnName = $widget->get_table()->get_uid_column()->get_data_column_name();
+			$textColumnName = $widget->get_text_column()->get_data_column_name();
+			
 			$output = '
 					var ' . $this->get_id() . '_cg = $("#' . $this->get_id() . '");
 					var rows = ' . $this->get_id() . '_cg.combogrid("grid").datagrid("getData");
@@ -363,6 +365,7 @@ JS;
 						var selectedrow = ' . $this->get_id() . '_cg.combogrid("grid").datagrid("getSelected");
 						if (selectedrow == null || selectedrow["' . $uidColumnName . '"] != rows["rows"][0]["' . $uidColumnName . '"]) {
 							' . $this->get_id() . '_cg.combogrid("grid").datagrid("selectRow", 0);
+							' . $this->get_id() . '_cg.combogrid("setText", rows["rows"][0]["' . $textColumnName . '"]);
 						}
 					}';
 		}
