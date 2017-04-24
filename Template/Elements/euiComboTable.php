@@ -54,6 +54,24 @@ class euiComboTable extends euiInput {
 		$output .= $this->build_js_init_options();
 		$output .= '});';
 		
+		// Es werden JavaScript Value-Getter-/Setter- und OnChange-Funktionen fuer die ComboTable erzeugt.
+		$output .= '
+				' . $this->build_js_value_getter_function() . '
+				' . $this->build_js_value_setter_function() . '
+				' . $this->build_js_on_change_function();
+		
+		// Es werden Dummy-Methoden fuer die Filter der DataTable hinter dieser ComboTable generiert. Diese
+		// Funktionen werden nicht benoetigt, werden aber trotzdem vom verlinkten Element aufgerufen, da
+		// dieses nicht entscheiden kann, ob das Filter-Input-Widget existiert oder nicht. Fuer diese Filter
+		// existiert kein Input-Widget, daher existiert fuer sie weder HTML- noch JavaScript-Code und es
+		// kommt sonst bei einem Aufruf der Funktion zu einem Fehler. 
+		if ($this->get_widget()->get_table()->has_filters()) {
+			foreach ($this->get_widget()->get_table()->get_filters() as $fltr) {
+				$output .= '
+				function ' . $this->get_template()->get_element($fltr->get_widget())->get_id() . '_valueSetter(value){}';
+			}
+		}
+		
 		// Wenn die ComboTable den Fokus verliert bevor ein Eintrag selektiert wird, waere es
 		// gut wenn die Eingabe geloescht wuerde. Leider laesst sich nicht unterscheiden ob
 		// eine ComboTable manuell oder mittels setText (beim prefill) ausgefuellt wurde. Das
@@ -62,12 +80,14 @@ class euiComboTable extends euiInput {
 				$("#' . $this->get_id() . '").parent().on("focusout", function(event) {
 					var ' . $this->get_id() . '_cg = $("#' . $this->get_id() . '");
 					var row = ' . $this->get_id() . '_cg.combogrid("grid").datagrid("getSelected");
-					var lastValidValue = ' . $this->get_id() . '_cg.data("lastValidValue");
 					var currentValue = ' . $this->get_id() . '_cg.combogrid("getValues").join();
+					var currentText =' . $this->get_id() . '_cg.data("currentText");
+					var lastValidValue = ' . $this->get_id() . '_cg.data("lastValidValue");
 					var lastValidText = ' . $this->get_id() . '_cg.data("lastValidText");
-					var currentText =' . $this->get_id() . '_cg.combogrid("getText");
-					if (row == null && value != inputText) {
-						' . $this->get_id() . '_cg.combogrid("clear");
+					if (row == null && currentValue == currentText) {
+						//' . $this->get_id() . '_valueSetter(lastValidValue);
+						//' . $this->get_id() . '_cg.combogrid("setText", lastValidText);
+						//' . $this->get_id() . '_cg.combogrid("clear");
 						//' . $this->get_id() . '_cg.combogrid("grid").datagrid("loadData", []);
 					}
 				});';
@@ -114,16 +134,19 @@ class euiComboTable extends euiInput {
 						' . ($widget->is_disabled() ? ', disabled:true' : '') . '
 						' . ($widget->get_multi_select() ? ', multiple: true' : '') . '
 						' . ($this->get_on_change_script() ? ', onChange: function(newValue, oldValue) {
-							if (!newValue) {
+							if (newValue) {
+								$("#' . $this->get_id() . '").data("currentText", newValue);
+							} else {
 								// Loeschen der verlinkten Elemente wenn der Wert manuell geloescht wird
 								// Die Updates der Filter-Links werden an dieser Stelle unterdrueckt und
 								// nur einmal nach dem value-Setter update onLoadSuccess ausgefuehrt.
-								var suppressFilterSetterUpdate = true;
-								' . $this->get_on_change_script() . '
+								' . $this->get_id() . '_onChange(true);
 							}
 						}
 						, onSelect: function(index, row) {
-							' . $this->get_on_change_script() . '
+							$("#' . $this->get_id() . '").data("lastValidValue", row["' . $widget->get_table()->get_uid_column()->get_data_column_name() . '"]);
+							$("#' . $this->get_id() . '").data("lastValidText", row["' . $widget->get_text_column()->get_data_column_name() . '"]);
+							' . $this->get_id() . '_onChange();
 						}' : '') . '
 						, onShowPanel: function() {
 							// Wird firstLoad verhindert, wuerde man eine leere Tabelle sehen. Um das zu
@@ -137,34 +160,45 @@ class euiComboTable extends euiInput {
 	}
 	
 	function build_js_value_getter($column = null, $row = null){
-		if ($this->get_widget()->get_multi_select() || is_null($column) || $column === ''){
+		$params = $column ? '"' . $column . '"' : '';
+		$params = $row ? ($params ? $params . ', ' . $row : $row) : $params;
+		return $this->get_id() . '_valueGetter(' . $params . ')';
+	}
+	
+	function build_js_value_getter_function(){
+		if ($this->get_widget()->get_multi_select()){
 			$value_getter = <<<JS
 						return {$this->get_id()}_cg.combogrid("getValues").join();
 JS;
 		} else {
 			$value_getter = <<<JS
-						var row = {$this->get_id()}_cg.combogrid("grid").datagrid("getSelected");
-						if (row) { 
-							if (row["{$column}"] == undefined){
-								{$this->get_id()}_cg.combogrid("grid").datagrid("reload");
+						if (column){
+							var row = {$this->get_id()}_cg.combogrid("grid").datagrid("getSelected");
+							if (row) {
+								if (row[column] == undefined){
+									{$this->get_id()}_cg.combogrid("grid").datagrid("reload");
+								}
+								return row[column];
+							} else { 
+								return "";
 							}
-							return row["{$column}"]; 
-						} else { 
-							return ""; 
+						} else {
+							return {$this->get_id()}_cg.combogrid("getValues").join();
 						}
 JS;
 		}
 		
 		$output = <<<JS
-				(function() {
+				
+				function {$this->get_id()}_valueGetter(column, row){
 					var {$this->get_id()}_cg = $("#{$this->get_id()}");
 					if ({$this->get_id()}_cg.data("combogrid")) {
 						{$value_getter}
 					} else {
-						return $("#{$this->get_id()}").val();
+						return {$this->get_id()}_cg.val();
 					}
-				})()
-
+				}
+				
 JS;
 		
 		return $output;
@@ -177,47 +211,72 @@ JS;
 	 * @see \exface\AbstractAjaxTemplate\Template\Elements\AbstractJqueryElement::build_js_value_setter($value)
 	 */
 	function build_js_value_setter($value){
-		$widget = $this->get_widget();
-		
-		$output = '
-							(function() {
-								var ' . $this->get_id() . '_cg = $("#' . $this->get_id() . '");
-								var value = ' . $value . ', valueArray;
-								if (' . $this->get_id() . '_cg.data("combogrid")) {
-									if (value) {
-										switch ($.type(value)) {
-											case "number":
-												valueArray = [value]; break;
-											case "string":
-												valueArray = $.map(value.split(","), $.trim); break;
-											case "array":
-												valueArray = value; break;
-											default:
-												valueArray = [];
-										}
-									} else {
-										valueArray = [];
-									}
-									if (!' . $this->get_id() . '_cg.combogrid("getValues").equals(valueArray)) {';
-		
+		return $this->get_id() . '_valueSetter(' . $value . ')';
+	}
+	
+	function build_js_value_setter_function(){
 		if ($this->get_widget()->get_multi_select()) {
-			$output .= '
-										' . $this->get_id() . '_cg.combogrid("setValues", valueArray);';
+			$value_setter = <<<JS
+							{$this->get_id()}_cg.combogrid("setValues", valueArray);
+JS;
 		} else {
-			$output .= '
-										if (valueArray.length <= 1) {
-											' . $this->get_id() . '_cg.combogrid("setValues", valueArray);
-										}';
+			$value_setter = <<<JS
+							if (valueArray.length <= 1) {
+								{$this->get_id()}_cg.combogrid("setValues", valueArray);
+							}
+JS;
 		}
 		
-		$output .= '
-										' . $this->get_id() . '_cg.combogrid("grid").datagrid("options").queryParams._jsValueSetterUpdate = true;
-										' . $this->get_id() . '_cg.combogrid("grid").datagrid("reload");
-									}
-								} else {
-									$("#' . $this->get_id() . '").val(value).trigger("change");
-								}
-							})()';
+		$output = <<<JS
+				
+				function {$this->get_id()}_valueSetter(value){
+					var {$this->get_id()}_cg = $("#{$this->get_id()}");
+					var valueArray;
+					if ({$this->get_id()}_cg.data("combogrid")) {
+						if (value) {
+							switch ($.type(value)) {
+								case "number":
+									valueArray = [value]; break;
+								case "string":
+									valueArray = $.map(value.split(","), $.trim); break;
+								case "array":
+									valueArray = value; break;
+								default:
+									valueArray = [];
+							}
+						} else {
+							valueArray = [];
+						}
+						if (!{$this->get_id()}_cg.combogrid("getValues").equals(valueArray)) {
+							{$value_setter}
+							
+							{$this->get_id()}_cg.data("lastValidValue", valueArray.join());
+							
+							{$this->get_id()}_cg.combogrid("grid").datagrid("options").queryParams._jsValueSetterUpdate = true;
+							{$this->get_id()}_cg.combogrid("grid").datagrid("reload");
+						}
+					} else {
+						{$this->get_id()}_cg.val(value).trigger("change");
+					}
+				}
+				
+JS;
+		
+		return $output;
+	}
+	
+	/**
+	 * 
+	 * @return string
+	 */
+	function build_js_on_change_function(){
+		$output = <<<JS
+				
+				function {$this->get_id()}_onChange(suppressFilterSetterUpdate = false){
+					{$this->get_on_change_script()}
+				}
+				
+JS;
 		
 		return $output;
 	}
@@ -246,16 +305,22 @@ JS;
 						$("#' . $this->get_id() .'").' . $this->get_element_type() . '("setText", "' . str_replace('"', '\"', $widget->get_value_text()) . '");
 						$("#' . $this->get_id() .'").data("lastValidValue", ' . $this->get_value_with_defaults() . ');
 						$("#' . $this->get_id() .'").data("lastValidText", "' . str_replace('"', '\"', $widget->get_value_text()) . '");
+						$("#' . $this->get_id() .'").data("currentText", "' . str_replace('"', '\"', $widget->get_value_text()) . '");
 						return false;';
 			} else {
 				$first_load_script = '
 						paramGlobal._jsValueSetterUpdate = true;
 						param.fltr01_' . $widget->get_value_column()->get_data_column_name() . ' = "' . $this->get_value_with_defaults() . '";
-						$("#' . $this->get_id() .'").data("lastValidValue", ' . $this->get_value_with_defaults() . ');';
+						$("#' . $this->get_id() .'").data("lastValidValue", ' . $this->get_value_with_defaults() . ');
+						$("#' . $this->get_id() .'").data("lastValidText", ' . $this->get_value_with_defaults() . ');
+						$("#' . $this->get_id() .'").data("currentText", ' . $this->get_value_with_defaults() . ');';
 			}
 		} else {
 			// If no value set, just supress initial autoload
 			$first_load_script = '
+						$("#' . $this->get_id() .'").data("lastValidValue", "");
+						$("#' . $this->get_id() .'").data("lastValidText", "");
+						$("#' . $this->get_id() .'").data("currentText", "");
 						return false;';
 		}
 		
@@ -350,7 +415,8 @@ JS;
 						
 						var selectedrow = $("#' . $this->get_id() .'").combogrid("grid").datagrid("getSelected");
 						if (selectedrow != null) {
-							$("#' . $this->get_id() .'").data("lastValidText", selectedrow["' . $textColumnName . '"]);
+							$("#' . $this->get_id() . '").combogrid("setText", selectedrow["' . $textColumnName . '"]);
+							$("#' . $this->get_id() . '").data("lastValidText", selectedrow["' . $textColumnName . '"]);
 						}
 						
 						' . $jsValueSetterScript . '
@@ -362,7 +428,7 @@ JS;
 	}
 	
 	function build_js_on_load_sucess_live_reference() {
-		$output = $this->build_js_on_load_live_reference($this->get_on_change_script());
+		$output = $this->build_js_on_load_live_reference($this->get_id() . '_onChange();');
 		return $output;
 	}
 	
