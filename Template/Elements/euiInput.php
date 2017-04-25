@@ -109,8 +109,22 @@ class euiInput extends euiAbstractElement {
 		}
 	}
 	
+	/**
+	 * 
+	 * {@inheritDoc}
+	 * @see \exface\AbstractAjaxTemplate\Template\Elements\AbstractJqueryElement::build_js_validator()
+	 */
 	function build_js_validator(){
-		return '$("#' . $this->get_id() . '").' . $this->get_element_type() . '("isValid")';
+		$widget = $this->get_widget();
+		
+		$must_be_validated = !($widget->is_hidden() || $widget->is_readonly() || $widget->is_disabled() || $widget->is_display_only());
+		if ($must_be_validated) {
+			$output = '$("#' . $this->get_id() . '").' . $this->get_element_type() . '("isValid")';
+		} else {
+			$output = 'true';
+		}
+		
+		return $output; 
 	}
 }
 ?>
