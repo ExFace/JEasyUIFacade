@@ -123,7 +123,7 @@ class euiData extends euiAbstractElement {
 				, multiSort: ' . ($widget->get_header_sort_multiple() ? 'true' : 'false') .'
 				' . $sortColumn . $sortOrder . '
 				, showFooter: "' . ($this->get_show_footer() ? 'true' : 'false' ) . '"
-				, idField: "' . $widget->get_uid_column()->get_data_column_name() . '"
+				' . ($widget->get_uid_column_id() ? ', idField: "' . $widget->get_uid_column()->get_data_column_name() . '"' : '') . '
 				' . (!$widget->get_multi_select() ? ', singleSelect: true' : '') . '
 				' . ($this->get_width() ? ', width: "' . $this->get_width() . '"' : '') . '
 				, pagination: ' . ($widget->get_paginate() ? 'true' : 'false') . '
