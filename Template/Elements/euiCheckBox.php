@@ -45,6 +45,11 @@ class euiCheckBox extends euiInput {
 		return $options;
 	}
 	
+	/**
+	 * 
+	 * {@inheritDoc}
+	 * @see \exface\AbstractAjaxTemplate\Template\Elements\AbstractJqueryElement::build_js_validator()
+	 */
 	function build_js_validator(){
 		return 'true';
 	}
