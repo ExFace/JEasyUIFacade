@@ -363,12 +363,12 @@ JS;
 				// If the text is already known, set it and prevent initial backend request
 				$first_load_script = '
 						$("#' . $this->get_id() .'").' . $this->get_element_type() . '("setText", "' . str_replace('"', '\"', $widget->get_value_text()) . '");
-						$("#' . $this->get_id() .'").data("lastValidValue", ' . $this->get_value_with_defaults() . ');
+						$("#' . $this->get_id() .'").data("lastValidValue", "' . $this->get_value_with_defaults() . '");
 						$("#' . $this->get_id() .'").data("currentText", "");
 						return false;';
 			} else {
 				$first_load_script = '
-						$("#' . $this->get_id() .'").data("lastValidValue", ' . $this->get_value_with_defaults() . ');
+						$("#' . $this->get_id() .'").data("lastValidValue", "' . $this->get_value_with_defaults() . '");
 						$("#' . $this->get_id() .'").data("currentText", "");
 						paramGlobal._jsValueSetterUpdate = true;
 						param.fltr01_' . $widget->get_value_column()->get_data_column_name() . ' = "' . $this->get_value_with_defaults() . '";';
