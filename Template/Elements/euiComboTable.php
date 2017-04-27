@@ -193,11 +193,15 @@ class euiComboTable extends euiInput {
 	 * @return string
 	 */
 	function build_js_value_getter_function(){
-		if ($this->get_widget()->get_multi_select()){
+		$widget = $this->get_widget();
+		
+		if ($widget->get_multi_select()){
 			$value_getter = <<<JS
 						return {$this->get_id()}_cg.combogrid("getValues").join();
 JS;
 		} else {
+			$uidColumnName = $widget->get_table()->get_uid_column()->get_data_column_name();
+			
 			$value_getter = <<<JS
 						if (column){
 							var row = {$this->get_id()}_cg.combogrid("grid").datagrid("getSelected");
@@ -206,7 +210,13 @@ JS;
 									{$this->get_id()}_cg.combogrid("grid").datagrid("reload");
 								}
 								return row[column];
-							} else { 
+							} else if (column == "{$uidColumnName}") {
+								// Wurde durch den prefill nur value und text gesetzt, aber noch
+								// nichts geladen (daher auch keine Auswahl) dann wird der gesetzte
+								// value zurueckgegeben wenn die OID-Spalte angefragt wird (wichtig
+								// fuer das Funktionieren von Filtern bei initialem Laden).
+								return {$this->get_id()}_cg.combogrid("getValues").join();
+							} else {
 								return "";
 							}
 						} else {
