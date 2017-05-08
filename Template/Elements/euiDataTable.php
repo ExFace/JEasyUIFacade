@@ -242,8 +242,19 @@ JS;
 		
 		// get the standard params for grids and put them before the custom grid head
 		$grid_head = $this->build_js_init_options() . $grid_head;
+		// Auf manchen Seiten (z.B. Kundenreklamation) kam es nach dem Laden zu Fehlern im Layout
+		// (Tabelle nimmt nicht den gesamten verfügbaren Raum ein -> weißer Rand darunter, Spalten-
+		// Header sind schmaler als die Inhalte -> verschoben). Durch den Aufruf von "autoSizeColumn"
+		// onResize wird das Layout nach dem Laden oder ausklappen der SideBar erneuert. (Auch
+		// möglich wäre ein Aufruf von "resize" (dann werden aber die Spaltenbreiten nicht
+		// korrigiert) oder "autoSizeColumn" onLoadSuccess ($this->add_on_load_success()) und
+		// onLoadError u.U. mit setTimeout()). Durch diese Aenderung wird das Layout leider etwas
+		// traeger.
 		$grid_head .= ', fit: true'
-				. ($widget->has_filters() ? ', onResize: function(){$("#' . $this->get_toolbar_id() . ' .datagrid-filters").masonry({itemSelector: \'.fitem\', columnWidth: ' . $this->get_width_relative_unit() . '});}' : '')
+				. ($widget->has_filters() ? ', onResize: function(){
+					$("#' . $this->get_toolbar_id() . ' .datagrid-filters").masonry({itemSelector: \'.fitem\', columnWidth: ' . $this->get_width_relative_unit() . '});
+					$("#' . $this->get_id() . '").' . $this->get_element_type() . '("autoSizeColumn");
+				}' : '')
 				. ($this->get_on_change_script() ? ', onSelect: function(index, row){' . $this->get_on_change_script() . '}' : '')
 				. ($widget->get_caption() ? ', title: "' . $widget->get_caption() . '"' : '')
 				;

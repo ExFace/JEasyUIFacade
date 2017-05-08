@@ -8,6 +8,10 @@ function jeasyui_create_dialog(parentElement, id, options, content, parseContent
 		$.parser.parse(dialog);
 	}
 	dialog.dialog(options);
+	// Lädt man eine Seite neu wenn man an alexa UI aber nicht an alexa RMS angemeldet ist,
+	// erscheint in Firefox eine Fehlermeldung in der linken unteren Ecke, in WebView ist
+	// die Fehlermeldung gar nicht zu sehen. Deshalb wird sie hier nochmal zentriert.
+	setTimeout(function() { dialog.dialog("center"); }, 0);
 }
 
 /*$.extend($.fn.textbox.methods, {
