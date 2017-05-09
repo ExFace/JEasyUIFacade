@@ -250,11 +250,15 @@ JS;
 		// korrigiert) oder "autoSizeColumn" onLoadSuccess ($this->add_on_load_success()) und
 		// onLoadError u.U. mit setTimeout()). Durch diese Aenderung wird das Layout leider etwas
 		// traeger.
-		$grid_head .= ', fit: true'
-				. ($widget->has_filters() ? ', onResize: function(){
-					$("#' . $this->get_toolbar_id() . ' .datagrid-filters").masonry({itemSelector: \'.fitem\', columnWidth: ' . $this->get_width_relative_unit() . '});
-					$("#' . $this->get_id() . '").' . $this->get_element_type() . '("autoSizeColumn");
-				}' : '')
+		$resize_function = '';
+		if ($widget->has_filters()) {
+			$resize_function .= '
+					$("#' . $this->get_toolbar_id() . ' .datagrid-filters").masonry({itemSelector: \'.fitem\', columnWidth: ' . $this->get_width_relative_unit() . '});'; 
+		}
+		$resize_function .= '
+					$("#' . $this->get_id() . '").' . $this->get_element_type() . '("autoSizeColumn");';
+		$grid_head .= ', fit: true
+				, onResize: function(){' . $resize_function . '}'
 				. ($this->get_on_change_script() ? ', onSelect: function(index, row){' . $this->get_on_change_script() . '}' : '')
 				. ($widget->get_caption() ? ', title: "' . $widget->get_caption() . '"' : '')
 				;
