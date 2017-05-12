@@ -578,6 +578,24 @@ JS;
 						Object.assign(param, currentFilterSet);
 					}
 JS;
+		/* FIXME how to make multiselects search for every text in the list separately. The trouble is, 
+		 * the combotable seems to drop _all_ it's values once you continue typing. It will only restore
+		 * them if the returned resultset contains them too. 
+		if ($widget->get_multi_select()){
+			$output .= '
+					if (param.q.indexOf("' . $widget->get_multi_select_text_delimiter() . '") !== -1){	
+						// The idea here was to send a list of texts for an IN-query. This returns no results though, as
+						// the SQL "IN" expects exact matches, no LIKEs
+						//param.q = "["+param.q;
+						
+						// Here the q-parameter was to be split into "old" and new part and the search would only be done with the
+						// new part. This did not work because the old values would get lost and be replaced by the text. To cope
+						// with this the ID filter was to be used, but it would add an AND to the query, not an OR.
+						//param.q = param.q.substring(param.q.lastIndexOf("' . $widget->get_multi_select_text_delimiter() . '") + 1);
+						//param.fltr01_' . $widget->get_value_column()->get_data_column_name() . ' = $("#' . $this->get_id() .'").data("lastValidValue");
+					}
+			';
+		}*/
 		
 		return $output;
 	}
