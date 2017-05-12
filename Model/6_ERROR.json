@@ -92,6 +92,32 @@
             "ERROR_TEXT": "jEasyUI files not found! Please install jEasyUI before using the template!",
             "DESCRIPTION": "",
             "LABEL": "exface.JEasyUiTemplate.6T6HUFO"
+        },
+        {
+            "CREATED_ON": "2017-05-12 08:43:47",
+            "MODIFIED_ON": "2017-05-12 08:49:26",
+            "CREATED_BY_USER": "",
+            "MODIFIED_BY_USER": "",
+            "UID": "0x11e736ef1deebf87987574e5434dc47d",
+            "FULL_ERROR_CODE": "exface.JEasyUiTemplate.6V6C2HY",
+            "APP": "0x11e6c930ff1f486693cce4b318306b9a",
+            "ERROR_CODE": "6V6C2HY",
+            "ERROR_TEXT": "Filter-reference to widget outside own lazy-loading-group",
+            "DESCRIPTION": "This error occurs because filter-references of widgets inside a lazy-loading-group to widgets which don't belong to the same group are not allows. A solution might be to include the outside widget in the group, don't forget to add the necessary filter-references to the new widget.",
+            "LABEL": "exface.JEasyUiTemplate.6V6C2HY"
+        },
+        {
+            "CREATED_ON": "2017-05-12 08:45:31",
+            "MODIFIED_ON": "2017-05-12 08:59:10",
+            "CREATED_BY_USER": "",
+            "MODIFIED_BY_USER": "",
+            "UID": "0x11e736ef5b8e1f2c987574e5434dc47d",
+            "FULL_ERROR_CODE": "exface.JEasyUiTemplate.6V6C3AP",
+            "APP": "0x11e6c930ff1f486693cce4b318306b9a",
+            "ERROR_CODE": "6V6C3AP",
+            "ERROR_TEXT": "Value-reference to other widget",
+            "DESCRIPTION": "This error occurs because value-references of widgets inside a lazy-loading-group to other widgets are not allows. A solution might be to convert the value reference to a filter-reference and to include the other widget in the group, if it does not belong to it yet. Don't forget to add the necessary filter-references to the new widget.",
+            "LABEL": "exface.JEasyUiTemplate.6V6C3AP"
         }
     ],
     "totals_rows": [],
