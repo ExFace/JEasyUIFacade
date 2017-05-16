@@ -127,15 +127,16 @@ HTML;
 	}
 	
 	function generate_js(){
-		$debug_script = ($this->get_js_debug_level() > 0) ? $this->build_js_debug_data_to_string_function() : '';
+		$debug_function = ($this->get_js_debug_level() > 0) ? $this->build_js_debug_data_to_string_function() : '';
 		
 		$output = <<<JS
 
 			// Globale Variablen initialisieren.
-			if (!window.{$this->get_id()}_jquery) { window.{$this->get_id()}_jquery = $("#{$this->get_id()}"); }
+			{$this->build_js_init_globals_function()}
+			{$this->get_id()}_initGlobals();
 			// Debug-Funktionen hinzufuegen.
-			{$debug_script}
-
+			{$debug_function}
+			
 			{$this->get_id()}_jquery.combogrid({
 				{$this->build_js_init_options()}
 			});
@@ -201,6 +202,19 @@ JS;
 		$disabled_script = $widget->is_disabled() ? ', disabled:true' : '';
 		$multi_select_script = $widget->get_multi_select() ? ', multiple: true' : '';
 		
+		// Das entspricht dem urspruenglichen Verhalten. Filter-Referenzen werden beim Loeschen eines
+		// Elements nicht geleert, sondern nur aktualisiert.
+		$filter_setter_update_script = $widget->get_lazy_loading_group_id() ? '
+								// Der eigene Wert wird geloescht.
+								' . $this->get_id() . '_jquery.data("_clearFilterSetterUpdate", true);
+								// Loeschen der verlinkten Elemente wenn der Wert manuell geloescht wird.
+								' . $this->get_id() . '_jquery.data("_otherClearFilterSetterUpdate", true);'
+				: '
+								// Loeschen der verlinkten Elemente wenn der Wert manuell geloescht wird.
+								// Die Updates der Filter-Links werden an dieser Stelle unterdrueckt und
+								// nur einmal nach dem value-Setter update onLoadSuccess ausgefuehrt.
+								' . $this->get_id() . '_jquery.data("_suppressFilterSetterUpdate", true);';
+		
 		$output .= $inherited_options . <<<JS
 
 						, textField:"{$this->get_widget()->get_text_column()->get_data_column_name()}"
@@ -220,10 +234,7 @@ JS;
 							{$this->get_id()}_jquery.data("_currentText", newValue);
 							if (!newValue) {
 								{$this->get_id()}_jquery.data("_lastValidValue", "");
-								// Der eigene Wert wird geloescht.
-								{$this->get_id()}_jquery.data("_clearFilterSetterUpdate", true);
-								// Loeschen der verlinkten Elemente wenn der Wert manuell geloescht wird.
-								{$this->get_id()}_jquery.data("_otherClearFilterSetterUpdate", true);
+								{$filter_setter_update_script}
 								{$this->get_id()}_onChange();
 							}
 							// Anschließend an onChange wird neu geladen -> onBeforeLoad
@@ -285,6 +296,14 @@ JS;
 								}
 							}
 						}
+						, onDestroy: function() {
+							// Wird leider nicht getriggert, sonst waere das eine gute Moeglichkeit
+							// die globalen Variablen nur nach Bedarf zu initialisieren.
+							{$this->build_js_debug_message('onDestroy')}
+							
+							delete {$this->get_id()}_jquery;
+							delete {$this->get_id()}_datagrid;
+						}
 JS;
 		return $output;
 	}
@@ -319,6 +338,9 @@ JS;
 						if (column){
 							var row = {$this->get_id()}_datagrid.datagrid("getSelected");
 							if (row) {
+								if (row[column] == undefined) {
+									if (window.console) { console.warn("The non-existing column \"" + column + "\" was requested from element \"{$this->get_id()}\""); }
+								}
 								return row[column];
 							} else if (column == "{$uidColumnName}") {
 								// Wurde durch den prefill nur value und text gesetzt, aber noch
@@ -338,8 +360,9 @@ JS;
 		$output = <<<JS
 				
 				function {$this->get_id()}_valueGetter(column, row){
-					// Der value-Getter kann aufgerufen werden, bevor diese globale Variable definiert ist.
-					if (!window.{$this->get_id()}_jquery) { window.{$this->get_id()}_jquery = $("#{$this->get_id()}"); }
+					// Der value-Getter wird in manchen Faellen aufgerufen, bevor die globalen
+					// Variablen definiert sind. Daher hier noch einmal initialisieren.
+					{$this->get_id()}_initGlobals();
 					
 					{$this->build_js_debug_message('valueGetter()')}
 					
@@ -436,7 +459,7 @@ JS;
 				function {$this->get_id()}_onChange(){
 					{$this->build_js_debug_message('onChange()')}
 					// Diese Werte koennen gesetzt werden damit, wenn der Wert der ComboTable
-					// geaendert wird, nur ein Teil oder gar keine verlinkten Elemente geupdated
+					// geaendert wird, nur ein Teil oder gar keine verlinkten Elemente aktualisiert
 					// werden.
 					var suppressFilterSetterUpdate = false, clearFilterSetterUpdate = false, suppressAllUpdates = false, suppressLazyLoadingGroupUpdate = false;
 					if ({$this->get_id()}_jquery.data("_otherSuppressFilterSetterUpdate")){
@@ -553,8 +576,9 @@ JS;
 		$output = <<<JS
 
 					// OnBeforeLoad ist das erste Event, das nach der Erzeugung des Objekts getriggert
-					// wird. Daher werden hier globale Variablen initialisiert.
-					if (!window.{$this->get_id()}_datagrid) { window.{$this->get_id()}_datagrid = {$this->get_id()}_jquery.combogrid("grid"); }
+					// wird. Daher werden hier globale Variablen initialisiert (_datagrid kann vorher
+					// nicht initialisiert werden, da das combogrid-Objekt noch nicht existiert).
+					{$this->get_id()}_initGlobals();
 					
 					{$this->build_js_debug_message('onBeforeLoad')}
 					
@@ -572,13 +596,17 @@ JS;
 					}
 					
 					if ({$this->get_id()}_jquery.data("_valueSetterUpdate")) {
+						param._valueSetterUpdate = true;
 						{$value_filters_script}
 					} else if ({$this->get_id()}_jquery.data("_clearFilterSetterUpdate")) {
+						param._clearFilterSetterUpdate = true;
 						{$clear_filters_script}
 					} else if ({$this->get_id()}_jquery.data("_filterSetterUpdate")) {
+						param._filterSetterUpdate = true;
 						{$filters_script}
 						{$value_filters_script}
 					} else if ({$this->get_id()}_jquery.data("_firstLoad")) {
+						param._firstLoad = true;
 						{$first_load_script}
 					} else {
 						if (!param.q) {
@@ -592,6 +620,11 @@ JS;
 					// aendert, wird die Anfrage unterbunden, denn das Resultat waere das gleiche.
 					if ((JSON.stringify(currentFilterSet) === JSON.stringify({$this->get_id()}_jquery.data("_lastFilterSet"))) &&
 							!({$this->get_id()}_jquery.data("_resultSetChanged"))) {
+						// Suchart entfernen, sonst ist sie beim naechsten Mal noch gesetzt
+						{$this->get_id()}_jquery.removeData("_valueSetterUpdate");
+						{$this->get_id()}_jquery.removeData("_clearFilterSetterUpdate");
+						{$this->get_id()}_jquery.removeData("_filterSetterUpdate");
+						
 						return false;
 					} else {
 						{$this->get_id()}_jquery.data("_lastFilterSet", currentFilterSet);
@@ -662,7 +695,7 @@ JS;
 						{$this->get_id()}_jquery.removeData("_clearFilterSetterUpdate");
 						{$this->get_id()}_jquery.removeData("_filterSetterUpdate");
 						
-						{$this->get_id()}_clear();
+						{$this->get_id()}_clear(false);
 						
 						// Neu geladen werden muss nicht, denn die Filter waren beim vorangegangenen Laden schon
 						// entsprechend gesetzt.
@@ -701,7 +734,7 @@ JS;
 						if (rows["total"] == 1) {
 							var selectedrow = {$this->get_id()}_datagrid.datagrid("getSelected");
 							if (selectedrow == null || selectedrow["{$uidColumnName}"] != rows["rows"][0]["{$uidColumnName}"]) {
-								// Ist das Widget in einer lazy-loading-group, werden keine Filter-Referenzen geupdated,
+								// Ist das Widget in einer lazy-loading-group, werden keine Filter-Referenzen aktualisiert,
 								// denn alle Elemente der Gruppe werden vom Orginalobjekt bedient.
 								{$suppressLazyLoadingGroupUpdateScript}
 								// Beim Autoselect wurde ja zuvor schon geladen und es gibt nur noch einen Vorschlag
@@ -746,7 +779,7 @@ JS;
 	 * before, onChange is triggered by clearing it. If suppressAllUpdates = true is
 	 * passed to the function, linked elements are not updated by clearing the object.
 	 * This behavior is usefull, if the object should really just be cleared.
-	 *  
+	 * 
 	 * @return string
 	 */
 	function build_js_clear_function() {
@@ -754,7 +787,7 @@ JS;
 		
 		$output = <<<JS
 
-				function {$this->get_id()}_clear(suppressAllUpdates = false) {
+				function {$this->get_id()}_clear(suppressAllUpdates) {
 					{$this->build_js_debug_message('clear()')}
 					
 					// Bestimmt ob durch das Leeren andere verlinkte Elemente aktualisiert werden sollen. 
@@ -802,8 +835,7 @@ JS;
 	}
 	
 	/**
-	 * Creates an inline javascript-function that writes a debug-message to the browser-
-	 * console.
+	 * Creates javascript-code that writes a debug-message to the browser-console.
 	 * 
 	 * @param string $source
 	 * @return string
@@ -816,12 +848,12 @@ JS;
 			case 1:
 			case 2:
 				$output = <<<JS
-				console.debug(Date.now() + "|{$this->get_id()}.{$source}");
+				if (window.console) { console.debug(Date.now() + "|{$this->get_id()}.{$source}"); }
 JS;
 				break;
 			case 3:
 				$output = <<<JS
-				console.debug(Date.now() + "|{$this->get_id()}.{$source}|" + {$this->get_id()}_debugDataToString());
+				if (window.console) { console.debug(Date.now() + "|{$this->get_id()}.{$source}|" + {$this->get_id()}_debugDataToString()); }
 JS;
 				break;
 			default:
@@ -859,6 +891,19 @@ JS;
 						"_lastFilterSet: "+ JSON.stringify({$this->get_id()}_jquery.data("_lastFilterSet")) + ", " +
 						"_resultSetChanged: " + {$this->get_id()}_jquery.data("_resultSetChanged");
 					return output;
+				}
+JS;
+		return $output;
+	}
+	
+	function build_js_init_globals_function() {
+		$output = <<<JS
+
+				function {$this->get_id()}_initGlobals() {
+					window.{$this->get_id()}_jquery = $("#{$this->get_id()}");
+					if ({$this->get_id()}_jquery.data("combogrid")) {
+						window.{$this->get_id()}_datagrid = {$this->get_id()}_jquery.combogrid("grid");
+					}
 				}
 JS;
 		return $output;
