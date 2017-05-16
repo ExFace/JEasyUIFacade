@@ -6,6 +6,7 @@ use exface\Core\Exceptions\DependencyNotFoundError;
 class JEasyUiTemplate extends AbstractAjaxTemplate {
 	
 	public function init(){
+		parent::init();
 		$this->set_class_prefix('eui');
 		$this->set_class_namespace(__NAMESPACE__);
 		$this->set_request_system_vars(array('_'));
