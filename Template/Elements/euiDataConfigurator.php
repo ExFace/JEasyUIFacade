@@ -12,9 +12,9 @@ use exface\AbstractAjaxTemplate\Template\Elements\JqueryDataConfiguratorTrait;
  *
  */
 class euiDataConfigurator extends euiTabs
-{    
+{
     use JqueryDataConfiguratorTrait;
-    
+
     /**
      * Returns the default number of columns to layout this widget.
      *
@@ -23,6 +23,16 @@ class euiDataConfigurator extends euiTabs
     public function getDefaultColumnNumber()
     {
         return $this->getTemplate()->getConfig()->getOption("WIDGET.DATACONFIGURATOR.COLUMNS_BY_DEFAULT");
+    }
+
+    /**
+     * 
+     * {@inheritDoc}
+     * @see \exface\JEasyUiTemplate\Template\Elements\euiTabs::inheritsColumnNumber()
+     */
+    public function inheritsColumnNumber()
+    {
+        return false;
     }
 }
 ?>

@@ -81,6 +81,17 @@ HTML;
         return $this->getTemplate()->getConfig()->getOption("WIDGET.TABS.COLUMNS_BY_DEFAULT");
     }
 
+    /**
+     * Determines if the tabs in this widget inherit their column number from a parent
+     * layout widget.
+     *
+     * @return boolean
+     */
+    public function inheritsColumnNumber()
+    {
+        return true;
+    }
+
     public function addOnResizeScript($js)
     {
         foreach ($this->getWidget()->getTabs() as $tab) {

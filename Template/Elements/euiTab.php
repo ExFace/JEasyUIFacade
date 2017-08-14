@@ -94,5 +94,20 @@ JS;
         }
         return parent::getDefaultColumnNumber();
     }
+
+    /**
+     * If the tab inherits the column number from a parent layout widget is defined for
+     * the tabs widget or its derivatives.
+     *
+     * @return boolean
+     */
+    public function inheritsColumnNumber()
+    {
+        $parent_element = $this->getTemplate()->getElement($this->getWidget()->getParent());
+        if (method_exists($parent_element, 'inheritsColumnNumber')) {
+            return $parent_element->inheritsColumnNumber();
+        }
+        return parent::inheritsColumnNumber();
+    }
 }
 ?>
