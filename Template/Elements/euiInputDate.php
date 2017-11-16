@@ -107,7 +107,28 @@ JS;
 
     public function buildJsValueGetter()
     {
-        return '$("#' . $this->getId() . '").data("_internalValue")';
+        // Wird der Wert eines euiInputDates in der Uxon-Beschreibung gesetzt, dann wird das
+        // Widget vorbefuellt. Wird dieser vorbefuellte Wert manuell geloescht, dann wird kein
+        // onChange getriggert (auch daran zu erkennen, dass das Panel nicht geoeffnet wird)
+        // und der _internalValue bleibt auf dem vorherigen Wert. Das scheint ein Problem der
+        // datebox zu sein.
+        // Als workaround wird hier der aktuell angezeigte Wert abgerufen (nur getText()
+        // liefert den korrekten (leeren) Wert, getValue() bzw. getValues() liefert auch den
+        // bereits geloeschten Wert) und wenn dieser leer ist, wird auch der _internalValue
+        // geleert.
+        
+        //return '$("#' . $this->getId() . '").data("_internalValue")';
+        
+        return <<<JS
+
+        (function(){
+            var {$this->getId()}_jquery = $("#{$this->getId()}");
+            if (! {$this->getId()}_jquery.{$this->getElementType()}("getText")) {
+                {$this->getId()}_jquery.data("_internalValue", "");
+            }
+            return {$this->getId()}_jquery.data("_internalValue");
+        })()
+JS;
     }
 
     protected function buildJsDateFormatter()
