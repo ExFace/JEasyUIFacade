@@ -114,7 +114,7 @@ class euiButton extends euiAbstractElement
         /* @var $prefill_link \exface\Core\CommonLogic\WidgetLink */
         $prefill = '';
         if ($prefill_link = $this->getAction()->getPrefillWithDataFromWidgetLink()) {
-            if ($prefill_link->getPage()->is($widget->getPage())) {
+            if ($widget->getPage()->is($prefill_link->getPageAlias())) {
                 $prefill = ", prefill: " . $this->getTemplate()->getElement($prefill_link->getWidget())->buildJsDataGetter($this->getAction());
             }
         }
