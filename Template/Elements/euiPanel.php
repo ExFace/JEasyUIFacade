@@ -103,6 +103,16 @@ HTML;
         
         return $output;
     }
+    
+    public function getHeight()
+    {
+        $dimension = $this->getWidget()->getHeight();
+        if ($dimension->isUndefined() || $dimension->isMax()) {
+            return 'auto';
+        }
+        
+        return parent::getHeight();
+    }
 
     public function generateJs()
     {

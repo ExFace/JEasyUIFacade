@@ -1,11 +1,11 @@
 <?php
 namespace exface\JEasyUiTemplate\Template\Elements;
 
-class euiInputGroup extends euiPanel
+class euiWidgetGroup extends euiPanel
 {
     protected function init(){
         parent::init();
-        $this->addElementCssClass('exf-input-group');
+        $this->addElementCssClass('exf-widget-group');
     }
     
     public function buildJsDataOptions()

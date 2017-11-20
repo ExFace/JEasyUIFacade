@@ -163,10 +163,10 @@ abstract class euiAbstractElement extends AbstractJqueryElement
                 if ($cols == $columnNumber) {
                     $output = '100%';
                 } else {
-                    $output = 'calc(100%*' . $cols . '/' . $columnNumber . ')';
+                    $output = 'calc(100% * ' . $cols . '/' . $columnNumber . ')';
                 }
             } else {
-                $output = 'calc(100%*' . $this->getWidthDefault() . '/' . $columnNumber . ')';
+                $output = 'calc(100% * ' . $this->getWidthDefault() . '/' . $columnNumber . ')';
             }
         } elseif ($dimension->isTemplateSpecific() || $dimension->isPercentual()) {
             $output = $dimension->getValue();
@@ -176,7 +176,7 @@ abstract class euiAbstractElement extends AbstractJqueryElement
             $output = '100%';
         } else {
             // Ein "kleines" Widget ohne angegebene Breite hat ist widthDefault Spalten breit.
-            $output = 'calc(100%*' . $this->getWidthDefault() . '/' . $columnNumber . ')';
+            $output = 'calc(100% * ' . $this->getWidthDefault() . '/' . $columnNumber . ')';
         }
         return $output;
     }
