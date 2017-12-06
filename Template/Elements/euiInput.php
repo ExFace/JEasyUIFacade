@@ -47,6 +47,11 @@ class euiInput extends euiText
         return $this->buildHtmlLabelWrapper($output);
     }
 
+    /**
+     * Returns the escaped and ready-to-use value of the widget including the default value (if applicable).
+     *
+     * @return string
+     */
     public function getValueWithDefaults()
     {
         return $this->escapeString($this->getWidget()->getValueWithDefaults());

@@ -29,7 +29,7 @@ class euiInputSelect extends euiInput
             if ($this->getWidget()->getMultiSelect() && $selected_cnt > 1 && $value !== '' && ! is_null($value)) {
                 $selected = in_array($value, $this->getWidget()->getValues());
             } else {
-                $selected = strcasecmp($this->getValueWithDefaults(), $value) == 0 ? true : false;
+                $selected = strcasecmp($this->getWidget()->getValueWithDefaults(), $value) == 0 ? true : false;
             }
             $options .= '
 					<option value="' . $value . '"' . ($selected ? ' selected="selected"' : '') . '>' . $text . '</option>';
