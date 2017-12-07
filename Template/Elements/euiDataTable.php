@@ -94,6 +94,22 @@ HTML;
             }
         }
         
+        // Wenn noetig initiales Laden ueberspringen.
+        if (! $widget->getAutoloadData() && $widget->getLazyLoading()) {
+            $output .= <<<JS
+
+            $("#{$this->getId()}").data("_skipNextLoad", true);
+JS;
+            
+            // Dieses Skript wird nach dem erfolgreichen Laden ausgefuehrt, um die angezeigte
+            // Nachricht (s.u.) zu entfernen. Das Skript muss vor $grid_head erzeugt werden.
+            $onLoadSuccessScript = <<<JS
+
+            $("#{$this->getId()}_init_message").remove();
+JS;
+            $this->addOnLoadSuccess($onLoadSuccessScript);
+        }
+        
         $grid_head = '';
         
         // Add row details (expandable rows) if required
@@ -121,6 +137,15 @@ HTML;
         $output .= '
             $("#' . $this->getId() . '").' . $this->getElementType() . '({' . $grid_head . '});
         ';
+        
+        // Eine Nachricht anzeigen, dass keine Daten geladen wurde, wenn das initiale Laden
+        // uebersprungen wird.
+        if (! $widget->getAutoloadData() && $widget->getLazyLoading()) {
+            $output .= <<<JS
+
+            $("#{$this->getId()}").parent().append("<div id='{$this->getId()}_init_message' style='width:100%;height:100%;position:absolute;top:0;left:0;'><table style='width:100%;height:100%;'><tr><td style='text-align:center;'>{$widget->getTextNotLoaded()}</td></tr></table></div>");
+JS;
+        }
         
         // build JS for the button actions
         $output .= $this->buildJsButtons();

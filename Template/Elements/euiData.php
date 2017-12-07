@@ -661,8 +661,9 @@ JS;
     protected function buildJsOnBeforeLoadScript($js_var_param = 'param')
     {
         return <<<JS
-                    if ($(this).{$this->getElementType()}('options')._skipNextLoad == true) {
-    					$(this).{$this->getElementType()}('options')._skipNextLoad = false;
+                    {$this->getId()}_jquery = $("#{$this->getId()}");
+                    if ({$this->getId()}_jquery.data("_skipNextLoad") == true) {
+    					{$this->getId()}_jquery.data("_skipNextLoad", false);
     					return false;
     				}
 				    {$this->on_before_load}
