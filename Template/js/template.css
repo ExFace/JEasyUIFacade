@@ -89,4 +89,17 @@ div.messager-body{overflow-y: auto;}
 #sf-resetcontent h1 {display: none;} 
 h2.block_exception.clear_fix {margin: 0}
 pre.sf-dump {background-color: white !important; margin: 10px;}
-pre.sf-dump .sf-dump-private, pre.sf-dump .sf-dump-public, pre.sf-dump .sf-dump-protected {color: black !important; "}
+pre.sf-dump .sf-dump-private, pre.sf-dump .sf-dump-public, pre.sf-dump .sf-dump-protected {color: black !important;}
+
+/* DataTables */
+.no-initial-load-message-overlay {
+	position:absolute;
+	top:0;
+	left:0;
+	width:100%;
+	height:100%;
+}
+.no-initial-load-message-overlay-table {
+	width:100%;
+	height:100%;
+}
