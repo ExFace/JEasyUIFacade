@@ -121,6 +121,9 @@ class euiData extends euiAbstractElement
         } else {
             // Data embedded in the code of the DataGrid
             $data = $widget->prepareDataSheetToRead($widget->getValuesDataSheet());
+            if (is_null($data->getRowsOnPage())) {
+                $data->setRowsOnPage($this->getDefaultPageSize());
+            }
             if (! $data->isFresh()) {
                 $data->dataRead();
             }
@@ -154,15 +157,7 @@ class euiData extends euiAbstractElement
             $sortOrder = ", sortOrder: '" . implode(',', $direction) . "'";
         }
         
-        if (! is_null($widget->getPaginatePageSize())) {
-            $default_page_size = $widget->getPaginatePageSize();
-        } else {
-            try {
-                $default_page_size = $this->getTemplate()->getConfig()->getOption('WIDGET.' . $widget->getWidgetType() . '.PAGE_SIZE');
-            } catch (ConfigOptionNotFoundError $e) {
-                $default_page_size = $this->getTemplate()->getConfig()->getOption('WIDGET.DATATABLE.PAGE_SIZE');
-            }
-        }
+        $default_page_size = ! is_null($widget->getPaginatePageSize()) ? $widget->getPaginatePageSize() : $this->getDefaultPageSize();
         
         $page_sizes = $this->getTemplate()->getApp()->getConfig()->getOption('WIDGET.DATATABLE.PAGE_SIZES_SELECTABLE')->toArray();
         if (!in_array($default_page_size, $page_sizes)){
@@ -682,6 +677,22 @@ JS;
 				}
 
 JS;
+    }
+
+    /**
+     * Returns the default page size of this widget.
+     * 
+     * @return \exface\Core\CommonLogic\multitype
+     */
+    protected function getDefaultPageSize()
+    {
+        try {
+            $default_page_size = $this->getTemplate()->getConfig()->getOption('WIDGET.' . $this->getWidget()->getWidgetType() . '.PAGE_SIZE');
+        } catch (ConfigOptionNotFoundError $e) {
+            $default_page_size = $this->getTemplate()->getConfig()->getOption('WIDGET.DATATABLE.PAGE_SIZE');
+        }
+        
+        return $default_page_size;
     }
 }
 ?>
