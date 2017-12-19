@@ -20,16 +20,5 @@ class JEasyUiTemplate extends AbstractAjaxTemplate
             throw new DependencyNotFoundError('jEasyUI files not found! Please install jEasyUI to "' . $folder . '"!', '6T6HUFO');
         }
     }
-
-    /*public function getRequestFilters()
-    {
-        parent::getRequestFilters();
-        // id is a special filter for dynamic tree loading in jeasyui
-        if ($this->getWorkbench()->getRequestParams()['id']) {
-            $this->request_filters_array['PARENT'][] = urldecode($this->getWorkbench()->getRequestParams()['id']);
-            $this->getWorkbench()->removeRequestParam('id');
-        }
-        return $this->request_filters_array;
-    }*/
 }
 ?>

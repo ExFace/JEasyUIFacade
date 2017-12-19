@@ -53,7 +53,7 @@ class euiInputNumber extends euiInput
                      // TODO check if the element is an instantiated numberbox somehow!
     			     {$value_js_var} = $.fn.numberbox.defaults.formatter.call(this,{$value_js_var});
                 }
-                {$value_js_var} = {$value_js_var}.toString().replace(/{$separator_regex}/g, '.');
+                {$value_js_var} = {$value_js_var}.toString().replace(/{$separator_regex}/g, '.').replace(/ /g, '');
     			var number = parseFloat({$value_js_var});
                 if (! isNaN(number)) {
                     var {$value_js_var} = number.toLocaleString(
