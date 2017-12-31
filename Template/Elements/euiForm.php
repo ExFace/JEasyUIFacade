@@ -23,6 +23,11 @@ class euiForm extends euiPanel
     {
         return parent::generateHtml() . $this->buildHtmlFooter();
     }
+    
+    public function buildCssElementClass()
+    {
+        return parent::buildCssElementClass() . ' exf-form';
+    }
 
     protected function buildHtmlFooter()
     {

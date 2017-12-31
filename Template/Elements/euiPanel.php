@@ -52,12 +52,11 @@ class euiPanel extends euiContainer implements JqueryLayoutInterface
 HTML;
         
         // Wrap children widgets with a grid for masonry layouting - but only if there is something to be layed out
-        // Normalerweise wird das der masonry_grid-wrapper nicht gebraucht. Masonry ordnet
+        // Normalerweise wird das der masonry-wrapper nicht gebraucht. Masonry ordnet
         // dann die Elemente an und passt direkt die Grosse des Panels an den neuen Inhalt an.
         // Nur wenn das Panel den gesamten Container ausfuellt, darf seine Groesse nicht
         // geaendert werden. In diesem Fall wird der wrapper eingefuegt und stattdessen seine
         // Groesse geaendert. Dadurch wird der Inhalt scrollbar im Panel angezeigt.
-        
         if ((is_null($widget->getParent()) || (($containerWidget = $widget->getParentByType('exface\\Core\\Interfaces\\Widgets\\iContainOtherWidgets')) && ($containerWidget->countWidgetsVisible() == 1))) && ($widget->countWidgetsVisible() > 1)) {
             $children_html = <<<HTML
 
@@ -90,18 +89,36 @@ HTML;
         // wenn sich die Groesse des Bildschirms/Containers aendert.
         $output = <<<HTML
 
-                <div class="exf-grid-item {$this->getMasonryItemClass()} {$this->buildCssElementClass()}" style="width:{$this->getWidth()};min-width:{$this->getMinWidth()};height:{$this->getHeight()};padding:{$this->getPadding()};box-sizing:border-box;{$style}">
-                    <div class="easyui-{$this->getElementType()}"
+                <div class="easyui-{$this->getElementType()}"
                             id="{$this->getId()}"
                             data-options="{$this->buildJsDataOptions()}{$fit}"
                             {$title}
                             style="{$styleScript}">
                         {$children_html}
-                    </div>
                 </div>
 HTML;
+                        
+        if ($this->isOnlyVisibleElementInContainer()) {
+            $output = $this->buildHtmlGridItemWrapper($output, $style);
+        }
         
         return $output;
+    }
+    
+    /**
+     * 
+     * {@inheritDoc}
+     * @see \exface\JEasyUiTemplate\Template\Elements\euiAbstractElement::buildHtmlGridItemWrapper()
+     */
+    protected function buildHtmlGridItemWrapper($html, $style = '')
+    {
+        return <<<HTML
+
+            <div class="exf-grid-item {$this->getMasonryItemClass()} {$this->buildCssElementClass()}" style="width:{$this->getWidth()};min-width:{$this->getMinWidth()};height:{$this->getHeight()};padding:{$this->getPadding()};box-sizing:border-box;{$style}">
+                {$html}
+            </div>
+
+HTML;
     }
     
     public function getHeight()

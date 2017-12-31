@@ -55,7 +55,7 @@ HTML;
                 // veraendert wird -> kein Scrollbalken.
                 $children_html = <<<HTML
 
-        <div class="grid" id="{$this->getId()}_masonry_grid" style="width:100%;height:100%;">
+        <div class="grid exf-dialog" id="{$this->getId()}_masonry_grid" style="width:100%;height:100%;">
             {$children_html}
         </div>
 HTML;
