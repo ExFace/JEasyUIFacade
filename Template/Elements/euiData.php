@@ -90,6 +90,19 @@ class euiData extends euiAbstractElement
     }
     
     /**
+     *
+     * @return boolean
+     */
+    protected function isLazyLoading()
+    {
+        $widget_option = $this->getWidget()->getLazyLoading();
+        if (is_null($widget_option)) {
+            return true;
+        }
+        return $widget_option;
+    }
+    
+    /**
      * Generates config-elements for the js grid instatiator, that define the data source for the grid.
      * By default the data source is remote and will be fetched via AJAX. Override this method for local data sources.
      *
@@ -99,14 +112,14 @@ class euiData extends euiAbstractElement
     {
         $widget = $this->getWidget();
         
-        if ($widget->getLazyLoading()) {
+        if ($this->isLazyLoading()) {
             // Lazy loading via AJAX
             $params = array();
             $queryParams = array(
                 'resource' => $widget->getPage()->getAliasWithNamespace(),
                 'element' => $widget->getId(),
                 'object' => $this->getWidget()->getMetaObject()->getId(),
-                'action' => $widget->getLazyLoadingAction()
+                'action' => $widget->getLazyLoadingActionAlias()
             );
             foreach ($queryParams as $param => $val) {
                 $params[] = $param . ': "' . $val . '"';
@@ -139,7 +152,7 @@ class euiData extends euiAbstractElement
         // add initial sorters
         $sort_by = array();
         $direction = array();
-        if ($widget->getLazyLoading() && count($widget->getSorters()) > 0) {
+        if ($this->isLazyLoading() && count($widget->getSorters()) > 0) {
             foreach ($widget->getSorters() as $sort) {
                 // Check if sorting over a column and use the column name in this case
                 // to ensure, the sorting indicator lights up in the column header.

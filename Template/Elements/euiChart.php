@@ -138,7 +138,7 @@ JS;
                             resource: "' . $widget->getPage()->getAliasWithNamespace() . '"
                             , element: "' . $widget->getData()->getId(). '"
                             , object: "' . $widget->getMetaObject()->getId(). '"
-                            , action: "' . $widget->getLazyLoadingAction(). '"
+                            , action: "' . $widget->getLazyLoadingActionAlias(). '"
             ';
             
             // send sort information

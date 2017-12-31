@@ -198,7 +198,7 @@ function {$this->buildJsFunctionPrefix()}shapeLoader(){
 	data.resource = "{$widget->getPage()->getAliasWithNamespace()}";
 	data.element = "{$shape->getId()}";
 	data.object = "{$shape->getMetaObject()->getId()}";
-	data.action = "{$widget->getLazyLoadingAction()}";
+	data.action = "{$widget->getLazyLoadingActionAlias()}";
 	{$filter_shape_options}
 	
 	$.ajax({
@@ -220,7 +220,7 @@ function {$this->buildJsFunctionPrefix()}dataLoader(){
 	data.resource = "{$widget->getPage()->getAliasWithNamespace()}";
 	data.element = "{$shape->getData()->getId()}";
 	data.object = "{$shape->getData()->getMetaObject()->getId()}";
-	data.action = "{$shape->getData()->getLazyLoadingAction()}";
+	data.action = "{$shape->getData()->getLazyLoadingActionAlias()}";
 	{$filter_shape_data}
 	
 	$.ajax({

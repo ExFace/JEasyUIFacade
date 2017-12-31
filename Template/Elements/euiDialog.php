@@ -18,6 +18,19 @@ class euiDialog extends euiForm
         $this->buttons_div_id = $this->getId() . '-buttons';
         $this->setElementType('dialog');
     }
+    
+    /**
+     *
+     * @return boolean
+     */
+    protected function isLazyLoading()
+    {
+        $widget_option = $this->getWidget()->getLazyLoading();
+        if (is_null($widget_option)) {
+            return true;
+        }
+        return $widget_option;
+    }
 
     /**
      *
@@ -30,7 +43,7 @@ class euiDialog extends euiForm
         $widget = $this->getWidget();
         
         $children_html = '';
-        if (! $widget->getLazyLoading()) {
+        if (! $this->isLazyLoading()) {
             $children_html = <<<HTML
 
             {$this->buildHtmlForWidgets()}
@@ -78,7 +91,7 @@ HTML;
     public function generateJs()
     {
         $output = '';
-        if (! $this->getWidget()->getLazyLoading()) {
+        if (! $this->isLazyLoading()) {
             $output .= $this->buildJsForWidgets();
         }
         $output .= $this->buildJsButtons();

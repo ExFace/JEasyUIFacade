@@ -237,7 +237,7 @@ JS;
         
         // Init the combogrid itself
         $inheritedOptions = '';
-        if ($widget->getLazyLoading() || (! $widget->getLazyLoading() && $widget->isDisabled())) {
+        if ($this->isLazyLoading() || (! $this->isLazyLoading() && $widget->isDisabled())) {
             $inheritedOptions = $table->buildJsDataSource();
         }
         $table->setOnBeforeLoad($this->buildJsOnBeforeload());
@@ -1062,6 +1062,19 @@ JS;
                 }
 JS;
         return $output;
+    }
+    
+    /**
+     *
+     * @return boolean
+     */
+    protected function isLazyLoading()
+    {
+        $widget_option = $this->getWidget()->getLazyLoading();
+        if (is_null($widget_option)) {
+            return true;
+        }
+        return $widget_option;
     }
 }
 ?>
