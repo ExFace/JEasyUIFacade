@@ -44,7 +44,7 @@ fieldset.exface_inputgroup {border-color: #95B8E7; border-width: 1px 0 0 0; padd
 fieldset.exface_inputgroup legend {color: #404040; font-weight: bold; padding: 0 6px; margin: 0 10px;}
 
 /* Widget groups */
-.exf-widget-group .panel-header {background-color: transparent;}
+.exf-widget-group > .panel > .panel-header {background-color: transparent; padding-top: 6px; margin-bottom: 4px;}
 
 /* Text & headings */
 .panel-body h1, .panel-body h2, .panel-body h3, .panel-body h4, .panel-body h5, .panel-body p, .panel-body pre {padding: 0 10px;}
