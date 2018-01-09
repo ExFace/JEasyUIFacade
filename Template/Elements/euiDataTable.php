@@ -87,6 +87,28 @@ HTML;
         $output .= $configurator_element->generateJs();
         $this->addOnBeforeLoad('param["data"] = ' . $configurator_element->buildJsDataGetter() . ';');
         
+        // Add a script to remove selected but not present rows onLoadSuccess. getRowIndex returns
+        // -1 for selected but not present rows. Selections outlive a reload but the selected row
+        // may have been deleted in the meanwhile. An example is "offene Positionen stornieren" in
+        // "Rueckstandsliste".
+        $onLoadSuccessScript = <<<JS
+
+				var {$this->getId()}_jquery = $("#{$this->getId()}");
+                var rows = {$this->getId()}_jquery.{$this->getElementType()}("getSelections");
+                var selectedRows = [];
+                for (var i = 0; i < rows.length; i++) {
+                    var index = {$this->getId()}_jquery.{$this->getElementType()}("getRowIndex", rows[i]);
+                    if( index >= 0) {
+                        selectedRows.push(index);
+                    }
+                }
+                {$this->getId()}_jquery.{$this->getElementType()}("clearSelections");
+                for (var i = 0; i < selectedRows.length; i++) {
+                    {$this->getId()}_jquery.{$this->getElementType()}("selectRow", selectedRows[i]);
+                }
+JS;
+        $this->addOnLoadSuccess($onLoadSuccessScript);
+        
         // Build JS for the editors
         if ($this->isEditable()) {
             foreach ($this->getEditors() as $editor) {
