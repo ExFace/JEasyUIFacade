@@ -13,11 +13,15 @@ use exface\Core\Factories\WidgetLinkFactory;
  * @author Andrej Kabachnik
  *        
  */
-class euiInput extends euiText
+class euiInput extends euiValue
 {
-    
     use JqueryLiveReferenceTrait;
 
+    /**
+     * 
+     * {@inheritDoc}
+     * @see \exface\JEasyUiTemplate\Template\Elements\euiText::init()
+     */
     protected function init()
     {
         parent::init();
@@ -31,7 +35,12 @@ class euiInput extends euiText
         $this->registerDisableConditionAtLinkedElement();
     }
 
-    function generateHtml()
+    /**
+     * 
+     * {@inheritDoc}
+     * @see \exface\JEasyUiTemplate\Template\Elements\euiText::generateHtml()
+     */
+    public function generateHtml()
     {
         /* @var $widget \exface\Core\Widgets\Input */
         $widget = $this->getWidget();
@@ -57,7 +66,12 @@ class euiInput extends euiText
         return $this->escapeString($this->getWidget()->getValueWithDefaults());
     }
 
-    function generateJs()
+    /**
+     * 
+     * {@inheritDoc}
+     * @see \exface\JEasyUiTemplate\Template\Elements\euiText::generateJs()
+     */
+    public function generateJs()
     {
         $output = '';
         $output .= "
@@ -84,21 +98,39 @@ class euiInput extends euiText
         return $output;        
     }
 
+    /**
+     * 
+     * {@inheritDoc}
+     * @see \exface\JEasyUiTemplate\Template\Elements\euiAbstractElement::buildJsInitOptions()
+     */
     public function buildJsInitOptions()
     {
         return $this->buildJsDataOptions();
     }
 
+    /**
+     * 
+     * @return string
+     */
     protected function buildJsDataOptions()
     {
         return '';
     }
 
-    function buildJsValueSetterMethod($value)
+    /**
+     * 
+     * {@inheritDoc}
+     * @see \exface\Core\Templates\AbstractAjaxTemplate\Elements\AbstractJqueryElement::buildJsValueSetterMethod()
+     */
+    public function buildJsValueSetterMethod($value)
     {
         return $this->getElementType() . '("setValue", ' . $value . ')';
     }
 
+    /**
+     * 
+     * @return string
+     */
     protected function buildJsOnChangeHandler()
     {
         if ($this->getOnChangeScript()) {
