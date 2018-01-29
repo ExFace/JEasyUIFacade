@@ -271,7 +271,7 @@ JS;
     {
         $editable_transposed_cols = array();
         foreach ($this->getWidget()->getColumnsTransposed() as $pos => $col) {
-            if ($col->getEditor()) {
+            if ($col->isEditable()) {
                 $editable_transposed_cols[] = $pos;
             }
         }

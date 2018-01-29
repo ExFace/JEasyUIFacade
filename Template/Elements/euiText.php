@@ -3,12 +3,7 @@ namespace exface\JEasyUiTemplate\Template\Elements;
 
 use exface\Core\Widgets\Text;
 use exface\Core\Templates\AbstractAjaxTemplate\Elements\JqueryAlignmentTrait;
-use exface\Core\Interfaces\DataTypes\EnumDataTypeInterface;
-use exface\Core\DataTypes\NumberDataType;
-use exface\Core\DataTypes\DateDataType;
-use exface\Core\DataTypes\TimestampDataType;
 use exface\Core\DataTypes\TextStylesDataType;
-use exface\Core\Interfaces\Widgets\iTakeInput;
 
 /**
  * @method Text getWidget()

@@ -2,6 +2,7 @@
 namespace exface\JEasyUiTemplate\Template\Elements;
 
 use exface\Core\Widgets\InputNumber;
+use exface\Core\DataTypes\NumberDataType;
 
 /**
  * @method InputNumber getWidget()
@@ -11,13 +12,24 @@ use exface\Core\Widgets\InputNumber;
  */
 class euiInputNumber extends euiInput
 {
-
+    private $formatter = null;
+    
+    /**
+     * 
+     * {@inheritDoc}
+     * @see \exface\JEasyUiTemplate\Template\Elements\euiInput::init()
+     */
     protected function init()
     {
         parent::init();
         $this->setElementType('numberbox');
     }
 
+    /**
+     * 
+     * {@inheritDoc}
+     * @see \exface\JEasyUiTemplate\Template\Elements\euiInput::buildJsDataOptions()
+     */
     protected function buildJsDataOptions()
     {
         $widget = $this->getWidget();
@@ -26,9 +38,8 @@ class euiInputNumber extends euiInput
         
         $precision_max = $widget->getPrecisionMax();
         $precision_min = $widget->getPrecisionMin();
-        $locale = $this->getWorkbench()->context()->getScopeSession()->getSessionLocale();
         if (is_null($precision_max) || $precision_min === $precision_max) {
-            $formatter = static::buildJsNumberFormatter('value', $widget->getPrecisionMin(), $widget->getPrecisionMax(), $widget->getDecimalSeparator(), $widget->getThousandsSeparator(), $locale);
+            $formatter = 'return ' . $this->getDatatypeFormatter()->buildJsFormatter('value');
         }
         
         $output .= "precision: " . ($precision_max ? $precision_max : 10)
@@ -38,38 +49,40 @@ class euiInputNumber extends euiInput
         return trim($output, ',');
     }
     
-    public static function buildJsNumberFormatter($value_js_var, $precision_min, $precision_max, $decimal_separator, $thousands_separator, $locale = null)
-    {
-        $separator_regex = preg_quote($decimal_separator);
-        $precision_max = is_null($precision_max) ? 'undefined' : $precision_max;
-        $precision_min = is_null($precision_min) ? 'undefined' : $precision_min;
-        $locale = is_null($locale) ? 'undefined' : "'" . str_replace('_', '-', $locale) . "'";
-        $use_grouping = $thousands_separator ? 'true' : 'false';
-        
-        $js = <<<JS
-            
-            if ({$value_js_var} !== null && {$value_js_var} !== undefined && {$value_js_var} !== ''){
-    			if (this.nodeType > 0) {
-                     // TODO check if the element is an instantiated numberbox somehow!
-    			     {$value_js_var} = $.fn.numberbox.defaults.formatter.call(this,{$value_js_var});
-                }
-                {$value_js_var} = {$value_js_var}.toString().replace(/{$separator_regex}/g, '.').replace(/ /g, '');
-    			var number = parseFloat({$value_js_var});
-                if (! isNaN(number)) {
-                    var {$value_js_var} = number.toLocaleString(
-                        {$locale}, // use a string like 'en-US' to override browser locale
-                        {
-                            minimumFractionDigits: {$precision_min}, 
-                            maximumFractionDigits: {$precision_max},
-                            useGrouping: {$use_grouping}
-                        }
-                    );
-                }
-                return {$value_js_var};
+    /**
+     * 
+     * @return \exface\Core\Templates\AbstractAjaxTemplate\Interfaces\JsDataTypeFormatterInterface
+     */
+    protected function getDatatypeFormatter() {
+        if (is_null($this->formatter)) {
+            $widget = $this->getWidget();
+            $type = $widget->getValueDataType();
+            if (! $type instanceof NumberDataType) {
+                $type = new NumberDataType($this->getWorkbench());
             }
-
-JS;
+            /* @var $formatter \exface\Core\Templates\AbstractAjaxTemplate\Formatters\JsNumberFormatter */
+            $this->formatter = $this->getTemplate()->getDataTypeFormatter($type);
+            $this->formatter
+                ->setDecimalSeparator($widget->getDecimalSeparator())
+                ->setThousandsSeparator($widget->getThousandsSeparator());
+        }
         
-        return $js;
+        return $this->formatter;
+    }
+    
+    protected function buildJsValueFormatter($jsInput)
+    {
+        return $this->getDatatypeFormatter()->buildJsFormatter($jsInput);
+    }
+    
+    /**
+     * 
+     * {@inheritDoc}
+     * @see \exface\Core\Templates\AbstractAjaxTemplate\Elements\AbstractJqueryElement::generateHeaders()
+     */
+    public function generateHeaders()
+    {
+        $formatter = $this->getDataTypeFormatter();
+        return array_merge(parent::generateHeaders(), $formatter->buildHtmlHeadIncludes(), $formatter->buildHtmlBodyIncludes());
     }
 }

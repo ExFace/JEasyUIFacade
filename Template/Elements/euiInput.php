@@ -252,5 +252,15 @@ JS;
     {
         return ($this->getHeightRelativeUnit() * 1) . 'px';
     }
+    
+    /**
+     * 
+     * {@inheritDoc}
+     * @see \exface\JEasyUiTemplate\Template\Elements\euiValue::buildCssElementClass()
+     */
+    public function buildCssElementClass()
+    {
+        return parent::buildCssElementClass() . ' exf-input';
+    }
 }
 ?>

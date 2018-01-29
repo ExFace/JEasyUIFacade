@@ -42,7 +42,7 @@ class euiDataTable extends euiData
         /* @var $col \exface\Core\Widgets\DataColumn */
         foreach ($widget->getColumns() as $col) {
             if ($col->isEditable()) {
-                $editor = $this->getTemplate()->getElement($col->getEditor());
+                $editor = $this->getTemplate()->getElement($col->getCellWidget());
                 $this->setEditable(true);
                 $this->editors[$col->getId()] = $editor;
             }
@@ -230,10 +230,9 @@ JS;
     }
 
     /**
-     *
-     * {@inheritdoc}
-     *
-     * @see \exface\Core\Templates\AbstractAjaxTemplate\Elements\AbstractJqueryElement::generateHeaders()
+     * 
+     * {@inheritDoc}
+     * @see \exface\JEasyUiTemplate\Template\Elements\euiData::generateHeaders()
      */
     public function generateHeaders()
     {
@@ -431,7 +430,7 @@ JS;
         foreach ($this->getEditors() as $col_id => $editor) {
             $col = $widget->getColumn($col_id);
             // Skip editors for columns, that are not attributes
-            if (! $col->getAttribute())
+            if (! $col->hasAttributeReference())
                 continue;
                 // For all other editors, that belong to related attributes, add some JS to update all rows with that
                 // attribute, once the value of one of them changes. This makes sure, that the value of a related attribute

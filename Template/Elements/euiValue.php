@@ -99,7 +99,7 @@ HTML;
      */
     public function buildCssElementClass()
     {
-        return parent::buildCssElementClass() . ' exf-input';
+        return parent::buildCssElementClass() . ' exf-control';
     }
     
     /**

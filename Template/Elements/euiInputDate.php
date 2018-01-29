@@ -2,6 +2,9 @@
 namespace exface\JEasyUiTemplate\Template\Elements;
 
 use exface\Core\Templates\AbstractAjaxTemplate\Elements\JqueryInputDateTrait;
+use exface\Core\Widgets\InputDate;
+use exface\Core\DataTypes\DateDataType;
+use exface\Core\Templates\AbstractAjaxTemplate\Formatters\JsDateFormatter;
 
 // Es waere wuenschenswert die Formatierung des Datums abhaengig vom Locale zu machen.
 // Das Problem dabei ist folgendes: Wird im DateFormatter das Datum von DateJs ent-
@@ -17,6 +20,15 @@ use exface\Core\Templates\AbstractAjaxTemplate\Elements\JqueryInputDateTrait;
 // festgelegt. Dabei ist darauf zu achten, dass es kompatibel zum Parser ist, das
 // amerikanische Format MM/dd/yyyy ist deshalb nicht moeglich, da es vom Parser als
 // dd/MM/yyyy interpretiert wird.
+
+/**
+ * Renders a jEasyUI datebox for an InputDate widget.
+ * 
+ * @method InputDate getWidget()
+ * 
+ * @author Andrej Kabachnik
+ *
+ */
 class euiInputDate extends euiInput
 {
     
@@ -70,9 +82,6 @@ HTML;
     $("#{$this->getId()}").{$this->getElementType()}({
         {$this->buildJsDataOptions()}
     });
-    
-    {$this->buildJsDateParser()}
-    {$this->buildJsDateFormatter()}
 JS;
         
         return $output;
@@ -83,28 +92,52 @@ JS;
         return <<<JS
 
         delay: 0,
-        formatter: {$this->buildJsFunctionPrefix()}dateFormatter,
-        parser: {$this->buildJsFunctionPrefix()}dateParser,
+        formatter: function (date) {
+            // date ist ein date-Objekt und wird zu einem String geparst
+            return {$this->getDataTypeFormatter()->buildJsDateFormatter('date')};
+        },
+        parser: function(string) {
+            var date = {$this->getDataTypeFormatter()->buildJsDateParserFunctionName()}(string);
+            // Ausgabe des geparsten Wertes
+            if (date) {
+                $('#{$this->getId()}').data("_internalValue", {$this->getDataTypeFormatter()->buildJsDateStringifier('date')}).data("_isValid", true);
+                return date;
+            } else {
+                $('#{$this->getId()}').data("_internalValue", "").data("_isValid", false);
+                return null;
+            }
+        },
         onHidePanel: function() {
             // onHidePanel wird der Inhalt formatiert (beim Verlassen des Feldes), der
             // ausgefuehrte Code entspricht dem beim Druecken der Enter-Taste.
             {$this->getId()}_jquery = $("#{$this->getId()}");
             currentDate = {$this->getId()}_jquery.{$this->getElementType()}("calendar").calendar("options").current;
             if (currentDate) {
-                {$this->getId()}_jquery.{$this->getElementType()}("setValue", {$this->buildJsFunctionPrefix()}dateFormatter(currentDate));
+                {$this->getId()}_jquery.{$this->getElementType()}("setValue", {$this->buildJsValueFormatter('currentDate')});
             }
         },
         validType: "date['#{$this->getId()}']"
 JS;
     }
 
+    /**
+     * 
+     * {@inheritDoc}
+     * @see \exface\Core\Templates\AbstractAjaxTemplate\Elements\AbstractJqueryElement::generateHeaders()
+     */
     public function generateHeaders()
     {
+        $formatter = $this->getDataTypeFormatter();
         $headers = parent::generateHeaders();
-        $headers[] = '<script type="text/javascript" src="exface/vendor/npm-asset/datejs/build/production/' . $this->buildDateJsLocaleFilename() . '"></script>';
+        $headers = array_merge($headers, $formatter->buildHtmlHeadIncludes(), $formatter->buildHtmlBodyIncludes());
         return $headers;
     }
 
+    /**
+     * 
+     * {@inheritDoc}
+     * @see \exface\Core\Templates\AbstractAjaxTemplate\Elements\AbstractJqueryElement::buildJsValueGetter()
+     */
     public function buildJsValueGetter()
     {
         // Wird der Wert eines euiInputDates in der Uxon-Beschreibung gesetzt, dann wird das
@@ -129,27 +162,5 @@ JS;
             return {$this->getId()}_jquery.data("_internalValue");
         })()
 JS;
-    }
-
-    protected function buildJsDateFormatter()
-    {
-        // Das Format in dateFormatScreen muss mit dem DateParser kompatibel sein. Das
-        // amerikanische Format MM/dd/yyyy wird vom Parser als dd/MM/yyyy interpretiert
-        // und kann deshalb nicht verwendet werden. Loesung waere den Parser anzupassen.
-        
-        // Auch moeglich: Verwendung des DateJs-Formatters:
-        // "d" entspricht CultureInfo shortDate Format Pattern, hierfuer muss das
-        // entsprechende locale DateJs eingebunden werden und ein kompatibler Parser ver-
-        // wendet werden
-        // return date.toString("d");
-        $output = <<<JS
-
-    function {$this->buildJsFunctionPrefix()}dateFormatter(date) {
-        // date ist ein date-Objekt und wird zu einem String geparst
-        return date.toString("{$this->buildJsDateFormatScreen()}");
-    }
-JS;
-        
-        return $output;
     }
 }

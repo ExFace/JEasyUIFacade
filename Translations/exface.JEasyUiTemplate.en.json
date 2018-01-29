@@ -13,9 +13,7 @@
 	"WIDGET.SEARCH": "Search",
 	
 	"DATE.FORMAT.SCREEN": "yyyy-MM-dd",
-	"DATE.FORMAT.INTERNAL": "yyyy-MM-dd",
 	"DATETIME.FORMAT.SCREEN": "yyyy-MM-dd HH:mm:ss",
-	"DATETIME.FORMAT.INTERNAL": "yyyy-MM-dd HH:mm:ss",
 	
 	"MESSAGE.INVALID.INPUTDATE": "Please enter a valid date."
 }

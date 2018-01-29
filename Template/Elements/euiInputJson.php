@@ -33,6 +33,11 @@ class euiInputJson extends euiInputText
 
     public function generateJs()
     {
+        return $this->buildJsJsonEditor();
+    }
+    
+    protected function buildJsJsonEditor()
+    {
         $init_value = $this->getValueWithDefaults() ? $this->getId() . '_JSONeditor.set(' . $this->getWidget()->getValue() . ');' : '';
         $script = <<<JS
             var {$this->getId()}_JSONeditor = new JSONEditor(document.getElementById("{$this->getId()}"), {
