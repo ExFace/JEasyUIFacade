@@ -21,6 +21,8 @@ use exface\Core\DataTypes\TextStylesDataType;
 use exface\Core\DataTypes\DateDataType;
 use exface\Core\DataTypes\TimestampDataType;
 use exface\Core\Templates\AbstractAjaxTemplate\Interfaces\JsValueDecoratingInterface;
+use exface\Core\Interfaces\Widgets\iShowText;
+use exface\Core\Interfaces\Widgets\iDisplayValue;
 
 /**
  * Implementation of a basic grid.
@@ -602,7 +604,9 @@ HTML;
      */
     protected function buildJsInitOptionsColumnFormatter(DataColumn $col, $js_var_value, $js_var_row, $js_var_index)
     {
-        if ($col->getDisableFormatters()) {
+        $cellWidget = $col->getCellWidget();
+        
+        if (($cellWidget instanceof iDisplayValue) && $cellWidget->getDisableFormatting()) {
             return '';
         }
         
@@ -610,7 +614,7 @@ HTML;
         
         // Data type specific formatting
         $formatter_js = '';
-        $cellTpl = $this->getTemplate()->getElement($col->getCellWidget());
+        $cellTpl = $this->getTemplate()->getElement($cellWidget);
         if (($cellTpl instanceof JsValueDecoratingInterface) && $cellTpl->hasDecorator()) {
             $formatter_js = $cellTpl->buildJsValueDecorator($js_var_value);
         }
@@ -622,8 +626,8 @@ HTML;
         
         // Styler option
         $styler = $col->getCellStylerScript();
-        if (! $styler){
-            switch ($col->getStyle()) {
+        if (! $styler && $cellWidget instanceof iShowText){
+            switch ($cellTpl->getStyle()) {
                 case TextStylesDataType::BOLD:
                     $styler = "return 'font-weight: bold;'";
                     break;
