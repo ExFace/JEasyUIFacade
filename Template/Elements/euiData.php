@@ -621,7 +621,19 @@ HTML;
         
         // Formatter option
         if ($formatter_js) {
-            $options = "formatter: function({$js_var_value},{$js_var_row},{$js_var_index}){try {return " . $formatter_js . ";} catch (e) {return {$js_var_value}; console.warn('Cannot apply decorator to column {$col->getDataColumnName()}');} }";
+            $options = <<<JS
+
+                        formatter: function({$js_var_value},{$js_var_row},{$js_var_index}){
+
+                            try {
+                                return {$formatter_js};
+                            } catch (e) {
+                                console.warn('Cannot apply decorator to column {$col->getDataColumnName()}');
+                                return {$js_var_value}; 
+                            } 
+
+                        }
+JS;
         }
         
         // Styler option
