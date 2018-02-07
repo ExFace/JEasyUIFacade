@@ -116,6 +116,18 @@ JS;
             }
         }
         
+        // Wenn noetig initiales Laden ueberspringen.
+        if (! $widget->getAutoloadData() && $widget->getLazyLoading()) {
+            $output .= <<<JS
+
+            $("#{$this->getId()}").data("_skipNextLoad", true);
+JS;
+            
+            // Dieses Skript wird nach dem erfolgreichen Laden ausgefuehrt, um die angezeigte
+            // Nachricht (s.u.) zu entfernen. Das Skript muss vor $grid_head erzeugt werden.
+            $this->addOnLoadSuccess($this->buildJsNoInitialLoadMessageRemove());
+        }
+        
         $grid_head = '';
         
         // Add row details (expandable rows) if required
@@ -143,6 +155,12 @@ JS;
         $output .= '
             $("#' . $this->getId() . '").' . $this->getElementType() . '({' . $grid_head . '});
         ';
+        
+        // Eine Nachricht anzeigen, dass keine Daten geladen wurde, wenn das initiale Laden
+        // uebersprungen wird.
+        if (! $widget->getAutoloadData() && $widget->getLazyLoading()) {
+            $output .= $this->buildJsNoInitialLoadMessageShow();
+        }
         
         // build JS for the button actions
         $output .= $this->buildJsButtons();
@@ -565,6 +583,49 @@ JS;
 								    
 					';
         }
+        
+        return $output;
+    }
+
+    /**
+     * Generates JS code to show a message if the initial load was skipped.
+     * 
+     * @return string
+     */
+    protected function buildJsNoInitialLoadMessageShow()
+    {
+        $widget = $this->getWidget();
+        
+        $output = <<<JS
+
+            $("#{$this->getId()}").parent().append("\
+                <div id='{$this->getId()}_no_initial_load_message'\
+                     class='no-initial-load-message-overlay'>\
+                    <table class='no-initial-load-message-overlay-table'>\
+                        <tr>\
+                            <td style='text-align:center;'>\
+                                {$widget->getTextNotLoaded()}\
+                            </td>\
+                        </tr>\
+                    </table>\
+                </div>\
+            ");
+JS;
+        
+        return $output;
+    }
+
+    /**
+     * Generates JS code to remove the message if the initial load was skipped.
+     * 
+     * @return string
+     */
+    protected function buildJsNoInitialLoadMessageRemove()
+    {
+        $output = <<<JS
+
+        $("#{$this->getId()}_no_initial_load_message").remove();
+JS;
         
         return $output;
     }
