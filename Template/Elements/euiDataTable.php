@@ -415,13 +415,13 @@ JS;
     protected function buildJsInitOptionsRowGroups()
     {
         $grid_head = '';
-        $widget = $this->getWidget();
+        $grouper = $this->getWidget()->getRowGrouper();
         
-        $grid_head .= ', view: groupview' . ",groupField: '" . $widget->getRowGroupsByColumnId() . "'" . ",groupFormatter:function(value,rows){ return value" . ($widget->getRowGroupsShowCount() ? " + ' (' + rows.length + ')'" : "") . ";}";
-        if ($widget->getRowGroupsExpand() == 'none' || $widget->getRowGroupsExpand() == 'first') {
+        $grid_head .= ', view: groupview' . ",groupField: '" . $grouper->getGroupByColumn()->getDataColumnName() . "'" . ",groupFormatter:function(value,rows){ return value" . ($grouper->getShowCounter() ? " + ' (' + rows.length + ')'" : "") . ";}";
+        if (! $grouper->getExpandAllGroups()) {
             $this->addOnLoadSuccess("$('#" . $this->getId() . "')." . $this->getElementType() . "('collapseGroup');");
         }
-        if ($widget->getRowGroupsExpand() == 'first') {
+        if ($grouper->getExpandFirstGroupOnly()) {
             $this->addOnLoadSuccess("$('#" . $this->getId() . "')." . $this->getElementType() . "('expandGroup', 0);");
         }
         return $grid_head;
