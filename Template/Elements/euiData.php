@@ -639,7 +639,7 @@ JS;
         // Styler option
         $styler = $col->getCellStylerScript();
         if (! $styler && $cellWidget instanceof iShowText){
-            switch ($cellTpl->getStyle()) {
+            switch ($cellWidget->getStyle()) {
                 case TextStylesDataType::BOLD:
                     $styler = "return 'font-weight: bold;'";
                     break;
