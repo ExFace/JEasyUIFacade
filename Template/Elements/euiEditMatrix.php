@@ -1,11 +1,11 @@
 <?php
 namespace exface\JEasyUiTemplate\Template\Elements;
 
-use exface\Core\CommonLogic\DataTypes\AbstractDataType;
 use exface\Core\DataTypes\BooleanDataType;
 use exface\Core\DataTypes\DateDataType;
 use exface\Core\DataTypes\PriceDataType;
 use exface\Core\DataTypes\NumberDataType;
+use exface\Core\Interfaces\DataTypes\DataTypeInterface;
 
 class euiEditMatrix extends euiDataMatrixOld
 {    
@@ -274,7 +274,7 @@ HTML;
         return $output;
     }
 
-    public function renderDataType(AbstractDataType $data_type)
+    public function renderDataType(DataTypeInterface $data_type)
     {
         if ($data_type instanceof BooleanDataType) {
             return 'type: "checkbox"';
