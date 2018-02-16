@@ -38,7 +38,7 @@ class euiDisplay extends euiValue implements JsValueDecoratingInterface
         
         $element = <<<HTML
 
-        <{$this->getElementType()} id="{$this->getId()}" class="exf-display {$this->buildCssElementClass()}">{$value}</{$this->getElementType()}>
+        <{$this->getElementType()} id="{$this->getId()}" class="exf-display {$this->buildCssElementClass()}" style="{$this->buildCssElementStyle()}">{$value}</{$this->getElementType()}>
 
 HTML;
         return $this->buildHtmlLabelWrapper($element);
