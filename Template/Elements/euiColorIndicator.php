@@ -5,6 +5,7 @@ use exface\Core\Widgets\ColorIndicator;
 use exface\Core\Widgets\DataColumn;
 use exface\Core\CommonLogic\Constants\Colors;
 use exface\Core\CommonLogic\Model\Condition;
+use exface\Core\DataTypes\ComparatorDataType;
 
 /**
  * Creates colored display elements from ColorIndicator widgets.
@@ -41,7 +42,15 @@ class euiColorIndicator extends euiDisplay
             $ifs = '';
             foreach ($widget->getColorConditions() as $condition) {
                 $target = is_string($condition->getValue()) ? "'" . $condition->getValue() . "'" : $condition->getValue();
-                $ifs .= "if ({$value_js} {$condition->getComparator()} {$target}) css = '" . $this->buildCssColorProperties($condition) . "';";
+                $comp = $condition->getComparator();
+                switch ($comp) {
+                    // TODO add comparators like IN
+                    default:
+                        if ($comp === ComparatorDataType::IS) {
+                            $comp = '==';
+                        }
+                        $ifs .= "if ({$value_js} {$comp} {$target}) css = '" . $this->buildCssColorProperties($condition) . "';";
+                }
             }
             $js = <<<JS
 
@@ -79,7 +88,15 @@ JS;
                 $compare_to_js = is_string($condition->getValue()) ? "'" . $condition->getValue() . "'" : $condition->getValue();
             }
             $css = $this->buildCssColorProperties($condition);
-            $script .= 'if (value ' . $condition->getComparator() . $compare_to_js . ') return "' . $css . '";';
+            $comp = $condition->getComparator();
+            switch ($comp) {
+                // TODO add comparators like IN
+                default:
+                    if ($comp === ComparatorDataType::IS) {
+                        $comp = '==';
+                    }
+                    $script .= 'if (value ' . $condition->getComparator() . $compare_to_js . ') return "' . $css . '";';
+            }
         }
         return $script;
     }
