@@ -55,13 +55,12 @@ class euiColorIndicator extends euiDisplay
             $js = <<<JS
 
 function(){
-    {$this->buildJsValueFormatter($value_js)}
-    
     var css = '';
     {$ifs}
     if (css) {
         $('#{$this->getId()}').css(css);
     }
+    return {$this->buildJsValueFormatter($value_js)};
 }()
 
 JS;
