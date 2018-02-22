@@ -698,7 +698,7 @@ JS;
                     delete param.q;
                     
                     if (!{$this->getId()}_jquery.data("_lastFilterSet")) { {$this->getId()}_jquery.data("_lastFilterSet", {}); }
-                    var currentFilterSet = {page: param.page, rows: param.rows};
+                    var currentFilterSet = {page: param.page, rows: param.rows, sort: param.sort, order: param.order};
                     
                     if ({$this->getId()}_jquery.data("_firstLoad") == undefined){
                         {$this->getId()}_jquery.data("_firstLoad", true);
