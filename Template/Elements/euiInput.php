@@ -167,7 +167,7 @@ class euiInput extends euiValue
         
         $must_be_validated = ! ($widget->isHidden() || $widget->isReadonly() || $widget->isDisabled() || $widget->isDisplayOnly());
         if ($must_be_validated) {
-            $output = '$("#' . $this->getId() . '").' . $this->getElementType() . '("isValid")';
+            $output = "$('#{$this->getId()}').{$this->getElementType()}('isValid')";
         } elseif ($widget->isRequired()) {
             $output = '(' . $this->buildJsValueGetter() . ' === "" ? false : true)';
         } else {

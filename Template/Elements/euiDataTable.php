@@ -87,9 +87,13 @@ HTML;
         $output .= $configurator_element->generateJs();
         $on_before_load = <<<JS
             
-                if (! {$configurator_element->buildJsValidator()}) {
-                    return false;
-                } 
+                try {
+                    if (! {$configurator_element->buildJsValidator()}) {
+                        return false;
+                    } 
+                } catch (e) {
+                    console.warn('Could not check filter validity - ', e);
+                }
                 param['data'] = {$configurator_element->buildJsDataGetter()};
         
 JS;

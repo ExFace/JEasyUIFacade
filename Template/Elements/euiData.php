@@ -626,7 +626,7 @@ HTML;
                             try {
                                 return {$formatter_js};
                             } catch (e) {
-                                console.warn('Cannot apply decorator to column {$col->getDataColumnName()}');
+                                console.warn('Cannot apply decorator to column {$col->getDataColumnName()} . ', e);
                                 return {$js_var_value}; 
                             } 
 
