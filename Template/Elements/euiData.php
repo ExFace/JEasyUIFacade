@@ -393,7 +393,8 @@ class euiData extends euiAbstractElement
     
     public function addOnChangeScript($string)
     {
-        return $this->addOnLoadSuccess($string);
+        $this->addOnLoadSuccess($string);
+        return parent::addOnChangeScript($string);
     }
     
     public function addLoadFilterScript($javascript)

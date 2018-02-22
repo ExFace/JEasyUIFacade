@@ -44,7 +44,7 @@ class euiCheckBox extends euiInput
 
     function buildJsValueSetterMethod($value)
     {
-        return 'prop(\'checked\', ' . $value . ')';
+        return 'prop(\'checked\', ' . $value . ').trigger("change")';
     }
 
     function buildJsInitOptions()

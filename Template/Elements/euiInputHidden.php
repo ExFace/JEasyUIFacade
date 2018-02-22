@@ -21,13 +21,13 @@ class euiInputHidden extends euiInput
 
     function generateJs()
     {
-        $output .= $this->buildJsLiveReference();
+        $output .= $this->buildJsEventScripts();
         return $output;
     }
 
     function buildJsValueSetterMethod($value)
     {
-        return 'val(' . $value . ')';
+        return 'val(' . $value . ').trigger("change")';
     }
 
     function buildJsValueGetterMethod()

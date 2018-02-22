@@ -124,7 +124,7 @@ class euiInput extends euiValue
      */
     public function buildJsValueSetterMethod($value)
     {
-        return $this->getElementType() . '("setValue", ' . $value . ')';
+        return $this->getElementType() . '("setValue", ' . $value . ').trigger("change")';
     }
 
     /**

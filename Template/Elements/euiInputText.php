@@ -48,7 +48,7 @@ class euiInputText extends euiInput
 
     public function buildJsValueSetterMethod($value)
     {
-        return 'val(' . $value . ')';
+        return 'val(' . $value . ').trigger("change")';
     }
 
     /*
@@ -57,7 +57,7 @@ class euiInputText extends euiInput
      * }
      *
      * function buildJsValueSetterMethod($value){
-     * return $this->getElementType() . '("setText", ' . $value . ')';
+     * return $this->getElementType() . '("setText", ' . $value . ').trigger("change")';
      * }
      */
     
