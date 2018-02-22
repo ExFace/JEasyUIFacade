@@ -128,9 +128,6 @@ class euiData extends euiAbstractElement
                 $params[] = $param . ': "' . $val . '"';
             }
             
-            // TODO why did this not work? It produces a result with most columns being empty
-            // $params[] = 'data: ' . $this->getTemplate()->getElement($widget->getConfiguratorWidget())->buildJsDataGetter();
-            
             $result = '
 				url: "' . $this->getAjaxUrl() . '"
 				, queryParams: {' . implode("\n\t\t\t\t\t, ", $params) . '}';

@@ -85,8 +85,15 @@ HTML;
         // Add Scripts for the configurator widget first as they may be needed for the others
         $configurator_element = $this->getTemplate()->getElement($widget->getConfiguratorWidget());
         $output .= $configurator_element->generateJs();
-        $this->addOnBeforeLoad('param["data"] = ' . $configurator_element->buildJsDataGetter() . ';');
+        $on_before_load = <<<JS
+            
+                if (! {$configurator_element->buildJsValidator()}) {
+                    return false;
+                } 
+                param['data'] = {$configurator_element->buildJsDataGetter()};
         
+JS;
+        $this->addOnBeforeLoad($on_before_load);
         // Add a script to remove selected but not present rows onLoadSuccess. getRowIndex returns
         // -1 for selected but not present rows. Selections outlive a reload but the selected row
         // may have been deleted in the meanwhile. An example is "offene Positionen stornieren" in

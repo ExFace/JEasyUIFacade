@@ -38,11 +38,13 @@ class euiInputHidden extends euiInput
     /**
      *
      * {@inheritdoc}
-     *
      * @see \exface\Core\Templates\AbstractAjaxTemplate\Elements\AbstractJqueryElement::buildJsValidator()
      */
     function buildJsValidator()
     {
+        if ($this->getWidget()->isRequired()) {
+            return '(' . $this->buildJsValueGetter() . ' === "" ? false : true)';
+        } 
         return 'true';
     }
 }
