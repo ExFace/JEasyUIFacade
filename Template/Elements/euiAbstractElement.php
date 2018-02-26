@@ -281,16 +281,19 @@ abstract class euiAbstractElement extends AbstractJqueryElement
     /**
      * Wraps the given HTML code in a DIV with properties needed for layouting
      * parent widgets to put this widget in the correct position.
+     * 
+     * Use the $title parameter to set a title (tooltip) for the gird element.
      *
      * @param string $html
+     * @param string $title
      * @return string
      */
-    protected function buildHtmlGridItemWrapper($html)
+    protected function buildHtmlGridItemWrapper($html, $title = '')
     {
         if ($this->getWidget()->getParentByType('exface\\Core\\Interfaces\\Widgets\\iLayoutWidgets')){
             return <<<HTML
             
-            <div class="exf-grid-item {$this->getMasonryItemClass()} {$this->buildCssElementClass()}" style="width:{$this->getWidth()};min-width:{$this->getMinWidth()};height:{$this->getHeight()};padding:{$this->getPadding()};box-sizing:border-box;">
+            <div title="{$title}" class="exf-grid-item {$this->getMasonryItemClass()} {$this->buildCssElementClass()}" style="width:{$this->getWidth()};min-width:{$this->getMinWidth()};height:{$this->getHeight()};padding:{$this->getPadding()};box-sizing:border-box;">
                 {$html}
             </div>
 HTML;

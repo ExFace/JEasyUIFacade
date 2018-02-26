@@ -86,7 +86,7 @@ HTML;
         }
         
         if ($make_grid_item) {
-            $html = $this->buildHtmlGridItemWrapper($html);
+            $html = $this->buildHtmlGridItemWrapper($html, $this->getTooltip());
         }
         
         return $html;
