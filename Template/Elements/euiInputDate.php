@@ -82,7 +82,7 @@ JS;
     {
         return <<<JS
 
-        delay: 0,
+        delay: 1,
         formatter: {$this->buildJsFunctionPrefix()}dateFormatter,
         parser: {$this->buildJsFunctionPrefix()}dateParser,
         onHidePanel: function() {
