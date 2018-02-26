@@ -91,7 +91,7 @@ JS;
     {
         return <<<JS
 
-        delay: 0,
+        delay: 1,
         formatter: function (date) {
             // date ist ein date-Objekt und wird zu einem String geparst
             return {$this->getDataTypeFormatter()->buildJsDateFormatter('date')};
