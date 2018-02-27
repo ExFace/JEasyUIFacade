@@ -255,7 +255,13 @@ JS;
      */
     public function buildJsRefresh($keep_pagination_position = false)
     {
-        return '$("#' . $this->getId() . '").' . $this->getElementType() . '("' . ($keep_pagination_position ? 'reload' : 'load') .'")';
+        $keepPaginationScript = $keep_pagination_position ? 'reload' : 'load';
+        $output = <<<JS
+
+            $("#{$this->getId()}").{$this->getElementType()}("{$keepPaginationScript}");
+            $("#{$this->getId()}").{$this->getElementType()}("unselectAll");
+JS;
+        return $output;
     }
 
     /**
