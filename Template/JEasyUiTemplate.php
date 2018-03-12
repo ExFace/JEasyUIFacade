@@ -12,9 +12,6 @@ class JEasyUiTemplate extends AbstractAjaxTemplate
         parent::init();
         $this->setClassPrefix('eui');
         $this->setClassNamespace(__NAMESPACE__);
-        $this->setRequestSystemVars(array(
-            '_'
-        ));
         $folder = dirname(__FILE__) . DIRECTORY_SEPARATOR . 'js' . DIRECTORY_SEPARATOR . 'jeasyui';
         if (! is_dir($folder)) {
             throw new DependencyNotFoundError('jEasyUI files not found! Please install jEasyUI to "' . $folder . '"!', '6T6HUFO');
