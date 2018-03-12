@@ -20,7 +20,7 @@ class euiChart extends euiData
     use JqueryFlotTrait;
     
     use JqueryToolbarsTrait {
-        generateHeaders as generateHeadersByTrait;
+        buildHtmlHeadTags as buildHtmlHeadTagsByTrait;
     }
 
     private $on_change_script = '';
@@ -223,7 +223,7 @@ JS;
     
     public function buildHtmlHeadTags()
     {
-        $includes = array_merge(parent::buildHtmlHeadTags(), $this->generateHeadersByTrait());
+        $includes = array_merge(parent::buildHtmlHeadTags(), $this->buildHtmlHeadTagsByTrait());
         
         $includes[] = '<script type="text/javascript" src="exface/vendor/exface/JEasyUiTemplate/Template/js/flot/plugins/axislabels/jquery.flot.axislabels.js"></script>';
         $includes[] = '<script type="text/javascript" src="exface/vendor/exface/JEasyUiTemplate/Template/js/flot/plugins/jquery.flot.orderBars.js"></script>';
