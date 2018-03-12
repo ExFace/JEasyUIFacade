@@ -31,8 +31,9 @@ class euiMenuButton extends euiButton
     }
 
     /**
-     *
-     * @see \exface\JEasyUiTemplate\Template\Elements\abstractWidget::generateHtml()
+     * 
+     * {@inheritDoc}
+     * @see \exface\JEasyUiTemplate\Template\Elements\euiButton::generateHtml()
      */
     public function generateHtml()
     {
@@ -91,9 +92,9 @@ HTML;
      * @param string $html            
      * @return string
      */
-    protected function buildHtmlGridItemWrapper($html)
+    protected function buildHtmlGridItemWrapper($html, $title = '')
     {
-        $output = '<div class="exf-grid-item ' . $this->getMasonryItemClass() . ' exf-input" title="' . trim($this->buildHintText()) . '" style="width: ' . $this->getWidth() . '; min-width: ' . $this->getMinWidth() . '; height: ' . $this->getHeight() . ';">
+        $output = '<div class="exf-grid-item ' . $this->getMasonryItemClass() . ' exf-input" title="' . ($title ? $title : trim($this->buildHintText())) . '" style="width: ' . $this->getWidth() . '; min-width: ' . $this->getMinWidth() . '; height: ' . $this->getHeight() . ';">
 				' . $html . '
 			</div>
 			';
