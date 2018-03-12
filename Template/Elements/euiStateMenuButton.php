@@ -11,9 +11,9 @@ class euiStateMenuButton extends euiMenuButton
 
     /**
      *
-     * @see \exface\Templates\jeasyui\Widgets\abstractWidget::generateHtml()
+     * @see \exface\Templates\jeasyui\Widgets\abstractWidget::buildHtml()
      */
-    function generateHtml()
+    function buildHtml()
     {
         $widget = $this->getWidget();
         $button_no = count($widget->getButtons());
@@ -25,9 +25,9 @@ class euiStateMenuButton extends euiMenuButton
             $b->setCaption($widget->getCaption());
             $b->setAlign($widget->getAlign());
             $b->setVisibility($widget->getVisibility());
-            $output = $this->getTemplate()->getElement($b)->generateHtml();
+            $output = $this->getTemplate()->getElement($b)->buildHtml();
         } elseif ($button_no > 1) {
-            $output = parent::generateHtml();
+            $output = parent::buildHtml();
         }
         
         return $output;

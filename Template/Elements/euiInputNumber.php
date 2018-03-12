@@ -78,11 +78,11 @@ class euiInputNumber extends euiInput
     /**
      * 
      * {@inheritDoc}
-     * @see \exface\Core\Templates\AbstractAjaxTemplate\Elements\AbstractJqueryElement::generateHeaders()
+     * @see \exface\Core\Templates\AbstractAjaxTemplate\Elements\AbstractJqueryElement::buildHtmlHeadTags()
      */
-    public function generateHeaders()
+    public function buildHtmlHeadTags()
     {
         $formatter = $this->getDataTypeFormatter();
-        return array_merge(parent::generateHeaders(), $formatter->buildHtmlHeadIncludes(), $formatter->buildHtmlBodyIncludes());
+        return array_merge(parent::buildHtmlHeadTags(), $formatter->buildHtmlHeadIncludes(), $formatter->buildHtmlBodyIncludes());
     }
 }

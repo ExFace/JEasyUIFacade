@@ -22,7 +22,7 @@ class euiText extends euiDisplay
         return;
     }
     
-    public function generateHtml()
+    public function buildHtml()
     {
         $widget = $this->getWidget();
         

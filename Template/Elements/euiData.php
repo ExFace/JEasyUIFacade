@@ -74,9 +74,9 @@ class euiData extends euiAbstractElement
      * The Data element by itself does not generate anything - it just offers common utility methods.
      *
      * {@inheritDoc}
-     * @see \exface\Core\Templates\AbstractAjaxTemplate\Elements\AbstractJqueryElement::generateHtml()
+     * @see \exface\Core\Templates\AbstractAjaxTemplate\Elements\AbstractJqueryElement::buildHtml()
      */
-    public function generateHtml()
+    public function buildHtml()
     {
         return '';
     }
@@ -87,7 +87,7 @@ class euiData extends euiAbstractElement
      * {@inheritDoc}
      * @see \exface\Core\Templates\AbstractAjaxTemplate\Elements\AbstractJqueryElement::generateJ()
      */
-    public function generateJs()
+    public function buildJs()
     {
         return '';
     }
@@ -574,7 +574,7 @@ JS;
         return <<<HTML
         
                 <div class="easyui-panel exf-data-header" data-options="footer: '#{$this->getToolbarId()}_footer', {$panel_options} {$configurator_panel_collapsed}">
-                    {$configurator_element->generateHtml()}
+                    {$configurator_element->buildHtml()}
                 </div>
                 <div id="{$this->getToolbarId()}_footer" class="datatable-toolbar" style="{$toolbar_style}">
                     {$toolbars_html}

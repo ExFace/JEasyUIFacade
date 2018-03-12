@@ -6,7 +6,7 @@ use exface\Core\Widgets\DiffText;
 class euiDiffText extends euiAbstractElement
 {
 
-    public function generateHtml()
+    public function buildHtml()
     {
         $output = <<<HTML
 				<div id="{$this->getId()}_diffcontainer" class="difftext-container">
@@ -23,7 +23,7 @@ HTML;
         return $output;
     }
 
-    public function generateJs()
+    public function buildJs()
     {
         return '
 				$("#' . $this->getId() . '_diffcontainer").prettyTextDiff({
@@ -40,7 +40,7 @@ HTML;
         return htmlspecialchars($string);
     }
 
-    public function generateHeaders()
+    public function buildHtmlHeadTags()
     {
         return array(
             '<script type="text/javascript" src="exface/vendor/npm-asset/jquery-prettytextdiff/jquery.pretty-text-diff.min.js"></script>',

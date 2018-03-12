@@ -17,7 +17,7 @@ class euiEditMatrix extends euiDataMatrixOld
         $this->setElementType('datagrid');
     }
 
-    function generateHeaders()
+    function buildHtmlHeadTags()
     {
         // handsontable
         $includes = array(
@@ -37,7 +37,7 @@ class euiEditMatrix extends euiDataMatrixOld
         return $includes;
     }
 
-    function generateHtml()
+    function buildHtml()
     {
         $widget = $this->getWidget();
         $output = '';
@@ -45,7 +45,7 @@ class euiEditMatrix extends euiDataMatrixOld
         // add filters
         if ($widget->hasFilters()) {
             foreach ($widget->getFilters() as $fltr) {
-                $fltr_html .= $this->getTemplate()->generateHtml($fltr);
+                $fltr_html .= $this->getTemplate()->buildHtml($fltr);
             }
             
             $fltr_html .= <<<HTML
@@ -75,7 +75,7 @@ HTML;
         return $output;
     }
 
-    function generateJs()
+    function buildJs()
     {
         $widget = $this->getWidget();
         $output = '			
@@ -88,7 +88,7 @@ HTML;
         if ($widget->hasFilters()) {
             foreach ($widget->getFilters() as $fnr => $fltr) {
                 $fltr_impl = $this->getTemplate()->getElement($fltr);
-                $output .= $fltr_impl->generateJs();
+                $output .= $fltr_impl->buildJs();
                 $fltrs[] = '"fltr' . str_pad($fnr, 2, 0, STR_PAD_LEFT) . '_' . urlencode($fltr->getAttributeAlias()) . '": ' . $fltr_impl->buildJsValueGetter();
             }
             // build JS for the search function

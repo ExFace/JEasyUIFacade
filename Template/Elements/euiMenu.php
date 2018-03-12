@@ -15,9 +15,9 @@ class euiMenu extends euiAbstractElement
     /**
      * 
      * {@inheritDoc}
-     * @see \exface\Core\Templates\AbstractAjaxTemplate\Elements\AbstractJqueryElement::generateHtml()
+     * @see \exface\Core\Templates\AbstractAjaxTemplate\Elements\AbstractJqueryElement::buildHtml()
      */
-    public function generateHtml()
+    public function buildHtml()
     {        
         return <<<HTML
 <div class="easyui-panel" data-options="fit:true, title:'{$this->getCaption()}'">
@@ -31,13 +31,13 @@ HTML;
     /**
      * 
      * {@inheritDoc}
-     * @see \exface\Core\Templates\AbstractAjaxTemplate\Elements\AbstractJqueryElement::generateJs()
+     * @see \exface\Core\Templates\AbstractAjaxTemplate\Elements\AbstractJqueryElement::buildJs()
      */
-    public function generateJs()
+    public function buildJs()
     {
         $buttons_js = '';
         foreach ($this->getWidget()->getButtons() as $btn){
-            $buttons_js .= $this->getTemplate()->getElement($btn)->generateJs();
+            $buttons_js .= $this->getTemplate()->getElement($btn)->buildJs();
         }
         return $buttons_js;
     }

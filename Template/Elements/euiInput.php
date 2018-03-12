@@ -38,9 +38,9 @@ class euiInput extends euiValue
     /**
      * 
      * {@inheritDoc}
-     * @see \exface\JEasyUiTemplate\Template\Elements\euiText::generateHtml()
+     * @see \exface\JEasyUiTemplate\Template\Elements\euiText::buildHtml()
      */
-    public function generateHtml()
+    public function buildHtml()
     {
         /* @var $widget \exface\Core\Widgets\Input */
         $widget = $this->getWidget();
@@ -69,9 +69,9 @@ class euiInput extends euiValue
     /**
      * 
      * {@inheritDoc}
-     * @see \exface\JEasyUiTemplate\Template\Elements\euiText::generateJs()
+     * @see \exface\JEasyUiTemplate\Template\Elements\euiText::buildJs()
      */
-    public function generateJs()
+    public function buildJs()
     {
         $output = '';
         $output .= "

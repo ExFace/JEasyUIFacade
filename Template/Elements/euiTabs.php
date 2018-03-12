@@ -24,7 +24,7 @@ class euiTabs extends euiContainer
         $this->setElementType('tabs');
     }
 
-    public function generateHtml()
+    public function buildHtml()
     {
         $widget = $this->getWidget();
         switch ($widget->getVisibility()) {

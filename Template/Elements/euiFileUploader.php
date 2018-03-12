@@ -16,7 +16,7 @@ class euiFileUploader extends euiAbstractElement
         return ($this->getHeightRelativeUnit()*8) . 'px';
     }
 
-    function generateHtml()
+    function buildHtml()
     {
         /* @var $widget \exface\Core\Widgets\FileUploader */
         $widget = $this->getWidget();
@@ -39,7 +39,7 @@ HTML;
         return $output;
     }
 
-    function generateJs()
+    function buildJs()
     {
         $output = <<<JS
 	$('#{$this->getId()}_pastearea').pastableNonInputable();
@@ -111,7 +111,7 @@ JS;
         return $output;
     }
 
-    function generateHeaders()
+    function buildHtmlHeadTags()
     {
         $headers = array();
         // The jQuery UI widget factory, can be omitted if jQuery UI is already included -->

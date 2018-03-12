@@ -25,13 +25,13 @@ class euiInputJson extends euiInputText
         return ($this->getHeightRelativeUnit() * 5) . 'px';
     }
 
-    public function generateHtml()
+    public function buildHtml()
     {
         $output = '<div id="' . $this->getId() . '" style="height: 100%; width: 100%;"></div>';
         return $this->buildHtmlLabelWrapper($output);
     }
 
-    public function generateJs()
+    public function buildJs()
     {
         return $this->buildJsJsonEditor();
     }
@@ -61,9 +61,9 @@ JS;
         return 'function(){var text = ' . $this->getId() . '_JSONeditor.getText(); if (text === "{}" || text === "[]") { return ""; } else { return text;}}';
     }
 
-    public function generateHeaders()
+    public function buildHtmlHeadTags()
     {
-        $includes = parent::generateHeaders();
+        $includes = parent::buildHtmlHeadTags();
         $includes[] = '<link href="exface/vendor/bower-asset/jsoneditor/dist/jsoneditor.min.css" rel="stylesheet">';
         $includes[] = '<script type="text/javascript" src="exface/vendor/bower-asset/jsoneditor/dist/jsoneditor.min.js"></script>';
         return $includes;

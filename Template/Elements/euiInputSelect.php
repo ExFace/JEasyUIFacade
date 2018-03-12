@@ -20,7 +20,7 @@ class euiInputSelect extends euiInput
         $this->setElementType('combobox');
     }
 
-    public function generateHtml()
+    public function buildHtml()
     {
         $widget = $this->getWidget();
         $options = '';
@@ -47,7 +47,7 @@ class euiInputSelect extends euiInput
         return $this->buildHtmlLabelWrapper($output);
     }
 
-    public function generateJs()
+    public function buildJs()
     {
         $output = '';
         return $output;

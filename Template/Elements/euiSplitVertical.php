@@ -12,7 +12,7 @@ class euiSplitVertical extends euiContainer
         $this->setElementType('layout');
     }
 
-    function generateHtml()
+    function buildHtml()
     {
         $output = <<<HTML
 
@@ -44,7 +44,7 @@ HTML;
                 default:
                     throw new TemplateUnsupportedWidgetPropertyWarning('The template jEasyUI currently only supports splits with a maximum of 3 panels! "' . $widget->getId() . '" has "' . $widget->countWidgets() . '" panels.');
             }
-            $panels_html .= $elem->generateHtml();
+            $panels_html .= $elem->buildHtml();
         }
         
         return $panels_html;

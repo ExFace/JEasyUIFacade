@@ -40,7 +40,7 @@ class euiInputDate extends euiInput
         $this->setElementType('datebox');
     }
 
-    function generateHtml()
+    function buildHtml()
     {
         /* @var $widget \exface\Core\Widgets\Input */
         $widget = $this->getWidget();
@@ -62,7 +62,7 @@ HTML;
         return $this->buildHtmlLabelWrapper($output);
     }
 
-    function generateJs()
+    function buildJs()
     {
         // Validator-Regel fuer InputDates hinzufuegen. Jetzt fuer jedes Widget einmal.
         // Einmal wuerde eigentlich reichen, geht aber in template.js nicht, weil die
@@ -123,12 +123,12 @@ JS;
     /**
      * 
      * {@inheritDoc}
-     * @see \exface\Core\Templates\AbstractAjaxTemplate\Elements\AbstractJqueryElement::generateHeaders()
+     * @see \exface\Core\Templates\AbstractAjaxTemplate\Elements\AbstractJqueryElement::buildHtmlHeadTags()
      */
-    public function generateHeaders()
+    public function buildHtmlHeadTags()
     {
         $formatter = $this->getDataTypeFormatter();
-        $headers = parent::generateHeaders();
+        $headers = parent::buildHtmlHeadTags();
         $headers = array_merge($headers, $formatter->buildHtmlHeadIncludes(), $formatter->buildHtmlBodyIncludes());
         return $headers;
     }

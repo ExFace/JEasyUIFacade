@@ -12,7 +12,7 @@ use exface\Core\Widgets\Tab;
 class euiTab extends euiPanel
 {
 
-    function generateHtml()
+    function buildHtml()
     {
         $widget = $this->getWidget();
         

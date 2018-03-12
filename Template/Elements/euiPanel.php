@@ -30,7 +30,7 @@ class euiPanel extends euiContainer implements JqueryLayoutInterface
         $this->setElementType('panel');
     }
 
-    public function generateHtml()
+    public function buildHtml()
     {
         $widget = $this->getWidget();
         
@@ -131,9 +131,9 @@ HTML;
         return parent::getHeight();
     }
 
-    public function generateJs()
+    public function buildJs()
     {
-        $output = parent::generateJs();
+        $output = parent::buildJs();
         
         // Layout-Funktion hinzufuegen
         $output .= $this->buildJsLayouterFunction();
@@ -187,9 +187,9 @@ HTML;
         return $this->fit_option;
     }
 
-    public function generateHeaders()
+    public function buildHtmlHeadTags()
     {
-        $includes = parent::generateHeaders();
+        $includes = parent::buildHtmlHeadTags();
         $includes[] = '<script type="text/javascript" src="exface/vendor/bower-asset/masonry/dist/masonry.pkgd.min.js"></script>';
         return $includes;
     }
@@ -237,7 +237,7 @@ JS;
         
         if ((is_null($widget->getParent()) || (($containerWidget = $widget->getParentByType('exface\\Core\\Interfaces\\Widgets\\iContainOtherWidgets')) && ($containerWidget->countWidgetsVisible() == 1))) && ($widget->countWidgetsVisible() > 1)) {
             // Wird ein masonry_grid-wrapper hinzugefuegt, sieht die Layout-Funktion etwas
-            // anders aus als wenn der wrapper fehlt. Siehe auch oben in generateHtml().
+            // anders aus als wenn der wrapper fehlt. Siehe auch oben in buildHtml().
             $output = <<<JS
 
     function {$this->buildJsFunctionPrefix()}layouter() {

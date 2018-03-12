@@ -54,7 +54,7 @@ class euiChart extends euiData
         }
     }
 
-    function generateHtml()
+    function buildHtml()
     {
         $output = '';
         $widget = $this->getWidget();
@@ -91,7 +91,7 @@ HTML;
         return $output;
     }
 
-    public function generateJs()
+    public function buildJs()
     {
         /* @var $widget \exface\Core\Widgets\Chart */
         $widget = $this->getWidget();
@@ -100,7 +100,7 @@ HTML;
         
         // Add Scripts for the configurator widget first as they may be needed for the others
         $configurator_element = $this->getTemplate()->getElement($widget->getConfiguratorWidget());
-        $output .= $configurator_element->generateJs();
+        $output .= $configurator_element->buildJs();
         
         // Add scripts for the buttons
         $output .= $this->buildJsButtons();
@@ -221,9 +221,9 @@ JS;
         return "$('#{$this->getId()}_wrapper .panel-loading').remove();";
     }
     
-    public function generateHeaders()
+    public function buildHtmlHeadTags()
     {
-        $includes = array_merge(parent::generateHeaders(), $this->generateHeadersByTrait());
+        $includes = array_merge(parent::buildHtmlHeadTags(), $this->generateHeadersByTrait());
         
         $includes[] = '<script type="text/javascript" src="exface/vendor/exface/JEasyUiTemplate/Template/js/flot/plugins/axislabels/jquery.flot.axislabels.js"></script>';
         $includes[] = '<script type="text/javascript" src="exface/vendor/exface/JEasyUiTemplate/Template/js/flot/plugins/jquery.flot.orderBars.js"></script>';

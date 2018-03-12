@@ -33,9 +33,9 @@ class euiMenuButton extends euiButton
     /**
      * 
      * {@inheritDoc}
-     * @see \exface\JEasyUiTemplate\Template\Elements\euiButton::generateHtml()
+     * @see \exface\JEasyUiTemplate\Template\Elements\euiButton::buildHtml()
      */
-    public function generateHtml()
+    public function buildHtml()
     {
         $output = '';
         $widget = $this->getWidget();
@@ -105,12 +105,12 @@ HTML;
      *
      * {@inheritdoc}
      *
-     * @see \exface\Core\Templates\AbstractAjaxTemplate\Elements\AbstractJqueryElement::generateJs()
+     * @see \exface\Core\Templates\AbstractAjaxTemplate\Elements\AbstractJqueryElement::buildJs()
      */
-    public function generateJs()
+    public function buildJs()
     {
         foreach ($this->getWidget()->getButtons() as $btn){
-            $button_js .= $this->getTemplate()->getElement($btn)->generateJs();   
+            $button_js .= $this->getTemplate()->getElement($btn)->buildJs();   
         }
         
         return  <<<JS

@@ -25,7 +25,7 @@ class euiInputText extends euiInput
         return ($this->getHeightRelativeUnit() * 2) . 'px';
     }
 
-    function generateHtml()
+    function buildHtml()
     {
         $output = ' <textarea 
 							name="' . $this->getWidget()->getAttributeAlias() . '" 
@@ -38,7 +38,7 @@ class euiInputText extends euiInput
         ;
     }
 
-    function generateJs()
+    function buildJs()
     {
         $output = '';
         $output .= $this->buildJsLiveReference();

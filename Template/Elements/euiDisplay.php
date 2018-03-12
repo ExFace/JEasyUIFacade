@@ -29,9 +29,9 @@ class euiDisplay extends euiValue implements JsValueDecoratingInterface
     /**
      * 
      * {@inheritDoc}
-     * @see \exface\JEasyUiTemplate\Template\Elements\euiValue::generateHtml()
+     * @see \exface\JEasyUiTemplate\Template\Elements\euiValue::buildHtml()
      */
-    public function generateHtml()
+    public function buildHtml()
     {
         $widget = $this->getWidget();
         $value = nl2br($widget->getValue());

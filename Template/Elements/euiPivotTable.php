@@ -13,7 +13,7 @@ class euiPivotTable extends euiDataTable
         $this->addOnBeforeLoad('if (!$("#' . $this->getId() . '").data("layouted")) {$("#' . $this->getId() . '").data("layouted", 1)}');
     }
 
-    function generateJs()
+    function buildJs()
     {
         $widget = $this->getWidget();
         $output = '';
@@ -57,9 +57,9 @@ class euiPivotTable extends euiDataTable
         return $output;
     }
 
-    function generateHeaders()
+    function buildHtmlHeadTags()
     {
-        $headers = parent::generateHeaders();
+        $headers = parent::buildHtmlHeadTags();
         $headers[] = '<script type="text/javascript" src="exface/vendor/exface/JEasyUiTemplate/Template/js/jeasyui/extensions/pivotgrid/jquery.pivotgrid.js"></script>';
         return $headers;
     }

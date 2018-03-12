@@ -6,12 +6,12 @@ use exface\Core\Interfaces\Actions\ActionInterface;
 class euiDiagramShapeData extends euiAbstractElement
 {
 
-    function generateHtml()
+    function buildHtml()
     {
         return '';
     }
 
-    function generateJs()
+    function buildJs()
     {
         return '';
     }

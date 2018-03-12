@@ -9,7 +9,7 @@ class euiCheckBox extends euiInput
         $this->setElementType('checkbox');
     }
 
-    function generateHtml()
+    function buildHtml()
     {
         $output = '	<div style="width: calc(100% + 2px); height: 100%; display: inline-block; text-align:left;">
 						<input type="checkbox" value="1" 
@@ -22,7 +22,7 @@ class euiCheckBox extends euiInput
         return $this->buildHtmlLabelWrapper($output);
     }
 
-    public function generateJs()
+    public function buildJs()
     {
         return $this->buildJsEventScripts();
     }

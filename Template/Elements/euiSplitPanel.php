@@ -14,7 +14,7 @@ class euiSplitPanel extends euiPanel
 
     private $region = null;
 
-    function generateHtml()
+    function buildHtml()
     {
         switch ($this->getRegion()) {
             case 'north':

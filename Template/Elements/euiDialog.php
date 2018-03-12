@@ -32,9 +32,9 @@ class euiDialog extends euiForm
      *
      * {@inheritdoc}
      *
-     * @see \exface\JEasyUiTemplate\Template\Elements\euiForm::generateHtml()
+     * @see \exface\JEasyUiTemplate\Template\Elements\euiForm::buildHtml()
      */
-    public function generateHtml()
+    public function buildHtml()
     {
         $widget = $this->getWidget();
         
@@ -82,9 +82,9 @@ HTML;
      *
      * {@inheritdoc}
      *
-     * @see \exface\Core\Templates\AbstractAjaxTemplate\Elements\AbstractJqueryElement::generateJs()
+     * @see \exface\Core\Templates\AbstractAjaxTemplate\Elements\AbstractJqueryElement::buildJs()
      */
-    public function generateJs()
+    public function buildJs()
     {
         $output = '';
         if (! $this->isLazyLoading()) {
@@ -94,7 +94,7 @@ HTML;
         
         // Add the help button in the bottom toolbar
         if (! $this->getWidget()->getHideHelpButton()) {
-            $output .= $this->getTemplate()->generateJs($this->getWidget()->getHelpButton());
+            $output .= $this->getTemplate()->buildJs($this->getWidget()->getHelpButton());
         }
         
         // Layout-Funktion hinzufuegen

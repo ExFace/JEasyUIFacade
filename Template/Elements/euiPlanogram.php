@@ -7,7 +7,7 @@ use exface\Core\CommonLogic\Model\RelationPath;
 class euiPlanogram extends euiDiagram
 {
 
-    public function generateHtml()
+    public function buildHtml()
     {
         $button_html = "";
         foreach ($this->getWidget()->getShapes() as $shape) {
@@ -25,7 +25,7 @@ class euiPlanogram extends euiDiagram
         $output = <<<HTML
 
 <div id="{$this->getId()}_panel" class="easyui-panel" title="{$this->getCaption()}" style="" data-options="fit:true,tools:'#{$this->getId()}_tools',onResize:function(){ if ($('#{$this->getId()} svg').length > 0) { $('#{$this->getId()}').planogram({width: $(this).width(), height: $(this).height()})}}">
-	{$this->getTemplate()->getElement($this->getWidget()->getDiagramObjectSelectorWidget())->generateHtml()}
+	{$this->getTemplate()->getElement($this->getWidget()->getDiagramObjectSelectorWidget())->buildHtml()}
     <div id="{$this->getId()}" style="margin: 10px 3px 0 3px; text-align: center;">
 
     </div>
@@ -56,7 +56,7 @@ HTML;
         return parent::getWidget();
     }
 
-    public function generateJs()
+    public function buildJs()
     {
         $widget = $this->getWidget();
         $actions_js = '';
@@ -77,7 +77,7 @@ HTML;
             /* @var $button_element \exface\JEasyUiTemplate\Template\Elements\euiButton */
             foreach ($shape->getData()->getButtons() as $button) {
                 $button_element = $this->getTemplate()->getElement($button);
-                $actions_js .= $button_element->generateJs() . "\n";
+                $actions_js .= $button_element->buildJs() . "\n";
                 $shape_click_js = $button_element->buildJsClickFunctionName() . '();';
             }
             
@@ -236,7 +236,7 @@ function {$this->buildJsFunctionPrefix()}dataLoader(){
 		
 {$actions_js}
 JS;
-        return $output . parent::generateJs();
+        return $output . parent::buildJs();
     }
 
     public function buildJsRefresh()
@@ -244,9 +244,9 @@ JS;
         return "$('#" . $this->getId() . "').planogram('refreshData');";
     }
 
-    public function generateHeaders()
+    public function buildHtmlHeadTags()
     {
-        $includes = parent::generateHeaders();
+        $includes = parent::buildHtmlHeadTags();
         // $includes[] = '<link rel="stylesheet" media="screen" href="exface/vendor/exface/jEasyUiTemplate/Template/js/planogram/style.css">';
         $includes[] = '<script type="text/javascript" src="exface/vendor/exface/jEasyUiTemplate/Template/js/planogram/planogram.plugin.js"></script>';
         $includes[] = '<script type="text/javascript" src="exface/vendor/exface/jEasyUiTemplate/Template/js/planogram/interact.js"></script>';

@@ -52,9 +52,9 @@ class euiDataTable extends euiData
     /**
      * 
      * {@inheritDoc}
-     * @see \exface\JEasyUiTemplate\Template\Elements\euiData::generateHtml()
+     * @see \exface\JEasyUiTemplate\Template\Elements\euiData::buildHtml()
      */
-    public function generateHtml()
+    public function buildHtml()
     {
         $widget = $this->getWidget();
         
@@ -75,16 +75,16 @@ HTML;
     /**
      * 
      * {@inheritDoc}
-     * @see \exface\JEasyUiTemplate\Template\Elements\euiData::generateJs()
+     * @see \exface\JEasyUiTemplate\Template\Elements\euiData::buildJs()
      */
-    public function generateJs()
+    public function buildJs()
     {
         $widget = $this->getWidget();
         $output = '';
         
         // Add Scripts for the configurator widget first as they may be needed for the others
         $configurator_element = $this->getTemplate()->getElement($widget->getConfiguratorWidget());
-        $output .= $configurator_element->generateJs();
+        $output .= $configurator_element->buildJs();
         $on_before_load = <<<JS
             
                 try {
@@ -261,11 +261,11 @@ JS;
     /**
      * 
      * {@inheritDoc}
-     * @see \exface\JEasyUiTemplate\Template\Elements\euiData::generateHeaders()
+     * @see \exface\JEasyUiTemplate\Template\Elements\euiData::buildHtmlHeadTags()
      */
-    public function generateHeaders()
+    public function buildHtmlHeadTags()
     {
-        $includes = parent::generateHeaders();
+        $includes = parent::buildHtmlHeadTags();
         // Masonry is neede to align filters nicely
         $includes[] = '<script type="text/javascript" src="exface/vendor/bower-asset/masonry/dist/masonry.pkgd.min.js"></script>';
         // Row details view
@@ -576,7 +576,7 @@ JS;
         
         // Add the help button in the bottom toolbar
         if (! $widget->getHideHelpButton()) {
-            $output .= $this->getTemplate()->generateJs($widget->getHelpButton());
+            $output .= $this->getTemplate()->buildJs($widget->getHelpButton());
             $bottom_buttons[] = '{
 						iconCls:  "fa fa-question-circle-o",
 						title: "' . $this->translate('HELP') . '",

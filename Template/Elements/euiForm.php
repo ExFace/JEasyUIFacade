@@ -19,9 +19,9 @@ class euiForm extends euiPanel
     
     use JqueryToolbarsTrait;
 
-    public function generateHtml()
+    public function buildHtml()
     {
-        return parent::generateHtml() . $this->buildHtmlFooter();
+        return parent::buildHtml() . $this->buildHtmlFooter();
     }
     
     public function buildCssElementClass()

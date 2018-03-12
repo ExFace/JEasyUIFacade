@@ -4,7 +4,7 @@ namespace exface\JEasyUiTemplate\Template\Elements;
 class euiTextHeading extends euiText
 {
 
-    function generateHtml()
+    function buildHtml()
     {
         $widget = $this->getWidget();
         $prefix = ! $widget->getHideCaption() && $widget->getCaption() ? $widget->getCaption() . ' "' : '';

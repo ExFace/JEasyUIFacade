@@ -10,7 +10,7 @@ namespace exface\JEasyUiTemplate\Template\Elements;
 class euiTile extends euiButton
 {
     
-    function generateHtml()
+    function buildHtml()
     {
         $widget = $this->getWidget();
         

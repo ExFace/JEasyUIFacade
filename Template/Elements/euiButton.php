@@ -25,7 +25,7 @@ class euiButton extends euiAbstractElement
     use JqueryButtonTrait;
     use JqueryAlignmentTrait;
 
-    function generateJs()
+    function buildJs()
     {
         $output = '';
         $action = $this->getAction();
@@ -55,9 +55,9 @@ class euiButton extends euiAbstractElement
 
     /**
      *
-     * @see \exface\JEasyUiTemplate\Template\Elements\abstractWidget::generateHtml()
+     * @see \exface\JEasyUiTemplate\Template\Elements\abstractWidget::buildHtml()
      */
-    function generateHtml()
+    function buildHtml()
     {
         // Create a linkbutton
         $output .= $this->buildHtmlButton();
@@ -187,9 +187,9 @@ JS;
      *
      * {@inheritdoc}
      *
-     * @see \exface\Core\Templates\AbstractAjaxTemplate\Elements\AbstractJqueryElement::generateHeaders()
+     * @see \exface\Core\Templates\AbstractAjaxTemplate\Elements\AbstractJqueryElement::buildHtmlHeadTags()
      */
-    public function generateHeaders()
+    public function buildHtmlHeadTags()
     {
         return array();
     }

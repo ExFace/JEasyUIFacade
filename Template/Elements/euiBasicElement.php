@@ -4,12 +4,12 @@ namespace exface\JEasyUiTemplate\Template\Elements;
 class euiBasicElement extends euiAbstractElement
 {
 
-    function generateHtml()
+    function buildHtml()
     {
         return '';
     }
 
-    function generateJs()
+    function buildJs()
     {
         return '';
     }

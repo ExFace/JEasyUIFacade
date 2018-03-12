@@ -131,9 +131,9 @@ JS;
      *
      * {@inheritdoc}
      *
-     * @see \exface\JEasyUiTemplate\Template\Elements\euiInput::generateHtml()
+     * @see \exface\JEasyUiTemplate\Template\Elements\euiInput::buildHtml()
      */
-    function generateHtml()
+    function buildHtml()
     {
         /* @var $widget \exface\Core\Widgets\ComboTable */
         $widget = $this->getWidget();
@@ -160,9 +160,9 @@ HTML;
      *
      * {@inheritdoc}
      *
-     * @see \exface\JEasyUiTemplate\Template\Elements\euiInput::generateJs()
+     * @see \exface\JEasyUiTemplate\Template\Elements\euiInput::buildJs()
      */
-    function generateJs()
+    function buildJs()
     {
         $debug_function = ($this->getJsDebugLevel() > 0) ? $this->buildJsDebugDataToStringFunction() : '';
         
@@ -484,7 +484,7 @@ JS;
     }
 
     /**
-     * The JS value setter for EasyUI combogrids is a custom function defined in euiComboTable::generateJs() - it only needs to be called here.
+     * The JS value setter for EasyUI combogrids is a custom function defined in euiComboTable::buildJs() - it only needs to be called here.
      *
      * {@inheritdoc}
      *

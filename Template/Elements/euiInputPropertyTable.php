@@ -10,7 +10,7 @@ class euiInputPropertyTable extends euiInput
         $this->setElementType('propertygrid');
     }
 
-    function generateHtml()
+    function buildHtml()
     {
         /* @var $widget \exface\Core\Widgets\InputPropertyTable */
         $widget = $this->getWidget();
@@ -30,9 +30,9 @@ class euiInputPropertyTable extends euiInput
      *
      * {@inheritdoc}
      *
-     * @see \exface\JEasyUiTemplate\Template\Elements\euiInput::generateJs()
+     * @see \exface\JEasyUiTemplate\Template\Elements\euiInput::buildJs()
      */
-    function generateJs()
+    function buildJs()
     {
         /* @var $widget \exface\Core\Widgets\InputPropertyTable */
         $widget = $this->getWidget();
