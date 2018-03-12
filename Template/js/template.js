@@ -7,8 +7,8 @@ $( document ).ready(function() {
 function contextBarInit(){
 	$(document).ajaxSuccess(function(event, jqXHR, ajaxOptions, data){
 		var extras = {};
-		if (jqXHR.responseJson){
-			extras = jqXHR.responseJson.extras;
+		if (jqXHR.responseJSON){
+			extras = jqXHR.responseJSON.extras;
 		} else {
 			try {
 				extras = $.parseJSON(jqXHR.responseText).extras;
