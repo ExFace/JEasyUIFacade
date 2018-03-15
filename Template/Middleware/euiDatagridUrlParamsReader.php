@@ -7,8 +7,8 @@ use Psr\Http\Server\MiddlewareInterface;
 use Psr\Http\Server\RequestHandlerInterface;
 use exface\Core\Interfaces\WorkbenchInterface;
 use exface\Core\Interfaces\Templates\HttpTemplateInterface;
-use exface\Core\Templates\AbstractHttpTemplate\Middleware\TaskRequestTrait;
-use exface\Core\Templates\AbstractHttpTemplate\Middleware\DataEnricherTrait;
+use exface\Core\Templates\AbstractHttpTemplate\Middleware\Traits\TaskRequestTrait;
+use exface\Core\Templates\AbstractHttpTemplate\Middleware\Traits\DataEnricherTrait;
 use exface\Core\Interfaces\Tasks\TaskInterface;
 use exface\Core\Interfaces\DataSheets\DataSheetInterface;
 
