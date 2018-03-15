@@ -3,6 +3,7 @@ namespace exface\JEasyUiTemplate\Template;
 
 use exface\Core\Templates\AbstractAjaxTemplate\AbstractAjaxTemplate;
 use exface\Core\Exceptions\DependencyNotFoundError;
+use exface\JEasyUiTemplate\Template\Middleware\euiDatagridUrlParamsReader;
 
 class JEasyUiTemplate extends AbstractAjaxTemplate
 {
@@ -16,6 +17,18 @@ class JEasyUiTemplate extends AbstractAjaxTemplate
         if (! is_dir($folder)) {
             throw new DependencyNotFoundError('jEasyUI files not found! Please install jEasyUI to "' . $folder . '"!', '6T6HUFO');
         }
+    }
+    
+    /**
+     * 
+     * {@inheritDoc}
+     * @see \exface\Core\Templates\AbstractAjaxTemplate\AbstractAjaxTemplate::getMiddleware()
+     */
+    public function getMiddleware() : array
+    {
+        $middleware = parent::getMiddleware();
+        $middleware[] = new euiDatagridUrlParamsReader($this, 'getInputData', 'setInputData');
+        return $middleware;
     }
 }
 ?>
