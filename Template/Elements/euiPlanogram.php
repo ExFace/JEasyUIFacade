@@ -92,8 +92,8 @@ HTML;
         /* @var $relation_to_diagram \exface\Core\CommonLogic\Model\RelationPath */
         $relation_to_diagram = $shape->getRelationPathToDiagramObject();
         $relation_from_data_to_diagram = $shape->getData()->getMetaObject()->findRelationPath($widget->getMetaObject())->toString();
-        $filter_shape_options = 'data.fltr01_' . RelationPath::relationPathAdd($relation_to_diagram->toString(), $relation_to_diagram->getEndObject()->getUidAttributeAlias()) . ' = ' . $this->getTemplate()->getElement($widget->getDiagramObjectSelectorWidget())->buildJsValueGetter() . ';';
-        $filter_shape_data = 'data.fltr01_' . $relation_from_data_to_diagram . ' = ' . $this->getTemplate()->getElement($widget->getDiagramObjectSelectorWidget())->buildJsValueGetter() . ';';
+        $filter_shape_options = 'data.' . $this->getTemplate()->getUrlFilterPrefix() . RelationPath::relationPathAdd($relation_to_diagram->toString(), $relation_to_diagram->getEndObject()->getUidAttributeAlias()) . ' = ' . $this->getTemplate()->getElement($widget->getDiagramObjectSelectorWidget())->buildJsValueGetter() . ';';
+        $filter_shape_data = 'data.' . $this->getTemplate()->getUrlFilterPrefix() . $relation_from_data_to_diagram . ' = ' . $this->getTemplate()->getElement($widget->getDiagramObjectSelectorWidget())->buildJsValueGetter() . ';';
         
         $bg_image = $widget->getPrefillData()->getCellValue($widget->getBackgroundImageAttributeAlias(), 0);
         if ($bg_image) {

@@ -412,9 +412,10 @@ class euiData extends euiAbstractElement
 		}
 		
 		var filter, value, total = data.rows.length;
+        var filterPrefix = ("{$this->getTemplate()->getUrlFilterPrefix()}").toLowerCase();
 		for(var p in param){
-			if (p.startsWith("fltr")){
-				column = p.substring(7);
+			if (p.toLowerCase().startsWith(filterPrefix)){
+				column = p.substring(filterPrefix.length);
 				value = param[p];
 			}
 			

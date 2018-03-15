@@ -651,37 +651,22 @@ JS;
 JS;
         }
         
-        $fltrId = 0;
-        // Add filters from widget
-        $filters = [];
-        if ($widget->getTable()->hasFilters()) {
-            foreach ($widget->getTable()->getFilters() as $fltr) {
-                if ($link = $fltr->getValueWidgetLink()) {
-                    // filter is a live reference
-                    $linked_element = $this->getTemplate()->getElementByWidgetId($link->getWidgetId(), $widget->getPage());
-                    $filters[] = 'currentFilterSet.fltr' . str_pad($fltrId ++, 2, 0, STR_PAD_LEFT) . '_' . urlencode($fltr->getAttributeAlias()) . ' = "' . $fltr->getComparator() . '"+' . $linked_element->buildJsValueGetter($link->getColumnId()) . ';';
-                } else {
-                    // filter has a static value
-                    $filters[] = 'currentFilterSet.fltr' . str_pad($fltrId ++, 2, 0, STR_PAD_LEFT) . '_' . urlencode($fltr->getAttributeAlias()) . ' = "' . $fltr->getComparator() . urlencode(strpos($fltr->getValue(), '=') === 0 ? '' : $fltr->getValue()) . '";';
-                }
-            }
-        }
-        $filters_script = implode("\n                        ", $filters);
+        // Run the data getter of the (unrendered) DataConfigurator widget to get the data
+        // parameter with filters, sorters, etc.
+        $dataParam = 'currentFilterSet.data = ' . $this->getTemplate()->getElement($widget->getTable()->getConfiguratorWidget())->buildJsDataGetter(null, true);
         // Beim Leeren eines Widgets in einer in einer lazy-loading-group wird kein Filter gesetzt,
         // denn alle Filter sollten leer sein (alle Elemente der Gruppe leer). Beim Leeren eines
         // Widgets ohne Gruppe werden die normalen Filter gesetzt.
-        $clear_filters_script = $widget->getLazyLoadingGroupId() ? '' : $filters_script;
+        $clearFiltersParam = $widget->getLazyLoadingGroupId() ? '' : $dataParam;
         // Add value filter (to show proper label for a set value)
-        $value_filters = [];
-        $value_filters[] = 'currentFilterSet.fltr' . str_pad($fltrId ++, 2, 0, STR_PAD_LEFT) . '_' . $widget->getValueColumn()->getDataColumnName() . ' = ' . $this->getId() . '_jquery.combogrid("getValues").join();';
-        $value_filters_script = implode("\n                        ", $value_filters);
+        $valueFilterParam = 'currentFilterSet.filter_' . $widget->getValueColumn()->getDataColumnName() . ' = ' . $this->getId() . '_jquery.combogrid("getValues").join();';
         
         // firstLoadScript: enthaelt Anweisungen, die nur beim ersten Laden ausgefuehrt
         // werden sollen (Initialisierung)
-        // filters_script: fuegt die gesetzten Filter zur Anfrage hinzu
-        // value_filters_script: fuegt einen Filter zur Anfrage hinzu, welcher auf dem
+        // dataParam: fuegt die gesetzten Filter zur Anfrage hinzu
+        // valueFilterParam: fuegt einen Filter zur Anfrage hinzu, welcher auf dem
         // aktuell gesetzten Wert beruht
-        // clear_filters_script: fuegt Filter zur Anfrage hinzu, welche beim Leeren des
+        // clearFiltersParam: fuegt Filter zur Anfrage hinzu, welche beim Leeren des
         // Objekts gelten sollen
         
         $output = <<<JS
@@ -708,20 +693,20 @@ JS;
                     
                     if ({$this->getId()}_jquery.data("_valueSetterUpdate")) {
                         param._valueSetterUpdate = true;
-                        {$value_filters_script}
+                        {$valueFilterParam}
                     } else if ({$this->getId()}_jquery.data("_clearFilterSetterUpdate")) {
                         param._clearFilterSetterUpdate = true;
-                        {$clear_filters_script}
+                        {$clearFiltersParam}
                     } else if ({$this->getId()}_jquery.data("_filterSetterUpdate")) {
                         param._filterSetterUpdate = true;
-                        {$filters_script}
-                        {$value_filters_script}
+                        {$dataParam}
+                        {$valueFilterParam}
                     } else if ({$this->getId()}_jquery.data("_firstLoad")) {
                         param._firstLoad = true;
                         {$first_load_script}
                     } else {
                         currentFilterSet.q = {$this->getId()}_jquery.data("_currentText");
-                        {$filters_script}
+                        {$dataParam}
                     }
                     
                     // Die Filter der gegenwaertigen Anfrage werden mit den Filtern der letzten Anfrage

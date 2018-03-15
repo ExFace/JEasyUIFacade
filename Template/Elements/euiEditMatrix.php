@@ -89,7 +89,7 @@ HTML;
             foreach ($widget->getFilters() as $fnr => $fltr) {
                 $fltr_impl = $this->getTemplate()->getElement($fltr);
                 $output .= $fltr_impl->buildJs();
-                $fltrs[] = '"fltr' . str_pad($fnr, 2, 0, STR_PAD_LEFT) . '_' . urlencode($fltr->getAttributeAlias()) . '": ' . $fltr_impl->buildJsValueGetter();
+                $fltrs[] = '"' . $this->getTemplate()->getUrlFilterPrefix() . urlencode($fltr->getAttributeAlias()) . '": ' . $fltr_impl->buildJsValueGetter();
             }
             // build JS for the search function
             $output .= '
