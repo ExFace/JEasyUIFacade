@@ -146,8 +146,8 @@ class euiData extends euiAbstractElement
         $widget = $this->getWidget();
         
         // add initial sorters
-        $sort_by = array();
-        $direction = array();
+        $sort_by = [];
+        $direction = [];
         if ($this->isLazyLoading() && count($widget->getSorters()) > 0) {
             foreach ($widget->getSorters() as $sort) {
                 // Check if sorting over a column and use the column name in this case
@@ -157,6 +157,7 @@ class euiData extends euiAbstractElement
                 } else {
                     $sort_by[] = urlencode($sort->getProperty('attribute_alias'));
                 }
+                $sort_attrs[] = $sort->getProperty('attribute_alias');
                 $direction[] = urlencode($sort->getProperty('direction'));
             }
             $sortColumn = ", sortName: '" . implode(',', $sort_by) . "'";
@@ -305,7 +306,7 @@ class euiData extends euiAbstractElement
         
         $output = '
                         title: "<span title=\"' . $this->buildHintText($col->getHint(), true) . '\">' . $col->getCaption() . '</span>"
-                        ' . ($col->getAttributeAlias() ? ', field: "' . $col->getDataColumnName() . '"' : '') . "
+                        ' . ($col->hasAttributeReference() ? ', field: "' . $col->getDataColumnName() . '", _attributeAlias: "' . $col->getAttributeAlias() . '"' : '') . "
                         " . ($colspan ? ', colspan: ' . intval($colspan) : '') . ($rowspan ? ', rowspan: ' . intval($rowspan) : '') . "
                         " . ($col->isHidden() ? ', hidden: true' : '') . "
                         " . ($col->getWidth()->isTemplateSpecific() ? ', width: "' . $col->getWidth()->toString() . '"' : '') . "
@@ -660,12 +661,26 @@ JS;
     protected function buildJsOnBeforeLoadScript($js_var_param = 'param')
     {
         return <<<JS
-                    {$this->getId()}_jquery = $("#{$this->getId()}");
-                    if ({$this->getId()}_jquery.data("_skipNextLoad") == true) {
-    					{$this->getId()}_jquery.data("_skipNextLoad", false);
+                    // General preparation
+                    var jqself = $(this);
+                    if (jqself.data("_skipNextLoad") == true) {
+    					jqself.data("_skipNextLoad", false);
     					return false;
     				}
+
+                    // Scripts added programmatically
 				    {$this->on_before_load}
+        
+                    // Enrich sorting options
+                    if ({$js_var_param}.sort !== undefined) {
+                        var sortNames = {$js_var_param}.sort.split(',');
+                        var sortAttrs = [];
+                        for (var i=0; i<sortNames.length; i++) {
+                            colOpts = jqself.{$this->getElementType()}('getColumnOption', sortNames[i]);
+                            sortAttrs.push(colOpts !== null ? colOpts['_attributeAlias'] : sortNames[i]);
+                        }
+                        {$js_var_param}.sortAttr = sortAttrs.join(',');
+                    }
 JS;
     }
     
