@@ -61,7 +61,7 @@ class euiDatagridUrlParamsReader implements MiddlewareInterface
         $result = $this->readSortParams($task, $requestParams);
         $result = $this->readPaginationParams($task, $requestParams, $result);
         
-        if (! $result === false) {
+        if ($result !== null) {
             $task = $this->updateTask($task, $this->setterMethodName, $result);
             return $handler->handle($request->withAttribute($this->taskAttributeName, $task));
         } else {
@@ -78,13 +78,17 @@ class euiDatagridUrlParamsReader implements MiddlewareInterface
      */
     protected function readSortParams (TaskInterface $task, array $params, DataSheetInterface $dataSheet = null) 
     {
-        $order = isset($params['order']) ? strval($params['order']) : null;
-        $sort_by = isset($params['sort']) ? strval($params['sort']) : null;
-        if (! is_null($sort_by) && ! is_null($order)) {
+        $order = isset($params['order']) ? urldecode($params['order']) : null;
+        $sort_cols = isset($params['sort']) ? urldecode($params['sort']) : null;
+        $sort_attrs = isset($params['sortAttr']) ? urldecode($params['sortAttr']) : null;
+        if (is_null($sort_attrs)) {
+            $sort_attrs = $sort_cols;
+        }
+        if (! is_null($sort_attrs) && ! is_null($order)) {
             $dataSheet = $dataSheet ? $dataSheet : $this->getDataSheet($task, $this->getterMethodName);
-            $sort_by = explode(',', $sort_by);
+            $sort_attrs = explode(',', $sort_attrs);
             $order = explode(',', $order);
-            foreach ($sort_by as $nr => $sort) {
+            foreach ($sort_attrs as $nr => $sort) {
                 $dataSheet->getSorters()->addFromString($sort, $order[$nr]);
             }
             return $dataSheet;
@@ -102,6 +106,10 @@ class euiDatagridUrlParamsReader implements MiddlewareInterface
      */
     protected function readPaginationParams (TaskInterface $task, array $params, DataSheetInterface $dataSheet = null) 
     {
+        if (! array_key_exists('rows', $params) && ! array_key_exists('page', $params)) {
+            return null;
+        }
+        
         $dataSheet = $dataSheet ? $dataSheet : $this->getDataSheet($task, $this->getterMethodName);
         $page_length = isset($params['rows']) ? intval($params['rows']) : 0;
         $page_nr = isset($params['page']) ? intval($params['page']) : 1;
