@@ -31,6 +31,11 @@ class JEasyUiTemplate extends AbstractAjaxTemplate
         return $middleware;
     }
     
+    /**
+     * 
+     * {@inheritDoc}
+     * @see \exface\Core\Interfaces\Templates\HttpTemplateInterface::getUrlRoutePatterns()
+     */
     public function getUrlRoutePatterns() : array
     {
         return [

@@ -142,7 +142,7 @@ function contextShowMenu(containerSelector){
 	$(containerSelector).find('.toolbar-element').empty().append('<li class="header"><div class="overlay text-center"><i class="fa fa-refresh fa-spin"></i></div></li>');
 	$.ajax({
 		type: 'POST',
-		url: 'exface/exface.php?exftpl=exface.JEasyUiTemplate',
+		url: 'exface/api/jeasyui',
 		dataType: 'html',
 		data: {
 			action: 'exface.Core.ShowContextPopup',

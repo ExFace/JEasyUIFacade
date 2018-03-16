@@ -7,7 +7,7 @@ $( document ).ready(function() {
 	data.object = "0x11E6B0C8227136B78943E4B318306B9A";
 	data.fltr00_VM_SHELF = 61;
     
-    $.post("exface/exface.php?exftpl=exface.JEasyUiTemplate", data, function(json){
+    $.post("exface/api/jeasyui", data, function(json){
     	try {
 			var data = $.parseJSON(json);
 		} catch (err) {
