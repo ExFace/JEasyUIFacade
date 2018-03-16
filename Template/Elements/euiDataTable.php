@@ -104,18 +104,18 @@ JS;
         // "Rueckstandsliste".
         $onLoadSuccessScript = <<<JS
 
-				var {$this->getId()}_jquery = $("#{$this->getId()}");
-                var rows = {$this->getId()}_jquery.{$this->getElementType()}("getSelections");
+				var jqself = $(this);
+                var rows = jqself.{$this->getElementType()}("getSelections");
                 var selectedRows = [];
                 for (var i = 0; i < rows.length; i++) {
-                    var index = {$this->getId()}_jquery.{$this->getElementType()}("getRowIndex", rows[i]);
+                    var index = jqself.{$this->getElementType()}("getRowIndex", rows[i]);
                     if( index >= 0) {
                         selectedRows.push(index);
                     }
                 }
-                {$this->getId()}_jquery.{$this->getElementType()}("clearSelections");
+                jqself.{$this->getElementType()}("clearSelections");
                 for (var i = 0; i < selectedRows.length; i++) {
-                    {$this->getId()}_jquery.{$this->getElementType()}("selectRow", selectedRows[i]);
+                    jqself.{$this->getElementType()}("selectRow", selectedRows[i]);
                 }
 JS;
         $this->addOnLoadSuccess($onLoadSuccessScript);
@@ -201,7 +201,7 @@ JS;
      * IDEA perhaps it should return an entire row as an array if the column is not specified. Just have a feeling, it
      * might be better...
      *
-     * @see \exface\JEasyUiTemplate\Template\Elements\jeasyuiAbstractWidget::buildJsValueGetter()
+     * @see euiAbstractElement::buildJsValueGetter()
      */
     public function buildJsValueGetter($column = null, $row = null)
     {

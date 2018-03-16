@@ -79,12 +79,12 @@ JS;
         $output = <<<JS
 
 (function(){
-	{$this->getId()}_jquery = $("#{$this->getId()}");
-	if ({$this->getId()}_jquery.data("{$this->getElementType()}")) {
+	var jqself = $('#{$this->getId()}');
+	if (jqself.data("{$this->getElementType()}")) {
 		{$value_getter}
 	} else {
         var value = '';
-        $.each({$this->getId()}_jquery.children('option[selected=selected]'), function(){
+        $.each(jqself.children('option[selected=selected]'), function(){
             value += (value !== '' ? '{$this->getWidget()->getMultiSelectValueDelimiter()}' : '') + this.value;
         });
         return value;

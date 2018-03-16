@@ -110,10 +110,10 @@ JS;
         onHidePanel: function() {
             // onHidePanel wird der Inhalt formatiert (beim Verlassen des Feldes), der
             // ausgefuehrte Code entspricht dem beim Druecken der Enter-Taste.
-            {$this->getId()}_jquery = $("#{$this->getId()}");
-            currentDate = {$this->getId()}_jquery.{$this->getElementType()}("calendar").calendar("options").current;
+            var jqself = $(this);
+            currentDate = jqself.{$this->getElementType()}("calendar").calendar("options").current;
             if (currentDate) {
-                {$this->getId()}_jquery.{$this->getElementType()}("setValue", {$this->buildJsValueFormatter('currentDate')});
+                jqself.{$this->getElementType()}("setValue", {$this->buildJsValueFormatter('currentDate')});
             }
         },
         validType: "date['#{$this->getId()}']"
@@ -155,11 +155,11 @@ JS;
         return <<<JS
 
         (function(){
-            var {$this->getId()}_jquery = $("#{$this->getId()}");
-            if (! {$this->getId()}_jquery.{$this->getElementType()}("getText")) {
-                {$this->getId()}_jquery.data("_internalValue", "");
+            var jqself = $("#{$this->getId()}");
+            if (! jqself.{$this->getElementType()}("getText")) {
+                jqself.data("_internalValue", "");
             }
-            return {$this->getId()}_jquery.data("_internalValue");
+            return jqself.data("_internalValue");
         })()
 JS;
     }
