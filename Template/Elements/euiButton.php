@@ -119,12 +119,15 @@ class euiButton extends euiAbstractElement
             }
         }
         
+        $headers = ! empty($this->getAjaxHeaders()) ? 'headers: ' . json_encode($this->getAjaxHeaders()) . ',' : '';
+        
         $output = $this->buildJsRequestDataCollector($action, $input_element);
         $output .= <<<JS
 						{$this->buildJsBusyIconShow()}
 						$.ajax({
 							type: 'POST',
 							url: '{$this->getAjaxUrl()}',
+                            {$headers}
 							dataType: 'html',
 							data: {
 								action: '{$widget->getActionAlias()}',

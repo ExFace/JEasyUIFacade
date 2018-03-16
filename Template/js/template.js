@@ -54,7 +54,7 @@ function contextBarLoad(delay){
 		if ($('#contextBar .panel-loading').length > 0){
 			$.ajax({
 				type: 'POST',
-				url: 'exface/exface.php?exftpl=exface.JEasyUiTemplate',
+				url: 'exface/api.php?tpl=jeasyui',
 				dataType: 'json',
 				data: {
 					action: 'exface.Core.ShowWidget',
@@ -98,7 +98,7 @@ function contextBarRefresh(data){
                 width: 200,
                 height: 300,
                 border: false,
-                href: 'exface/exface.php?exftpl=exface.JEasyUiTemplate',
+                href: 'exface/api/jeasyui',
                 method: 'POST',
                 cache: false,
                 queryParams: {

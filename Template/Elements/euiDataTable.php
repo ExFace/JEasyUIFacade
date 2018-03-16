@@ -381,6 +381,8 @@ JS;
         $details = $widget->getRowDetailsContainer();
         $details_element = $this->getTemplate()->getElement($widget->getRowDetailsContainer());
         $details_height = (! $details->getHeight()->isUndefined() ? ", height: '" . $details_element->getHeight() . "'" : "");
+
+        $headers = ! empty($this->getAjaxHeaders()) ? 'headers: ' . json_encode($this->getAjaxHeaders()) . ',' : '';
         
         // Add the needed options to our datagrid
         $grid_head .= <<<JS
@@ -392,6 +394,7 @@ JS;
     					$('#{$details_element->getId()}_'+row.{$widget->getMetaObject()->getUidAttributeAlias()}).panel({
     		            	border: false,
     						href: '{$this->getAjaxUrl()}',
+                            {$headers}
     		            	method: 'post',
     						queryParams: {
     							action: '{$widget->getRowDetailsAction()}',

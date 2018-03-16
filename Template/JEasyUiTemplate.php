@@ -30,5 +30,13 @@ class JEasyUiTemplate extends AbstractAjaxTemplate
         $middleware[] = new euiDatagridUrlParamsReader($this, 'getInputData', 'setInputData');
         return $middleware;
     }
+    
+    public function getUrlRoutePatterns() : array
+    {
+        return [
+            "/[\?&]tpl=jeasyui/",
+            "/\/api\/jeasyui[\/?]/"
+        ];
+    }
 }
 ?>

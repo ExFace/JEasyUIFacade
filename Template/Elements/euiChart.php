@@ -134,6 +134,8 @@ JS;
         $output = '';
         if (! $widget->getDataWidgetLink()) {
             
+            $headers = ! empty($this->getAjaxHeaders()) ? 'headers: ' . json_encode($this->getAjaxHeaders()) . ',' : '';
+            
             $url_params = '
                             resource: "' . $widget->getPage()->getAliasWithNamespace() . '"
                             , element: "' . $widget->getData()->getId(). '"
@@ -166,6 +168,7 @@ JS;
 					$.ajax({
 						url: "' . $this->getAjaxUrl() . '",
                         method: "POST",
+                        ' . $headers . '
                         data: {
                             ' . $url_params . '
                             , data: ' . $this->getTemplate()->getElement($widget->getConfiguratorWidget())->buildJsDataGetter() . '

@@ -124,6 +124,8 @@ HTML;
             $vm_shelf_oid = $this->getTemplate()->getElement($this->getWidget()->getDiagramObjectSelectorWidget())->buildJsValueGetter();
         }
         
+        $ajax_headers = ! empty($this->getAjaxHeaders()) ? 'headers: ' . json_encode($this->getAjaxHeaders()) . ',' : '';
+        
         $output = <<<JS
 
 $(document).ready(function(){
@@ -204,6 +206,7 @@ function {$this->buildJsFunctionPrefix()}shapeLoader(){
 	$.ajax({
 		type: "POST",
 		url: "{$this->getAjaxUrl()}",
+        {$ajax_headers}
 		data: data,
 		success: function(data){
 			diagram.setAreaData(data['rows']);
@@ -226,6 +229,7 @@ function {$this->buildJsFunctionPrefix()}dataLoader(){
 	$.ajax({
 		type: "POST",
 		url: "{$this->getAjaxUrl()}",
+        {$ajax_headers}
 		data: data,
 		success: function(data){
 			diagram.setElementData(data['rows']);

@@ -1,5 +1,5 @@
 {
-	"DEFAULT_AJAX_URL": "exface/exface.php?exftpl=exface.JEasyUiTemplate",
+	"DEFAULT_AJAX_URL": "/api/jeasyui",
 	"WIDTH_RELATIVE_UNIT": 400,
 	"WIDTH_MINIMUM": 300,
 	"WIDTH_DEFAULT": 1,
