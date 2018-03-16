@@ -24,7 +24,7 @@ class JEasyUiTemplate extends AbstractAjaxTemplate
      * {@inheritDoc}
      * @see \exface\Core\Templates\AbstractAjaxTemplate\AbstractAjaxTemplate::getMiddleware()
      */
-    public function getMiddleware() : array
+    protected function getMiddleware() : array
     {
         $middleware = parent::getMiddleware();
         $middleware[] = new euiDatagridUrlParamsReader($this, 'getInputData', 'setInputData');
