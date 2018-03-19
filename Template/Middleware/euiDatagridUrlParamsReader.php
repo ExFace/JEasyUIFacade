@@ -106,15 +106,13 @@ class euiDatagridUrlParamsReader implements MiddlewareInterface
      */
     protected function readPaginationParams (TaskInterface $task, array $params, DataSheetInterface $dataSheet = null) 
     {
-        if (! array_key_exists('rows', $params) && ! array_key_exists('page', $params)) {
-            return null;
+        if (array_key_exists('rows', $params) || array_key_exists('page', $params)) {
+            $dataSheet = $dataSheet ? $dataSheet : $this->getDataSheet($task, $this->getterMethodName);
+            $page_length = isset($params['rows']) ? intval($params['rows']) : 0;
+            $page_nr = isset($params['page']) ? intval($params['page']) : 1;
+            $dataSheet->setRowOffset(($page_nr - 1) * $page_length);
+            $dataSheet->setRowsOnPage($page_length);
         }
-        
-        $dataSheet = $dataSheet ? $dataSheet : $this->getDataSheet($task, $this->getterMethodName);
-        $page_length = isset($params['rows']) ? intval($params['rows']) : 0;
-        $page_nr = isset($params['page']) ? intval($params['page']) : 1;
-        $dataSheet->setRowOffset(($page_nr - 1) * $page_length);
-        $dataSheet->setRowsOnPage($page_length);
         return $dataSheet;
     }
 }
