@@ -638,7 +638,7 @@ JS;
                         {$this->getId()}_jquery.data("_lastValidValue", "{$this->getValueWithDefaults()}");
                         {$this->getId()}_jquery.data("_currentText", "");
                         {$this->getId()}_jquery.data("_valueSetterUpdate", true);
-                        currentFilterSet.fltr01_{$widget->getValueColumn()->getDataColumnName()} = "{$this->getValueWithDefaults()}";
+                        currentFilterSet.{$this->getTemplate()->getUrlFilterPrefix()}{$widget->getValueColumn()->getDataColumnName()} = "{$this->getValueWithDefaults()}";
 JS;
             }
         } else {
@@ -741,7 +741,7 @@ JS;
          * // new part. This did not work because the old values would get lost and be replaced by the text. To cope
          * // with this the ID filter was to be used, but it would add an AND to the query, not an OR.
          * //param.q = param.q.substring(param.q.lastIndexOf("' . $widget->getMultiSelectTextDelimiter() . '") + 1);
-         * //param.fltr01_' . $widget->getValueColumn()->getDataColumnName() . ' = $("#' . $this->getId() .'").data("lastValidValue");
+         * //param.filter_' . $widget->getValueColumn()->getDataColumnName() . ' = $("#' . $this->getId() .'").data("lastValidValue");
          * }
          * ';
          * }

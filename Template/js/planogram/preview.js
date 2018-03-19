@@ -5,7 +5,7 @@ $( document ).ready(function() {
 	data.resource = "315";
 	data.element = "SplitHorizontal_SplitPanel_DataTable";
 	data.object = "0x11E6B0C8227136B78943E4B318306B9A";
-	data.fltr00_VM_SHELF = 61;
+	data.filter_VM_SHELF = 61;
     
     $.post("exface/api/jeasyui", data, function(json){
     	try {
