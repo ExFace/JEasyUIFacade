@@ -391,10 +391,11 @@ JS;
     					return '<div id="{$details_element->getId()}_'+row.{$widget->getMetaObject()->getUidAttributeAlias()}+'"></div>';
     				}
     				, onExpandRow: function(index,row){
+                        var headers = {$headers};
+                        headers['Subrequest-ID'] = row.{$widget->getMetaObject()->getUidAttributeAlias()};
     					$('#{$details_element->getId()}_'+row.{$widget->getMetaObject()->getUidAttributeAlias()}).panel({
     		            	border: false,
-    						href: '{$this->getAjaxUrl()}',
-                            {$headers}
+    						headers: headers,
     		            	method: 'post',
     						queryParams: {
     							action: '{$widget->getRowDetailsAction()}',
@@ -406,8 +407,7 @@ JS;
     									{ {$widget->getMetaObject()->getUidAttributeAlias()} : row.{$widget->getMetaObject()->getUidAttributeAlias()} }
     								],
     								filters: {$this->buildJsDataFilters()}
-    							},
-    							exfrid: row.{$widget->getMetaObject()->getUidAttributeAlias()}
+    							}
     						},
     						onLoad: function(){
     		                   	$('#{$this->getId()}').{$this->getElementType()}('fixDetailRowHeight',index);
