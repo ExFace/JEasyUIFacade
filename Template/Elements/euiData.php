@@ -148,7 +148,6 @@ class euiData extends euiAbstractElement
         // add initial sorters
         $sort_by = [];
         $direction = [];
-        $sort_attrs = [];
         if ($this->isLazyLoading() && count($widget->getSorters()) > 0) {
             foreach ($widget->getSorters() as $sort) {
                 // Check if sorting over a column and use the column name in this case
@@ -158,7 +157,6 @@ class euiData extends euiAbstractElement
                 } else {
                     $sort_by[] = urlencode($sort->getProperty('attribute_alias'));
                 }
-                $sort_attrs[] = $sort->getProperty('attribute_alias');
                 $direction[] = $sort->getProperty('direction') === SortingDirectionsDataType::ASC ? 'asc' : 'desc';
             }
             $sortColumn = ", sortName: '" . implode(',', $sort_by) . "'";
