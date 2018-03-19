@@ -157,7 +157,7 @@ class euiData extends euiAbstractElement
                 } else {
                     $sort_by[] = urlencode($sort->getProperty('attribute_alias'));
                 }
-                $direction[] = $sort->getProperty('direction') === SortingDirectionsDataType::ASC ? 'asc' : 'desc';
+                $direction[] = strcasecmp($sort->getProperty('direction'), SortingDirectionsDataType::ASC) === 0 ? 'asc' : 'desc';
             }
             $sortColumn = ", sortName: '" . implode(',', $sort_by) . "'";
             $sortOrder = ", sortOrder: '" . implode(',', $direction) . "'";
