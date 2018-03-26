@@ -3,6 +3,7 @@ namespace exface\JEasyUiTemplate\Templates\Elements;
 
 use exface\Core\Widgets\InputNumber;
 use exface\Core\DataTypes\NumberDataType;
+use exface\Core\Factories\DataTypeFactory;
 
 /**
  * @method InputNumber getWidget()
@@ -58,7 +59,7 @@ class euiInputNumber extends euiInput
             $widget = $this->getWidget();
             $type = $widget->getValueDataType();
             if (! $type instanceof NumberDataType) {
-                $type = new NumberDataType($this->getWorkbench());
+                $type = DataTypeFactory::createFromPrototype($this->getWorkbench(), NumberDataType::class);
             }
             /* @var $formatter \exface\Core\Templates\AbstractAjaxTemplate\Formatters\JsNumberFormatter */
             $this->formatter = $this->getTemplate()->getDataTypeFormatter($type);
