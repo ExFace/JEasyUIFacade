@@ -382,8 +382,6 @@ JS;
         $details_element = $this->getTemplate()->getElement($widget->getRowDetailsContainer());
         $details_height = (! $details->getHeight()->isUndefined() ? ", height: '" . $details_element->getHeight() . "'" : "");
 
-        $headers = ! empty($this->getAjaxHeaders()) ? 'headers: ' . json_encode($this->getAjaxHeaders()) . ',' : '';
-        
         // Add the needed options to our datagrid
         $grid_head .= <<<JS
     				, view: detailview
@@ -391,16 +389,15 @@ JS;
     					return '<div id="{$details_element->getId()}_'+row.{$widget->getMetaObject()->getUidAttributeAlias()}+'"></div>';
     				}
     				, onExpandRow: function(index,row){
-                        var headers = {$headers};
-                        headers['Subrequest-ID'] = row.{$widget->getMetaObject()->getUidAttributeAlias()};
     					$('#{$details_element->getId()}_'+row.{$widget->getMetaObject()->getUidAttributeAlias()}).panel({
     		            	border: false,
-    						headers: headers,
-    		            	method: 'post',
+                            href: "{$this->getAjaxUrl()}",
+    						method: 'post',
     						queryParams: {
     							action: '{$widget->getRowDetailsAction()}',
     							resource: '{$widget->getPage()->getAliasWithNamespace()}',
     							element: '{$details->getId()}',
+                                exfrid: row.{$widget->getMetaObject()->getUidAttributeAlias()},
     							prefill: {
     								oId: "{$widget->getMetaObject()->getId()}",
     								rows:[

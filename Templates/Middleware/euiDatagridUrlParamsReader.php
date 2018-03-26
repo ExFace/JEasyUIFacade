@@ -50,12 +50,16 @@ class euiDatagridUrlParamsReader implements MiddlewareInterface
      * @see \Psr\Http\Server\MiddlewareInterface::process()
      */
     public function process(ServerRequestInterface $request, RequestHandlerInterface $handler): ResponseInterface
-    {
+    {        
         $task = $this->getTask($request, $this->taskAttributeName, $this->template);
         
         $requestParams = $request->getQueryParams();
         if (is_array($request->getParsedBody()) || $request->getParsedBody()) {
             $requestParams = array_merge($requestParams, $request->getParsedBody());
+        }
+        
+        if (isset($requestParams['exfrid'])) {
+            $task->getWorkbench()->context()->getScopeRequest()->setSubrequestId($requestParams['exfrid']);
         }
         
         $result = $this->readSortParams($task, $requestParams);
