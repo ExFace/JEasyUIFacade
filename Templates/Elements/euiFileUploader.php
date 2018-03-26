@@ -49,7 +49,7 @@ HTML;
         //$('<div class="result"></div>').text('text: "' + data.text + '"').insertAfter(this);
       });
     $('#{$this->getId()}').fileupload({
-        url: 'exface/vendor/exface/JEasyUiTemplate/Templates/upload.php?sid={$this->getTemplate()->getWorkbench()->context()->getScopeWindow()->getScopeId()}',
+        url: 'exface/vendor/exface/JEasyUiTemplate/Templates/upload.php?sid={$this->getTemplate()->getWorkbench()->getContext()->getScopeWindow()->getScopeId()}',
         dataType: 'json',
         autoUpload: true,
         {$this->generateFileFilter()}

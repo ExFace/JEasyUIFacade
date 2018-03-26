@@ -59,7 +59,7 @@ class euiDatagridUrlParamsReader implements MiddlewareInterface
         }
         
         if (isset($requestParams['exfrid'])) {
-            $task->getWorkbench()->context()->getScopeRequest()->setSubrequestId($requestParams['exfrid']);
+            $task->getWorkbench()->getContext()->getScopeRequest()->setSubrequestId($requestParams['exfrid']);
         }
         
         $result = $this->readSortParams($task, $requestParams);
