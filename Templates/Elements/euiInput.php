@@ -186,10 +186,11 @@ class euiInput extends euiValue
     public function buildJsDisableCondition()
     {
         $output = '';
-        if (($condition = $this->getWidget()->getDisableCondition()) && $condition->hasProperty('widget_link')) {
-            $link = WidgetLinkFactory::createFromAnything($this->getWorkbench(), $condition->getProperty('widget_link'));
-            $link->setWidgetIdSpace($this->getWidget()->getIdSpace());
-            $linked_element = $this->getTemplate()->getElementByWidgetId($link->getWidgetId(), $this->getWidget()->getPage());
+        $widget = $this->getWidget();
+        
+        if (($condition = $widget->getDisableCondition()) && $condition->hasProperty('widget_link')) {
+            $link = WidgetLinkFactory::createFromWidget($widget, $condition->getProperty('widget_link'));
+            $linked_element = $this->getTemplate()->getElement($link->getTargetWidget());
             if ($linked_element) {
                 switch ($condition->getProperty('comparator')) {
                     case EXF_COMPARATOR_IS_NOT: // !=
@@ -199,13 +200,13 @@ class euiInput extends euiValue
                     case EXF_COMPARATOR_LESS_THAN_OR_EQUALS: // <=
                     case EXF_COMPARATOR_GREATER_THAN: // >
                     case EXF_COMPARATOR_GREATER_THAN_OR_EQUALS: // >=
-                        $enable_widget_script = $this->getWidget()->isDisabled() ? '' : $this->buildJsEnabler() . ';
+                        $enable_widget_script = $widget->isDisabled() ? '' : $this->buildJsEnabler() . ';
 							// Sonst wird ein leeres required Widget nicht als invalide angezeigt
 							$("#' . $this->getId() . '").' . $this->getElementType() . '("validate");';
                         
                         $output = <<<JS
 
-						if ({$linked_element->buildJsValueGetter($link->getColumnId())} {$condition->getProperty('comparator')} "{$condition->getProperty('value')}") {
+						if ({$linked_element->buildJsValueGetter($link->getTargetColumnId())} {$condition->getProperty('comparator')} "{$condition->getProperty('value')}") {
 							{$this->buildJsDisabler()};
 						} else {
 							{$enable_widget_script}
