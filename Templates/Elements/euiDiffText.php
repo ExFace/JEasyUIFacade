@@ -43,8 +43,8 @@ HTML;
     public function buildHtmlHeadTags()
     {
         return array(
-            '<script type="text/javascript" src="exface/vendor/npm-asset/jquery-prettytextdiff/jquery.pretty-text-diff.min.js"></script>',
-            '<script type="text/javascript" src="exface/vendor/bower-asset/google-diff-match-patch-js/diff_match_patch.js"></script>'
+            '<script type="text/javascript" src="' . $this->getTemplate()->buildUrlToSource('SOURCES.JQUERY_PRETTY_TEXT_DIFF') . '"></script>',
+            '<script type="text/javascript" src="' . $this->getTemplate()->buildUrlToSource('SOURCES.DIFF_MATCH_PATCH') . '"></script>'
         );
     }
 

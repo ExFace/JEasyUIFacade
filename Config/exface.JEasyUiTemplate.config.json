@@ -10,7 +10,42 @@
 	"FORBIDDEN_CHARS_IN_ELEMENT_ID": ["/", "(", ")", ".", "-"],
 	"FORBIDDEN_CHARS_IN_FUNCTION_PREFIX": ["-", "."],
 	
-	"DATAGRID_SHOW_FOOTER_BY_DEFAULT": false,
+	"JAVASCRIPT_DEBUG_LEVEL": 0,
+	
+	"HEADERS": [
+		"<link rel=\"shortcut icon\" sizes=\"196x196\" href=\"assets/images/alexa_icon_196.png\">",
+	    "<link rel=\"apple-touch-icon\" sizes=\"128x128\" href=\"assets/images/alexa_icon_128.png\">",
+	    "<link rel=\"apple-touch-icon-precomposed\" sizes=\"128x128\" href=\"assets/images/alexa_icon_128.png\">"
+	],
+	
+	"ICON_CLASSES.DEFAULT_CLASS_PREFIX": "fa fa-",
+    "ICON_CLASSES.INSTALL": "fa fa-hdd-o",
+    "ICON_CLASSES.UNINSTALL": "fa fa-trash",
+    "ICON_CLASSES.PENCIL_MULTIPLE": "fa fa-pencil-square",
+    "ICON_CLASSES.COMPARE": "fa fa-files-o",
+    
+    "SOURCES.JQUERY": "bower-asset/jquery/dist/jquery.min.js",
+    "SOURCES.JQUERY_PRETTY_TEXT_DIFF": "npm-asset/jquery-prettytextdiff/jquery.pretty-text-diff.min.js",
+    
+    "SOURCES.JEASYUI.CORE": "bower-asset/jeasyui/jquery.easyui.min.js",
+    "SOURCES.JEASYUI.LANG_DEFAULT": "bower-asset/jeasyui/locale/easyui-lang-de.js",
+    "SOURCES.JEASYUI.THEME": "exface/JEasyUiTemplate/Templates/js/jeasyui/themes/metro-blue/easyui.css",
+    "SOURCES.JEASYUI.EXTENSIONS.DATAGRID_GROUPVIEW": "exface/JEasyUiTemplate/Templates/js/jeasyui/extensions/datagridview/datagrid-groupview.js",
+    "SOURCES.JEASYUI.EXTENSIONS.DATAGRID_DETAILVIEW": "exface/JEasyUiTemplate/Templates/js/jeasyui/extensions/datagridview/datagrid-detailview.js",
+    "SOURCES.JEASYUI.PATCHES": "exface/JEasyUiTemplate/Templates/js/jquery.easyui.patch.1.43.js",
+	
+	"SOURCES.FLOT.CORE_FOLDER": "npm-asset/flot-charts/",
+	"SOURCES.FLOT.PLUGINS.ORDERBARS": "exface/JEasyUiTemplate/Templates/js/flot/plugins/jquery.flot.orderBars.js",
+	"SOURCES.FLOT.PLUGINS.AXISLABELS": "exface/JEasyUiTemplate/Templates/js/flot/plugins/jquery.flot.orderBars.js",
+	
+	"SOURCES.MASONRY": "bower-asset/masonry/dist/masonry.pkgd.min.js",
+	
+	"SOURCES.TEMPLATE.CSS": "exface/JEasyUiTemplate/Templates/js/template.css",
+    "SOURCES.TEMPLATE.JS": "exface/JEasyUiTemplate/Templates/js/template.js",
+    
+    "SOURCES.FONT_AWESOME": "bower-asset/font-awesome/css/font-awesome.min.css",
+    
+    "SOURCES.DIFF_MATCH_PATCH": "bower-asset/google-diff-match-patch-js/diff_match_patch.js",
 	
 	"WIDGET.SPACING": 8,
     "WIDGET.BORDERWIDTH": 1,
@@ -37,13 +72,5 @@
     
 	"WIDGET.PANEL.COLUMNS_BY_DEFAULT": 3,
 	
-	"WIDGET.TABS.COLUMNS_BY_DEFAULT": 3,
-	
-	"JAVASCRIPT_DEBUG_LEVEL": 0,
-	
-	"ICON_CLASSES.DEFAULT_CLASS_PREFIX": "fa fa-",
-    "ICON_CLASSES.INSTALL": "fa fa-hdd-o",
-    "ICON_CLASSES.UNINSTALL": "fa fa-trash",
-    "ICON_CLASSES.PENCIL_MULTIPLE": "fa fa-pencil-square",
-    "ICON_CLASSES.COMPARE": "fa fa-files-o"
+	"WIDGET.TABS.COLUMNS_BY_DEFAULT": 3
 }

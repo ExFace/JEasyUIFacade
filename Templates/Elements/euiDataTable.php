@@ -265,15 +265,16 @@ JS;
      */
     public function buildHtmlHeadTags()
     {
+        $template = $this->getTemplate();
         $includes = parent::buildHtmlHeadTags();
         // Masonry is neede to align filters nicely
-        $includes[] = '<script type="text/javascript" src="exface/vendor/bower-asset/masonry/dist/masonry.pkgd.min.js"></script>';
+        $includes[] = '<script type="text/javascript" src="' . $template->buildUrlToSource('SOURCES.MASONRY') . '"></script>';
         // Row details view
         if ($this->getWidget()->hasRowDetails()) {
-            $includes[] = '<script type="text/javascript" src="exface/vendor/exface/JEasyUiTemplate/Templates/js/jeasyui/extensions/datagridview/datagrid-detailview.js"></script>';
+            $includes[] = '<script type="text/javascript" src="' . $template->buildUrlToSource('SOURCES.JEASYUI.EXTENSIONS.DATAGRID_DETAILVIEW') . '"></script>';
         }
         if ($this->getWidget()->hasRowGroups()){
-            $includes[] = '<script type="text/javascript" src="exface/vendor/exface/JEasyUiTemplate/Templates/js/jeasyui/extensions/datagridview/datagrid-groupview.js"></script>';
+            $includes[] = '<script type="text/javascript" src="' . $template->buildUrlToSource('SOURCES.JEASYUI.EXTENSIONS.DATAGRID_GROUPVIEW') . '"></script>';
         }
         return $includes;
     }

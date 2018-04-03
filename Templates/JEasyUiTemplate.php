@@ -43,5 +43,34 @@ class JEasyUiTemplate extends AbstractAjaxTemplate
             "/\/api\/jeasyui[\/?]/"
         ];
     }
+    
+    /**
+     *
+     * {@inheritDoc}
+     * @see \exface\Core\Templates\AbstractAjaxTemplate\AbstractAjaxTemplate::buildHtmlHeadCommonIncludes()
+     */
+    public function buildHtmlHeadCommonIncludes() : array
+    {
+        $includes = [
+            '<link rel="stylesheet" type="text/css" href="' . $this->buildUrlToSource('SOURCES.JEASYUI.THEME') . '">',
+            '<link rel="stylesheet" type="text/css" href="' . $this->buildUrlToSource('SOURCES.TEMPLATE.CSS') . '">',
+            '<script type="text/javascript" src="' . $this->buildUrlToSource('SOURCES.JQUERY') . '"></script>',
+            '<script type="text/javascript" src="' . $this->buildUrlToSource('SOURCES.JEASYUI.CORE') . '"></script>',
+            '<script type="text/javascript" src="' . $this->buildUrlToSource('SOURCES.JEASYUI.LANG_DEFAULT') . '"></script>',
+            '<script type="text/javascript" src="' . $this->buildUrlToSource('SOURCES.TEMPLATE.JS') . '"></script>',
+            '<link href="' . $this->buildUrlToSource('SOURCES.FONT_AWESOME') . '" rel="stylesheet" type="text/css" />'
+        ];
+        
+        // FIXME get the correct lang include accoring to the user's language
+        
+        $patches = $this->getConfig()->getOption('SOURCES.JEASYUI.PATCHES');
+        if (! empty($patches)) {
+            foreach (explode(',', $patches) as $patch) {
+                $includes[] = '<script type="text/javascript" src="' . $this->getWorkbench()->getCMS()->buildUrlToInclude($patch) . '"></script>';
+            }
+        }
+        
+        return $includes;        
+    }
 }
 ?>

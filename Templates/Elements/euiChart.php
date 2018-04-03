@@ -228,10 +228,8 @@ JS;
     {
         $includes = array_merge(parent::buildHtmlHeadTags(), $this->buildHtmlHeadTagsByTrait());
         
-        $includes[] = '<script type="text/javascript" src="exface/vendor/exface/JEasyUiTemplate/Templates/js/flot/plugins/axislabels/jquery.flot.axislabels.js"></script>';
-        $includes[] = '<script type="text/javascript" src="exface/vendor/exface/JEasyUiTemplate/Templates/js/flot/plugins/jquery.flot.orderBars.js"></script>';
         // masonry for proper filter alignment
-        $includes[] = '<script type="text/javascript" src="exface/vendor/bower-asset/masonry/dist/masonry.pkgd.min.js"></script>';
+        $includes[] = '<script type="text/javascript" src="' . $this->getTemplate()->buildUrlToSource('SOURCES.MASONRY') . '"></script>';
         return $includes;
     }
 }
