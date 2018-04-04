@@ -114,7 +114,13 @@ class euiInput extends euiValue
      */
     protected function buildJsDataOptions()
     {
-        return '';
+        $options = '';
+        
+        if ($this->getOnChangeScript()) {
+            $options .= "\n" . 'onChange: function(newValue, oldValue) {$(this).trigger("change");}';
+        }
+        
+        return $options;
     }
 
     /**
