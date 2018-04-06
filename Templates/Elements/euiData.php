@@ -299,19 +299,23 @@ class euiData extends euiAbstractElement
     
     protected function buildJsInitOptionsColumn(\exface\Core\Widgets\DataColumn $col)
     {
-        // FIXME Make compatible with column groups
         $colspan = $this->getColumnHeaderColspan($col->getId());
         $rowspan = $this->getColumnHeaderRowspan($col->getId());
         
+        // In datagrids with remote source sorting is allways performed remotely, so
+        // it cannot be done for columns without attribute binding (the server cannot
+        // sort those)
+        $sortable = $col->hasAttributeReference() ? $col->getSortable() : 'false';
+        
         $output = '
                         title: "<span title=\"' . $this->buildHintText($col->getHint(), true) . '\">' . $col->getCaption() . '</span>"
-                        ' . ($col->hasAttributeReference() ? ', field: "' . $col->getDataColumnName() . '", _attributeAlias: "' . $col->getAttributeAlias() . '"' : '') . "
+                        ' . ($col->hasAttributeReference() ? ', field: "' . $col->getDataColumnName() . '", _attributeAlias: "' . $col->getAttributeAlias() . '"' : ', field: "' . $col->getId() . '"') . "
                         " . ($colspan ? ', colspan: ' . intval($colspan) : '') . ($rowspan ? ', rowspan: ' . intval($rowspan) : '') . "
                         " . ($col->isHidden() ? ', hidden: true' : '') . "
                         " . ($col->getWidth()->isTemplateSpecific() ? ', width: "' . $col->getWidth()->toString() . '"' : '') . "
                         " . (($format_options = $this->buildJsInitOptionsColumnFormatter($col, 'value', 'row', 'index')) ? ', ' . $format_options . '' : '') . "
                         " . ', align: "' . $this->buildCssTextAlignValue($col->getAlign()) . '"
-                        ' . ', sortable: ' . ($col->getSortable() ? 'true' : 'false') . "
+                        ' . ', sortable: ' . $sortable . "
                         " . ($col->getSortable() ? ", order: '" . ($col->getDefaultSortingDirection() === SortingDirectionsDataType::ASC($this->getWorkbench()) ? 'asc' : 'desc') . "'" : '');
         
         return $output;
