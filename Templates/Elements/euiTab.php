@@ -34,7 +34,7 @@ HTML;
 HTML;
         }
         
-        $title = $widget->getHideCaption() ? '' : ' title="' . $widget->getCaption() . '"';
+        $title = $widget->getHideCaption() ? '' : ' title="' . str_replace('"', "'", $widget->getCaption()) . '"';
         
         $output = <<<HTML
 
