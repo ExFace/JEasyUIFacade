@@ -43,7 +43,7 @@ class euiInputNumber extends euiInput
             $formatter = 'return ' . $this->getDatatypeFormatter()->buildJsFormatter('value');
         }
         
-        $output .= "precision: " . ($precision_max ? $precision_max : 10)
+        $output .= "precision: " . ($precision_max !== null ? $precision_max : 10)
                 . ", decimalSeparator: '{$widget->getDecimalSeparator()}'"
                 . ($formatter ?  ", formatter:function(value){" . $formatter . "}" : "")
 				;
