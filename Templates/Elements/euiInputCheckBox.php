@@ -1,7 +1,7 @@
 <?php
 namespace exface\JEasyUiTemplate\Templates\Elements;
 
-class euiCheckBox extends euiInput
+class euiInputCheckBox extends euiInput
 {
 
     protected function init()

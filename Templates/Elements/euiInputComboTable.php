@@ -1,18 +1,18 @@
 <?php
 namespace exface\JEasyUiTemplate\Templates\Elements;
 
-use exface\Core\Widgets\ComboTable;
+use exface\Core\Widgets\InputComboTable;
 use exface\Core\Exceptions\Widgets\WidgetConfigurationError;
 use exface\Core\Exceptions\InvalidArgumentException;
 
 /**
  *
- * @method ComboTable getWidget()
+ * @method InputComboTable getWidget()
  *        
  * @author Andrej Kabachnik
  *        
  */
-class euiComboTable extends euiInput
+class euiInputComboTable extends euiInput
 {
 
     /**
@@ -101,14 +101,14 @@ JS;
         // Make sure, the table in the combo has a smaller default page size than regular (big) tables
         // This makes combotables faster with large data sets.
         if (is_null($this->getWidget()->getTable()->getPaginatePageSize())) {
-            $this->getWidget()->getTable()->setPaginatePageSize($this->getTemplate()->getConfig()->getOption('WIDGET.COMBOTABLE.PAGE_SIZE'));
+            $this->getWidget()->getTable()->setPaginatePageSize($this->getTemplate()->getConfig()->getOption('WIDGET.INPUTCOMBOTABLE.PAGE_SIZE'));
         }
     }
 
     /**
      *
      * @throws WidgetConfigurationError
-     * @return \exface\JEasyUiTemplate\Templates\Elements\euiComboTable
+     * @return \exface\JEasyUiTemplate\Templates\Elements\euiInputComboTable
      */
     protected function registerLiveReferenceAtLinkedElement()
     {
@@ -135,7 +135,7 @@ JS;
      */
     function buildHtml()
     {
-        /* @var $widget \exface\Core\Widgets\ComboTable */
+        /* @var $widget \exface\Core\Widgets\InputComboTable */
         $widget = $this->getWidget();
         
         $value = $this->getValueWithDefaults();
@@ -180,7 +180,7 @@ HTML;
             
 JS;
         
-        // Es werden JavaScript Value-Getter-/Setter- und OnChange-Funktionen fuer die ComboTable erzeugt,
+        // Es werden JavaScript Value-Getter-/Setter- und OnChange-Funktionen fuer die InputComboTable erzeugt,
         // um duplizierten Code zu vermeiden.
         $output .= <<<JS
 
@@ -190,7 +190,7 @@ JS;
             {$this->buildJsClearFunction()}
 JS;
         
-        // Es werden Dummy-Methoden fuer die Filter der DataTable hinter dieser ComboTable generiert. Diese
+        // Es werden Dummy-Methoden fuer die Filter der DataTable hinter dieser InputComboTable generiert. Diese
         // Funktionen werden nicht benoetigt, werden aber trotzdem vom verlinkten Element aufgerufen, da
         // dieses nicht entscheiden kann, ob das Filter-Input-Widget existiert oder nicht. Fuer diese Filter
         // existiert kein Input-Widget, daher existiert fuer sie weder HTML- noch JavaScript-Code und es
@@ -222,7 +222,7 @@ JS;
      */
     function buildJsInitOptions()
     {
-        /* @var $widget \exface\Core\Widgets\ComboTable */
+        /* @var $widget \exface\Core\Widgets\InputComboTable */
         $widget = $this->getWidget();
         /* @var $table \exface\JEasyUiTemplate\Templates\Elements\DataTable */
         $table = $this->getTemplate()->getElement($widget->getTable());
@@ -353,10 +353,10 @@ JS;
                         , onHidePanel: function() {
                             {$this->buildJsDebugMessage('onHidePanel')}
                             var selectedRows = {$this->getId()}_datagrid.datagrid("getSelections");
-                            // lastValidValue enthaelt den letzten validen Wert der ComboTable.
+                            // lastValidValue enthaelt den letzten validen Wert der InputComboTable.
                             var lastValidValue = {$this->getId()}_jquery.data("_lastValidValue");
                             var currentValue = {$this->getId()}_jquery.combogrid("getValues").join();
-                            // currentText enthaelt den seit der letzten validen Auswahl in die ComboTable eingegebenen Text,
+                            // currentText enthaelt den seit der letzten validen Auswahl in die InputComboTable eingegebenen Text,
                             // d.h. ist currentText nicht leer wurde Text eingegeben aber noch keine Auswahl getroffen.
                             var currentText = {$this->getId()}_jquery.data("_currentText");
                             
@@ -484,7 +484,7 @@ JS;
     }
 
     /**
-     * The JS value setter for EasyUI combogrids is a custom function defined in euiComboTable::buildJs() - it only needs to be called here.
+     * The JS value setter for EasyUI combogrids is a custom function defined in euiInputComboTable::buildJs() - it only needs to be called here.
      *
      * {@inheritdoc}
      *
@@ -567,7 +567,7 @@ JS;
 
                 function {$this->buildJsFunctionPrefix()}onChange(){
                     {$this->buildJsDebugMessage('onChange()')}
-                    // Diese Werte koennen gesetzt werden damit, wenn der Wert der ComboTable
+                    // Diese Werte koennen gesetzt werden damit, wenn der Wert der InputComboTable
                     // geaendert wird, nur ein Teil oder gar keine verlinkten Elemente aktualisiert
                     // werden.
                     var suppressFilterSetterUpdate = false, clearFilterSetterUpdate = false, suppressAllUpdates = false, suppressLazyLoadingGroupUpdate = false;
@@ -815,7 +815,7 @@ JS;
                         
                         // Ergibt die Anfrage bei einem FilterSetterUpdate keine Ergebnisse waehrend ein Wert
                         // gesetzt ist, widerspricht der gesetzte Wert wahrscheinlich den gesetzten Filtern.
-                        // Deshalb wird der Wert der ComboTable geloescht und anschliessend neu geladen.
+                        // Deshalb wird der Wert der InputComboTable geloescht und anschliessend neu geladen.
                         var rows = {$this->getId()}_datagrid.datagrid("getData");
                         if (rows["total"] == 0 && {$this->buildJsFunctionPrefix()}valueGetter()) {
                             {$this->buildJsFunctionPrefix()}clear(true);
@@ -952,7 +952,7 @@ JS;
      * 0 = off, 1 = low, 2 = medium, 3 = high detail-level (default: 0)
      *
      * @param integer|string $value            
-     * @return \exface\JEasyUiTemplate\Templates\Elements\euiComboTable
+     * @return \exface\JEasyUiTemplate\Templates\Elements\euiInputComboTable
      */
     function setJsDebugLevel($value)
     {

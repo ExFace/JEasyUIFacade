@@ -181,9 +181,9 @@ class euiData extends euiAbstractElement
         
         // Make sure, all selections are cleared, when the data is loaded from the backend. This ensures, the selected rows are always visible to the user!
         if ($widget->getMultiSelect()) {
-            // TODO: Gibt Probleme im Context einer ComboTable. Dort muesste die Zeile folgendermassen
+            // TODO: Gibt Probleme im Context einer InputComboTable. Dort muesste die Zeile folgendermassen
             // aussehen: $(this).combogrid("grid").' . $this->getElementType() . '("clearSelections");
-            // Ist es fuer eine ComboTable sinnvoll nach jedem Laden ihre Auswahl zu verlieren???
+            // Ist es fuer eine InputComboTable sinnvoll nach jedem Laden ihre Auswahl zu verlieren???
             // $this->addOnLoadSuccess('$(this).' . $this->getElementType() . '("clearSelections");');
             
             // Autoselect all rows if neccessary
