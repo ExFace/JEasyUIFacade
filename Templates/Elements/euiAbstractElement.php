@@ -254,13 +254,12 @@ abstract class euiAbstractElement extends AbstractJqueryElement
      *
      * @return string
      */
-    public function getPadding()
+    public function getPadding($default = 0)
     {
-        $output = '0';
         if (($containerWidget = $this->getWidget()->getParentByType('exface\\Core\\Interfaces\\Widgets\\iContainOtherWidgets')) && ($containerWidget->countWidgetsVisible() > 1)) {
             $output = round($this->getSpacing() / 2) . 'px';
         }
-        return $output;
+        return isset($output) ? $output : $default;
     }
 
     /**
@@ -290,16 +289,23 @@ abstract class euiAbstractElement extends AbstractJqueryElement
      */
     protected function buildHtmlGridItemWrapper($html, $title = '')
     {
-        if ($this->getWidget()->getParentByType('exface\\Core\\Interfaces\\Widgets\\iLayoutWidgets')){
-            return <<<HTML
-            
-            <div title="{$title}" class="exf-grid-item {$this->getMasonryItemClass()} {$this->buildCssElementClass()}" style="width:{$this->getWidth()};min-width:{$this->getMinWidth()};height:{$this->getHeight()};padding:{$this->getPadding()};box-sizing:border-box;">
+        $grid = $this->getWidget()->getParentByType('exface\\Core\\Interfaces\\Widgets\\iLayoutWidgets');
+        if ($grid && $grid->countWidgetsVisible() > 1){
+            $gridClasses = 'exf-grid-item ' . $this->getMasonryItemClass();
+        } else {
+            $gridClasses = '';
+        }
+        
+        $style = '';
+        if (($padding = $this->getPadding(false)) !== false) {
+            $style .= 'padding:' . $padding . ';';
+        }
+        return <<<HTML
+        
+            <div title="{$title}" class="{$gridClasses} {$this->buildCssElementClass()}" style="{$style}width:{$this->getWidth()};min-width:{$this->getMinWidth()};height:{$this->getHeight()};box-sizing:border-box;">
                 {$html}
             </div>
 HTML;
-        } else {
-            return $html;
-        }
     }
 }
 ?>

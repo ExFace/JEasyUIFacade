@@ -57,13 +57,16 @@ HTML;
         // Nur wenn das Panel den gesamten Container ausfuellt, darf seine Groesse nicht
         // geaendert werden. In diesem Fall wird der wrapper eingefuegt und stattdessen seine
         // Groesse geaendert. Dadurch wird der Inhalt scrollbar im Panel angezeigt.
-        if ((is_null($widget->getParent()) || (($containerWidget = $widget->getParentByType('exface\\Core\\Interfaces\\Widgets\\iContainOtherWidgets')) && ($containerWidget->countWidgetsVisible() == 1))) && ($widget->countWidgetsVisible() > 1)) {
+        $containerWidget = $widget->getParentByType('exface\\Core\\Interfaces\\Widgets\\iContainOtherWidgets');
+        if (! $widget->hasParent() || ($containerWidget && $containerWidget->countWidgetsVisible() == 1)) {
+            if ($widget->countWidgetsVisible() > 1) {
             $children_html = <<<HTML
 
                         <div class="grid" id="{$this->getId()}_masonry_grid" style="width:100%;height:100%;">
                             {$children_html}
                         </div>
 HTML;
+            }
         }
         
         // Hat das Panel eine begrenzte Groesse (es ist nicht alleine in seinem Container)
