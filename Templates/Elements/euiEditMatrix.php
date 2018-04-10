@@ -107,7 +107,7 @@ HTML;
         
         $output = $this->buildJsDataSource() . ', columnSorting: true' . ', sortIndicator: true' . ', manualColumnResize: true' . ', manualColumnMove: true' . 
         // . ', stretchH: "all"'
-        ($widget->getShowRowNumbers() ? ', rowHeaders: true' : '') . ($widget->getFormulasEnabled() ? ', formulas: true' : '') . ($this->getWidth() ? ', width: ' . $this->getWidth() : '') . ($widget->getCaption() ? ', title: "' . str_replace('"', '\"', $widget->getCaption()) . '"' : '') . ', ' . $this->buildJsInitOptionsColumns();
+        ($widget->getShowRowNumbers() ? ', rowHeaders: true' : '') . ($widget->getFormulasEnabled() ? ', formulas: true' : '') . ($this->getWidth() ? ', width: "' . $this->getWidth() . '"' : '') . ($widget->getCaption() ? ', title: "' . str_replace('"', '\"', $widget->getCaption()) . '"' : '') . ', ' . $this->buildJsInitOptionsColumns();
         return $output;
     }
 
@@ -287,6 +287,11 @@ HTML;
         } else {
             return 'type: "text"';
         }
+    }
+    
+    public function buildHtmlButtons()
+    {
+        return '';
     }
 }
 ?>
