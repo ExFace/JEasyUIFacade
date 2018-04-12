@@ -67,7 +67,7 @@ div.messager-body{overflow-y: auto;}
 
 /* InputJson widget */
 .jsoneditor {text-align: left;}
-.exf-grid-item .jsoneditor div.outer {margin: 0;}
+.exf-control .jsoneditor div.outer {margin: 0;}
 
 /* jQuery FileUpload */
 .fileupload-files{margin-top: 10px;}
