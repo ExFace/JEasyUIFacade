@@ -7,7 +7,7 @@ use exface\Core\DataTypes\PriceDataType;
 use exface\Core\DataTypes\NumberDataType;
 use exface\Core\Interfaces\DataTypes\DataTypeInterface;
 
-class euiEditMatrix extends euiDataMatrixOld
+class euiDataSpreadSheet extends euiDataMatrixOld
 {    
     private $label_values = array();
 
