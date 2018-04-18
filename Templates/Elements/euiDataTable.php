@@ -366,6 +366,21 @@ JS;
             }
         }
         
+        if ($this->getWidget()->getMultiSelect() === false) {
+            $grid_head .= <<<JS
+
+                    , onBeforeSelect: function(index,row) {
+                        console.log(index, row);
+                        if ($(this).{$this->getElementType()}('getSelected') === row) { 
+                            $(this).{$this->getElementType()}('unselectRow', index); 
+                            {$this->getOnChangeScript()};
+                            return false;
+                        }
+                    }
+
+JS;
+        }
+        
         $grid_head .= ($this->getOnChangeScript() ? ', onSelect: function(index, row){' . $this->getOnChangeScript() . '}' : '');
         $grid_head .= ($widget->getCaption() ? ', title: "' . str_replace('"', '\"', $widget->getCaption()) . '"' : '');
         
