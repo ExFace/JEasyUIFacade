@@ -198,7 +198,7 @@ class euiData extends euiAbstractElement
 				, multiSort: ' . ($widget->getHeaderSortMultiple() ? 'true' : 'false') . '
 				' . $sortColumn . $sortOrder . '
 				' . ($widget->getUidColumnId() ? ', idField: "' . $widget->getUidColumn()->getDataColumnName() . '"' : '') . '
-				' . (! $widget->getMultiSelect() ? ', singleSelect: true' : '') . '
+				, singleSelect: ' . ($widget->getMultiSelect() ? 'false' : 'true') . '
 				' . ($this->getWidth() ? ', width: "' . $this->getWidth() . '"' : '') . '
 				, pagination: ' . ($widget->getPaginate() ? 'true' : 'false') . '
 				' . ($widget->getPaginate() ? ', pageList: ' . json_encode($page_sizes) : '') . '
