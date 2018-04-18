@@ -366,21 +366,6 @@ JS;
             }
         }
         
-        if ($this->getWidget()->getMultiSelect() === false) {
-            $grid_head .= <<<JS
-
-                    , onBeforeSelect: function(index,row) {
-                        console.log(index, row);
-                        if ($(this).{$this->getElementType()}('getSelected') === row) { 
-                            $(this).{$this->getElementType()}('unselectRow', index); 
-                            {$this->getOnChangeScript()};
-                            return false;
-                        }
-                    }
-
-JS;
-        }
-        
         $grid_head .= ($this->getOnChangeScript() ? ', onSelect: function(index, row){' . $this->getOnChangeScript() . '}' : '');
         $grid_head .= ($widget->getCaption() ? ', title: "' . str_replace('"', '\"', $widget->getCaption()) . '"' : '');
         
@@ -564,6 +549,17 @@ JS;
         
         // Add buttons to the pager at the bottom of the datagrid
         $bottom_buttons = array();
+        $bottom_buttons[] = <<<JS
+                    
+                    {
+						iconCls:  "fa fa-eraser",
+						title: "{$this->translate('WIDGET.DATATABLE.CLEAR_SELECTIONS')}",
+						handler: function() { 
+                            $('#{$this->getId()}').{$this->getElementType()}('unselectAll');
+                            {$this->getOnChangeScript()}
+                        }
+					}
+JS;
         
         // If the top toolbar is hidden, add actions to the bottom toolbar
         if ($widget->getHideHeader() && ! $widget->getHideFooter() && $widget->hasButtons()) {
