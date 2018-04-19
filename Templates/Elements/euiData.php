@@ -637,20 +637,35 @@ JS;
         
         // Styler option
         $styler = $col->getCellStylerScript();
-        if (! $styler && $cellWidget instanceof iShowText){
-            switch ($cellWidget->getStyle()) {
-                case TextStylesDataType::BOLD:
-                    $styler = "return 'font-weight: bold;'";
-                    break;
-                case TextStylesDataType::ITALIC:
-                    $styler = "return 'font-style: italic;'";
-                    break;
-                case TextStylesDataType::UNDERLINE:
-                    $styler = "return 'text-decoration: underline;'";
-                    break;
-                case TextStylesDataType::UNDERLINE:
-                    $styler = "return 'text-decoration: line-through;'";
-                    break;
+        if (! $styler) {
+            $stylerCss = '';
+            if ($cellWidget instanceof iShowText){
+                switch ($cellWidget->getStyle()) {
+                    case TextStylesDataType::BOLD:
+                        $stylerCss = "font-weight: bold;";
+                        break;
+                    case TextStylesDataType::ITALIC:
+                        $stylerCss = "font-style: italic;";
+                        break;
+                    case TextStylesDataType::UNDERLINE:
+                        $stylerCss = "text-decoration: underline;";
+                        break;
+                    case TextStylesDataType::UNDERLINE:
+                        $stylerCss = "text-decoration: line-through;";
+                        break;
+                }
+            }
+            $maxWidth = $col->getWidthMax();
+            if (! $maxWidth->isUndefined()) {
+                if ($maxWidth->isRelative()) {
+                    // TODO
+                } else {
+                    $stylerCss .= 'max-width: ' . $maxWidth->getValue() . '; text-overflow: ellipsis;';
+                }
+            }
+            
+            if ($stylerCss !== '') {
+                $styler = "return '" . $stylerCss . "';";
             }
         }
         
