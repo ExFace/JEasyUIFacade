@@ -127,10 +127,17 @@ HTML;
      */
     public function getWidth()
     {
-        if ($this->getWidget()->getWidth()->isUndefined()) {
+        $width = $this->getWidget()->getWidth();
+        if ($width->isUndefined()) {
             $number_of_columns = $this->getNumberOfColumns();
-            $this->getWidget()->setWidth(($number_of_columns * $this->getWidthRelativeUnit() + 35) . 'px');
+            //$this->getWidget()->setWidth(($number_of_columns * $this->getWidthRelativeUnit() + 35) . 'px');
+            return ($number_of_columns * $this->getWidthRelativeUnit() + 35) . 'px';
+        } 
+        
+        if ($width->isRelative()) {
+            return $width->getValue() * $this->getWidthRelativeUnit() + 35 . 'px';
         }
+        
         return parent::getWidth();
     }
 
@@ -143,7 +150,7 @@ HTML;
     public function getHeight()
     {
         if ($this->getWidget()->getHeight()->isUndefined()) {
-            $this->getWidget()->setHeight('80%');
+            $this->getWidget()->setHeight('calc(100vh * 0.8)');
         }
         return parent::getHeight();
     }
