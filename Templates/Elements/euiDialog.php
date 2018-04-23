@@ -150,7 +150,7 @@ HTML;
     public function getHeight()
     {
         if ($this->getWidget()->getHeight()->isUndefined()) {
-            $this->getWidget()->setHeight('calc(100vh * 0.8)');
+            $this->getWidget()->setHeight('85%');
         }
         return parent::getHeight();
     }
