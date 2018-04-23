@@ -69,6 +69,10 @@ div.messager-body{overflow-y: auto;}
 .jsoneditor {text-align: left;}
 .exf-control .jsoneditor div.outer {margin: 0;}
 
+/* Markdown */
+.markdown-body {font-size: 14px !important;}
+.easyui-dialog > .markdown-body {padding: 20px 10px 10px 10px}
+
 /* jQuery FileUpload */
 .fileupload-files{margin-top: 10px;}
 .fileupload-inner{line-height: 110px; vertical-align: middle;}

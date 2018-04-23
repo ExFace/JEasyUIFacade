@@ -38,6 +38,8 @@
 	"SOURCES.FLOT.PLUGINS.ORDERBARS": "exface/JEasyUiTemplate/Templates/js/flot/plugins/jquery.flot.orderBars.js",
 	"SOURCES.FLOT.PLUGINS.AXISLABELS": "exface/JEasyUiTemplate/Templates/js/flot/plugins/jquery.flot.orderBars.js",
 	
+	"SOURCES.MARKDOWN.CSS": "npm-asset/github-markdown-css/github-markdown.css",
+	
 	"SOURCES.MASONRY": "bower-asset/masonry/dist/masonry.pkgd.min.js",
 	
 	"SOURCES.TEMPLATE.CSS": "exface/JEasyUiTemplate/Templates/js/template.css",
