@@ -17,5 +17,29 @@ class euiButtonGroup extends euiAbstractElement
     protected function getMoreButtonsMenuCaption(){
         return '...';
     }
+    
+    /**
+     * 
+     * {@inheritDoc}
+     * @see \exface\Core\Templates\AbstractAjaxTemplate\Elements\AbstractJqueryElement::buildHtml()
+     */
+    public function buildHtml()
+    {
+        return $this->buildHtmlButtonGroupWrapper($this->buildHtmlButtons());
+    }
+    
+    /**
+     * 
+     * {@inheritDoc}
+     * @see \exface\Core\Templates\AbstractAjaxTemplate\Elements\AbstractJqueryElement::buildJs()
+     */
+    public function buildJs()
+    {
+        $js = '';
+        foreach ($this->getWidget()->getButtons() as $button) {
+            $js .= $this->getTemplate()->buildJs($button);
+        }
+        return $js;
+    }
 }
 ?>
