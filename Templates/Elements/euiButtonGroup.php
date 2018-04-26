@@ -35,11 +35,7 @@ class euiButtonGroup extends euiAbstractElement
      */
     public function buildJs()
     {
-        $js = '';
-        foreach ($this->getWidget()->getButtons() as $button) {
-            $js .= $this->getTemplate()->buildJs($button);
-        }
-        return $js;
+        $this->buildJsForButtons();
     }
 }
 ?>
