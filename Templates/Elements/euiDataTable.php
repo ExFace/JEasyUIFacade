@@ -33,7 +33,7 @@ class euiDataTable extends euiData
         
         // Take care of refresh links
         if ($refresh_link = $widget->getRefreshWithWidget()) {
-            if ($refresh_link_element = $this->getTemplate()->getElement($refresh_link->getWidget())) {
+            if ($refresh_link_element = $this->getTemplate()->getElement($refresh_link->getTargetWidget())) {
                 $refresh_link_element->addOnChangeScript($this->buildJsRefresh());
             }
         }
