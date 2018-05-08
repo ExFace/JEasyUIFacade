@@ -54,13 +54,8 @@ function contextBarLoad(delay){
 		if ($('#contextBar .panel-loading').length > 0){
 			$.ajax({
 				type: 'POST',
-				url: 'exface/api/jeasyui',
+				url: 'exface/api/jeasyui/' + getPageId() + '/context',
 				dataType: 'json',
-				data: {
-					action: 'exface.Core.ShowWidget',
-					resource: getPageId(),
-					element: 'ContextBar'
-				},
 				success: function(data, textStatus, jqXHR) {
 					contextBarRefresh(data);
 				},
