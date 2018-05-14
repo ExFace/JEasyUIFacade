@@ -11,7 +11,7 @@ class euiMarkdown extends euiHtml
     public function buildHtmlHeadTags()
     {
         $includes = parent::buildHtmlHeadTags();   
-        $includes[] = '<link href="' . $this->getTemplate()->buildUrlToSource('SOURCES.MARKDOWN.CSS') . '" rel="stylesheet">';
+        $includes[] = '<link href="' . $this->getTemplate()->buildUrlToSource('LIBS.MARKDOWN.CSS') . '" rel="stylesheet">';
         return $includes;
     }
     

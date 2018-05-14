@@ -19,9 +19,7 @@ class euiChart extends euiData
     
     use JqueryFlotTrait;
     
-    use JqueryToolbarsTrait {
-        buildHtmlHeadTags as buildHtmlHeadTagsByTrait;
-    }
+    use JqueryToolbarsTrait;
 
     private $on_change_script = '';
 
@@ -117,18 +115,17 @@ HTML;
                     
 JS;
         
-        $output .= $this->buildJsPlotFunction();
+        $output .= $this->buildJsFunctions();
         
         return $output;
     }
 
     /**
-     * Returns the definition of the function elementId_load(urlParams) which is used to fethc the data via AJAX
-     * if the chart is not bound to another data widget (in that case, the data should be provided by that widget).
+     * Returns the JS code to fetch data: either via AJAX or from a Data widget (if the chart is bound to another data widget).
      *
      * @return string
      */
-    protected function buildJsAjaxLoaderFunction()
+    protected function buildJsDataLoader()
     {
         $widget = $this->getWidget();
         $output = '';
@@ -163,7 +160,6 @@ JS;
             
             // Loader function
             $output .= '
-				function ' . $this->buildJsFunctionPrefix() . 'load(){
 					' . $this->buildJsBusyIconShow() . '
 					$.ajax({
 						url: "' . $this->getAjaxUrl() . '",
@@ -175,18 +171,15 @@ JS;
                             
                         },
 						success: function(data){
-							' . $this->buildJsFunctionPrefix() . 'plot(data);
-							' . $this->buildJsBusyIconHide() . '
+							' . $this->buildJsRedraw('data') . ';
+							' . $this->buildJsBusyIconHide() . ';
 						},
 						error: function(jqXHR, textStatus, errorThrown){
 							' . $this->buildJsShowError('jqXHR.responseText', 'jqXHR.status + " " + jqXHR.statusText') . '
 							' . $this->buildJsBusyIconHide() . '
 						}
 					});
-				}';
-            
-            // Call the data loader to populate the Chart initially
-            $output .= $this->buildJsRefresh();
+				';
         }
         
         return $output;
@@ -224,12 +217,17 @@ JS;
         return "$('#{$this->getId()}_wrapper .panel-loading').remove();";
     }
     
+    /**
+     * 
+     * {@inheritDoc}
+     * @see \exface\Core\Templates\AbstractAjaxTemplate\Elements\AbstractJqueryElement::buildHtmlHeadTags()
+     */
     public function buildHtmlHeadTags()
     {
-        $includes = array_merge(parent::buildHtmlHeadTags(), $this->buildHtmlHeadTagsByTrait());
+        $includes = array_merge(parent::buildHtmlHeadTags(), $this->buildHtmlHeadDefaultIncludes());
         
         // masonry for proper filter alignment
-        $includes[] = '<script type="text/javascript" src="' . $this->getTemplate()->buildUrlToSource('SOURCES.MASONRY') . '"></script>';
+        $includes[] = '<script type="text/javascript" src="' . $this->getTemplate()->buildUrlToSource('LIBS.MASONRY') . '"></script>';
         return $includes;
     }
 }

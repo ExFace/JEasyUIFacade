@@ -43,8 +43,8 @@ HTML;
     public function buildHtmlHeadTags()
     {
         return array(
-            '<script type="text/javascript" src="' . $this->getTemplate()->buildUrlToSource('SOURCES.JQUERY_PRETTY_TEXT_DIFF') . '"></script>',
-            '<script type="text/javascript" src="' . $this->getTemplate()->buildUrlToSource('SOURCES.DIFF_MATCH_PATCH') . '"></script>'
+            '<script type="text/javascript" src="' . $this->getTemplate()->buildUrlToSource('LIBS.JQUERY_PRETTY_TEXT_DIFF') . '"></script>',
+            '<script type="text/javascript" src="' . $this->getTemplate()->buildUrlToSource('LIBS.DIFF_MATCH_PATCH') . '"></script>'
         );
     }
 
