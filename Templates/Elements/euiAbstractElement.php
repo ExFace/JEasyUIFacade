@@ -327,5 +327,16 @@ HTML;
     {
         return '';
     }
+    
+    /**
+     * Returns an inline JS-snippet, that resolves to TRUE if the jEasyUI control for this element is
+     * already initialized in FALSE otherwise.
+     * 
+     * @return string
+     */
+    public function buildJsCheckInitialized() : string
+    {
+        return "($('{$this->getId()}').data('{$this->getElementType()}') !== undefined)";
+    }
 }
 ?>

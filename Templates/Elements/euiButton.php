@@ -9,6 +9,7 @@ use exface\Core\Templates\AbstractAjaxTemplate\Elements\AbstractJqueryElement;
 use exface\Core\Widgets\Dialog;
 use exface\Core\Widgets\Button;
 use exface\Core\Widgets\ButtonGroup;
+use exface\Core\Templates\AbstractAjaxTemplate\Elements\JqueryDisableConditionTrait;
 
 /**
  * generates jEasyUI-Buttons for ExFace
@@ -24,8 +25,15 @@ class euiButton extends euiAbstractElement
     
     use JqueryButtonTrait;
     use JqueryAlignmentTrait;
+    use JqueryDisableConditionTrait;
+    
+    protected function init()
+    {
+        parent::init();
+        $this->setElementType('linkbutton');
+    }
 
-    function buildJs()
+    public function buildJs()
     {
         $output = '';
         $action = $this->getAction();
@@ -49,6 +57,9 @@ class euiButton extends euiAbstractElement
                 $output .= $this->getAction()->buildScriptHelperFunctions($this->getTemplate());
             }
         }
+        
+        // Initialize the disabled state of the widget if a disabled condition is set.
+        $output .= $this->buildJsDisableConditionInitializer();
         
         return $output;
     }
@@ -83,7 +94,7 @@ class euiButton extends euiAbstractElement
         }
         
         $output = '
-				<a id="' . $this->getId() . '" title="' . str_replace('"', '\"', $widget->getHint()) . '" href="#" class="easyui-linkbutton" data-options="' . $this->buildJsDataOptions() . '" style="' . $style . '" onclick="' . $this->buildJsFunctionPrefix() . 'click();">
+				<a id="' . $this->getId() . '" title="' . str_replace('"', '\"', $widget->getHint()) . '" href="#" class="easyui-' . $this->getElementType() . '" data-options="' . $this->buildJsDataOptions() . '" style="' . $style . '" onclick="' . $this->buildJsFunctionPrefix() . 'click();">
 						' . $widget->getCaption() . '
 				</a>';
         return $output;
@@ -195,6 +206,28 @@ JS;
     public function buildHtmlHeadTags()
     {
         return array();
+    }
+    
+    /**
+     * 
+     * {@inheritDoc}
+     * @see \exface\Core\Templates\AbstractAjaxTemplate\Elements\AbstractJqueryElement::buildJsDisabler()
+     */
+    public function buildJsDisabler()
+    {
+        // setTimeout() required to make sure, the jEasyUI element was initialized (especially in lazy loading dialogs)
+        return "setTimeout(function(){ $('#{$this->getId()}').{$this->getElementType()}('disable') }, 0)";
+    }
+    
+    /**
+     * 
+     * {@inheritDoc}
+     * @see \exface\Core\Templates\AbstractAjaxTemplate\Elements\AbstractJqueryElement::buildJsEnabler()
+     */
+    public function buildJsEnabler()
+    {
+        // setTimeout() required to make sure, the jEasyUI element was initialized (especially in lazy loading dialogs)
+        return  "setTimeout(function(){ $('#{$this->getId()}').{$this->getElementType()}('disable') }, 0)";
     }
 }
 ?>

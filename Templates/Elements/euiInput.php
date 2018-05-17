@@ -5,6 +5,7 @@ use exface\Core\Interfaces\Actions\ActionInterface;
 use exface\Core\Widgets\Input;
 use exface\Core\Templates\AbstractAjaxTemplate\Elements\JqueryLiveReferenceTrait;
 use exface\Core\Factories\WidgetLinkFactory;
+use exface\Core\Templates\AbstractAjaxTemplate\Elements\JqueryDisableConditionTrait;
 
 /**
  *
@@ -16,6 +17,7 @@ use exface\Core\Factories\WidgetLinkFactory;
 class euiInput extends euiValue
 {
     use JqueryLiveReferenceTrait;
+    use JqueryDisableConditionTrait;
 
     /**
      * 
