@@ -154,9 +154,9 @@ abstract class euiAbstractElement extends AbstractJqueryElement
                 $cols = $columnNumber;
             }
             if (is_numeric($cols)) {
-                if ($cols < 1) {
+                /*if ($cols < 1) {
                     $cols = 1;
-                } else if ($cols > $columnNumber) {
+                } else */if ($cols > $columnNumber) {
                     $cols = $columnNumber;
                 }
                 
@@ -289,7 +289,8 @@ abstract class euiAbstractElement extends AbstractJqueryElement
      */
     protected function buildHtmlGridItemWrapper($html, $title = '')
     {
-        $grid = $this->getWidget()->getParentByType('exface\\Core\\Interfaces\\Widgets\\iLayoutWidgets');
+        $widget = $this->getWidget();
+        $grid = $widget->getParentByType('exface\\Core\\Interfaces\\Widgets\\iLayoutWidgets');
         if ($grid && $grid->countWidgetsVisible() > 1){
             $gridClasses = 'exf-grid-item ' . $this->getMasonryItemClass();
         } else {
@@ -300,6 +301,7 @@ abstract class euiAbstractElement extends AbstractJqueryElement
         if (($padding = $this->getPadding(false)) !== false) {
             $style .= 'padding:' . $padding . ';';
         }
+        
         return <<<HTML
         
             <div title="{$title}" class="{$gridClasses} {$this->buildCssElementClass()}" style="{$style}width:{$this->getWidth()};min-width:{$this->getMinWidth()};height:{$this->getHeight()};box-sizing:border-box;">

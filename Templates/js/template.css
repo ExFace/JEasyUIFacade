@@ -124,9 +124,9 @@ pre.sf-dump .sf-dump-private, pre.sf-dump .sf-dump-public, pre.sf-dump .sf-dump-
 }
 .exf-tile-icon {
 	position: absolute;
-	top: 5px;
-	right: 10px;
-	font-size: 60px;
+	top: 8px;
+	right: 8px;
+	font-size: 28px;
 	color: rgba(0, 0, 0, 0.15);
 }
 .exf-tile-footer {
