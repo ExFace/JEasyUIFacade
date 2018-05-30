@@ -43,25 +43,27 @@ class euiWidgetGrid extends euiContainer implements JqueryLayoutInterface
         
         $title = $widget->getHideCaption() ? '' : ' title="' . $widget->getCaption() . '"';
         
-        $minChildWidthValue = null;
+        $minChildWidthValue = 1;
         foreach ($widget->getChildren() as $child) {
             $childWidth = $child->getWidth();
             if ($childWidth->isRelative() && ! $childWidth->isMax()) {
-                if ($minChildWidthValue === null) {
-                    $minChildWidthValue = $childWidth->getValue();
-                } elseif ($childWidth->getValue() < $minChildWidthValue) {
+                if ($childWidth->getValue() < $minChildWidthValue) {
                     $minChildWidthValue = $childWidth->getValue();
                 }
             }
         }
-        if (isset($minChildWidthValue)) {
-            $widthMultiplier = ' *' . $minChildWidthValue;
+        if ($minChildWidthValue !== 1) {
+            $sizerStyle .= "width:calc(100% / {$this->getNumberOfColumns()} * {$minChildWidthValue});";
+            $sizerStyle .= "min-width:calc({$this->getMinWidth()} * {$minChildWidthValue});";
+        } else {
+            $sizerStyle .= "width:calc(100% / {$this->getNumberOfColumns()});";
+            $sizerStyle .= "min-width:{$this->getMinWidth()};";
         }
         
         $children_html = <<<HTML
         
                             {$this->buildHtmlForWidgets()}
-                            <div id="{$this->getId()}_sizer" style="width:calc(100% / {$this->getNumberOfColumns()}{$widthMultiplier});"></div>
+                            <div id="{$this->getId()}_sizer" style="{$sizerStyle}"></div>
 HTML;
                             
                             // Wrap children widgets with a grid for masonry layouting - but only if there is something to be layed out
