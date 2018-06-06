@@ -4,6 +4,7 @@ namespace exface\JEasyUiTemplate\Templates\Elements;
 use exface\Core\Widgets\InputComboTable;
 use exface\Core\Exceptions\Widgets\WidgetConfigurationError;
 use exface\Core\Exceptions\InvalidArgumentException;
+use exface\Core\DataTypes\UrlDataType;
 
 /**
  *
@@ -615,6 +616,7 @@ JS;
     function buildJsOnBeforeload()
     {
         $widget = $this->getWidget();
+        $valueFilterParam = UrlDataType::urlEncode($this->getTemplate()->getUrlFilterPrefix().$widget->getValueColumn()->getAttributeAlias());
         
         // If the value is set data is loaded from the backend. Same if also value-text is set, because otherwise
         // live-references don't work at the beginning. If no value is set, loading from the backend is prevented.
@@ -638,7 +640,7 @@ JS;
                         {$this->getId()}_jquery.data("_lastValidValue", "{$this->getValueWithDefaults()}");
                         {$this->getId()}_jquery.data("_currentText", "");
                         {$this->getId()}_jquery.data("_valueSetterUpdate", true);
-                        currentFilterSet.{$this->getTemplate()->getUrlFilterPrefix()}{$widget->getValueColumn()->getDataColumnName()} = "{$this->getValueWithDefaults()}";
+                        currentFilterSet["{$valueFilterParam}"] = "{$this->getValueWithDefaults()}";
 JS;
             }
         } else {
@@ -659,7 +661,7 @@ JS;
         // Widgets ohne Gruppe werden die normalen Filter gesetzt.
         $clearFiltersParam = $widget->getLazyLoadingGroupId() ? '' : $dataParam;
         // Add value filter (to show proper label for a set value)
-        $valueFilterParam = 'currentFilterSet.filter_' . $widget->getValueColumn()->getDataColumnName() . ' = ' . $this->getId() . '_jquery.combogrid("getValues").join();';
+        $valueFilterParam = 'currentFilterSet["' . $valueFilterParam . '"] = ' . $this->getId() . '_jquery.combogrid("getValues").join();';
         
         // firstLoadScript: enthaelt Anweisungen, die nur beim ersten Laden ausgefuehrt
         // werden sollen (Initialisierung)
