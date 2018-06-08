@@ -344,11 +344,17 @@ JS;
                         , onShowPanel: function() {
                             // Wird firstLoad verhindert, wuerde man eine leere Tabelle sehen. Um das zu
                             // verhindern wird die Tabelle hier neu geladen, falls sie leer ist.
-                            // Update: Wird immer noch doppelt geladen, wenn anfangs eine manuelle Eingabe
-                            // gemacht wird -> onChange (-> Laden), onShowPanel (-> Laden)
+                            // Das setTimeout() dient dazu, sicherzustellen, dass onBeforeLoad durch ist,
+                            // bevor geprüft wird, ob ein reload notwendig ist. Dann ist klar, ob eine
+                            // text eingabe erfolgte und damit das laden sowieso auf dem Weg ist. Nur wenn
+                            // das nicht der Fall ist, muss neu geladen werden.
                             {$this->buildJsDebugMessage('onShowPanel')}
                             if ({$this->getId()}_jquery.data("_firstLoad")) {
-                                {$this->getId()}_datagrid.datagrid("reload");
+                                setTimeout(function(){
+                                    if ({$this->getId()}_jquery.data("_lastFilterSet").q === undefined) {
+                                        {$this->getId()}_datagrid.datagrid("reload");
+                                    }
+                                }, 0);
                             }
                         }
                         , onHidePanel: function() {
@@ -707,7 +713,11 @@ JS;
                         param._firstLoad = true;
                         {$first_load_script}
                     } else {
-                        currentFilterSet.q = {$this->getId()}_jquery.data("_currentText");
+                         if ({$this->getId()}_jquery.data("_currentText") !== '') {
+                            currentFilterSet.q = {$this->getId()}_jquery.data("_currentText");
+                        } else if ({$this->buildJsValueGetter()} !== '') {
+                            {$valueFilterParam}
+                        }
                         {$dataParam}
                     }
                     
