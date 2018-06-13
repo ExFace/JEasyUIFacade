@@ -467,15 +467,19 @@ JS;
                 // is the same, even if it is shown in multiple rows at all times!
                 $rel_path = $col->getAttribute()->getRelationPath();
                 if ($rel_path && ! $rel_path->isEmpty()) {
-                    $col_obj_uid = $rel_path->getRelationLast()->getRelatedObjectKeyAttribute()->getAliasWithRelationPath();
+                    $col_obj_uid = $rel_path->getRelationLast()->getRightKeyAttribute()->getAliasWithRelationPath();
                     $this->addOnLoadSuccess("$('td[field=\'" . $col->getDataColumnName() . "\'] input').change(function(){
 						var rows = $('#" . $this->getId() . "')." . $this->getElementType() . "('getRows');
-						var thisRowIdx = $(this).parents('tr.datagrid-row').attr('datagrid-row-index');
+                        var thisRowIdx = $(this).parents('tr.datagrid-row').attr('datagrid-row-index');
 						var thisRowUID = rows[thisRowIdx]['" . $col_obj_uid . "'];
-						for (var i=0; i<rows.length; i++){
+                        var val = $(this).{$editor->buildJsValueGetterMethod()};
+						for (var i=0; i<rows.length; i++) {
 							if (rows[i]['" . $col_obj_uid . "'] == thisRowUID){
 								var ed = $('#" . $this->getId() . "')." . $this->getElementType() . "('getEditor', {index: i, field: '" . $col->getDataColumnName() . "'});
-								$(ed.target)." . $editor->buildJsValueSetterMethod("$(this)." . $editor->buildJsValueGetterMethod()) . ";
+								var ed$ = $(ed.target);
+                                if (val != ed$.{$editor->buildJsValueGetterMethod()}) {
+                                    ed$." . $editor->buildJsValueSetterMethod("val") . ";
+                                }
 							}
 						}
 					});");
