@@ -309,7 +309,8 @@ class euiData extends euiAbstractElement
         
         $output = '
                         title: "<span title=\"' . $this->buildHintText($col->getHint(), true) . '\">' . $col->getCaption() . '</span>"
-                        ' . ($col->hasAttributeReference() ? ', field: "' . $col->getDataColumnName() . '", _attributeAlias: "' . $col->getAttributeAlias() . '"' : ', field: "' . $col->getId() . '"') . "
+                        , field: "' . ($col->getDataColumnName() ? $col->getDataColumnName() : $col->getId()) . '"
+                        ' . ($col->hasAttributeReference() ? ', _attributeAlias: "' . $col->getAttributeAlias() . '"' : '') . "
                         " . ($colspan ? ', colspan: ' . intval($colspan) : '') . ($rowspan ? ', rowspan: ' . intval($rowspan) : '') . "
                         " . ($col->isHidden() ? ', hidden: true' : '') . "
                         " . ($col->getWidth()->isTemplateSpecific() ? ', width: "' . $col->getWidth()->toString() . '"' : '') . "
