@@ -467,7 +467,7 @@ JS;
                 // is the same, even if it is shown in multiple rows at all times!
                 $rel_path = $col->getAttribute()->getRelationPath();
                 if ($rel_path && ! $rel_path->isEmpty()) {
-                    $col_obj_uid = $rel_path->getRelationLast()->getRightKeyAttribute()->getAliasWithRelationPath();
+                    $col_obj_uid = $rel_path->getRelationLast()->getRightKeyAttribute(true)->getAliasWithRelationPath();
                     $this->addOnLoadSuccess("$('td[field=\'" . $col->getDataColumnName() . "\'] input').change(function(){
 						var rows = $('#" . $this->getId() . "')." . $this->getElementType() . "('getRows');
                         var thisRowIdx = $(this).parents('tr.datagrid-row').attr('datagrid-row-index');
@@ -556,7 +556,7 @@ JS;
         $bottom_buttons[] = <<<JS
                     
                     {
-						iconCls:  "fa fa-eraser",
+						iconCls:  "fa fa-square-o",
 						title: "{$this->translate('WIDGET.DATATABLE.CLEAR_SELECTIONS')}",
 						handler: function() { 
                             $('#{$this->getId()}').{$this->getElementType()}('unselectAll');
