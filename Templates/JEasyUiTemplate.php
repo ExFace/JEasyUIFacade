@@ -70,6 +70,8 @@ class JEasyUiTemplate extends AbstractAjaxTemplate
             }
         }
         
+        $includes = array_merge($includes, $this->buildHtmlHeadIcons());
+        
         return $includes;        
     }
 }
