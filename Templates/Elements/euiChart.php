@@ -224,7 +224,9 @@ JS;
      */
     public function buildHtmlHeadTags()
     {
-        $includes = array_merge(parent::buildHtmlHeadTags(), $this->buildHtmlHeadDefaultIncludes());
+        $widget = $this->getWidget();
+        $dataIncludes = $widget->getDataWidgetLink() === null ? $this->getTemplate()->getElement($this->getWidget()->getData())->buildHtmlHeadTags() : [];
+        $includes = array_merge($dataIncludes, $this->buildHtmlHeadDefaultIncludes());
         
         // masonry for proper filter alignment
         $includes[] = '<script type="text/javascript" src="' . $this->getTemplate()->buildUrlToSource('LIBS.MASONRY') . '"></script>';
