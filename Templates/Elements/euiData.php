@@ -163,9 +163,7 @@ class euiData extends euiAbstractElement
             $sortOrder = ", sortOrder: '" . implode(',', $direction) . "'";
         }
         
-        if (! is_null($widget->getPaginatePageSize())) {
-            $default_page_size = $widget->getPaginatePageSize();
-        } else {
+        if (! $default_page_size = $widget->getPaginator()->getPageSize()) {
             try {
                 $default_page_size = $this->getTemplate()->getConfig()->getOption('WIDGET.' . $widget->getWidgetType() . '.PAGE_SIZE');
             } catch (ConfigOptionNotFoundError $e) {
@@ -200,8 +198,8 @@ class euiData extends euiAbstractElement
 				' . ($widget->getUidColumnId() ? ', idField: "' . $widget->getUidColumn()->getDataColumnName() . '"' : '') . '
 				, singleSelect: ' . ($widget->getMultiSelect() ? 'false' : 'true') . '
 				' . ($this->getWidth() ? ', width: "' . $this->getWidth() . '"' : '') . '
-				, pagination: ' . ($widget->getPaginate() ? 'true' : 'false') . '
-				' . ($widget->getPaginate() ? ', pageList: ' . json_encode($page_sizes) : '') . '
+				, pagination: ' . ($widget->isPaged() ? 'true' : 'false') . '
+				' . ($widget->isPaged() ? ', pageList: ' . json_encode($page_sizes) : '') . '
 				, showFooter: ' . ($widget->hasColumnFooters() ? 'true' : 'false') . '
                 , pageSize: ' . $default_page_size . '
 				, striped: ' . ($widget->getStriped() ? 'true' : 'false') . '
