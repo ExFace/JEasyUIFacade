@@ -26,7 +26,7 @@
     
     "INSTALLER.SERVICEWORKER.ROUTES": {
     	"GET data": {
-			"description": "Cache data from the UI5 API",
+			"description": "Cache data from the template API",
 			"matcher": "/.*\\/api\\/jeasyui\\?(?!.*context).*/",
 			"strategy": "workbox.strategies.networkFirst",
 			"cacheName": "jeasyui-cache",
@@ -34,7 +34,7 @@
     		"maxAgeSeconds": 86400
 		},
     	"POST data": {
-			"description": "Cache reading POST requests from the UI5 API",
+			"description": "Cache reading POST requests from the template API",
 			"method": "POST",
 			"matcher": "/.*\\/api\\/jeasyui(?!.*context).*/i",
 			"strategy": "swTools.strategies.postNetworkFirst",
