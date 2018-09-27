@@ -28,24 +28,7 @@ class JEasyUiTemplateApp extends App
         $installer->addInstaller($tplInstaller);
         
         // ServiceWorker installer
-        $serviceWorkerBuilder = new ServiceWorkerBuilder();
-        foreach ($this->getConfig()->getOption('INSTALLER.SERVICEWORKER.ROUTES') as $id => $uxon) {
-            $serviceWorkerBuilder->addRouteToCache(
-                $id,
-                $uxon->getProperty('matcher'),
-                $uxon->getProperty('strategy'),
-                $uxon->getProperty('method'),
-                $uxon->getProperty('description'),
-                $uxon->getProperty('cacheName'),
-                $uxon->getProperty('maxEntries'),
-                $uxon->getProperty('maxAgeSeconds')
-                );
-        }
-        foreach ($this->getConfig()->getOption('INSTALLER.SERVICEWORKER.IMPORTS') as $path) {
-            $serviceWorkerBuilder->addImport($this->getWorkbench()->getCMS()->buildUrlToInclude($path));
-        }
-        $serviceWorkerInstaller = new ServiceWorkerInstaller($this->getSelector(), $serviceWorkerBuilder);
-        $installer->addInstaller($serviceWorkerInstaller);
+        $installer->addInstaller(ServiceWorkerInstaller::fromConfig($this->getSelector(), $this->getConfig(), $this->getWorkbench()->getCMS()));
         
         return $installer;
     }
