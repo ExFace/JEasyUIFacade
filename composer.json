@@ -33,8 +33,8 @@
         "app": {
             "app_uid": "0x11e6c930ff1f486693cce4b318306b9a",
             "app_alias": "exface.JEasyUiTemplate",
-            "model_md5": "6a3e8ff983447c6048f7cd7d1d4bbfe1",
-            "model_timestamp": "2017-08-02 09:18:58"
+            "model_md5": "c35adfbf498c98a2bb98165ab6aea8ab",
+            "model_timestamp": "2018-09-27 10:17:01"
         }
     },
     "autoload": {

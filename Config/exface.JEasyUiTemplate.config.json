@@ -12,18 +12,13 @@
 	
 	"JAVASCRIPT_DEBUG_LEVEL": 0,
 	
-	"HEADERS": [
-		"<link rel=\"shortcut icon\" sizes=\"196x196\" href=\"assets/images/alexa_icon_196.png\">",
-	    "<link rel=\"apple-touch-icon\" sizes=\"128x128\" href=\"assets/images/alexa_icon_128.png\">",
-	    "<link rel=\"apple-touch-icon-precomposed\" sizes=\"128x128\" href=\"assets/images/alexa_icon_128.png\">"
-	],
-	
 	"ICON_CLASSES.DEFAULT_CLASS_PREFIX": "fa fa-",
     "ICON_CLASSES.INSTALL": "fa fa-hdd-o",
     "ICON_CLASSES.UNINSTALL": "fa fa-trash",
     "ICON_CLASSES.PENCIL_MULTIPLE": "fa fa-pencil-square",
     "ICON_CLASSES.COMPARE": "fa fa-files-o",
     
+    "INSTALLER.SERVICEWORKER.DISABLED": true, 
     "INSTALLER.SERVICEWORKER.ROUTES": {
     	"GET data": {
 			"description": "Cache data from the template API",
