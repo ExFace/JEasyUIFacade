@@ -63,5 +63,25 @@ class euiInputCheckBox extends euiInput
     {
         return 'true';
     }
+    
+    /**
+     * 
+     * {@inheritDoc}
+     * @see \exface\JEasyUiTemplate\Templates\Elements\euiInput::buildJsDisabler()
+     */
+    public function buildJsDisabler()
+    {
+        return '$("#' . $this->getId() . '_checkbox").attr("disabled", true)';
+    }
+    
+    /**
+     * 
+     * {@inheritDoc}
+     * @see \exface\JEasyUiTemplate\Templates\Elements\euiInput::buildJsEnabler()
+     */
+    public function buildJsEnabler()
+    {
+        return '$("#' . $this->getId() . '_checkbox").attr("disabled", false)';
+    }
 }
 ?>
