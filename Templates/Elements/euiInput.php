@@ -97,7 +97,7 @@ class euiInput extends euiValue
         
         // Initialize the disabled state of the widget if a disabled condition is set.
         $output .= $this->buildJsDisableConditionInitializer();
-        return $output;        
+        return '$(function() { ' . $output . '});';        
     }
 
     /**

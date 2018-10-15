@@ -80,11 +80,9 @@ HTML;
     public function buildJs()
     {
         $widget = $this->getWidget();
-        $output = '';
         
-        // Add Scripts for the configurator widget first as they may be needed for the others
         $configurator_element = $this->getTemplate()->getElement($widget->getConfiguratorWidget());
-        $output .= $configurator_element->buildJs();
+        
         $on_before_load = <<<JS
             
                 try {
@@ -121,15 +119,17 @@ JS;
         $this->addOnLoadSuccess($onLoadSuccessScript);
         
         // Build JS for the editors
+        $editorsInit = '';
         if ($this->isEditable()) {
             foreach ($this->getEditors() as $editor) {
-                $output .= $editor->buildJsInlineEditorInit();
+                $editorsInit .= $editor->buildJsInlineEditorInit();
             }
         }
         
         // Wenn noetig initiales Laden ueberspringen.
+        $autoloadInit = '';
         if (! $widget->getAutoloadData() && $widget->getLazyLoading()) {
-            $output .= <<<JS
+            $autoloadInit .= <<<JS
 
             $("#{$this->getId()}").data("_skipNextLoad", true);
 JS;
@@ -152,8 +152,9 @@ JS;
         }
         
         // Add editors
+        $editorFunctions = '';
         if ($this->isEditable()) {
-            $output .= $this->buildJsEditableGridFunctions();
+            $editorFunctions .= $this->buildJsEditableGridFunctions();
         }
         
         // Add scripts for layouting and resizing
@@ -162,25 +163,40 @@ JS;
         // get the standard params for grids and put them before the custom grid head
         $grid_head = $this->buildJsInitOptions() . $grid_head;
         
-        // instantiate the data grid
-        $output .= '
-            $("#' . $this->getId() . '").' . $this->getElementType() . '({' . $grid_head . '});
-        ';
-        
         // Eine Nachricht anzeigen, dass keine Daten geladen wurde, wenn das initiale Laden
         // uebersprungen wird.
+        $initialMessageInit = '';
         if (! $widget->getAutoloadData() && $widget->getLazyLoading()) {
-            $output .= $this->buildJsNoInitialLoadMessageShow();
+            $initialMessageInit = $this->buildJsNoInitialLoadMessageShow();
         }
         
-        // build JS for the button actions
-        $output .= $this->buildJsButtons();
-        
-        $output .= $this->buildJsPagerButtons();
-        
-        $output .= $this->buildJsContextMenu();
-        
-        return $output;
+        return <<<JS
+
+// Add Scripts for the configurator widget first as they may be needed for the others   
+{$configurator_element->buildJs()}
+
+$(function(){
+    
+    {$editorsInit}
+
+    {$autoloadInit}
+    
+    // Init the table
+    $("#{$this->getId()}").{$this->getElementType()}({ {$grid_head} });
+
+    {$initialMessageInit}
+
+    {$this->buildJsPagerButtons()}
+
+    {$this->buildJsContextMenu()}
+
+});
+
+{$editorFunctions}
+
+{$this->buildJsButtons()}
+
+JS;
     }
 
     public function buildJsEditModeEnabler()
