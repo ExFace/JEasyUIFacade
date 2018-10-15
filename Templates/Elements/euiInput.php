@@ -91,13 +91,20 @@ class euiInput extends euiValue
      */
     protected function buildJsEventScripts()
     {
-        $output = '';
-        $output .= $this->buildJsLiveReference();
-        $output .= $this->buildJsOnChangeHandler();
-        
-        // Initialize the disabled state of the widget if a disabled condition is set.
-        $output .= $this->buildJsDisableConditionInitializer();
-        return '$(function() { ' . $output . '});';        
+        return <<<JS
+
+    // Event scripts for {$this->getId()}
+    $(function() { 
+        try {
+            {$this->buildJsLiveReference()}
+        } catch (e) {
+            console.warn('Failed to update live reference: ' + e);
+        }
+        {$this->buildJsOnChangeHandler()}
+        {$this->buildJsDisableConditionInitializer()}
+    });
+
+JS;
     }
 
     /**
