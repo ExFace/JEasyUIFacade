@@ -677,11 +677,15 @@ JS;
     
     protected function buildJsOnBeforeLoadScript($js_var_param = 'param')
     {
+        // Abort loading if _skipNextLoad is set - don't forget to trigger
+        // resize, just as a regular load would do. Otherwise the table would
+        // not fit exaclty in containers like splits.
         return <<<JS
-                    // General preparation
+                    // Abort immediately if next loading should be skipped
                     var jqself = $(this);
                     if (jqself.data("_skipNextLoad") == true) {
     					jqself.data("_skipNextLoad", false);
+                        jqself.trigger('resize');
     					return false;
     				}
 
