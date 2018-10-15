@@ -69,6 +69,8 @@ HTML;
         // message uebersetzt werden muss.
         $output = <<<JS
 
+$(function() {
+
     // Validator-Regel fuer InputDates hinzufuegen.
     $.extend($.fn.validatebox.defaults.rules, {
         date: {
@@ -82,6 +84,9 @@ HTML;
     $("#{$this->getId()}").{$this->getElementType()}({
         {$this->buildJsDataOptions()}
     });
+
+});
+
 JS;
         
         return $output;

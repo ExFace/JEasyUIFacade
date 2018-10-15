@@ -174,9 +174,11 @@ HTML;
             {$this->buildJsFunctionPrefix()}initGlobals();
             // Debug-Funktionen hinzufuegen.
             {$debug_function}
-			
-            {$this->getId()}_jquery.combogrid({
-                {$this->buildJsInitOptions()}
+
+			$(function() {
+                {$this->getId()}_jquery.combogrid({
+                    {$this->buildJsInitOptions()}
+                });
             });
             
 JS;

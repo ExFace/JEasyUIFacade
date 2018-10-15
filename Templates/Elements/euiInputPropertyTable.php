@@ -43,24 +43,25 @@ class euiInputPropertyTable extends euiInput
         // it got called right before the parent form was submitted. After we stopped using forms, this does not happen anymore. Instead the
         // custom value getter was introduced. The question is, if we still need the textarea and the (now only partially working) synchronisation.
         $output = <<<JS
-
-$('#{$this->buildJsGridId()}').{$this->getElementType()}({
-	data: JSON.parse($('#{$this->getId()}').val()),
-	showGroup: false,
-	showHeader: false,
-	title: "{$title}",	
-	scrollbarSize: 0,
-	tools: "#{$this->getId()}_tools",	
-	loadFilter: function(input){
-		var data = {"rows":[]};
-		var i=0;
-		for (var key in input){
-			data.rows[i] = {name: key, value: input[key], editor: "text"};
-			i++;
-		}
-		return data;
-	},
-	onLoadSuccess: {$this->buildJsFunctionPrefix()}Sync
+$(function() {
+    $('#{$this->buildJsGridId()}').{$this->getElementType()}({
+    	data: JSON.parse($('#{$this->getId()}').val()),
+    	showGroup: false,
+    	showHeader: false,
+    	title: "{$title}",	
+    	scrollbarSize: 0,
+    	tools: "#{$this->getId()}_tools",	
+    	loadFilter: function(input){
+    		var data = {"rows":[]};
+    		var i=0;
+    		for (var key in input){
+    			data.rows[i] = {name: key, value: input[key], editor: "text"};
+    			i++;
+    		}
+    		return data;
+    	},
+    	onLoadSuccess: {$this->buildJsFunctionPrefix()}Sync
+    });
 });
 
 function {$this->buildJsFunctionPrefix()}Sync(){
