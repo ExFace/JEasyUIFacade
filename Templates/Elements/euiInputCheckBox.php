@@ -4,11 +4,11 @@ namespace exface\JEasyUiTemplate\Templates\Elements;
 class euiInputCheckBox extends euiInput
 {
 
-    protected function init()
+    public function getElementType()
     {
-        $this->setElementType('checkbox');
+        return 'checkbox';
     }
-
+    
     function buildHtml()
     {
         $output = '	<div style="width: calc(100% + 2px); height: 100%; display: inline-block; text-align:left;">
