@@ -179,6 +179,9 @@ HTML;
                 {$this->getId()}_jquery.combogrid({
                     {$this->buildJsInitOptions()}
                 });
+
+                // Initialize the disabled state of the widget if a disabled condition is set.
+                {$this->buildJsDisableConditionInitializer()};
             });
             
 JS;
@@ -206,9 +209,6 @@ JS;
 JS;
             }
         }
-        
-        // Initialize the disabled state of the widget if a disabled condition is set.
-        $output .= $this->buildJsDisableConditionInitializer();
         
         // Add a clear icon to each combo grid - a small cross to the right, that resets the value
         // TODO The addClearBtn extension seems to break the setText method, so that it also sets the value. Perhaps we can find a better way some time
