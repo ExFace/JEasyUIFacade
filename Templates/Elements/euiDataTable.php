@@ -96,27 +96,6 @@ HTML;
         
 JS;
         $this->addOnBeforeLoad($on_before_load);
-        // Add a script to remove selected but not present rows onLoadSuccess. getRowIndex returns
-        // -1 for selected but not present rows. Selections outlive a reload but the selected row
-        // may have been deleted in the meanwhile. An example is "offene Positionen stornieren" in
-        // "Rueckstandsliste".
-        $onLoadSuccessScript = <<<JS
-
-				var jqself = $(this);
-                var rows = jqself.{$this->getElementType()}("getSelections");
-                var selectedRows = [];
-                for (var i = 0; i < rows.length; i++) {
-                    var index = jqself.{$this->getElementType()}("getRowIndex", rows[i]);
-                    if( index >= 0) {
-                        selectedRows.push(index);
-                    }
-                }
-                jqself.{$this->getElementType()}("clearSelections");
-                for (var i = 0; i < selectedRows.length; i++) {
-                    jqself.{$this->getElementType()}("selectRow", selectedRows[i]);
-                }
-JS;
-        $this->addOnLoadSuccess($onLoadSuccessScript);
         
         // Build JS for the editors
         $editorsInit = '';
@@ -382,7 +361,7 @@ JS;
             }
         }
         
-        $grid_head .= ($this->getOnChangeScript() ? ', onSelect: function(index, row){' . $this->getOnChangeScript() . '}' : '');
+        $grid_head .= ($this->getOnChangeScript() ? ', onSelect: function(index, row){' . $this->buildJsOnChangeScript('row', 'index') . '}' : '');
         $grid_head .= ($widget->getCaption() ? ', title: "' . str_replace('"', '\"', $widget->getCaption()) . '"' : '');
         
         return $grid_head;
@@ -575,8 +554,7 @@ JS;
 						iconCls:  "fa fa-square-o",
 						title: "{$this->translate('WIDGET.DATATABLE.CLEAR_SELECTIONS')}",
 						handler: function() { 
-                            $('#{$this->getId()}').{$this->getElementType()}('unselectAll');
-                            {$this->getOnChangeScript()}
+                            {$this->buildJsValueResetter()}
                         }
 					}
 JS;

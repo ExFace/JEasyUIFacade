@@ -23,6 +23,7 @@ use exface\Core\DataTypes\TimestampDataType;
 use exface\Core\Templates\AbstractAjaxTemplate\Interfaces\JsValueDecoratingInterface;
 use exface\Core\Interfaces\Widgets\iShowText;
 use exface\Core\Interfaces\Widgets\iDisplayValue;
+use exface\Core\Interfaces\Widgets\iSupportMultiSelect;
 
 /**
  * Implementation of a basic grid.
@@ -206,9 +207,7 @@ class euiData extends euiAbstractElement
 				, nowrap: ' . ($widget->getNowrap() ? 'true' : 'false') . '
 				, toolbar: "#' . $this->getToolbarId() . '"
 				' . ($this->buildJsOnBeforeLoadFunction() ? ', onBeforeLoad: ' . $this->buildJsOnBeforeLoadFunction() : '') . '
-				' . ($this->getOnLoadSuccess() ? ', onLoadSuccess: function(data) {
-					' . $this->getOnLoadSuccess() . '
-				}' : '') . '
+				' . $this->buildJsOnLoadSuccessOption() . '
 				, onLoadError: function(response) {
 					' . $this->buildJsShowError('response.responseText', 'response.status + " " + response.statusText') . '
 					' . $this->getOnLoadError() . '
@@ -219,6 +218,111 @@ class euiData extends euiAbstractElement
 				}' : '') . '
 				, columns: [ ' . implode(',', $this->buildJsInitOptionsColumns()) . ' ]';
         return $output;
+    }
+    
+    protected function buildJsOnLoadSuccessOption() : string
+    {
+        $widget = $this->getWidget();
+        
+        // FIXME these are two different implementations for the selection fixer for
+        // single- and multi-select. The multi-select version will not reselect rows,
+        // that have the same UID, but different data (e.g. because it changed compared
+        // to the last reload.
+        if ($widget instanceof iSupportMultiSelect && $widget->getMultiSelect() === true) {
+            // Add a script to remove selected but not present rows onLoadSuccess. getRowIndex returns
+            // -1 for selected but not present rows. Selections outlive a reload but the selected row
+            // may have been deleted in the meanwhile. An example is "offene Positionen stornieren" in
+            // "Rueckstandsliste".
+            $fixSelection = <<<JS
+
+                    var rows = jqSelf.{$this->getElementType()}("getSelections");
+                    var selectedRows = [];
+                    for (var i = 0; i < rows.length; i++) {
+                        var index = jqSelf.{$this->getElementType()}("getRowIndex", rows[i]);
+                        if( index >= 0) {
+                            selectedRows.push(index);
+                        }
+                    }
+                    jqSelf.{$this->getElementType()}("clearSelections");
+                    for (var i = 0; i < selectedRows.length; i++) {
+                        jqSelf.{$this->getElementType()}("selectRow", selectedRows[i]);
+                    }
+
+JS;
+        } else {
+            $fixSelection = <<<JS
+
+                    var prevSelection = jqSelf.data("_prevSelection");
+                    if (prevSelection !== undefined) {
+                        var curSelectedIdx = -1;
+                        var curRows = jqSelf.{$this->getElementType()}('getRows');
+                        for (var i in curRows) {
+                            if ({$this->buildJsRowCompare('curRows[i]', 'prevSelection')}) {
+                                curSelectedIdx = i;
+                                break;
+                            }
+                        }
+                        if (curSelectedIdx !== -1) {
+                            jqSelf.{$this->getElementType()}('selectRow', curSelectedIdx);
+                        } else {
+                            {$this->buildJsValueResetter()}
+                        }
+                    }
+
+JS;
+        }
+        
+        return <<<JS
+
+, onLoadSuccess: function(data) {
+                    var jqSelf = $(this);
+                    
+                    {$fixSelection}
+                    
+					{$this->getOnLoadSuccess()}
+				}
+
+JS;
+    }
+    
+    protected function buildJsOnChangeScript(string $rowJs = 'row', string $indexJs = 'index') : string
+    {
+        return <<<JS
+                        var prevRow = $(this).data('_prevSelection');
+                        if (prevRow !== undefined && {$this->buildJsRowCompare($rowJs, 'prevRow')}) {
+                            $(this).data('_prevSelection', {$rowJs});
+                            return;
+                        } else {
+                            $(this).data('_prevSelection', {$rowJs});
+                        }
+                        {$this->getOnChangeScript()}
+                        
+JS;
+    }
+    
+    /**
+     * Returns an inline JS snippet to compare two data rows represented by JS objects.
+     * 
+     * If this widget has a UID column, only the values of this column will be compared,
+     * unless $trustUid is FALSE. This is handy if you need to compare if the rows represent
+     * the same object (e.g. when selecting based on a row).
+     * 
+     * If this widget has no UID column or $trustUid is FALSE, the JSON-representations of
+     * the rows will be compared.
+     * 
+     * @param string $leftRowJs
+     * @param string $rightRowJs
+     * @param bool $trustUid
+     * @return string
+     */
+    protected function buildJsRowCompare(string $leftRowJs, string $rightRowJs, bool $trustUid = true) : string
+    {
+        if ($trustUid === true && $this->getWidget()->hasUidColumn()) {
+            $uid = $this->getWidget()->getUidColumn()->getDataColumnName();
+            return "{$leftRowJs}['{$uid}'] == {$rightRowJs}['{$uid}']";
+        } else {
+            return "(JSON.stringify({$leftRowJs}) == JSON.stringify({$rightRowJs}))";
+        }
     }
     
     public function buildJsInitOptionsColumns(array $column_groups = null)
@@ -389,7 +493,6 @@ class euiData extends euiAbstractElement
     
     public function addOnChangeScript($string)
     {
-        $this->addOnLoadSuccess($string);
         return parent::addOnChangeScript($string);
     }
     
@@ -707,15 +810,30 @@ JS;
     
     protected function buildJsOnBeforeLoadFunction()
     {
-        if (! $this->buildJsOnBeforeLoadScript()) {
+        if (! $script = $this->buildJsOnBeforeLoadScript('param')) {
             return '';
         }
         
         return <<<JS
 
                 function(param) {
-    				{$this->buildJsOnBeforeLoadScript('param')}
+    				{$script}
 				}
+
+JS;
+    }
+    				
+    protected function buildJsValueResetter() : string
+    {
+        return <<<JS
+
+                            // Reset selection
+                            var jqSelf = $('#{$this->getId()}');
+                            jqSelf.{$this->getElementType()}('unselectAll');
+                            if (jqSelf.data('_prevSelection') !== undefined) {
+                                jqSelf.data('_prevSelection', undefined);
+                                {$this->getOnChangeScript()}
+                            }
 
 JS;
     }
