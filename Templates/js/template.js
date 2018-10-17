@@ -163,18 +163,25 @@ function getPageId(){
  */
 function jeasyui_create_dialog(parentElement, id, options, content, parseContent){
 	parseContent = parseContent ? true : false;
-	var dialog = $('<div class="easyui-dialog" id="'+id+'"></div>');
+	var dialog = $('<div id="'+id+'"><div class="spinner-bg"><i class="panel-loading"></i><span class="sr-only">Loading...</span></div></div>');
 	parentElement.append(dialog);
-	$.parser.parse(content);
 	dialog.append(content);
-	if (parseContent){
-		$.parser.parse(dialog);
-	}
+	
+	// Open the dialog right away (it will show the spinner as long as the content is not loaded)
 	dialog.dialog(options);
-	// Lädt man eine Seite neu wenn man an alexa UI aber nicht an alexa RMS angemeldet ist,
-	// erscheint in Firefox eine Fehlermeldung in der linken unteren Ecke, in WebView ist
-	// die Fehlermeldung gar nicht zu sehen. Deshalb wird sie hier nochmal zentriert.
-	setTimeout(function() { dialog.dialog("center"); }, 0);
+	
+	setTimeout(function(){
+		// Parse the jEasyUI elements inside
+		if (parseContent){
+			$.parser.parse(dialog);
+		}
+		// Now hide the spinner
+		dialog.children('.spinner-bg').hide();
+		// Lädt man eine Seite neu wenn man an alexa UI aber nicht an alexa RMS angemeldet ist,
+		// erscheint in Firefox eine Fehlermeldung in der linken unteren Ecke, in WebView ist
+		// die Fehlermeldung gar nicht zu sehen. Deshalb wird sie hier nochmal zentriert.
+		dialog.dialog("center");
+	}, 0);
 }
 
 /*$.extend($.fn.textbox.methods, {
