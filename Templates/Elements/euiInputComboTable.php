@@ -406,7 +406,16 @@ JS;
      */
     function buildJsValueGetter($column = null, $row = null)
     {
-        $params = $column ? '"' . $column . '"' : '';
+        $params = '';
+        if ($column !== null) {
+            $table = $this->getWidget()->getTable();
+            if ($col = $table->getColumn($column)) {
+                $column = $col->getDataColumnName();
+            } elseif ($col = $table->getColumnByAttributeAlias($column)) {
+                $column = $col->getDataColumnName();
+            }
+            $params = '"' . $column . '"';
+        }
         $params = $row ? ($params ? $params . ', ' . $row : $row) : $params;
         return $this->buildJsFunctionPrefix() . 'valueGetter(' . $params . ')';
     }
