@@ -66,23 +66,7 @@ class euiWidgetGrid extends euiContainer implements JqueryLayoutInterface
                             <div id="{$this->getId()}_sizer" style="{$sizerStyle}"></div>
 HTML;
                             
-                            // Wrap children widgets with a grid for masonry layouting - but only if there is something to be layed out
-                            // Normalerweise wird das der masonry-wrapper nicht gebraucht. Masonry ordnet
-                            // dann die Elemente an und passt direkt die Grosse des Panels an den neuen Inhalt an.
-                            // Nur wenn das Panel den gesamten Container ausfuellt, darf seine Groesse nicht
-                            // geaendert werden. In diesem Fall wird der wrapper eingefuegt und stattdessen seine
-                            // Groesse geaendert. Dadurch wird der Inhalt scrollbar im Panel angezeigt.
-                            $containerWidget = $widget->getParentByType('exface\\Core\\Interfaces\\Widgets\\iContainOtherWidgets');
-                            if (! $widget->hasParent() || ($containerWidget && $containerWidget->countWidgetsVisible() == 1)) {
-                                if ($widget->countWidgetsVisible() > 1) {
-                                    $children_html = <<<HTML
-                                    
-                        <div class="grid" id="{$this->getId()}_masonry_grid" style="width:100%;height:100%;">
-                            {$children_html}
-                        </div>
-HTML;
-                                }
-                            }
+                            $children_html = $this->buildHtmlGridWrapper($children_html);
                             
                             // Hat das Panel eine begrenzte Groesse (es ist nicht alleine in seinem Container)
                             // und hat es eine begrenzte Breite (z.B. width: 1), dann ist am Ende seine Hoehe
@@ -121,6 +105,31 @@ HTML;
                         }
                         
                         return $output;
+    }
+    
+    protected function buildHtmlGridWrapper(string $contentHtml) : string
+    {
+        $widget = $this->getWidget();
+        
+        // Wrap children widgets with a grid for masonry layouting - but only if there is something to be layed out
+        // Normalerweise wird das der masonry-wrapper nicht gebraucht. Masonry ordnet
+        // dann die Elemente an und passt direkt die Grosse des Panels an den neuen Inhalt an.
+        // Nur wenn das Panel den gesamten Container ausfuellt, darf seine Groesse nicht
+        // geaendert werden. In diesem Fall wird der wrapper eingefuegt und stattdessen seine
+        // Groesse geaendert. Dadurch wird der Inhalt scrollbar im Panel angezeigt.
+        $containerWidget = $widget->getParentByType('exface\\Core\\Interfaces\\Widgets\\iContainOtherWidgets');
+        if (! $widget->hasParent() || ($containerWidget && $containerWidget->countWidgetsVisible() == 1)) {
+            if ($widget->countWidgetsVisible() > 1) {
+                $grid = <<<HTML
+                
+                        <div class="grid" id="{$this->getId()}_masonry_grid" style="width:100%;">
+                            {$contentHtml}
+                        </div>
+HTML;
+            }
+        } 
+        
+        return $grid ?? $contentHtml;
     }
     
     /**
