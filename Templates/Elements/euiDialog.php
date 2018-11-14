@@ -1,6 +1,8 @@
 <?php
 namespace exface\JEasyUiTemplate\Templates\Elements;
 
+use exface\Core\Widgets\Tabs;
+
 class euiDialog extends euiForm
 {
 
@@ -40,6 +42,14 @@ class euiDialog extends euiForm
         
         $children_html = '';
         if (! $this->isLazyLoading()) {
+            if ($widget->countWidgetsVisible() === 1 && ($widget->getWidget(0) instanceof Tabs)) {
+                // FIXME put the messages in the active tab instead of the first tab
+                $widget->getWidget(0)->getTab(0)->addWidget($widget->getMessageList());
+                $messageListHtml = '';
+            } else {
+                $messageListHtml = $this->getTemplate()->getElement($widget->getMessageList())->buildHtml();
+            }
+            
             $children_html = <<<HTML
 
             {$this->buildHtmlForWidgets()}
@@ -52,6 +62,7 @@ HTML;
                 $children_html = <<<HTML
 
         <div class="grid exf-dialog" id="{$this->getId()}_masonry_grid" style="width:100%;height:100%;">
+            {$messageListHtml}
             {$children_html}
         </div>
 HTML;
