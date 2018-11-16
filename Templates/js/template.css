@@ -69,7 +69,8 @@ div.messager-body{overflow-y: auto;}
 
 /* Messages */
 .exf-message-list {margin: 2px 4px;}
-.exf-message {padding: 5px; color: white; margin: 2px 0}
+.exf-message {padding: 5px; color: white; margin: 2px 0; min-height: 27px;}
+.exf-message a {color: white;}
 .exf-message-icon {float: left; width: 50px; text-align: center; height: 2em; line-height: 2em;}
 .exf-message-icon > i {font-size: 2em; color: white;}
 .exf-message-title {font-weight: bold};
