@@ -63,7 +63,7 @@ abstract class euiAbstractElement extends AbstractJqueryElement
         }
         $data = array();
         $data['rows'] = $data_sheet->getRows();
-        $data['total'] = $data_sheet->countRowsInDataSource();
+        $data['total'] = $data_sheet->countRowsInDataSource() ?? 999999;
         $data['footer'] = $data_sheet->getTotalsRows();
         return $data;
     }
