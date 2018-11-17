@@ -328,6 +328,8 @@ JS;
     public function buildJsInitOptionsHead()
     {
         $widget = $this->getWidget();
+        $this->registerPaginationFixer();
+        
         $grid_head = parent::buildJsInitOptionsHead();
         
         // Double click actions. Currently only supports one double click action - the first one in the list of buttons
@@ -649,6 +651,30 @@ JS;
 JS;
         
         return $output;
+    }
+    
+    protected function registerPaginationFixer() : string
+    {
+        $modifyLoadedData = <<<JS
+
+                    if (data.total === null) {
+                        data.total = data.rows.length + data.offset + 1;
+                        $(this).data("_totalRowCounterPlaceholder", data.total);
+                    }
+
+JS;
+        
+        $updatePager = <<<JS
+
+                    if ((jqSelf.data("_totalRowCounterPlaceholder") !== undefined) && jqSelf.prop('nodeName') === 'TABLE') {
+                        var pInfo = jqSelf.datagrid("getPager").find('.pagination-info');
+                        pInfo.text(pInfo.text().replace(jqSelf.data("_totalRowCounterPlaceholder"), '?'));
+                    }                         
+
+JS;
+        $this->addLoadFilterScript($modifyLoadedData);
+        $this->addOnLoadSuccess($updatePager);
+        return '';
     }
 }
 ?>

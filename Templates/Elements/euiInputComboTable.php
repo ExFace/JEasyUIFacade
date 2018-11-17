@@ -216,6 +216,32 @@ JS;
         
         return $output;
     }
+    
+    protected function registerPaginationFixer() : string
+    {
+        $modifyLoadedData = <<<JS
+        
+                    if (data.total === null) {
+                        data.total = data.rows.length + data.offset + 1;
+                        $("#{$this->getId()}").data("_totalRowCounterPlaceholder", data.total);
+                    }
+                    
+JS;
+        
+        $updatePager = <<<JS
+                    var rowCountPh = $("#{$this->getId()}").data("_totalRowCounterPlaceholder");
+                    if (rowCountPh !== undefined) {
+                        var pInfo = $("#{$this->getId()}").combogrid("grid").datagrid("getPager").find('.pagination-info');
+                        pInfo.text(pInfo.text().replace(rowCountPh, '?'));
+                    }
+                    
+JS;
+        
+        $table = $this->getTemplate()->getElement($this->getWidget()->getTable());
+        $table->addLoadFilterScript($modifyLoadedData);
+        $table->addOnLoadSuccess($updatePager);
+        return '';
+    }
 
     /**
      *
@@ -229,6 +255,8 @@ JS;
         $widget = $this->getWidget();
         /* @var $table \exface\JEasyUiTemplate\Templates\Elements\DataTable */
         $table = $this->getTemplate()->getElement($widget->getTable());
+        
+        $this->registerPaginationFixer();
         
         // Add explicitly specified values to every return data
         foreach ($widget->getSelectableOptions() as $key => $value) {
