@@ -69,11 +69,12 @@ div.messager-body{overflow-y: auto;}
 
 /* Messages */
 .exf-message-list {margin: 4px 4px 2px 4px;}
-.exf-message {padding: 5px; color: white; margin: 2px 0; min-height: 27px;}
+.exf-message {padding: 5px; color: white; margin: 2px 0; min-height: 27px; background-color: lightgray;}
 .exf-message a {color: white;}
 .exf-message-icon {float: left; width: 50px; text-align: center; height: 2em; line-height: 2em;}
 .exf-message-icon > i {font-size: 2em; color: white;}
-.exf-message-title {font-weight: bold};
+.exf-message-title {font-weight: bold; margin-left: 50px;}
+.exf-message-text {margin-left: 50px;}
 .exf-message.error {background-color: #dd4b39 !important}
 .exf-message.warning {background-color: #f39c12 !important}
 .exf-message.info {background-color: #00c0ef !important}
