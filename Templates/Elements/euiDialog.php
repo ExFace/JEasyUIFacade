@@ -44,7 +44,7 @@ class euiDialog extends euiForm
         if (! $this->isLazyLoading()) {
             if ($widget->countWidgetsVisible() === 1 && ($widget->getWidget(0) instanceof Tabs)) {
                 // FIXME put the messages in the active tab instead of the first tab
-                $widget->getWidget(0)->getTab(0)->addWidget($widget->getMessageList());
+                $widget->getWidget(0)->getTab(0)->addWidget($widget->getMessageList(), 0);
                 $messageListHtml = '';
             } else {
                 $messageListHtml = $this->getTemplate()->getElement($widget->getMessageList())->buildHtml();
