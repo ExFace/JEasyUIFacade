@@ -299,6 +299,7 @@ abstract class euiAbstractElement extends AbstractJqueryElement
         }
         
         $style = '';
+        // Padding
         if (($padding = $this->getPadding(false)) !== false) {
             $style .= 'padding:' . $padding . ';';
         }

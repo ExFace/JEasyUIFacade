@@ -29,4 +29,14 @@ class euiMessageList extends euiContainer
         } 
         return parent::getWidth();
     }
+    
+    public function getPadding($default = 0)
+    {
+        return 0;
+    }
+    
+    protected function buildCssHeightDefaultValue()
+    {
+        return '';
+    }
 }
