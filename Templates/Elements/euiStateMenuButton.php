@@ -19,14 +19,14 @@ class euiStateMenuButton extends euiMenuButton
         $button_no = count($widget->getButtons());
         $output = '';
         
-        if ($button_no == 1) {
+        if ($button_no === 1) {
             /* @var $b \exface\Core\Widgets\Button */
             $b = $widget->getButtons()[0];
             $b->setCaption($widget->getCaption());
             $b->setAlign($widget->getAlign());
             $b->setVisibility($widget->getVisibility());
             $output = $this->getTemplate()->getElement($b)->buildHtml();
-        } elseif ($button_no > 1) {
+        } else {
             $output = parent::buildHtml();
         }
         
