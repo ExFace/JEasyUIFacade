@@ -73,12 +73,12 @@
             "CODE": "6T6HUFO",
             "TITLE": "jEasyUI files not found! Please install jEasyUI before using the template!",
             "DESCRIPTION": "",
-            "hint": null,
+            "hint": "",
             "type": "ERROR",
-            "docs_path": null,
-            "HINT": null,
+            "docs_path": "",
+            "HINT": "",
             "TYPE": "ERROR",
-            "DOCS": null
+            "DOCS": ""
         },
         {
             "CREATED_ON": "2017-05-12 08:43:47",
@@ -90,12 +90,12 @@
             "CODE": "6V6C2HY",
             "TITLE": "Filter-reference to widget outside own lazy-loading-group",
             "DESCRIPTION": "This error occurs because filter-references of widgets inside a lazy-loading-group to widgets which don't belong to the same group are not allows. A solution might be to include the outside widget in the group, don't forget to add the necessary filter-references to the new widget.",
-            "hint": null,
+            "hint": "",
             "type": "ERROR",
-            "docs_path": null,
-            "HINT": null,
+            "docs_path": "",
+            "HINT": "",
             "TYPE": "ERROR",
-            "DOCS": null
+            "DOCS": ""
         },
         {
             "CREATED_ON": "2017-05-12 08:45:31",
@@ -107,12 +107,12 @@
             "CODE": "6V6C3AP",
             "TITLE": "Value-reference to other widget",
             "DESCRIPTION": "This error occurs because value-references of widgets inside a lazy-loading-group to other widgets are not allows. A solution might be to convert the value reference to a filter-reference and to include the other widget in the group, if it does not belong to it yet. Don't forget to add the necessary filter-references to the new widget.",
-            "hint": null,
+            "hint": "",
             "type": "ERROR",
-            "docs_path": null,
-            "HINT": null,
+            "docs_path": "",
+            "HINT": "",
             "TYPE": "ERROR",
-            "DOCS": null
+            "DOCS": ""
         }
     ],
     "totals_rows": [],
