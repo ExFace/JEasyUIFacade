@@ -23,4 +23,14 @@ class euiNavTiles extends euiWidgetGrid
 
 HTML;
     }
+         
+    /**
+     * 
+     * {@inheritDoc}
+     * @see \exface\JEasyUiTemplate\Templates\Elements\euiWidgetGrid::getDefaultColumnNumber()
+     */
+    public function getDefaultColumnNumber()
+    {
+        return $this->getTemplate()->getConfig()->getOption("WIDGET.TILECONTAINER.COLUMNS_BY_DEFAULT");
+    }
 }
