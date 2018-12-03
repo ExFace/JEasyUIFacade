@@ -676,6 +676,10 @@ JS;
         if ($widget->getHideHeader()){
             $panel_options .= ', collapsed: true';
             $toolbar_style .= 'display: none; height: 0;';
+        } else {
+            if ($widget->getConfiguratorWidget()->isCollapsed() === true) {
+                $panel_options .= ', collapsed: true';
+            }
         }
         
         return <<<HTML

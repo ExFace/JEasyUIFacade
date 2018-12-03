@@ -95,7 +95,7 @@ class euiButton extends euiAbstractElement
         
         $output = '
 				<a id="' . $this->getId() . '" title="' . str_replace('"', '\"', $widget->getHint()) . '" href="#" class="easyui-' . $this->getElementType() . '" data-options="' . $this->buildJsDataOptions() . '" style="' . $style . '" onclick="' . $this->buildJsFunctionPrefix() . 'click();">
-						' . $widget->getCaption() . '
+						' . $this->getCaption() . '
 				</a>';
         return $output;
     }

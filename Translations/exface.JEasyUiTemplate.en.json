@@ -10,6 +10,8 @@
 	"MESSAGE.SUCCESS_TITLE": "Success",
 	"MESSAGE.FILL_REQUIRED_ATTRIBUTES": "Please fill in the required fields: ",
 	
+	"WIDGET.DATATABLE.CONFIGURATOR_EXPAND_COLLAPSE": "Collapse/expand quick filters",
+	
 	"WIDGET.SEARCH": "Search",
 	
 	"DATE.FORMAT.SCREEN": "yyyy-MM-dd",
