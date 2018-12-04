@@ -1,16 +1,16 @@
 <?php
 namespace exface\JEasyUiTemplate\Templates\Elements;
 
-use exface\Core\Widgets\NavTiles;
+use exface\Core\Widgets\Tiles;
 
 /**
  * 
- * @method NavTiles getWidget()
+ * @method Tiles getWidget()
  * 
  * @author Andrej Kabachnik
  *
  */
-class euiNavTiles extends euiWidgetGrid 
+class euiTiles extends euiWidgetGrid 
 {
     protected function buildHtmlGridWrapper(string $contentHtml) : string
     {
