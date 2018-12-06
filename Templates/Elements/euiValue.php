@@ -58,10 +58,10 @@ HTML;
      * {@inheritDoc}
      * @see \exface\Core\Templates\AbstractAjaxTemplate\Elements\AbstractJqueryElement::getCaption()
      */
-    protected function getCaption()
+    protected function getCaption() : string
     {
         $caption = parent::getCaption();
-        return  $caption . ($caption && ! $this->getWidget() instanceof iTakeInput ?  ':' : '');
+        return  $caption . ($caption !== '' && ($this->getWidget() instanceof iTakeInput) === false ?  ':' : '');
     }
     
     /**
