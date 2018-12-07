@@ -55,7 +55,7 @@ HTML;
         return $this;
     }
 
-    public function getFitOption()
+    protected function getFitOption()
     {
         return $this->fit_option;
     }
