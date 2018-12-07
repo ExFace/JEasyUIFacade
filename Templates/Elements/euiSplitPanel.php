@@ -77,6 +77,17 @@ HTML;
         
         return $output;
     }
+    
+    /**
+     * Fit is never used as it would cause the panel to take up all the space
+     * 
+     * {@inheritDoc}
+     * @see \exface\JEasyUiTemplate\Templates\Elements\euiWidgetGrid::getFitOption()
+     */
+    protected function getFitOption() : bool
+    {
+        return false;
+    }
 
     public function getRegion()
     {
