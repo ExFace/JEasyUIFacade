@@ -5,7 +5,7 @@ class euiWidgetGroup extends euiPanel
 {
     protected function init(){
         parent::init();
-        $this->addElementCssClass('exf-widget-group');
+        $this->addElementCssClass('exf-panel-flat exf-widget-group');
     }
     
     public function buildJsDataOptions()

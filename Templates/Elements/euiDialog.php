@@ -214,5 +214,10 @@ JS;
     {
         return false;
     }
+    
+    protected function getFitOption()
+    {
+        return false;
+    }
 }
 ?>

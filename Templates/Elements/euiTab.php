@@ -52,6 +52,11 @@ HTML;
         $output = parent::buildJsDataOptions() . ($widget->isHidden() || $widget->isDisabled() ? ', disabled:true' : '');
         return $output;
     }
+    
+    protected function getFitOption()
+    {
+        return false;
+    }
 
     /**
      *

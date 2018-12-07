@@ -28,6 +28,20 @@ class euiWidgetGrid extends euiContainer implements JqueryLayoutInterface
         $this->setElementType('panel');
     }
     
+    protected function getMinChildWidthRelative()
+    {
+        $minChildWidthValue = 1;
+        foreach ($this->getWidget()->getChildren() as $child) {
+            $childWidth = $child->getWidth();
+            if ($childWidth->isRelative() && ! $childWidth->isMax()) {
+                if ($childWidth->getValue() < $minChildWidthValue) {
+                    $minChildWidthValue = $childWidth->getValue();
+                }
+            }
+        }
+        return $minChildWidthValue;
+    }
+    
     public function buildHtml()
     {
         $widget = $this->getWidget();
@@ -43,15 +57,7 @@ class euiWidgetGrid extends euiContainer implements JqueryLayoutInterface
         
         $title = $widget->getHideCaption() ? '' : ' title="' . $widget->getCaption() . '"';
         
-        $minChildWidthValue = 1;
-        foreach ($widget->getChildren() as $child) {
-            $childWidth = $child->getWidth();
-            if ($childWidth->isRelative() && ! $childWidth->isMax()) {
-                if ($childWidth->getValue() < $minChildWidthValue) {
-                    $minChildWidthValue = $childWidth->getValue();
-                }
-            }
-        }
+        $minChildWidthValue = $this->getMinChildWidthRelative();
         if ($minChildWidthValue !== 1) {
             $sizerStyle .= "width:calc(100% / {$this->getNumberOfColumns()} * {$minChildWidthValue});";
             $sizerStyle .= "min-width:calc({$this->getMinWidth()} * {$minChildWidthValue});";
@@ -64,53 +70,61 @@ class euiWidgetGrid extends euiContainer implements JqueryLayoutInterface
         
                             {$this->buildHtmlForWidgets()}
                             <div id="{$this->getId()}_sizer" style="{$sizerStyle}"></div>
+
 HTML;
                             
-                            $children_html = $this->buildHtmlGridWrapper($children_html);
+        $children_html = $this->buildHtmlGridWrapper($children_html);
                             
-                            // Hat das Panel eine begrenzte Groesse (es ist nicht alleine in seinem Container)
-                            // und hat es eine begrenzte Breite (z.B. width: 1), dann ist am Ende seine Hoehe
-                            // aus irgendeinem Grund um etwa 1 Pixel zu klein, so dass ein Scrollbalken ange-
-                            // zeigt wird. Aus diesem Grund wird hier dann overflow-y: hidden gesetzt. Falls
-                            // das Probleme gibt, muss u.U. eine andere Loesung gefunden werden.
-                            if ($widget->getHeight()->isUndefined() && ($containerWidget = $widget->getParentByType('exface\\Core\\Interfaces\\Widgets\\iContainOtherWidgets')) && ($containerWidget->countWidgetsVisible() > 1)) {
-                                $styleScript = 'overflow-y:hidden;';
-                            }
-                            
-                            // A standalone panel will always fill out the parent container (fit: true), but
-                            // other widgets based on a panel may not do so. Thus, the fit data-option is added
-                            // here, in the generate_html() method, which is verly likely to be overridden in
-                            // extending classes!
-                            $fit = $this->getFitOption() ? ', fit: true' : '';
-                            
-                            // Wrapper wird gebraucht, denn es wird von easyui neben dem .easyui-panel div
-                            // ein .panel-header div erzeugt, welches sonst von masonry nicht beachtet wird
-                            // (beide divs .panel-header und .easyui-panel/.panel-body werden unter einem
-                            // .panel div zusammengefasst).
-                            // Fit:true wird gebraucht, denn sonst aendert das Panel seine Groesse nicht mehr
-                            // wenn sich die Groesse des Bildschirms/Containers aendert.
-                            $output = <<<HTML
+        // Hat das Panel eine begrenzte Groesse (es ist nicht alleine in seinem Container)
+        // und hat es eine begrenzte Breite (z.B. width: 1), dann ist am Ende seine Hoehe
+        // aus irgendeinem Grund um etwa 1 Pixel zu klein, so dass ein Scrollbalken ange-
+        // zeigt wird. Aus diesem Grund wird hier dann overflow-y: hidden gesetzt. Falls
+        // das Probleme gibt, muss u.U. eine andere Loesung gefunden werden.
+        if ($widget->getHeight()->isUndefined() && ($containerWidget = $widget->getParentByType('exface\\Core\\Interfaces\\Widgets\\iContainOtherWidgets')) && ($containerWidget->countWidgetsVisible() > 1)) {
+            $styleScript = 'overflow-y:hidden;';
+        }
+        
+        // Wrapper wird gebraucht, denn es wird von easyui neben dem .easyui-panel div
+        // ein .panel-header div erzeugt, welches sonst von masonry nicht beachtet wird
+        // (beide divs .panel-header und .easyui-panel/.panel-body werden unter einem
+        // .panel div zusammengefasst).
+        $output = <<<HTML
                             
                 <div class="easyui-{$this->getElementType()}"
                             id="{$this->getId()}"
-                            data-options="{$this->buildJsDataOptions()}{$fit}"
+                            data-options="{$this->buildJsDataOptions()}"
                             {$title}
                             style="{$styleScript}">
                         {$children_html}
                 </div>
+
 HTML;
                         
-                        if ($this->isOnlyVisibleElementInContainer()) {
-                            $output = $this->buildHtmlGridItemWrapper($output, $style);
-                        }
-                        
-                        return $output;
+        if ($this->isOnlyVisibleElementInContainer()) {
+            $output = $this->buildHtmlGridItemWrapper($output, $style);
+        }
+        
+        return $output;
     }
     
     protected function buildHtmlGridWrapper(string $contentHtml) : string
     {
-        $widget = $this->getWidget();
+        if ($this->needsGridWrapper() === true) {
+            
+            $grid = <<<HTML
+                
+                        <div class="grid" id="{$this->getId()}_masonry_grid" style="width:100%;">
+                            {$contentHtml}
+                        </div>
+HTML;
+        } 
         
+        return $grid ?? $contentHtml;
+    }
+    
+    protected function needsGridWrapper() : bool
+    {
+        $widget = $this->getWidget();
         // Wrap children widgets with a grid for masonry layouting - but only if there is something to be layed out
         // Normalerweise wird das der masonry-wrapper nicht gebraucht. Masonry ordnet
         // dann die Elemente an und passt direkt die Grosse des Panels an den neuen Inhalt an.
@@ -118,18 +132,12 @@ HTML;
         // geaendert werden. In diesem Fall wird der wrapper eingefuegt und stattdessen seine
         // Groesse geaendert. Dadurch wird der Inhalt scrollbar im Panel angezeigt.
         $containerWidget = $widget->getParentByType('exface\\Core\\Interfaces\\Widgets\\iContainOtherWidgets');
-        if (! $widget->hasParent() || ($containerWidget && $containerWidget->countWidgetsVisible() == 1)) {
+        if(! $widget->hasParent() || ($containerWidget && $containerWidget->countWidgetsVisible() == 1)) {
             if ($widget->countWidgetsVisible() > 1) {
-                $grid = <<<HTML
-                
-                        <div class="grid" id="{$this->getId()}_masonry_grid" style="width:100%;">
-                            {$contentHtml}
-                        </div>
-HTML;
-            }
-        } 
-        
-        return $grid ?? $contentHtml;
+                return true;
+            } 
+        }
+        return false;
     }
     
     /**
@@ -179,7 +187,7 @@ HTML;
         /** @var Panel $widget */
         $widget = $this->getWidget();
         
-        if ($widget->getNumberOfColumns() != 1) {
+        if ($this->getNumberOfColumns() > $this->getMinChildWidthRelative()) {
             $this->addOnLoadScript($this->buildJsLayouter() . ';');
             // The resize-script seems to get called too early sometimes if the
             // panel is loaded via AJAX, so we need to add a timeout if the
@@ -199,7 +207,13 @@ HTML;
         $onLoadScript = $this->getOnLoadScript() ? ', onLoad: function(){' . $this->getOnLoadScript() . '}' : '';
         $onResizeScript = $this->getOnResizeScript() ? ', onResize: function(){' . $this->getOnResizeScript() . '}' : '';
         
-        return ltrim($onLoadScript . $onResizeScript, ", ");
+        // A standalone panel will always fill out the parent container (fit: true), but
+        // other widgets based on a panel may not do so. Thus, the fit data-option is added
+        // here, in the generate_html() method, which is verly likely to be overridden in
+        // extending classes!
+        $fit = $this->getFitOption() ? ', fit: true' : '';
+        
+        return ltrim($onLoadScript . $onResizeScript . $fit, ", ");
     }
     
     public function setFitOption(int $value)
@@ -208,7 +222,7 @@ HTML;
         return $this;
     }
     
-    public function getFitOption()
+    protected function getFitOption()
     {
         return $this->fit_option;
     }
@@ -261,7 +275,7 @@ HTML;
 JS;
         }
         
-        if ((is_null($widget->getParent()) || (($containerWidget = $widget->getParentByType('exface\\Core\\Interfaces\\Widgets\\iContainOtherWidgets')) && ($containerWidget->countWidgetsVisible() == 1))) && ($widget->countWidgetsVisible() > 1)) {
+        if ($this->needsGridWrapper()) {
             // Wird ein masonry_grid-wrapper hinzugefuegt, sieht die Layout-Funktion etwas
             // anders aus als wenn der wrapper fehlt. Siehe auch oben in buildHtml().
             $output = <<<JS
