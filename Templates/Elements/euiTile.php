@@ -15,10 +15,11 @@ class euiTile extends euiButton
         $widget = $this->getWidget();
         
         $icon_class = $widget->getIcon() && ! $widget->getHideButtonIcon() ? $this->buildCssIconClass($widget->getIcon()) : '';
+        $style = $this->buildCssElementStyle();
         
         if ($this->getWidget()->hasAction()) {
             $click = "onclick=\"{$this->buildJsClickFunctionName()}();\"";
-            $style = 'cursor: pointer;';
+            $style .= 'cursor: pointer;';
         }
         
         $output = <<<JS
@@ -43,5 +44,20 @@ JS;
     public function getMinWidth()
     {
         return 0;
+    }
+    
+    /**
+     *
+     * {@inheritDoc}
+     * @see \exface\Core\Templates\AbstractAjaxTemplate\Elements\AbstractJqueryElement::buildCssElementStyle()
+     */
+    public function buildCssElementStyle()
+    {
+        $style = '';
+        $bgColor = $this->getWidget()->getColor();
+        if ($bgColor !== null && $bgColor !== '') {
+            $style .= 'background-color:' . $bgColor . ';';
+        }
+        return $style;
     }
 }
