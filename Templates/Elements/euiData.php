@@ -407,12 +407,12 @@ JS;
         // In datagrids with remote source sorting is allways performed remotely, so
         // it cannot be done for columns without attribute binding (the server cannot
         // sort those)
-        $sortable = $col->hasAttributeReference() ? ($col->getSortable() ? 'true' : 'false') : 'false';
+        $sortable = $col->isBoundToAttribute() ? ($col->getSortable() ? 'true' : 'false') : 'false';
         
         $output = '
                         title: "<span title=\"' . $this->buildHintText($col->getHint(), true) . '\">' . $col->getCaption() . '</span>"
                         , field: "' . ($col->getDataColumnName() ? $col->getDataColumnName() : $col->getId()) . '"
-                        ' . ($col->hasAttributeReference() ? ', _attributeAlias: "' . $col->getAttributeAlias() . '"' : '') . "
+                        ' . ($col->isBoundToAttribute() ? ', _attributeAlias: "' . $col->getAttributeAlias() . '"' : '') . "
                         " . ($colspan ? ', colspan: ' . intval($colspan) : '') . ($rowspan ? ', rowspan: ' . intval($rowspan) : '') . "
                         " . ($col->isHidden() ? ', hidden: true' : '') . "
                         " . ($col->getWidth()->isTemplateSpecific() ? ', width: "' . $col->getWidth()->toString() . '"' : '') . "

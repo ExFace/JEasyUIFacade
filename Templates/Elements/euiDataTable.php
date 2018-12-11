@@ -499,7 +499,7 @@ JS;
         foreach ($this->getEditors() as $col_id => $editor) {
             $col = $widget->getColumn($col_id);
             // Skip editors for columns, that are not attributes
-            if (! $col->hasAttributeReference())
+            if (! $col->isBoundToAttribute())
                 continue;
                 // For all other editors, that belong to related attributes, add some JS to update all rows with that
                 // attribute, once the value of one of them changes. This makes sure, that the value of a related attribute
