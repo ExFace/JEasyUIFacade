@@ -10,6 +10,7 @@ use exface\Core\Widgets\MenuButton;
 use exface\Core\Factories\WidgetFactory;
 use exface\Core\CommonLogic\Constants\Icons;
 use exface\Core\CommonLogic\UxonObject;
+use exface\Core\Exceptions\Templates\TemplateLogicError;
 
 /**
  *
@@ -258,6 +259,7 @@ JS;
 
     public function buildJsDataGetter(ActionInterface $action = null)
     {
+        $widget = $this->getWidget();
         $rows = '';
         $filters = '';
         if (is_null($action)) {
@@ -265,17 +267,21 @@ JS;
         } elseif ($action instanceof iReadData) {
             // If we are reading, than we need the special data from the configurator 
             // widget: filters, sorters, etc.
-            return $this->getTemplate()->getElement($this->getWidget()->getConfiguratorWidget())->buildJsDataGetter($action);
+            return $this->getTemplate()->getElement($widget->getConfiguratorWidget())->buildJsDataGetter($action);
         } elseif ($this->isEditable() && $action->implementsInterface('iModifyData')) {
-            if ($this->getWidget()->getMultiSelect()) {
-                $rows = "$('#" . $this->getId() . "')." . $this->getElementType() . "('getSelections').length > 0 ? $('#" . $this->getId() . "')." . $this->getElementType() . "('getSelections') : " . $this->buildJsFunctionPrefix() . "getChanges()";
+            if ($action->getMetaObject()->is($widget->getMetaObject())) {
+                if ($widget->getMultiSelect()) {
+                    $rows = "$('#" . $this->getId() . "')." . $this->getElementType() . "('getSelections').length > 0 ? $('#" . $this->getId() . "')." . $this->getElementType() . "('getSelections') : " . $this->buildJsFunctionPrefix() . "getChanges()";
+                } else {
+                    $rows = $this->buildJsFunctionPrefix() . "getChanges()";
+                }
             } else {
-                $rows = $this->buildJsFunctionPrefix() . "getChanges()";
+                throw new TemplateLogicError('Editable tables currently cannot be used with writing actions over different object than that of the table');
             }
         } else {
             $rows = "$('#" . $this->getId() . "')." . $this->getElementType() . "('getSelections')";
         }
-        return "{oId: '" . $this->getWidget()->getMetaObject()->getId() . "'" . ($rows ? ", rows: " . $rows : '') . ($filters ? ", filters: " . $filters : "") . "}";
+        return "{oId: '" . $widget->getMetaObject()->getId() . "'" . ($rows ? ", rows: " . $rows : '') . ($filters ? ", filters: " . $filters : "") . "}";
     }
 
     /**
@@ -532,17 +538,17 @@ JS;
         }
         $changes_cols = trim($changes_cols, ',');
         
-        $output .= "
-					function " . $this->buildJsFunctionPrefix() . "getChanges(){
+        $output .= <<<JS
+
+					function {$this->buildJsFunctionPrefix()}getChanges(){
 						var data = [];
-						var cols = [" . $changes_cols . "];
-						var rowCount = $('#" . $this->getId() . "')." . $this->getElementType() . "('getRows').length;
+						var cols = [{$changes_cols}];
+						var rowCount = $('#{$this->getId()}').{$this->getElementType()}('getRows').length;
 						for (var i=0; i<rowCount; i++){
-							$('#" . $this->getId() . "')." . $this->getElementType() . "('endEdit', i);
+							$('#{$this->getId()}').{$this->getElementType()}('endEdit', i);
 						}
-						rows = $('#" . $this->getId() . "')." . $this->getElementType() . "('getChanges');
+						rows = $('#{$this->getId()}').{$this->getElementType()}('getChanges');
 						for (var i=0; i<rows.length; i++){
-							$('#" . $this->getId() . "')." . $this->getElementType() . "('endEdit', i);
 							var row = {};
 							for (var j=0; j<cols.length; j++){
 								row[cols[j]] = rows[i][cols[j]];
@@ -550,7 +556,9 @@ JS;
 							data.push(row);
 						}
 						return data;
-					}";
+					}
+
+JS;
         
         return $output;
     }
