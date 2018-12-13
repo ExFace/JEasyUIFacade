@@ -66,9 +66,7 @@ class euiDataTree extends euiDataTable
 
                             return data;
                         }
-                        , onLoadSuccess: function(row, data) {
-                            ' . $this->getOnLoadSuccess() . '
-                        }
+                        ' . $this->buildJsOnLoadSuccessOption() . '
                         ' . ($this->buildJsOnExpandScript() ? ', onExpand: function(row){' . $this->buildJsOnExpandScript() . '}' : '');
         
         return $grid_head;
