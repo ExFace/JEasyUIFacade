@@ -60,4 +60,14 @@ JS;
         }
         return $style;
     }
+    
+    /**
+     * 
+     * {@inheritDoc}
+     * @see \exface\Core\Templates\AbstractAjaxTemplate\Elements\AbstractJqueryElement::buildCssElementClass()
+     */
+    public function buildCssElementClass()
+    {
+        return 'exf-tile ' . parent::buildCssElementClass();
+    }
 }

@@ -129,6 +129,7 @@ pre.sf-dump .sf-dump-private, pre.sf-dump .sf-dump-public, pre.sf-dump .sf-dump-
 }
 
 /* Tile widget */
+.exf-tile {padding: 4px;} /* This makes a stand-alone tile have the same padding as .exf-grid-item.exf-tile */
 .exf-tile-box { position: relative; background-color: #fafafa; border: 1px solid #c3d9e0; height: 100%; overflow: hidden;}
 .exf-tile-box h3, .exf-tile-box p { overflow: hidden; text-overflow: ellipsis;}
 .exf-tile-box h3 { white-space: nowrap;}
