@@ -2,6 +2,7 @@
 namespace exface\JEasyUiTemplate\Templates\Elements;
 
 use exface\Core\Widgets\Tabs;
+use exface\Core\Interfaces\WidgetInterface;
 
 class euiDialog extends euiForm
 {
@@ -42,9 +43,12 @@ class euiDialog extends euiForm
         
         $children_html = '';
         if (! $this->isLazyLoading()) {
-            if ($widget->countWidgetsVisible() === 1 && ($widget->getWidget(0) instanceof Tabs)) {
+            $visibleChildren = $widget->getWidgets(function($w) { 
+                return $w->isHidden() === false; 
+            });
+            if (count($visibleChildren) === 1 && ($visibleChildren[0] instanceof Tabs)) {
                 // FIXME put the messages in the active tab instead of the first tab
-                $widget->getWidget(0)->getTab(0)->addWidget($widget->getMessageList(), 0);
+                $visibleChildren[0]->getTab(0)->addWidget($widget->getMessageList(), 0);
                 $messageListHtml = '';
             } else {
                 $messageListHtml = $this->getTemplate()->getElement($widget->getMessageList())->buildHtml();
