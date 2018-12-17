@@ -79,6 +79,8 @@ div.messager-body{overflow-y: auto;}
 .exf-message.warning {background-color: #f39c12 !important}
 .exf-message.info {background-color: #00c0ef !important}
 .exf-message.success {background-color: #00a65a !important}
+.exf-message.hint {background-color: transparent; font-style: italic; color: inherit;}
+.exf-message.hint .exf-message-icon > i {color: black}
 
 /* InputJson widget */
 .jsoneditor {text-align: left;}
