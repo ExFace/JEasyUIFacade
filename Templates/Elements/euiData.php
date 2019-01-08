@@ -833,7 +833,7 @@ JS;
 
                             // Reset selection
                             var jqSelf = $('#{$this->getId()}');
-                            jqSelf.{$this->getElementType()}('unselectAll');
+                            jqSelf.{$this->getElementType()}('clearSelections').{$this->getElementType()}('clearChecked');
                             if (jqSelf.data('_prevSelection') !== undefined) {
                                 jqSelf.data('_prevSelection', undefined);
                                 {$this->getOnChangeScript()}

@@ -109,6 +109,7 @@ HTML;
             
                 try {
                     if (! {$configurator_element->buildJsValidator()}) {
+                        {$this->buildJsDataResetter()}
                         return false;
                     } 
                 } catch (e) {
@@ -720,5 +721,14 @@ JS;
         $this->addOnLoadSuccess($updatePager);
         return '';
     }
+    
+    /**
+     * Returns a JS snippet, that empties the table (removes all rows).
+     * 
+     * @return string
+     */
+    protected function buildJsDataResetter() : string
+    {
+        return "$('#{$this->getId()}').{$this->getElementType()}('loadData', {rows: []});";
+    }
 }
-?>
