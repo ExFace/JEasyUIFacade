@@ -289,12 +289,10 @@ JS;
     {
         return <<<JS
                         var prevRow = $(this).data('_prevSelection');
+                        $(this).data('_prevSelection', {$rowJs});
                         if (prevRow !== undefined && {$this->buildJsRowCompare($rowJs, 'prevRow')}) {
-                            $(this).data('_prevSelection', {$rowJs});
                             return;
-                        } else {
-                            $(this).data('_prevSelection', {$rowJs});
-                        }
+                        } 
                         {$this->getOnChangeScript()}
                         
 JS;
@@ -462,7 +460,12 @@ JS;
     }
     
     /**
-     * Binds a script to the onLoadSuccess event.
+     * Binds a script to the onLoadSuccess event (available JS vars: jqSelf, data).
+     * 
+     * The script may use the following javascript variables available locally in the event handler:
+     * 
+     * - jqSelf - same as $('#{$this->getId()}'), but faster
+     * - data - the data object just loaded
      *
      * @param string $script
      */

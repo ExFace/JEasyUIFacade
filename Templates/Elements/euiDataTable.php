@@ -11,6 +11,7 @@ use exface\Core\Factories\WidgetFactory;
 use exface\Core\CommonLogic\Constants\Icons;
 use exface\Core\CommonLogic\UxonObject;
 use exface\Core\Exceptions\Templates\TemplateLogicError;
+use exface\Core\Widgets\DataButton;
 
 /**
  *
@@ -372,6 +373,24 @@ JS;
     {
         $widget = $this->getWidget();
         $this->registerPaginationFixer();
+        
+        // Add single-result action to onLoadSuccess
+        if ($singleResultButton = $widget->getButtons(function($btn) {return ($btn instanceof DataButton) && $btn->isBoundToSingleResult() === true;})[0]) {
+            $singleResultJs = <<<JS
+
+                        if (data.rows.length === 1) {
+                            var curRow = jqSelf.{$this->getElementType()}("getRows")[0];
+                            var lastRow = jqSelf.data("_singleResultActionPerformedFor");
+                            if (lastRow === undefined || {$this->buildJsRowCompare('curRow', 'lastRow')} === false){
+                                jqSelf.{$this->getElementType()}("selectRow", 0);
+                                jqSelf.data("_singleResultActionPerformedFor", curRow);
+                                {$this->getTemplate()->getElement($singleResultButton)->buildJsClickFunction()};
+                            }
+                        }
+
+JS;
+            $this->addOnLoadSuccess($singleResultJs);
+        }
         
         $grid_head = parent::buildJsInitOptionsHead();
         
