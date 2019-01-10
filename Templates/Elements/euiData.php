@@ -838,7 +838,7 @@ JS;
                             var jqSelf = $('#{$this->getId()}');
                             jqSelf.{$this->getElementType()}('clearSelections').{$this->getElementType()}('clearChecked');
                             if (jqSelf.data('_prevSelection') !== undefined) {
-                                jqSelf.data('_prevSelection', undefined);
+                                jqSelf.removeData('_prevSelection');
                                 {$this->getOnChangeScript()}
                             }
 
