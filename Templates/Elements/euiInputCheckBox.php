@@ -9,7 +9,7 @@ class euiInputCheckBox extends euiInput
         return 'checkbox';
     }
     
-    function buildHtml()
+    public function buildHtml()
     {
         $output = '	<div style="width: calc(100% + 2px); height: 100%; display: inline-block; text-align:left;">
 						<input type="checkbox" value="1" 
@@ -37,17 +37,17 @@ class euiInputCheckBox extends euiInput
         return 'prop(\'checked\')';
     }
 
-    function buildJsValueSetter($value)
+    public function buildJsValueSetter($value)
     {
-        return '($("#' . $this->getId() . '_checkbox").' . $this->buildJsValueSetterMethod($value);
+        return '$("#' . $this->getId() . '_checkbox").' . $this->buildJsValueSetterMethod($value);
     }
 
-    function buildJsValueSetterMethod($value)
+    public function buildJsValueSetterMethod($value)
     {
         return 'prop(\'checked\', ' . $value . ').trigger("change")';
     }
 
-    function buildJsInitOptions()
+    public function buildJsInitOptions()
     {
         $options = 'on: "1"' . ', off: "0"' . ($this->getWidget()->isDisabled() ? ', disabled: true' : '');
         return $options;
@@ -59,7 +59,7 @@ class euiInputCheckBox extends euiInput
      *
      * @see \exface\Core\Templates\AbstractAjaxTemplate\Elements\AbstractJqueryElement::buildJsValidator()
      */
-    function buildJsValidator()
+    public function buildJsValidator()
     {
         return 'true';
     }
@@ -84,4 +84,3 @@ class euiInputCheckBox extends euiInput
         return '$("#' . $this->getId() . '_checkbox").attr("disabled", false)';
     }
 }
-?>
