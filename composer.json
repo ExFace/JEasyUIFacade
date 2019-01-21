@@ -21,6 +21,7 @@
 		"bower-asset/paste.js" : "~0.0.15",
 		"bower-asset/google-diff-match-patch-js" : "^1.0.0",
 		"bower-asset/font-awesome" : "^4.7",
+		"npm-asset/slick-carousel" : "^1.8",
 		"npm-asset/jsoneditor" : "^5.26",
 		"npm-asset/flot-charts" : "~0.8",
 		"npm-asset/jquery-prettytextdiff" : "^1.0.3",

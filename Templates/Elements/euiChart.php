@@ -120,9 +120,7 @@ HTML;
                     $('#{$configurator_element->getId()}').find('.grid').on( 'layoutComplete', function( event, items ) {
                         setTimeout(function(){
                             var newHeight = $('#{$this->getId()}_wrapper > .panel').height();
-                            console.log(newHeight);
                             $('#{$this->getId()}').height($('#{$this->getId()}').parent().height()-newHeight);
-                            console.log($('#{$this->getId()}').height());
                         }, 0);               
                     });
                     

@@ -137,3 +137,11 @@ pre.sf-dump .sf-dump-private, pre.sf-dump .sf-dump-public, pre.sf-dump .sf-dump-
 .exf-tile-box h3 { white-space: nowrap;}
 .exf-tile-box p { max-height: 28px; }
 .exf-tile-icon { position: absolute; top: 8px; right: 8px; font-size: 28px; color: rgba(0, 0, 0, 0.15); }
+
+/* slick carousel */
+.slick-carousel.horizontal .slick-list {padding: 10px; box-sizing: border-box;}
+.slick-carousel.horizontal .slick-list, 
+.slick-carousel.horizontal .slick-track, 
+.slick-carousel.horizontal .slick-slide, 
+.slick-carousel.horizontal .slick-slide img {height: 100%}
+.slick-carousel.horizontal .slick-slide {margin-left: 10px}
