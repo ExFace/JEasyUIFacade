@@ -47,12 +47,17 @@ class euiChart extends euiData
         if ($widget->getHideHeader()){
             $this->addOnResizeScript("
                  var newHeight = $('#{$this->getId()}_wrapper > .panel').height();
-                 $('#{$this->getId()}').height($('#{$this->getId()}').parent().height()-newHeight);
+                 $('#{$this->getId()}').height($('#{$this->getId()}').parent().height() - newHeight);
             ");
         }
     }
 
-    function buildHtml()
+    /**
+     * 
+     * {@inheritDoc}
+     * @see \exface\JEasyUiTemplate\Templates\Elements\euiData::buildHtml()
+     */
+    public function buildHtml()
     {
         $output = '';
         $widget = $this->getWidget();
@@ -78,17 +83,24 @@ class euiChart extends euiData
         // das Layout umgebrochen hat. Da sich die Groesse des Charts sowieso an den Container
         // anpasst sollte overflow: hidden keine weiteren Auswirkungen haben.
         $output = <<<HTML
+
 <div class="exf-grid-item {$this->getMasonryItemClass()}" style="width:{$this->getWidth()};min-width:{$this->getMinWidth()};height:{$this->getHeight()};padding:{$this->getPadding()};box-sizing:border-box;">
     <div class="easyui-panel" style="height: auto;" id="{$this->getId()}_wrapper" data-options="fit: true {$chart_panel_options}, onResize: function(){ {$this->getOnResizeScript()} }">
     	{$header_html}
     	<div id="{$this->getId()}" style="height:{$canvas_height}; min-height: 100px; overflow: hidden;"></div>
     </div>
 </div>
+
 HTML;
         
         return $output;
     }
 
+    /**
+     * 
+     * {@inheritDoc}
+     * @see \exface\JEasyUiTemplate\Templates\Elements\euiData::buildJs()
+     */
     public function buildJs()
     {
         /* @var $widget \exface\Core\Widgets\Chart */
@@ -104,6 +116,7 @@ HTML;
         $output .= $this->buildJsButtons();
         
         $output .= <<<JS
+
                     $('#{$configurator_element->getId()}').find('.grid').on( 'layoutComplete', function( event, items ) {
                         setTimeout(function(){
                             var newHeight = $('#{$this->getId()}_wrapper > .panel').height();
@@ -188,10 +201,9 @@ JS;
     /**
      *
      * {@inheritdoc}
-     *
      * @see \exface\JEasyUiTemplate\Templates\Elements\euiAbstractElement::getHeight()
      */
-    function getHeight()
+    public function getHeight()
     {
         // Die Hoehe des Charts passt sich nicht automatisch dem Inhalt an. Wenn er also
         // nicht den gesamten Container ausfuellt, kollabiert er vollstaendig. Deshalb
@@ -207,11 +219,21 @@ JS;
         return parent::getHeight();
     }
     
+    /**
+     * 
+     * {@inheritDoc}
+     * @see \exface\JEasyUiTemplate\Templates\Elements\euiAbstractElement::buildJsBusyIconShow()
+     */
     public function buildJsBusyIconShow()
     {
         return "$('#{$this->getId()}_wrapper').prepend('<div class=\"panel-loading\" style=\"height: 15px;\"></div>');";
     }
     
+    /**
+     * 
+     * {@inheritDoc}
+     * @see \exface\JEasyUiTemplate\Templates\Elements\euiAbstractElement::buildJsBusyIconHide()
+     */
     public function buildJsBusyIconHide()
     {
         return "$('#{$this->getId()}_wrapper .panel-loading').remove();";
@@ -233,4 +255,3 @@ JS;
         return $includes;
     }
 }
-?>
