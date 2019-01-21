@@ -77,9 +77,14 @@ class euiDataTree extends euiDataTable
         $result = parent::prepareData($data_sheet);
         /* @var $widget \exface\Core\Widgets\DataTree */
         $widget = $this->getWidget();
+        $folderFlagCol = $widget->hasTreeFolderFlag() ? $widget->getTreeFolderFlagAttributeAlias() : null;
+        $parentCol = $widget->getTreeParentIdAttributeAlias();
+        $idCol = $widget->getUidColumn()->getDataColumnName();
+        $rowsById = [];
         foreach ($result['rows'] as $nr => $row) {
-            if ($widget->hasTreeFolderFlag()) {
-                if ($row[$widget->getTreeFolderFlagAttributeAlias()]) {
+            // If we know, which attribute flags a leaf as a folder, use it to set the node state (open/close)
+            if ($folderFlagCol !== null) {
+                if ($row[$folderFlagCol]) {
                     // $result['rows'][$nr]['state'] = $row[$this->getWidget()->getTreeFolderFlagAttributeAlias()] ? 'closed' : 'open';
                     $result['rows'][$nr]['state'] = 'closed';
                     // Dirty hack to remove zero numeric values on folders, because they are easily assumed to be sums
@@ -92,14 +97,26 @@ class euiDataTree extends euiDataTable
                     $result['rows'][$nr]['state'] = 'open';
                 }
                 
-                unset($result['rows'][$nr][$this->getWidget()->getTreeFolderFlagAttributeAlias()]);
+                unset($result['rows'][$nr][$folderFlagCol]);
             } else {
+                // If we can't tell, if a node has children - make it close (assume it may have children)
                 $result['rows'][$nr]['state'] = 'closed';
             }
             
-            /*if ($result['rows'][$nr][$widget->getTreeParentIdAttributeAlias()] != $widget->getTreeRootUid()) {
-                $result['rows'][$nr]['_parentId'] = $result['rows'][$nr][$widget->getTreeParentIdAttributeAlias()] ? $result['rows'][$nr][$widget->getTreeParentIdAttributeAlias()] : 0;
-            }*/
+            // The jEasyUI treegrid cannot build trees itself, so we need to form a hierarchy here, if we have
+            // parents and their children within our data.
+            $parentId = $row[$parentCol];
+            // We save references to all rows in an array indexed with row UIDs
+            $rowsById[$row[$idCol]] =& $result['rows'][$nr];
+            // Now, if the parent id is found in our array, we need to remove the row from the flat data array
+            // and put it into the children-array of it's parent row. We need to use references here as the
+            // next row may be a child of one of the children in-turn.
+            // TODO This will probably only work well if the initial rows are in the correct order...
+            if ($rowsById[$parentId] !== null) {
+                $rowsById[$parentId]['children'][] =& $result['rows'][$nr];
+                $rowsById[$parentId]['state'] = 'open';
+                unset ($result['rows'][$nr]);
+            }
         }
         
         $result['footer'][0][$this->getWidget()->getTreeColumn()->getDataColumnName()] = '';
