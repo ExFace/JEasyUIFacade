@@ -106,20 +106,7 @@ HTML;
         
         $configurator_element = $this->getTemplate()->getElement($widget->getConfiguratorWidget());
         
-        $on_before_load = <<<JS
-            
-                try {
-                    if (! {$configurator_element->buildJsValidator()}) {
-                        {$this->buildJsDataResetter()}
-                        return false;
-                    } 
-                } catch (e) {
-                    console.warn('Could not check filter validity - ', e);
-                }
-                param['data'] = {$configurator_element->buildJsDataGetter()};
-        
-JS;
-        $this->addOnBeforeLoad($on_before_load);
+        $this->addOnBeforeLoad($this->buildJsOnBeforeLoadAddConfiguratorData());
         
         // Build JS for the editors
         $editorsInit = '';
@@ -129,18 +116,9 @@ JS;
             }
         }
         
-        // Wenn noetig initiales Laden ueberspringen.
-        $autoloadInit = '';
-        if (! $widget->getAutoloadData() && $widget->getLazyLoading()) {
-            $autoloadInit .= <<<JS
-
-            $("#{$this->getId()}").data("_skipNextLoad", true);
-JS;
-            
-            // Dieses Skript wird nach dem erfolgreichen Laden ausgefuehrt, um die angezeigte
-            // Nachricht (s.u.) zu entfernen. Das Skript muss vor $grid_head erzeugt werden.
-            $this->addOnLoadSuccess($this->buildJsNoInitialLoadMessageRemove());
-        }
+        // Need to build the autoload disabler BEFORE the grid head is combiled, to make sure
+        // the autoload disabler can hook to onXXX events.
+        $autoloadInit = $this->buildJsAutoloadDisabler();
         
         $grid_head = '';
         
@@ -166,13 +144,6 @@ JS;
         // get the standard params for grids and put them before the custom grid head
         $grid_head = $this->buildJsInitOptions() . $grid_head;
         
-        // Eine Nachricht anzeigen, dass keine Daten geladen wurde, wenn das initiale Laden
-        // uebersprungen wird.
-        $initialMessageInit = '';
-        if (! $widget->getAutoloadData() && $widget->getLazyLoading()) {
-            $initialMessageInit = $this->buildJsNoInitialLoadMessageShow();
-        }
-        
         return <<<JS
 
 // Add Scripts for the configurator widget first as they may be needed for the others   
@@ -186,8 +157,6 @@ $(setTimeout(function(){
     
     // Init the table
     $("#{$this->getId()}").{$this->getElementType()}({ {$grid_head} });
-
-    {$initialMessageInit}
 
     {$this->buildJsPagerButtons()}
 
@@ -673,49 +642,6 @@ JS;
         
         return $output;
     }
-
-    /**
-     * Generates JS code to show a message if the initial load was skipped.
-     * 
-     * @return string
-     */
-    protected function buildJsNoInitialLoadMessageShow()
-    {
-        $widget = $this->getWidget();
-        
-        $output = <<<JS
-
-            $("#{$this->getId()}").parent().append("\
-                <div id='{$this->getId()}_no_initial_load_message'\
-                     class='no-initial-load-message-overlay'>\
-                    <table class='no-initial-load-message-overlay-table'>\
-                        <tr>\
-                            <td style='text-align:center;'>\
-                                {$widget->getAutoloadDisabledHint()}\
-                            </td>\
-                        </tr>\
-                    </table>\
-                </div>\
-            ");
-JS;
-        
-        return $output;
-    }
-
-    /**
-     * Generates JS code to remove the message if the initial load was skipped.
-     * 
-     * @return string
-     */
-    protected function buildJsNoInitialLoadMessageRemove()
-    {
-        $output = <<<JS
-
-        $("#{$this->getId()}_no_initial_load_message").remove();
-JS;
-        
-        return $output;
-    }
     
     protected function registerPaginationFixer() : string
     {
@@ -749,5 +675,23 @@ JS;
     protected function buildJsDataResetter() : string
     {
         return "$('#{$this->getId()}').{$this->getElementType()}('loadData', {rows: []});";
+    }
+    
+    protected function buildJsOnBeforeLoadAddConfiguratorData($js_var_param = 'param') : string
+    {
+        return parent::buildJsOnBeforeLoadAddConfiguratorData($js_var_param) . <<<JS
+
+                    // Enrich sorting options
+                    if ({$js_var_param}.sort !== undefined) {
+                        var sortNames = {$js_var_param}.sort.split(',');
+                        var sortAttrs = [];
+                        for (var i=0; i<sortNames.length; i++) {
+                            colOpts = jqself.{$this->getElementType()}('getColumnOption', sortNames[i]);
+                            sortAttrs.push(colOpts !== null ? colOpts['_attributeAlias'] : sortNames[i]);
+                        }
+                        {$js_var_param}.sortAttr = sortAttrs.join(',');
+                    }
+
+JS;
     }
 }

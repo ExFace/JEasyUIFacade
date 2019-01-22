@@ -83,20 +83,34 @@ JS;
         }
         
         return <<<JS
-        
+    
+    // Don't load if already loading    
     if ($('#{$this->getId()}').data('_loading')) return;
+
 	{$this->buildJsBusyIconShow()}
-	$('#{$this->getId()}').data('_loading', 1);
-	var data = {};
-    data.action = '{$widget->getLazyLoadingActionAlias()}';
-	data.resource = "{$widget->getPage()->getAliasWithNamespace()}";
-	data.element = "{$widget->getId()}";
-	data.object = "{$widget->getMetaObject()->getId()}";
-	data.data = {$this->getTemplate()->getElement($widget->getConfiguratorWidget())->buildJsDataGetter()};
+	
+    $('#{$this->getId()}').data('_loading', 1);
+
+	var param = {
+       action: '{$widget->getLazyLoadingActionAlias()}',
+	   resource: "{$widget->getPage()->getAliasWithNamespace()}",
+	   element: "{$widget->getId()}",
+	   object: "{$widget->getMetaObject()->getId()}"
+    };
+
+    var checkOnBeforeLoad = function(param){
+        {$this->buildJsOnBeforeLoadScript('param')}
+        {$this->buildJsOnBeforeLoadAddConfiguratorData('param')}
+    }(param);
+
+    if (checkOnBeforeLoad === false) {
+        {$this->buildJsBusyIconHide()}
+        return;
+    }
 	
 	$.ajax({
        url: "{$this->getAjaxUrl()}",
-       data: data,
+       data: param,
        method: 'POST',
        success: function(json){
 			try {
@@ -143,5 +157,19 @@ JS;
     public function buildJsBusyIconHide()
     {
         return "$('#{$this->getId()} .panel-loading').remove();";
+    }
+
+    /**
+     * Returns a JS snippet, that empties the table (removes all rows).
+     *
+     * @return string
+     */
+    protected function buildJsDataResetter() : string
+    {
+        return <<<JS
+
+           $('#{$this->getId()} .slick-track').empty();
+
+JS;
     }
 }

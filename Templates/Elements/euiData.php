@@ -801,17 +801,7 @@ JS;
 
                     // Scripts added programmatically
 				    {$this->on_before_load}
-        
-                    // Enrich sorting options
-                    if ({$js_var_param}.sort !== undefined) {
-                        var sortNames = {$js_var_param}.sort.split(',');
-                        var sortAttrs = [];
-                        for (var i=0; i<sortNames.length; i++) {
-                            colOpts = jqself.{$this->getElementType()}('getColumnOption', sortNames[i]);
-                            sortAttrs.push(colOpts !== null ? colOpts['_attributeAlias'] : sortNames[i]);
-                        }
-                        {$js_var_param}.sortAttr = sortAttrs.join(',');
-                    }
+
 JS;
     }
     
@@ -844,5 +834,103 @@ JS;
 
 JS;
     }
+                                
+    protected function buildJsOnBeforeLoadAddConfiguratorData(string $paramJs = 'param') : string
+    {
+        $configurator_element = $this->getTemplate()->getElement($this->getWidget()->getConfiguratorWidget());
+        
+        return <<<JS
+        
+                try {
+                    if (! {$configurator_element->buildJsValidator()}) {
+                        {$this->buildJsDataResetter()}
+                        return false;
+                    }
+                } catch (e) {
+                    console.warn('Could not check filter validity - ', e);
+                }
+                {$paramJs}['data'] = {$configurator_element->buildJsDataGetter()};
+                
+JS;
+    }
+    
+    /**
+     * 
+     * @return string
+     */
+    protected function buildJsAutoloadDisabler() : string
+    {
+        $widget = $this->getWidget();
+        $js = '';
+        if (! $widget->getAutoloadData() && $widget->getLazyLoading()) {
+            // Wrap in setTimeout() to allow the grid to be drawn before placing the message in the middle.
+            $js .= <<<JS
+            
+            $("#{$this->getId()}").data("_skipNextLoad", true);
+            setTimeout(function(){
+                {$this->buildJsAutoloadDisabledMessageShow()}
+            }, 0);
+
+JS;
+            
+            // Dieses Skript wird nach dem erfolgreichen Laden ausgefuehrt, um die angezeigte
+            // Nachricht (s.u.) zu entfernen. Das Skript muss vor $grid_head erzeugt werden.
+            $this->addOnLoadSuccess($this->buildJsAutoloadDisabledMessageHide());        
+            
+        }
+        return $js;
+    }
+    
+    
+    
+    /**
+     * Generates JS code to show a message if the initial load was skipped.
+     *
+     * @return string
+     */
+    protected function buildJsAutoloadDisabledMessageShow() : string
+    {
+        return <<<JS
+        
+            $("#{$this->getId()}").parent().append("\
+                <div id='{$this->getId()}_no_initial_load_message'\
+                     class='no-initial-load-message-overlay'>\
+                    <table class='no-initial-load-message-overlay-table'>\
+                        <tr>\
+                            <td style='text-align:center;'>\
+                                {$this->getWidget()->getAutoloadDisabledHint()}\
+                            </td>\
+                        </tr>\
+                    </table>\
+                </div>\
+            ");
+JS;
+    }
+    
+    /**
+     * Generates JS code to remove the message if the initial load was skipped.
+     *
+     * @return string
+     */
+    protected function buildJsAutoloadDisabledMessageHide() : string
+    {
+        $output = <<<JS
+        
+        $("#{$this->getId()}_no_initial_load_message").remove();
+JS;
+        
+        return $output;
+    }
+    
+    
+    
+    /**
+     * Returns a JS snippet, that empties the table (removes all rows).
+     *
+     * @return string
+     */
+    protected function buildJsDataResetter() : string
+    {
+        return "";
+    }
 }
-?>
