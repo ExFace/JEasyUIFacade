@@ -1,6 +1,10 @@
 <?php
 namespace exface\JEasyUiTemplate\Templates\Elements;
 
+use exface\Core\Interfaces\DataSheets\DataSheetInterface;
+use exface\Core\Interfaces\WidgetInterface;
+use exface\JEasyUiTemplate\Templates\JEasyUiTemplate;
+
 class euiPivotTable extends euiDataTable
 {
 
@@ -67,27 +71,14 @@ class euiPivotTable extends euiDataTable
     /**
      * A pivotGrid expects data in a different format: [ {field: value, ...}, {...}, ...
      * ]
-     *
-     * @see \exface\JEasyUiTemplate\Templates\Elements\jeasyuiAbstractWidget::prepareData()
+     * @return array
      */
-    public function prepareData(\exface\Core\Interfaces\DataSheets\DataSheetInterface $data_sheet)
+    public static function buildResponseData(JEasyUiTemplate $template, DataSheetInterface $data_sheet, WidgetInterface $widget)
     {
-        // apply the formatters
-        foreach ($data_sheet->getColumns() as $name => $col) {
-            if ($formatter = $col->getFormatter()) {
-                $expr = $formatter->toString();
-                $function = substr($expr, 1, strpos($expr, '(') - 1);
-                $formatter_class_name = 'formatters\'' . $function;
-                if (class_exists($class_name)) {
-                    $formatter = new $class_name($y);
-                }
-                $data_sheet->setColumnValues($name, $formatter->evaluate($data_sheet, $name));
-            }
-        }
         $data = array();
         foreach ($data_sheet->getRows() as $row_nr => $row) {
             foreach ($row as $fld => $val) {
-                if ($col = $this->getWidget()->getColumnByDataColumnName($fld)) {
+                if ($col = $widget->getColumnByDataColumnName($fld)) {
                     $data[$row_nr][$col->getCaption()] = $val;
                 }
             }

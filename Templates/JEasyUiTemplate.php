@@ -4,6 +4,8 @@ namespace exface\JEasyUiTemplate\Templates;
 use exface\Core\Templates\AbstractAjaxTemplate\AbstractAjaxTemplate;
 use exface\Core\Exceptions\DependencyNotFoundError;
 use exface\JEasyUiTemplate\Templates\Middleware\euiDatagridUrlParamsReader;
+use exface\Core\Interfaces\DataSheets\DataSheetInterface;
+use exface\Core\Interfaces\WidgetInterface;
 
 class JEasyUiTemplate extends AbstractAjaxTemplate
 {
@@ -73,6 +75,33 @@ class JEasyUiTemplate extends AbstractAjaxTemplate
         $includes = array_merge($includes, $this->buildHtmlHeadIcons());
         
         return $includes;        
+    }
+    
+    /**
+     *
+     * {@inheritDoc}
+     * @see \exface\Core\Templates\AbstractAjaxTemplate\AbstractAjaxTemplate::buildResponseData()
+     */
+    public function buildResponseData(DataSheetInterface $data_sheet, WidgetInterface $widget = null)
+    {
+        // If we need data for a specific widget, see if it's element has a statc data builder method.
+        // This way, we can place data builder logic inside elements with special requirements 
+        // (e.g. treegrid or privotgrid). Using static methods means, the element does not need to
+        // get instantiated - this is not required and may cause significant overhead because
+        // the init() methods of all elements would be called (registering event listeners, etc.)
+        if ($widget !== null) {
+            $widgetClass = $this->getClass($widget);
+            if (method_exists($widgetClass, 'buildResponseData') === true) {
+                return $widgetClass::buildResponseData($this, $data_sheet, $widget);
+            }
+        }        
+        
+        $data = array();
+        $data['rows'] = $data_sheet->getRows();
+        $data['offset'] = $data_sheet->getRowsOffset();
+        $data['total'] = $data_sheet->countRowsInDataSource();
+        $data['footer'] = $data_sheet->getTotalsRows();
+        return $data;
     }
 }
 ?>

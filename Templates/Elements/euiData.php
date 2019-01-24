@@ -514,7 +514,7 @@ JS;
         $js = <<<JS
         
 		try {
-			var data = {$this->getTemplate()->encodeData($this->prepareData($data, false))};
+			var data = {$this->getTemplate()->encodeData($this->getTemplate()->buildResponseData($data, $this->getWidget()))};
 		} catch (err){
             error();
 			return;

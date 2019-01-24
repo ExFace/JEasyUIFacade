@@ -3,6 +3,9 @@ namespace exface\JEasyUiTemplate\Templates\Elements;
 
 use exface\Core\Widgets\DataTree;
 use exface\Core\Interfaces\Actions\ActionInterface;
+use exface\JEasyUiTemplate\Templates\JEasyUiTemplate;
+use exface\Core\Interfaces\DataSheets\DataSheetInterface;
+use exface\Core\Interfaces\WidgetInterface;
 
 /**
  * @method DataTree getWidget()
@@ -73,11 +76,10 @@ class euiDataTree extends euiDataTable
         return $grid_head;
     }
 
-    public function prepareData(\exface\Core\Interfaces\DataSheets\DataSheetInterface $data_sheet)
+    public static function buildResponseData(JEasyUiTemplate $template, DataSheetInterface $data_sheet, WidgetInterface $widget)
     {
-        $result = parent::prepareData($data_sheet);
+        $result = $template->buildResponseData($data_sheet);
         /* @var $widget \exface\Core\Widgets\DataTree */
-        $widget = $this->getWidget();
         $folderFlagCol = $widget->hasTreeFolderFlag() ? $widget->getTreeFolderFlagAttributeAlias() : null;
         $parentCol = $widget->getTreeParentIdAttributeAlias();
         $idCol = $widget->getUidColumn()->getDataColumnName();
@@ -120,7 +122,7 @@ class euiDataTree extends euiDataTable
             }
         }
         
-        $result['footer'][0][$this->getWidget()->getTreeColumn()->getDataColumnName()] = '';
+        $result['footer'][0][$widget->getTreeColumn()->getDataColumnName()] = '';
         
         return $result;
     }

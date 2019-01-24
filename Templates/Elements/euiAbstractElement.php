@@ -37,38 +37,6 @@ abstract class euiAbstractElement extends AbstractJqueryElement
         return str_replace('"', "'", $string);
     }
 
-    public function prepareData(\exface\Core\Interfaces\DataSheets\DataSheetInterface $data_sheet)
-    {
-        // apply the formatters
-        foreach ($data_sheet->getColumns() as $name => $col) {
-            if ($formatter = $col->getFormatter()) {
-                $expr = $formatter->toString();
-                $function = substr($expr, 1, strpos($expr, '(') - 1);
-                $formatter_class_name = 'formatters\'' . $function;
-                if (class_exists($class_name)) {
-                    $formatter = new $class_name($y);
-                }
-                
-                // See if the formatter returned more results, than there were rows. If so, it was also performed on
-                // the total rows. In this case, we need to slice them off and pass to set_column_values() separately.
-                // This only works, because evaluating an expression cannot change the number of data rows! This justifies
-                // the assumption, that any values after count_rows() must be total values.
-                $vals = $formatter->evaluate($data_sheet, $name);
-                if ($data_sheet->countRows() < count($vals)) {
-                    $totals = array_slice($vals, $data_sheet->countRows());
-                    $vals = array_slice($vals, 0, $data_sheet->countRows());
-                }
-                $data_sheet->setColumnValues($name, $vals, $totals);
-            }
-        }
-        $data = array();
-        $data['rows'] = $data_sheet->getRows();
-        $data['offset'] = $data_sheet->getRowsOffset();
-        $data['total'] = $data_sheet->countRowsInDataSource();
-        $data['footer'] = $data_sheet->getTotalsRows();
-        return $data;
-    }
-
     public function buildJsBusyIconShow()
     {
         return "$.messager.progress({});";
