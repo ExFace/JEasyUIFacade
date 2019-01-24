@@ -677,7 +677,7 @@ JS;
         return "$('#{$this->getId()}').{$this->getElementType()}('loadData', {rows: []});";
     }
     
-    protected function buildJsOnBeforeLoadAddConfiguratorData($js_var_param = 'param') : string
+    protected function buildJsOnBeforeLoadAddConfiguratorData(string $js_var_param = 'param') : string
     {
         return parent::buildJsOnBeforeLoadAddConfiguratorData($js_var_param) . <<<JS
 
