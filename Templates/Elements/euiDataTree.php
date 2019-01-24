@@ -2,6 +2,7 @@
 namespace exface\JEasyUiTemplate\Templates\Elements;
 
 use exface\Core\Widgets\DataTree;
+use exface\Core\Interfaces\Actions\ActionInterface;
 
 /**
  * @method DataTree getWidget()
@@ -147,6 +148,8 @@ class euiDataTree extends euiDataTable
     protected function buildJsOnBeforeLoadScript($js_var_param = 'param', $js_var_row = 'row')
     {
         return parent::buildJsOnBeforeLoadScript($js_var_param) . <<<JS
+                    
+                    // Make parentId a regular filter instead of an extra URL parameter
                     var parentId = {$js_var_param}['id'];
                     if (parentId) {
                         if ({$js_var_param}['data'] !== undefined && {$js_var_param}['data']['filters'] !== undefined && {$js_var_param}['data']['filters']['conditions'] !== undefined) {
@@ -159,6 +162,7 @@ class euiDataTree extends euiDataTable
                         }
                         delete {$js_var_param}['id'];
                     }
+
 JS;
     }
     
@@ -176,5 +180,20 @@ JS;
 				
 JS;
     }
+    				
+    public function buildJsDataGetter(ActionInterface $action = null)
+    {
+        $parentData = parent::buildJsDataGetter($action);
+        // TODO #nested-data-sheets instead of removing children, replace the key by the alias of the relation to the child object (once nested sheets are supported)
+        return <<<JS
+function() {
+    var data = {$parentData};
+    for (var i in data.rows) {
+        delete data.rows[i]['children'];
+        delete data.rows[i]['state'];
+    }
+    return data;
+}()
+JS;
+    }
 }
-?>
