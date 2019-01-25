@@ -52,6 +52,7 @@ fieldset.exface_inputgroup legend {color: #404040; font-weight: bold; padding: 0
 .panel-body h1, .panel-body h2, .panel-body h3, .panel-body h4, .panel-body h5, .panel-body p, .panel-body pre {padding: 0 10px;}
 .panel-body h1 {margin: 10px 0 5px 0}
 .exf-text {display: block}
+.exf-display {font-weight: bold; padding-left: 3px;}
 
 /* Context menus */
 .easyui-menu .menu-item {float: none !important;}
