@@ -3,6 +3,7 @@ namespace exface\JEasyUiTemplate\Templates\Elements;
 
 use exface\Core\Widgets\ProgressBar;
 use exface\Core\Templates\AbstractAjaxTemplate\Elements\HtmlProgressBarTrait;
+use exface\Core\Templates\AbstractAjaxTemplate\Elements\JqueryDisplayTrait;
 
 /**
  *
@@ -22,17 +23,10 @@ class euiProgressBar extends euiDisplay
      */
     public function buildHtml()
     {
-        return $this->buildHtmlProgressBar($this->getValueWithDefaults());
-    }
-    
-    /**
-     * 
-     * {@inheritDoc}
-     * @see \exface\JEasyUiTemplate\Templates\Elements\euiValue::buildJs()
-     */
-    public function buildJs()
-    {
-        return '';
+        $widget = $this->getWidget();
+        $val = $widget->getValueWithDefaults();
+        $bar = $this->buildHtmlProgressBar($val, $widget->getText($val), $widget->getProgress($val), $widget->getColor($val));
+        return $this->buildHtmlLabelWrapper($bar);
     }
 }
 ?>
