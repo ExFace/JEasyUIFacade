@@ -23,6 +23,7 @@ class euiDisplay extends euiValue implements JsValueDecoratingInterface
     {
         parent::init();
         $this->setElementType($this->getCaption() ? 'span' : 'div');
+        $this->setElementType('div');
         return;
     }
     
@@ -38,10 +39,15 @@ class euiDisplay extends euiValue implements JsValueDecoratingInterface
         
         $element = <<<HTML
 
-        <{$this->getElementType()} id="{$this->getId()}" class="exf-display {$this->buildCssElementClass()}" style="{$this->buildCssElementStyle()}">{$value}</{$this->getElementType()}>
+        <{$this->getElementType()} id="{$this->getId()}" style="{$this->buildCssElementStyle()}">{$value}</{$this->getElementType()}>
 
 HTML;
         return $this->buildHtmlLabelWrapper($element);
+    }
+    
+    public function buildCssElementClass()
+    {
+        return parent::buildCssElementClass() . ' exf-display';
     }
 }
 ?>
