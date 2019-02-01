@@ -243,7 +243,7 @@ JS;
      *
      * @see \exface\Core\Templates\AbstractAjaxTemplate\Elements\AbstractJqueryElement::buildJsEnabler()
      */
-    function buildJsEnabler()
+    public function buildJsEnabler()
     {
         return '$("#' . $this->getId() . '").' . $this->getElementType() . '("enable").' . $this->getElementType() . '("validate")';
     }
@@ -254,7 +254,7 @@ JS;
      *
      * @see \exface\Core\Templates\AbstractAjaxTemplate\Elements\AbstractJqueryElement::buildJsDisabler()
      */
-    function buildJsDisabler()
+    public function buildJsDisabler()
     {
         return '$("#' . $this->getId() . '").' . $this->getElementType() . '("disable")';
     }

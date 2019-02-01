@@ -176,7 +176,7 @@ HTML;
             {$debug_function}
 
 			$(function() {
-                {$this->getId()}_jquery.combogrid({
+                {$this->getId()}_jquery.{$this->getElementType()}({
                     {$this->buildJsInitOptions()}
                 });
 

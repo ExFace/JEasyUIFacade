@@ -35,22 +35,36 @@ class euiInputSelect extends euiInput
 					<option value="' . $value . '"' . ($selected ? ' selected="selected"' : '') . '>' . $text . '</option>';
         }
         
-        $output = '	<select style="height: 100%; width: 100%;" class="easyui-' . $this->getElementType() . '" 
+        $output = '	<select style="height: 100%; width: 100%;"
 						name="' . $widget->getAttributeAlias() . '"  
 						id="' . $this->getId() . '"  
 						' . ($widget->isRequired() ? 'required="true" ' : '') . '
-						' . ($widget->isDisabled() ? 'disabled="disabled" ' : '') . '
-						' . ($this->buildJsDataOptions() ? 'data-options="' . $this->buildJsDataOptions() . '" ' : '') . '>
+						' . ($widget->isDisabled() ? 'disabled="disabled" ' : '') . '>
 						' . $options . '
 					</select>
 					';
         return $this->buildHtmlLabelWrapper($output);
     }
 
+    /**
+     * 
+     * {@inheritDoc}
+     * @see \exface\JEasyUiTemplate\Templates\Elements\euiInput::buildJs()
+     */
     public function buildJs()
     {
-        $output = '';
-        return $output;
+        // Instantiate the combobox via JS because otherwse all the initializer scripts would fail.
+        return <<<JS
+           $(function() {
+                $('#{$this->getId()}').{$this->getElementType()}({
+                    {$this->buildJsInitOptions()}
+                });
+
+			     // Initialize the live refs, enablers/disablers, etc.
+                {$this->buildJsEventScripts()};
+            });
+            
+JS;
     }
 
     /**
