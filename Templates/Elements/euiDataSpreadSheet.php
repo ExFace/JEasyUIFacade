@@ -6,6 +6,7 @@ use exface\Core\DataTypes\DateDataType;
 use exface\Core\DataTypes\PriceDataType;
 use exface\Core\DataTypes\NumberDataType;
 use exface\Core\Interfaces\DataTypes\DataTypeInterface;
+use exface\Core\Factories\DataSheetFactory;
 
 class euiDataSpreadSheet extends euiDataMatrixOld
 {    
@@ -204,7 +205,7 @@ HTML;
         $result = array();
         
         // create data sheet to fetch data
-        $ds = $this->getTemplate()->getWorkbench()->data()->createDataSheet($this->getMetaObject());
+        $ds = DataSheetFactory::createFromObject($this->getMetaObject());
         // add columns
         foreach ($widget->getColumns() as $col) {
             $ds->getColumns()->addFromExpression($col->getAttributeAlias(), $col->getDataColumnName(), $col->isHidden());

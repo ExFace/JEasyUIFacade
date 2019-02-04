@@ -2,6 +2,7 @@
 namespace exface\JEasyUiTemplate\Templates\Elements;
 
 use exface\Core\CommonLogic\DataSheets\DataColumn;
+use exface\Core\Factories\DataSheetFactory;
 
 class euiDataMatrixOld extends euiDataTable
 {
@@ -42,7 +43,7 @@ class euiDataMatrixOld extends euiDataTable
         $result = array();
         
         // create data sheet to fetch data
-        $ds = $this->getTemplate()->getWorkbench()->data()->createDataSheet($this->getMetaObject());
+        $ds = DataSheetFactory::createFromObject($this->getMetaObject());
         // add columns
         foreach ($widget->getColumns() as $col) {
             $ds->getColumns()->addFromExpression($col->getAttributeAlias(), $col->getDataColumnName(), $col->isHidden());
