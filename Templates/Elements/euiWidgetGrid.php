@@ -1,7 +1,6 @@
 <?php
 namespace exface\JEasyUiTemplate\Templates\Elements;
 
-use exface\Core\Templates\AbstractAjaxTemplate\Elements\JqueryLayoutInterface;
 use exface\Core\Templates\AbstractAjaxTemplate\Elements\JqueryLayoutTrait;
 use exface\Core\Widgets\WidgetGrid;
 
@@ -12,7 +11,7 @@ use exface\Core\Widgets\WidgetGrid;
  *        
  * @method WidgetGrid getWidget()
  */
-class euiWidgetGrid extends euiContainer implements JqueryLayoutInterface
+class euiWidgetGrid extends euiContainer
 {
     use JqueryLayoutTrait;
     
@@ -258,11 +257,20 @@ HTML;
     
     /**
      *
-     * {@inheritdoc}
-     *
+     * {@inheritDoc}
+     * @see \exface\Core\Templates\AbstractAjaxTemplate\Elements\JqueryLayoutTrait::buildJsLayouter()
+     */
+    public function buildJsLayouter() : string
+    {
+        return $this->buildJsFunctionPrefix() . 'layouter()';
+    }
+    
+    /**
+     * 
+     * {@inheritDoc}
      * @see \exface\Core\Templates\AbstractAjaxTemplate\Elements\JqueryLayoutInterface::buildJsLayouterFunction()
      */
-    public function buildJsLayouterFunction()
+    protected function buildJsLayouterFunction() : string
     {
         $widget = $this->getWidget();
         
@@ -318,23 +326,12 @@ JS;
         return $output;
     }
 
-    /**
-     * Returns if the the number of columns of this widget depends on the number of columns
-     * of the parent layout widget.
-     *
-     * @return boolean
-     */
-    public function inheritsColumnNumber()
+    public function inheritsNumberOfColumns() : bool
     {
         return true;
     }
     
-    /**
-     * Returns the default number of columns to layout this widget.
-     *
-     * @return integer
-     */
-    public function getDefaultColumnNumber()
+    public function getNumberOfColumnsByDefault() : int
     {
         return $this->getTemplate()->getConfig()->getOption("WIDGET.PANEL.COLUMNS_BY_DEFAULT");
     }

@@ -34,7 +34,7 @@ class euiDataConfigurator extends euiTabs
      *
      * @return integer
      */
-    public function getDefaultColumnNumber()
+    public function getNumberOfColumnsByDefault() : int
     {
         return $this->getTemplate()->getConfig()->getOption("WIDGET.DATACONFIGURATOR.COLUMNS_BY_DEFAULT");
     }

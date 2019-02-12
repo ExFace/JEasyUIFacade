@@ -15,9 +15,9 @@ class euiTiles extends euiWidgetGrid
     /**
      *
      * {@inheritDoc}
-     * @see \exface\JEasyUiTemplate\Templates\Elements\euiWidgetGrid::getDefaultColumnNumber()
+     * @see \exface\JEasyUiTemplate\Templates\Elements\euiWidgetGrid::getNumberOfColumnsByDefault()
      */
-    public function getDefaultColumnNumber()
+    public function getNumberOfColumnsByDefault() : int
     {
         return $this->getTemplate()->getConfig()->getOption("WIDGET.TILECONTAINER.COLUMNS_BY_DEFAULT");
     }

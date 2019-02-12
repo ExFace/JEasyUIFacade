@@ -2,8 +2,6 @@
 namespace exface\JEasyUiTemplate\Templates\Elements;
 
 use exface\Core\Widgets\Panel;
-use exface\Core\Templates\AbstractAjaxTemplate\Elements\JqueryLayoutInterface;
-use exface\Core\Templates\AbstractAjaxTemplate\Elements\JqueryLayoutTrait;
 use exface\Core\DataTypes\BooleanDataType;
 
 /**

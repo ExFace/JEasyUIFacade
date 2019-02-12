@@ -64,7 +64,7 @@ HTML;
      *
      * @see \exface\JEasyUiTemplate\Templates\Elements\euiPanel::buildJsLayouterFunction()
      */
-    public function buildJsLayouterFunction()
+    protected function buildJsLayouterFunction() : string
     {
         $output = <<<JS
 
@@ -91,13 +91,13 @@ JS;
      *
      * @return integer
      */
-    public function getDefaultColumnNumber()
+    public function getNumberOfColumnsByDefault() : int
     {
         $parent_element = $this->getTemplate()->getElement($this->getWidget()->getParent());
-        if (method_exists($parent_element, 'getDefaultColumnNumber')) {
-            return $parent_element->getDefaultColumnNumber();
+        if (method_exists($parent_element, 'getNumberOfColumnsByDefault')) {
+            return $parent_element->getNumberOfColumnsByDefault();
         }
-        return parent::getDefaultColumnNumber();
+        return parent::getNumberOfColumnsByDefault();
     }
 }
 ?>

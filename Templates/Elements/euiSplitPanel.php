@@ -105,7 +105,7 @@ HTML;
      * {@inheritDoc}
      * @see \exface\JEasyUiTemplate\Templates\Elements\euiPanel::buildJsLayouterFunction()
      */
-    public function buildJsLayouterFunction()
+    protected function buildJsLayouterFunction() : string
     {
         $output = <<<JS
 

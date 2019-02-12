@@ -173,10 +173,9 @@ HTML;
     /**
      *
      * {@inheritdoc}
-     *
      * @see \exface\JEasyUiTemplate\Templates\Elements\euiPanel::buildJsLayouterFunction()
      */
-    public function buildJsLayouterFunction()
+    protected function buildJsLayouterFunction() : string
     {
         $output = <<<JS
 
@@ -203,7 +202,7 @@ JS;
      *
      * @return integer
      */
-    public function getDefaultColumnNumber()
+    public function getNumberOfColumnsByDefault() : int
     {
         return $this->getTemplate()->getConfig()->getOption("WIDGET.DIALOG.COLUMNS_BY_DEFAULT");
     }
@@ -214,7 +213,7 @@ JS;
      *
      * @return boolean
      */
-    public function inheritsColumnNumber()
+    public function inheritsNumberOfColumns() : bool
     {
         return false;
     }
