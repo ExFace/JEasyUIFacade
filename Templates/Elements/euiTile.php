@@ -14,7 +14,7 @@ class euiTile extends euiButton
     {
         $widget = $this->getWidget();
         
-        $icon_class = $widget->getIcon() && ! $widget->getHideButtonIcon() ? $this->buildCssIconClass($widget->getIcon()) : '';
+        $icon_class = $widget->getIcon() && $widget->getShowIcon(true) ? $this->buildCssIconClass($widget->getIcon()) : '';
         $style = $this->buildCssElementStyle();
         
         if ($this->getWidget()->hasAction()) {
