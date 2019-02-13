@@ -6,7 +6,7 @@ use exface\Core\DataTypes\DateDataType;
 use exface\Core\DataTypes\PriceDataType;
 use exface\Core\DataTypes\NumberDataType;
 use exface\Core\Templates\AbstractAjaxTemplate\Elements\JquerySlickGalleryTrait;
-use exface\Core\Widgets\DataImageGallery;
+use exface\Core\Widgets\Imagegallery;
 use exface\Core\DataTypes\UrlDataType;
 
 /**
@@ -14,10 +14,10 @@ use exface\Core\DataTypes\UrlDataType;
  * 
  * @author Andrej Kabachnik
  * 
- * @method DataImageGallery getWidget()
+ * @method Imagegallery getWidget()
  *        
  */
-class euiDataImageGallery extends euiData
+class euiImagegallery extends euiData
 {    
     use JquerySlickGalleryTrait;
     
