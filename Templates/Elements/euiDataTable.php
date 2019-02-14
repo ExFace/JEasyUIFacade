@@ -650,6 +650,8 @@ JS;
                     if (data.total === null) {
                         data.total = data.rows.length + data.offset + 1;
                         $(this).data("_totalRowCounterPlaceholder", data.total);
+                    } else {
+                        $(this).removeData("_totalRowCounterPlaceholder");
                     }
 
 JS;
