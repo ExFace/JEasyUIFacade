@@ -99,7 +99,7 @@ JS;
         delay: 1,
         formatter: function (date) {
             // date ist ein date-Objekt und wird zu einem String geparst
-            return {$this->getDataTypeFormatter()->buildJsDateFormatter('date')};
+            return (date instanceof Date ? {$this->getDataTypeFormatter()->buildJsDateFormatter('date')} : '');
         },
         parser: function(string) {
             var date = {$this->getDataTypeFormatter()->buildJsDateParserFunctionName()}(string);
