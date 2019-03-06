@@ -53,6 +53,11 @@ class euiDataTable extends euiData
                 $this->editors[$col->getId()] = $editor;
             }
         }
+        
+        // If GroupView is used, make the group-by-column hidden. Otherwise the column layout gets broken!
+        if ($widget->hasRowGroups() === true) {
+            $widget->getRowGrouper()->getGroupByColumn()->setHidden(true);
+        }
     }
 
     /**
@@ -457,7 +462,11 @@ JS;
         $grid_head = '';
         $grouper = $this->getWidget()->getRowGrouper();
         
-        $grid_head .= ', view: groupview' . ",groupField: '" . $grouper->getGroupByColumn()->getDataColumnName() . "'" . ",groupFormatter:function(value,rows){ return value" . ($grouper->getShowCounter() ? " + ' (' + rows.length + ')'" : "") . ";}";
+        // groupView options
+        $prefix = $grouper->getHideCaption() === false ? "'" . $grouper->getCaption() . " ' + " : '';
+        $counter = $grouper->getShowCounter() ? " + ' (' + rows.length + ')'" : "";
+        $grid_head .= ', view: groupview' . ",groupField: '{$grouper->getGroupByColumn()->getDataColumnName()}', groupFormatter:function(value,rows){ return {$prefix}value{$counter};}";
+        
         if (! $grouper->getExpandAllGroups()) {
             $this->addOnLoadSuccess("$('#" . $this->getId() . "')." . $this->getElementType() . "('collapseGroup');");
         }
