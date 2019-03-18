@@ -71,6 +71,22 @@ HTML;
         </div>
 HTML;
             }
+            
+            if ($widget->hasHeader() === true) {
+                $headerElem = $this->getTemplate()->getElement($widget->getHeader());
+                $children_html = <<<HTML
+
+    <div class="easyui-layout" data-options="fit:true">
+        <div data-options="region:'north'" class="exf-dialog-header" style="height: {$headerElem->getHeight()}">
+            {$headerElem->buildHtml()}
+        </div>
+        <div data-options="region:'center'">
+            {$children_html}
+        </div>
+    </div>
+
+HTML;
+            }
         }
         
         if (! $this->getWidget()->getHideHelpButton()) {
@@ -104,6 +120,9 @@ HTML;
         $output = '';
         if (! $this->isLazyLoading()) {
             $output .= $this->buildJsForWidgets();
+            if ($this->getWidget()->hasHeader() === true) {
+                $output .= $this->getTemplate()->getElement($this->getWidget()->getHeader())->buildJs();
+            }
         }
         $output .= $this->buildJsButtons();
         

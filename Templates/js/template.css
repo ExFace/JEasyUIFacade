@@ -64,6 +64,10 @@ div.messager-body{overflow-y: auto;}
 .window .window-header .panel-with-icon {padding-left: 21px !important;}
 .dialog-button {min-height: 26px; text-align: left !important}
 
+/* Dialog */
+.exf-dialog-header {background-color: #daeef5 !important;}
+.exf-dialog-header .easyui-panel {background-color: transparent !important;}
+
 /* TextDiff widget */
 .difftext-container {border: 1px solid #c3d9e0;}
 .difftext-diff del {text-decoration: line-through; color: white; background-color: red;}
