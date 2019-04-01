@@ -21,7 +21,7 @@
     "INSTALLER.SERVICEWORKER.DISABLED": true, 
     "INSTALLER.SERVICEWORKER.ROUTES": {
     	"GET data": {
-			"description": "Cache data from the template API",
+			"description": "Cache data from the facade API",
 			"matcher": "/.*\\/api\\/jeasyui\\?(?!.*context).*/",
 			"strategy": "workbox.strategies.networkFirst",
 			"cacheName": "jeasyui-cache",
@@ -29,7 +29,7 @@
     		"maxAgeSeconds": 86400
 		},
     	"POST data": {
-			"description": "Cache reading POST requests from the template API",
+			"description": "Cache reading POST requests from the facade API",
 			"method": "POST",
 			"matcher": "/.*\\/api\\/jeasyui(?!.*context).*/i",
 			"strategy": "swTools.strategies.postNetworkFirst",
@@ -60,8 +60,8 @@
 	
 	"LIBS.MASONRY": "bower-asset/masonry/dist/masonry.pkgd.min.js",
 	
-	"LIBS.TEMPLATE.CSS": "exface/JEasyUIFacade/Facades/js/template.css",
-    "LIBS.TEMPLATE.JS": "exface/JEasyUIFacade/Facades/js/template.js",
+	"LIBS.TEMPLATE.CSS": "exface/JEasyUIFacade/Facades/js/facade.css",
+    "LIBS.TEMPLATE.JS": "exface/JEasyUIFacade/Facades/js/facade.js",
     
     "LIBS.FONT_AWESOME": "bower-asset/font-awesome/css/font-awesome.min.css",
     

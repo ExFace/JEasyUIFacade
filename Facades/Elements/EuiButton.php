@@ -51,7 +51,7 @@ class EuiButton extends EuiAbstractElement
         
         // Get the java script required for the action itself
         if ($action) {
-            // Actions with template scripts may contain some helper functions or global variables.
+            // Actions with facade scripts may contain some helper functions or global variables.
             // Print the here first.
             if ($action && $action->implementsInterface('iRunFacadeScript')) {
                 $output .= $this->getAction()->buildScriptHelperFunctions($this->getFacade());
@@ -83,7 +83,7 @@ class EuiButton extends EuiAbstractElement
         $style = '';
         if (! $widget->getParent() instanceof ButtonGroup){
             // TODO look for the default alignment for buttons for the input
-            // widget in the config of this template
+            // widget in the config of this facade
             switch ($this->buildCssTextAlignValue($widget->getAlign())) {
                 case 'left':
                     break;

@@ -76,9 +76,9 @@ class EuiDataTree extends EuiDataTable
         return $grid_head;
     }
 
-    public static function buildResponseData(JEasyUIFacade $template, DataSheetInterface $data_sheet, WidgetInterface $widget)
+    public static function buildResponseData(JEasyUIFacade $facade, DataSheetInterface $data_sheet, WidgetInterface $widget)
     {
-        $result = $template->buildResponseData($data_sheet);
+        $result = $facade->buildResponseData($data_sheet);
         /* @var $widget \exface\Core\Widgets\DataTree */
         $folderFlagCol = $widget->hasTreeFolderFlag() ? $widget->getTreeFolderFlagAttributeAlias() : null;
         $parentCol = $widget->getTreeParentIdAttributeAlias();

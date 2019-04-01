@@ -24,7 +24,7 @@ class EuiSplitHorizontal extends EuiSplitVertical
                     $elem->setRegion('east');
                     break;
                 default:
-                    throw new FacadeUnsupportedWidgetPropertyWarning('The template jEasyUI currently only supports splits with a maximum of 3 panels! "' . $widget->getId() . '" has "' . $widget->countWidgets() . '" panels.');
+                    throw new FacadeUnsupportedWidgetPropertyWarning('The facade jEasyUI currently only supports splits with a maximum of 3 panels! "' . $widget->getId() . '" has "' . $widget->countWidgets() . '" panels.');
             }
             $panels_html .= $elem->buildHtml();
         }

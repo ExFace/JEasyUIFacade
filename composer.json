@@ -1,6 +1,6 @@
 {
 	"name" : "exface/JEasyUIFacade",
-	"description" : "UI template for the ExFace plattform based on jQuery EasyUI",
+	"description" : "UI facade for the ExFace plattform based on jQuery EasyUI",
 	"type" : "library",
 	"license" : "GPL-3.0+",
 	"authors" : [{

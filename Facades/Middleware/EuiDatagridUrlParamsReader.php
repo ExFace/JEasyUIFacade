@@ -24,7 +24,7 @@ class EuiDatagridUrlParamsReader implements MiddlewareInterface
     use TaskRequestTrait;
     use DataEnricherTrait;
     
-    private $template = null;
+    private $facade = null;
     
     private $taskAttributeName = null;
     
@@ -36,9 +36,9 @@ class EuiDatagridUrlParamsReader implements MiddlewareInterface
      * 
      * @param WorkbenchInterface $workbench
      */
-    public function __construct(HttpFacadeInterface $template, string $dataGetterMethod, string $dataSetterMethod, $taskAttributeName = 'task')
+    public function __construct(HttpFacadeInterface $facade, string $dataGetterMethod, string $dataSetterMethod, $taskAttributeName = 'task')
     {
-        $this->template = $template;
+        $this->facade = $facade;
         $this->taskAttributeName = $taskAttributeName;
         $this->getterMethodName = $dataGetterMethod;
         $this->setterMethodName = $dataSetterMethod;
@@ -51,7 +51,7 @@ class EuiDatagridUrlParamsReader implements MiddlewareInterface
      */
     public function process(ServerRequestInterface $request, RequestHandlerInterface $handler): ResponseInterface
     {        
-        $task = $this->getTask($request, $this->taskAttributeName, $this->template);
+        $task = $this->getTask($request, $this->taskAttributeName, $this->facade);
         
         $requestParams = $request->getQueryParams();
         if (is_array($request->getParsedBody()) || $request->getParsedBody()) {

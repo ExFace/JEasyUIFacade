@@ -65,7 +65,7 @@ HTML;
     function buildJs()
     {
         // Validator-Regel fuer InputDates hinzufuegen. Jetzt fuer jedes Widget einmal.
-        // Einmal wuerde eigentlich reichen, geht aber in template.js nicht, weil die
+        // Einmal wuerde eigentlich reichen, geht aber in facade.js nicht, weil die
         // message uebersetzt werden muss.
         $output = <<<JS
 

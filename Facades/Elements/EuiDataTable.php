@@ -278,16 +278,16 @@ JS;
      */
     public function buildHtmlHeadTags()
     {
-        $template = $this->getFacade();
+        $facade = $this->getFacade();
         $includes = parent::buildHtmlHeadTags();
         // Masonry is neede to align filters nicely
-        $includes[] = '<script type="text/javascript" src="' . $template->buildUrlToSource('LIBS.MASONRY') . '"></script>';
+        $includes[] = '<script type="text/javascript" src="' . $facade->buildUrlToSource('LIBS.MASONRY') . '"></script>';
         // Row details view
         if ($this->getWidget()->hasRowDetails()) {
-            $includes[] = '<script type="text/javascript" src="' . $template->buildUrlToSource('LIBS.JEASYUI.EXTENSIONS.DATAGRID_DETAILVIEW') . '"></script>';
+            $includes[] = '<script type="text/javascript" src="' . $facade->buildUrlToSource('LIBS.JEASYUI.EXTENSIONS.DATAGRID_DETAILVIEW') . '"></script>';
         }
         if ($this->getWidget()->hasRowGroups()){
-            $includes[] = '<script type="text/javascript" src="' . $template->buildUrlToSource('LIBS.JEASYUI.EXTENSIONS.DATAGRID_GROUPVIEW') . '"></script>';
+            $includes[] = '<script type="text/javascript" src="' . $facade->buildUrlToSource('LIBS.JEASYUI.EXTENSIONS.DATAGRID_GROUPVIEW') . '"></script>';
         }
         return $includes;
     }

@@ -73,7 +73,7 @@ class EuiPivotTable extends EuiDataTable
      * ]
      * @return array
      */
-    public static function buildResponseData(JEasyUIFacade $template, DataSheetInterface $data_sheet, WidgetInterface $widget)
+    public static function buildResponseData(JEasyUIFacade $facade, DataSheetInterface $data_sheet, WidgetInterface $widget)
     {
         $data = array();
         foreach ($data_sheet->getRows() as $row_nr => $row) {

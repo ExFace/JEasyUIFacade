@@ -69,7 +69,7 @@ HTML;
      * 
      * Set $make_grid_item to FALSE to disable wrapping in a grid item <div> - this way the
      * grid item can be generated in a custom way. Wrapping every label-control pair by default
-     * is just a convenience function, so every template element just needs to call one single
+     * is just a convenience function, so every facade element just needs to call one single
      * wrapper by default.
      * 
      * @param string $html

@@ -13,7 +13,7 @@ class JEasyUIFacadeApp extends App
     /**
      * {@inheritdoc}
      * 
-     * An additional installer is included to condigure the routing for the HTTP templates.
+     * An additional installer is included to condigure the routing for the HTTP facades.
      * 
      * @see App::getInstaller($injected_installer)
      */
