@@ -39,7 +39,7 @@
 	},
     "INSTALLER.SERVICEWORKER.IMPORTS": [
     	"npm-asset/dexie/dist/dexie.min.js",
-    	"exface/Core/Templates/AbstractPWATemplate/sw_tools.js"
+    	"exface/Core/Facades/AbstractPWAFacade/sw_tools.js"
     ],
     
     "LIBS.JQUERY": "bower-asset/jquery/dist/jquery.min.js",
@@ -47,21 +47,21 @@
     
     "LIBS.JEASYUI.CORE": "bower-asset/jeasyui/jquery.easyui.min.js",
     "LIBS.JEASYUI.LANG_DEFAULT": "bower-asset/jeasyui/locale/easyui-lang-de.js",
-    "LIBS.JEASYUI.THEME": "exface/JEasyUiTemplate/Templates/js/jeasyui/themes/metro-blue/easyui.css",
-    "LIBS.JEASYUI.EXTENSIONS.DATAGRID_GROUPVIEW": "exface/JEasyUiTemplate/Templates/js/jeasyui/extensions/datagridview/datagrid-groupview.js",
-    "LIBS.JEASYUI.EXTENSIONS.DATAGRID_DETAILVIEW": "exface/JEasyUiTemplate/Templates/js/jeasyui/extensions/datagridview/datagrid-detailview.js",
-    "LIBS.JEASYUI.PATCHES": "exface/JEasyUiTemplate/Templates/js/jquery.easyui.patch.1.43.js",
+    "LIBS.JEASYUI.THEME": "exface/JEasyUIFacade/Facades/js/jeasyui/themes/metro-blue/easyui.css",
+    "LIBS.JEASYUI.EXTENSIONS.DATAGRID_GROUPVIEW": "exface/JEasyUIFacade/Facades/js/jeasyui/extensions/datagridview/datagrid-groupview.js",
+    "LIBS.JEASYUI.EXTENSIONS.DATAGRID_DETAILVIEW": "exface/JEasyUIFacade/Facades/js/jeasyui/extensions/datagridview/datagrid-detailview.js",
+    "LIBS.JEASYUI.PATCHES": "exface/JEasyUIFacade/Facades/js/jquery.easyui.patch.1.43.js",
 	
 	"LIBS.FLOT.CORE_FOLDER": "npm-asset/flot-charts/",
-	"LIBS.FLOT.PLUGINS.ORDERBARS": "exface/JEasyUiTemplate/Templates/js/flot/plugins/jquery.flot.orderBars.js",
-	"LIBS.FLOT.PLUGINS.AXISLABELS": "exface/JEasyUiTemplate/Templates/js/flot/plugins/jquery.flot.orderBars.js",
+	"LIBS.FLOT.PLUGINS.ORDERBARS": "exface/JEasyUIFacade/Facades/js/flot/plugins/jquery.flot.orderBars.js",
+	"LIBS.FLOT.PLUGINS.AXISLABELS": "exface/JEasyUIFacade/Facades/js/flot/plugins/jquery.flot.orderBars.js",
 	
 	"LIBS.MARKDOWN.CSS": "npm-asset/github-markdown-css/github-markdown.css",
 	
 	"LIBS.MASONRY": "bower-asset/masonry/dist/masonry.pkgd.min.js",
 	
-	"LIBS.TEMPLATE.CSS": "exface/JEasyUiTemplate/Templates/js/template.css",
-    "LIBS.TEMPLATE.JS": "exface/JEasyUiTemplate/Templates/js/template.js",
+	"LIBS.TEMPLATE.CSS": "exface/JEasyUIFacade/Facades/js/template.css",
+    "LIBS.TEMPLATE.JS": "exface/JEasyUIFacade/Facades/js/template.js",
     
     "LIBS.FONT_AWESOME": "bower-asset/font-awesome/css/font-awesome.min.css",
     

@@ -1,5 +1,5 @@
 {
-	"name" : "exface/JEasyUiTemplate",
+	"name" : "exface/JEasyUIFacade",
 	"description" : "UI template for the ExFace plattform based on jQuery EasyUI",
 	"type" : "library",
 	"license" : "GPL-3.0+",
@@ -10,7 +10,7 @@
 		}
 	],
 	"support" : {
-		"issues" : "https://github.com/exface/JEasyUiTemplate/issues"
+		"issues" : "https://github.com/exface/JEasyUIFacade/issues"
 	},
 	"require" : {
 		"exface/core" : "~0.1",
@@ -32,14 +32,14 @@
 	"extra" : {
 		"app" : {
 			"app_uid" : "0x11e6c930ff1f486693cce4b318306b9a",
-			"app_alias" : "exface.JEasyUiTemplate",
+			"app_alias" : "exface.JEasyUIFacade",
 			"model_md5" : "b50b0ae444bcf9d06a41c72c0e97ee57",
 			"model_timestamp" : "2018-09-27 10:17:01"
 		}
 	},
 	"autoload" : {
 		"psr-4" : {
-			"exface\\JEasyUiTemplate\\" : ""
+			"exface\\JEasyUIFacade\\" : ""
 		},
 		"exclude-from-classmap" : [
 			"/Config/",
