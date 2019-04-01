@@ -55,11 +55,11 @@ class JEasyUIFacade extends AbstractAjaxFacade
     {
         $includes = [
             '<link rel="stylesheet" type="text/css" href="' . $this->buildUrlToSource('LIBS.JEASYUI.THEME') . '">',
-            '<link rel="stylesheet" type="text/css" href="' . $this->buildUrlToSource('LIBS.TEMPLATE.CSS') . '">',
+            '<link rel="stylesheet" type="text/css" href="' . $this->buildUrlToSource('LIBS.FACADE.CSS') . '">',
             '<script type="text/javascript" src="' . $this->buildUrlToSource('LIBS.JQUERY') . '"></script>',
             '<script type="text/javascript" src="' . $this->buildUrlToSource('LIBS.JEASYUI.CORE') . '"></script>',
             '<script type="text/javascript" src="' . $this->buildUrlToSource('LIBS.JEASYUI.LANG_DEFAULT') . '"></script>',
-            '<script type="text/javascript" src="' . $this->buildUrlToSource('LIBS.TEMPLATE.JS') . '"></script>',
+            '<script type="text/javascript" src="' . $this->buildUrlToSource('LIBS.FACADE.JS') . '"></script>',
             '<link href="' . $this->buildUrlToSource('LIBS.FONT_AWESOME') . '" rel="stylesheet" type="text/css" />'
         ];
         
