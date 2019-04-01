@@ -60,8 +60,8 @@
 	
 	"LIBS.MASONRY": "bower-asset/masonry/dist/masonry.pkgd.min.js",
 	
-	"LIBS.TEMPLATE.CSS": "exface/JEasyUIFacade/Facades/js/facade.css",
-    "LIBS.TEMPLATE.JS": "exface/JEasyUIFacade/Facades/js/facade.js",
+	"LIBS.TEMPLATE.CSS": "exface/JEasyUIFacade/Facades/js/jeasyui-metro-blue.template.css",
+    "LIBS.TEMPLATE.JS": "exface/JEasyUIFacade/Facades/js/jeasyui.facade.js",
     
     "LIBS.FONT_AWESOME": "bower-asset/font-awesome/css/font-awesome.min.css",
     
