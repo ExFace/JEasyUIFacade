@@ -14,7 +14,6 @@
 	},
 	"require" : {
 		"exface/core" : "^0.1",
-		"exface/ActionTest" : "^0.1",
 		"bower-asset/jeasyui" : "1.4.3",
 		"bower-asset/masonry" : "^4",
 		"bower-asset/blueimp-file-upload" : "^9.12",
