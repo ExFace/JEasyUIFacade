@@ -6,6 +6,7 @@ use exface\Core\Factories\FacadeFactory;
 use exface\Core\Widgets\Parts\ConsoleCommandPreset;
 
 /**
+ * JEasyUI Element to Display Console Terminal in the browser
  * 
  * @author rml
  * @method \exface\Core\Widgets\Console getWidget()
@@ -44,7 +45,7 @@ class EuiConsole extends EuiAbstractElement
     }
     
     /***
-     * Build the HTML for when the Widget has Presets
+     * Build HTML for when the Widget has Presets
      * 
      * @param string $terminal
      * @return string
@@ -55,12 +56,13 @@ class EuiConsole extends EuiAbstractElement
 
 <div class="easyui-panel" title="" data-options="fit: true, footer:'#footer_{$this->getId()}'">
     {$terminal}
+    {$this->buildHtmlCommandPresetDialogs()}
 </div>
 <div id="footer_{$this->getId()}" style="padding:5px;">
     {$this->buildHtmlCommandPresetButtons()}
 </div>
 
-{$this->buildHtmlCommandPresetDialogs()}
+
 
 HTML;
     }
@@ -77,7 +79,7 @@ HTML;
             $hint = str_replace('"', '&quot;', $preset->getHint());
             $html .= <<<HTML
 
-<a href="#" class="easyui-linkbutton" title="{$hint}" onclick="javascript: {$this->buildJsFunctionPrefix()}clickPreset{$nr}();" data-options="plain: true">{$preset->getCaption()}</a>
+    <a href="#" class="easyui-linkbutton" title="{$hint}" onclick="javascript: {$this->buildJsFunctionPrefix()}clickPreset{$nr}();" data-options="plain: true">{$preset->getCaption()}</a>
 
 HTML;
         }
@@ -85,12 +87,14 @@ HTML;
     }
     
     /**
-     * Build HTML fpr Preset Dialogs
+     * Build HTML for Preset Dialogs
      * 
      * @return string
      */
     protected function buildHtmlCommandPresetDialogs() : string
     {
+        $html = '';
+        
         foreach ($this->getWidget()->getCommandPresets() as $nr => $preset) {
             if ($preset->hasPlaceholders() === true){
                 $commands = json_encode($preset->getcommands());
@@ -104,7 +108,7 @@ HTML;
         <div class="exf-control exf-input" style="width: 100%;">
             <label>{$placeholder}</label>
 			<div class="exf-labeled-item">
-                <input class="easyui-textbox" required="true" style="height: 100%; width: 100%;" name="{$placeholder}">
+                <input class="easyui-textbox" required="true" style="height: 100%; width: 100%;" name="{$placeholder}" />
             </div>
         </div>
         
@@ -122,16 +126,35 @@ HTML;
     </div>
 
 HTML;
-            }
-            
+            }            
         }
-        return $html;
-            
+        
+        return $html;            
     }
     
+    /**
+     * Returns preset Dialog with the given Number
+     * 
+     * @param int $presetIdx
+     * @return string
+     */
     protected function getPresetDialogId(int $presetIdx) : string
     {
         return "{$this->getId()}_presetDialog{$presetIdx}";
+    }    
+    
+    /**
+     * Build HTML for Console Terminal
+     *
+     * @return string
+     */
+    protected function buildHtmlTerminal() : string
+    {
+        return <<<HTML
+        
+    <div id="{$this->getId()}" style="min-height: 100%; margin: 0;"></div>
+    
+HTML;
     }
     
     /**
@@ -157,20 +180,6 @@ function {$this->buildJsFunctionPrefix()}clickPreset{$presetId}() {
 
 JS;
      
-    }
-    
-    /**
-     * Build HTML for Console Terminal
-     * 
-     * @return string
-     */
-    protected function buildHtmlTerminal() : string
-    {
-        return <<<HTML
-
-    <div id="{$this->getId()}" style="min-height: 100%; margin: 0;"></div>
-
-HTML;
     }
         
     /**
@@ -213,6 +222,8 @@ HTML;
         return <<<JS
 
 /**
+ * Function to perform ajax request to Server.
+ * Echo responses while request still running to the console terminal.
  *
  * @return jqXHR
  */
@@ -229,23 +240,21 @@ function {$this->buildJsFunctionPrefix()}ExecuteCommand(command, terminal) {
 		},
 		xhrFields: {
 			onprogress: function(e){
-                console.log('Request läuft');
                 var XMLHttpRequest = e.target;
                 if (XMLHttpRequest.status >= 200 && XMLHttpRequest.status < 300) {
 					var response = XMLHttpRequest.response;
 					terminal.echo(String(response));
-                    terminal.scroll(-10);                    
+                    terminal.resume();
+                    terminal.pause()                    
                 }
-                //terminal.scroll_to_bottom();
 			}
 		},
         headers: {
             'Cache-Control': 'no-cache'
         }
     }).done(function(data, textStatus, jqXHR){
-        console.log('Request done');
         $('#{$this->getId()}').data('cwd', jqXHR.getResponseHeader('X-CWD'));
-        terminal.set_prompt($('#{$this->getId()}').data('cwd') + '> ' );
+        terminal.set_prompt({$this->getStyledPrompt("$('#{$this->getId()}').data('cwd')")});
         terminal.resume();    
     }).fail(function(jqXHR, textStatus, errorThrown){
         console.log('Error: ', errorThrown);
@@ -254,6 +263,7 @@ function {$this->buildJsFunctionPrefix()}ExecuteCommand(command, terminal) {
     }).always({$pauseIfDisabled});
 }
 
+//Function to send commands given in an array to server one after another
 function {$this->buildJsFunctionPrefix()}ExecuteCommandsJson(commandsarray, terminal, placeholders){            
     setTimeout(function(){ 
         $('#{$this->getId()}').terminal().focus(); 
@@ -268,13 +278,11 @@ function {$this->buildJsFunctionPrefix()}ExecuteCommandsJson(commandsarray, term
     }
     
     commandsarray.reduce(function (promise, command) {
-        console.log('prepare ', command);
         return promise
             .then(function(){
                 return terminal.echo(terminal.get_prompt() + command);
             })
             .then(function(){
-                console.log('done ', command);
                 return {$this->buildJsFunctionPrefix()}ExecuteCommand(command, terminal).promise();
             })
             
@@ -291,7 +299,7 @@ $(function(){
     }, {
         greetings: '{$this->getCaption()}',
         scrollOnEcho: true,
-        prompt: '{$this->getWidget()->getWorkingDirectoryPath()}'+'> '
+        prompt: {$this->getStyledPrompt("'" . $this->getWidget()->getWorkingDirectoryPath(). "'")}
     });
 
     {$runStartCommands}
@@ -302,7 +310,6 @@ $(function(){
         var placeholders = {};
         var window = btn.parents('.panel.window').first();
         var commands = JSON.parse(window.find('textarea[name=commands]').val());
-        console.log(window, commands);
         window.find('.textbox-value').each(function(){
             placeholders['<'+ this.name +'>'] = this.value;
         });
@@ -320,6 +327,18 @@ $(function(){
 
 JS;
             
+    }
+        
+    /**
+     * Styles the prompt string.
+     * See https://terminal.jcubic.pl/api_reference.php for allowed syntax 
+     *
+     * @param string $prompt
+     * @return string
+     */
+    protected function getStyledPrompt(string $prompt) :string
+    {
+        return "'[[;red;]' + " . $prompt . " + '> ]'";
     }
         
     /**
