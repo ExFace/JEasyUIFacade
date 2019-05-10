@@ -338,7 +338,7 @@ JS;
      */
     protected function getStyledPrompt(string $prompt) :string
     {
-        return "'[[;red;]' + " . $prompt . " + '> ]'";
+        return "'[[;lime;]' + " . $prompt . " + '> ]'";
     }
         
     /**
