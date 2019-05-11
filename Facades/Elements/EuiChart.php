@@ -1,7 +1,7 @@
 <?php
 namespace exface\JEasyUIFacade\Facades\Elements;
 
-use exface\Core\Widgets\ChartAxis;
+use exface\Core\Widgets\Parts\Charts\ChartAxis;
 use exface\Core\Widgets\ChartSeries;
 use exface\Core\Widgets\Chart;
 use exface\Core\Facades\AbstractAjaxFacade\Elements\JqueryFlotTrait;
