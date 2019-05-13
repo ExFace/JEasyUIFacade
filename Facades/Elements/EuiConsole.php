@@ -56,13 +56,10 @@ class EuiConsole extends EuiAbstractElement
 
 <div class="easyui-panel" title="" data-options="fit: true, footer:'#footer_{$this->getId()}'">
     {$terminal}
-    {$this->buildHtmlCommandPresetDialogs()}
 </div>
 <div id="footer_{$this->getId()}" style="padding:5px;">
     {$this->buildHtmlCommandPresetButtons()}
 </div>
-
-
 
 HTML;
     }
@@ -76,60 +73,19 @@ HTML;
     {
         $html = '';
         foreach ($this->getWidget()->getCommandPresets() as $nr => $preset) {
-            $hint = str_replace('"', '&quot;', $preset->getHint());
+            $hint = str_replace('"', '&quot;', $preset->getHint() . " (" . implode("; ", $preset->getCommands()) . ")");
+            $dataOptions = '';
+            if ($preset->getVisibility() !== EXF_WIDGET_VISIBILITY_PROMOTED) {
+                $dataOptions .= ', plain: true';
+            }
+            $dataOptions = trim($dataOptions, " ,");
             $html .= <<<HTML
 
-    <a href="#" class="easyui-linkbutton" title="{$hint}" onclick="javascript: {$this->buildJsFunctionPrefix()}clickPreset{$nr}();" data-options="plain: true">{$preset->getCaption()}</a>
+    <a href="#" class="easyui-linkbutton" title="{$hint}" onclick="javascript: {$this->buildJsFunctionPrefix()}clickPreset{$nr}();" data-options="{$dataOptions}">{$preset->getCaption()}</a>
 
 HTML;
         }
         return $html;
-    }
-    
-    /**
-     * Build HTML for Preset Dialogs
-     * 
-     * @return string
-     */
-    protected function buildHtmlCommandPresetDialogs() : string
-    {
-        $html = '';
-        
-        foreach ($this->getWidget()->getCommandPresets() as $nr => $preset) {
-            if ($preset->hasPlaceholders() === true){
-                $commands = json_encode($preset->getcommands());
-                $dialogWidth = $this->getWidthRelativeUnit() + 35;
-                
-                $inputs = '<textarea name="commands" style="display: none;">' . $commands . '</textarea>';
-                foreach ($preset->getPlaceholders() as $placeholder){
-                    $placeholder = trim($placeholder, "<>");
-                    $inputs .=<<<HTML
-
-        <div class="exf-control exf-input" style="width: 100%;">
-            <label>{$placeholder}</label>
-			<div class="exf-labeled-item">
-                <input class="easyui-textbox" required="true" style="height: 100%; width: 100%;" name="{$placeholder}" />
-            </div>
-        </div>
-        
-HTML;
-                }
-                
-                $html .= <<<HTML
-    
-    <div id="{$this->getPresetDialogId($nr)}" class="easyui-dialog" title="{$preset->getCaption()}" style="width:{$dialogWidth}px;" data-options="closed:true,modal:true,border:'thin',buttons:'#{$this->getPresetDialogId($nr)}_buttons'">
-        {$inputs}
-        <div id="{$this->getPresetDialogId($nr)}_buttons" style="text-align: right !important;">
-    		<a href="#" class="easyui-linkbutton {$this->getId()}_dialog_ok" data-options="">{$this->translate("WIDGET.CONSOLE_BTN_OK")}</a>
-            <a href="#" class="easyui-linkbutton {$this->getId()}_dialog_close" data-options="plain: true">{$this->translate("WIDGET.CONSOLE_BTN_CANCEL")}</a>
-    	</div>
-    </div>
-
-HTML;
-            }            
-        }
-        
-        return $html;            
     }
     
     /**
@@ -168,7 +124,73 @@ HTML;
     {
         $commands = json_encode($preset->getCommands());
         if ($preset->hasPlaceholders()) {
-            $action = "$('#{$this->getPresetDialogId($presetId)}').dialog('open').dialog('center');";
+            $commands = json_encode($preset->getcommands());
+            $dialogWidth = $this->getWidthRelativeUnit() + 35;
+            
+            $addInputsJs = '';
+            foreach ($preset->getPlaceholders() as $placeholder){
+                $placeholder = trim($placeholder, "<>");
+                $addInputsJs .= <<<js
+
+    jqDialog.append(`
+        <div class="exf-control exf-input" style="width: 100%;">
+            <label>{$placeholder}</label>
+			<div class="exf-labeled-item">
+                <input class="easyui-textbox" required="true" style="height: 100%; width: 100%;" name="{$placeholder}" />
+            </div>
+        </div>
+    `);
+        
+js;
+            }
+            
+            $action = <<<JS
+
+    var jqDialog = $(`
+<div class="exf-console-preset-dialog" title="{$preset->getCaption()}" style="width:{$dialogWidth}px;">
+    <div class="exf-console-preset-dialog-buttons" style="text-align: right !important;">
+		<a href="#" class="easyui-linkbutton exf-console-preset-btn-ok" data-options="">{$this->translate("WIDGET.CONSOLE.PRESET_BTN_OK")}</a>
+        <a href="#" class="easyui-linkbutton exf-console-preset-btn-close" data-options="plain: true">{$this->translate("WIDGET.CONSOLE.PRESET_BTN_CANCEL")}</a>
+	</div>
+</div>
+`);
+    {$addInputsJs}
+    jqDialog.attr('id', '{$this->getPresetDialogId($presetId)}');
+    jqDialog.find('.exf-console-preset-dialog-buttons').attr('id', '{$this->getPresetDialogId($presetId)}_buttons');
+    $('body').append(jqDialog);
+    $.parser.parse(jqDialog.find('.exf-console-preset-dialog-buttons'));
+    jqDialog.dialog({
+        closed:true,
+        modal:true,
+        border:'thin',
+        buttons:'#{$this->getPresetDialogId($presetId)}_buttons',
+        onOpen: function() {
+            var jqToolbar = $('#{$this->getPresetDialogId($presetId)}_buttons');
+            console.log('opened', $(jqToolbar).find('.console-preset-button-ok'));
+            // Add click handlers to preset dialogs
+            $(jqToolbar).find('.exf-console-preset-btn-ok').click(function(event){
+                var placeholders = {};
+                var commands = {$commands};
+                jqDialog.find('.textbox-value').each(function(){
+                    console.log('found ph', this.name);
+                    placeholders['<'+ this.name +'>'] = this.value;
+                });
+                {$this->buildJsRunCommands('commands', "$('#{$this->getId()}').terminal()", 'placeholders')};
+                jqDialog.dialog('close');
+            });
+            $(jqToolbar).find('.exf-console-preset-btn-close').click(function(event){
+                setTimeout(function(){ $('#{$this->getId()}').terminal().focus(); }, 0);
+                jqDialog.dialog('close');
+            });
+        },
+        onClose: function() {
+            jqDialog.dialog('destroy');
+        }
+    });
+    jqDialog.dialog('open').dialog('center');
+    setTimeout(function(){ $.parser.parse(jqDialog);}, 0);
+
+JS;
         } else {
             $action = $this->buildJsRunCommands($commands, "$('#{$this->getId()}').terminal()");
         }
@@ -303,26 +325,6 @@ $(function(){
     });
 
     {$runStartCommands}
-    
-    // Add click handlers to preset dialogs
-    $('.{$this->getId()}_dialog_ok').click(function(event){
-        var btn = $(this);
-        var placeholders = {};
-        var window = btn.parents('.panel.window').first();
-        var commands = JSON.parse(window.find('textarea[name=commands]').val());
-        window.find('.textbox-value').each(function(){
-            placeholders['<'+ this.name +'>'] = this.value;
-        });
-        {$this->buildJsRunCommands('commands', "$('#{$this->getId()}').terminal()", 'placeholders')};
-        window.find('.easyui-dialog').dialog('close');
-    });
-    $('.{$this->getId()}_dialog_close').click(function(event){
-        setTimeout(function(){ $('#{$this->getId()}').terminal().focus(); }, 0);
-        var btn = $(this);
-        var window = btn.parents('.panel.window').first();
-        window.find('.easyui-dialog').dialog('close');
-    });
-
 });
 
 JS;
