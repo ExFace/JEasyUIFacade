@@ -116,6 +116,15 @@ HTML;
     /**
      * Build JS for preset button function
      * 
+     * The resulting JS function will
+     * - call the server to perform all commands if neither of them has placeholders
+     * - create an easyui-dialog for placeholders and perform the commands after 
+     * the OK-button of the dialog is pressed. The dialog will be destroyed after
+     * being closed.
+     * 
+     * Destroying the dialog after closing it is important as otherwise it's parts
+     * will remain in the DOM causing broken future dialogs.
+     * 
      * @param int $presetId
      * @param ConsoleCommandPreset $preset
      * @return string
@@ -158,7 +167,7 @@ js;
     jqDialog.attr('id', '{$this->getPresetDialogId($presetId)}');
     jqDialog.find('.exf-console-preset-dialog-buttons').attr('id', '{$this->getPresetDialogId($presetId)}_buttons');
     $('body').append(jqDialog);
-    $.parser.parse(jqDialog.find('.exf-console-preset-dialog-buttons'));
+    $.parser.parse(jqDialog);
     jqDialog.dialog({
         closed:true,
         modal:true,
@@ -188,7 +197,6 @@ js;
         }
     });
     jqDialog.dialog('open').dialog('center');
-    setTimeout(function(){ $.parser.parse(jqDialog);}, 0);
 
 JS;
         } else {
