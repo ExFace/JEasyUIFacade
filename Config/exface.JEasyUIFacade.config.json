@@ -66,6 +66,11 @@
     "LIBS.FONT_AWESOME": "bower-asset/font-awesome/css/font-awesome.min.css",
     
     "LIBS.DIFF_MATCH_PATCH": "bower-asset/google-diff-match-patch-js/diff_match_patch.js",
+    
+    "LIBS.TERMINAL.TERMINAL_JS": "npm-asset/jquery.terminal/js/jquery.terminal.min.js",
+    "LIBS.TERMINAL.ASCII_TABLE_JS": "npm-asset/jquery.terminal/js/ascii_table.js",
+    "LIBS.TERMINAL.UNIX_FORMATTING_JS": "npm-asset/jquery.terminal/js/unix_formatting.js",
+    "LIBS.TERMINAL.TERMINAL_CSS": "npm-asset/jquery.terminal/css/jquery.terminal.min.css",
 	
 	"WIDGET.SPACING": 8,
     "WIDGET.BORDERWIDTH": 1,
