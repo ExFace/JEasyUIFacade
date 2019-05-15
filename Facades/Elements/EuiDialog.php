@@ -96,7 +96,7 @@ HTML;
         $dialog_title = str_replace('"', '\"', $this->getCaption());
         
         $output = <<<HTML
-	<div class="easyui-dialog" id="{$this->getId()}" data-options="{$this->buildJsDataOptions()}" title="{$dialog_title}" style="width: {$this->getWidth()}; height: {$this->getHeight()};">
+	<div class="easyui-dialog" id="{$this->getId()}" data-options="{$this->buildJsDataOptions()}" title="{$dialog_title}" style="width: {$this->getWidth()}; height: {$this->getHeight()}; max-width: 100%;">
 		{$children_html}
 	</div>
 	<div id="{$this->buttons_div_id}">
