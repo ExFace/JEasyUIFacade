@@ -66,13 +66,24 @@ class EuiChart extends EuiData
             $header_html = $this->buildHtmlTableHeader();
             // Set the height of the canvas-div to auto. Otherwise the chart will be to high in some cases
             // (e.g. in vertical splits, where the chart has filters etc.)
-            $canvas_height = 'auto';
+            $canvas_height = '100%';
         } else {
             // If the chart has no customizir, set the height to 100%. Auto will not work for some reason...
             $canvas_height = '100%';
         }
         
         $chart_panel_options = ", title: '{$this->getCaption()}'";
+        
+        $onResizeScript = <<<JS
+        
+setTimeout(function(){
+    var chartDiv = $('#{$this->getId()}');
+    chartDiv.height(chartDiv.parent().height() - chartDiv.prev().height());
+}, 0);
+
+JS;
+        $this->addOnResizeScript($onResizeScript);
+    
         
         // Create the panel for the chart
         // overflow: hidden loest ein Problem im JavaFX WebView-Browser, bei dem immer wieder
