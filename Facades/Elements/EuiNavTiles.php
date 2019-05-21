@@ -3,6 +3,7 @@ namespace exface\JEasyUIFacade\Facades\Elements;
 
 use exface\Core\Widgets\NavTiles;
 use exface\Core\Widgets\Tile;
+use exface\Core\Widgets\Tiles;
 
 /**
  * 
@@ -18,14 +19,12 @@ class EuiNavTiles extends EuiWidgetGrid
         if ($this->getWidget()->countWidgets() > 1) {
             foreach ($this->getWidget()->getWidgets() as $tiles) {
                 $tiles->setNumberOfColumns(1);
-                foreach ($tiles->getTiles() as $tile) {
-                    if (! $tile->getColor()) {
-                        $tile->setColor($this->getColor($tile));
-                    }
-                }
+                $this->colorize($tiles);
             }
         } else {
-            $this->getWidget()->getWidgetFirst()->setHideCaption(true);
+            $tiles = $this->getWidget()->getWidgetFirst();
+            $tiles->setHideCaption(true);
+            $this->colorize($tiles);
         }
         return parent::buildHtml();
     }
@@ -40,6 +39,28 @@ class EuiNavTiles extends EuiWidgetGrid
         return $this->getFacade()->getConfig()->getOption("WIDGET.NAVTILES.COLUMNS_BY_DEFAULT");
     }
     
+    /**
+     * Sets the color of each tile widget in the container if it does not have a color already
+     * 
+     * @param Tiles $tileContainer
+     * @return Tiles
+     */
+    protected function colorize(Tiles $tileContainer) : Tiles
+    {
+        foreach ($tileContainer->getTiles() as $tile) {
+            if (! $tile->getColor()) {
+                $tile->setColor($this->getColor($tile));
+            }
+        }
+        return $tileContainer;
+    }
+    
+    /**
+     * Returns the HTML color code for a tile, inheriting it from the upper menu level if possible.
+     * 
+     * @param Tile $tile
+     * @return string
+     */
     protected function getColor(Tile $tile) : string
     {
         if ($upperTile = $this->getWidget()->getUpperLevelTile($tile)) {
@@ -50,7 +71,11 @@ class EuiNavTiles extends EuiWidgetGrid
         $idx = $tile->getParent()->getWidgetIndex($tile);
         return $classes[$idx % count($classes)];
     }
-        
+     
+    /**
+     * 
+     * @return array
+     */
     protected function getColors() : array
     {
         return [
