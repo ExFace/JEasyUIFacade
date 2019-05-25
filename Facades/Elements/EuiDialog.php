@@ -184,7 +184,11 @@ HTML;
     public function getHeight()
     {
         if ($this->getWidget()->getHeight()->isUndefined()) {
-            $this->getWidget()->setHeight('85%');
+            if ($this->getWidget()->getColumnsInGrid() === 1) {
+                $this->getWidget()->setHeight('auto');
+            } else {
+                $this->getWidget()->setHeight('85%');
+            }
         }
         return parent::getHeight();
     }
