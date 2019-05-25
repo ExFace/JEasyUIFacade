@@ -244,15 +244,42 @@ JS;
             // If we are reading, than we need the special data from the configurator 
             // widget: filters, sorters, etc.
             return $this->getFacade()->getElement($widget->getConfiguratorWidget())->buildJsDataGetter($action);
-        } elseif ($this->isEditable() && $action->implementsInterface('iModifyData')) {
-            if ($action->getMetaObject()->is($widget->getMetaObject())) {
+        } elseif ($this->isEditable()) {
+            // Build the row data from the table
+            
+            if ($action->getMetaObject()->is($widget->getMetaObject()) === true) {
                 if ($widget->getMultiSelect()) {
                     $rows = "$('#" . $this->getId() . "')." . $this->getElementType() . "('getSelections').length > 0 ? $('#" . $this->getId() . "')." . $this->getElementType() . "('getSelections') : " . $this->buildJsFunctionPrefix() . "getChanges()";
                 } else {
                     $rows = $this->buildJsFunctionPrefix() . "getChanges()";
                 }
             } else {
-                throw new FacadeLogicError('Editable tables currently cannot be used with writing actions over different object than that of the table');
+                // If the data is intended for another object, make it a nested data sheet
+                if ($relPath = $widget->getObjectRelationPathFromParent()) {
+                    $relAlias = $relPath->toString();
+                } else {
+                    if ($relPath = $widget->getObjectRelationPathToParent()) {
+                        $relAlias = $relPath->reverse()->toString();
+                    } else {
+                        $relation = $action->getMetaObject()->findRelation($widget->getMetaObject(), true);
+                        $relAlias = $relation->getAlias();
+                    }
+                }
+                return <<<JS
+
+    {
+        oId: '{$action->getMetaObject()->getId()}', 
+        rows: [
+            {
+                '{$relAlias}': {
+                    oId: '{$widget->getMetaObject()->getId()}', 
+                    rows: {$this->buildJsFunctionPrefix()}getDataRows()
+                }
+            }
+        ]
+    }
+
+JS;
             }
         } else {
             $rows = "$('#" . $this->getId() . "')." . $this->getElementType() . "('getSelections')";
@@ -485,7 +512,7 @@ JS;
         $this->addOnLoadSuccess($this->buildJsEditModeEnabler());
         // add data and changes getter if the grid is editable
         $output .= "
-						function " . $this->buildJsFunctionPrefix() . "getData(){
+						function " . $this->buildJsFunctionPrefix() . "getDataRows(){
 							var data = [];
 							var rows = $('#" . $this->getId() . "')." . $this->getElementType() . "('getRows');
 							for (var i=0; i<rows.length; i++){
