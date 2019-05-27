@@ -38,30 +38,10 @@ class EuiConsole extends EuiAbstractElement
      */
     public function buildHtml(){
         if ($this->getWidget()->hasCommandPresets() === true) {
-            return $this->buildHtmlPanelWrapper($this->buildHtmlTerminal());
+            return $this->buildHtmlPanelWrapper($this->buildHtmlTerminal(), $this->buildHtmlCommandPresetButtons());
         } else {
             return $this->buildHtmlTerminal();
         }
-    }
-    
-    /***
-     * Build HTML for when the Widget has Presets
-     * 
-     * @param string $terminal
-     * @return string
-     */
-    protected function buildHtmlPanelWrapper(string $terminal) : string
-    {
-        return <<<HTML
-
-<div class="easyui-panel" title="" data-options="fit: true, footer:'#footer_{$this->getId()}'">
-    {$terminal}
-</div>
-<div id="footer_{$this->getId()}" style="padding:5px;">
-    {$this->buildHtmlCommandPresetButtons()}
-</div>
-
-HTML;
     }
     
     /**
