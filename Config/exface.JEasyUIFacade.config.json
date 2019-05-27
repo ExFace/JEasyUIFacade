@@ -52,6 +52,14 @@
     "LIBS.JEASYUI.EXTENSIONS.DATAGRID_DETAILVIEW": "exface/JEasyUIFacade/Facades/js/jeasyui/extensions/datagridview/datagrid-detailview.js",
     "LIBS.JEASYUI.PATCHES": "exface/JEasyUIFacade/Facades/js/jquery.easyui.patch.1.43.js",
 	
+	"LIBS.JEXCEL.JS": "paulhodel/jexcel/dist/js/jquery.jexcel.js",
+    "LIBS.JEXCEL.JS_DROPDOWN": "paulhodel/jexcel/dist/js/jquery.jdropdown.js",
+    "LIBS.JEXCEL.JS_FORMULAS": "paulhodel/jexcel/dist/js/jexcel-formula.min.js",
+    "LIBS.JEXCEL.JS_CALENDAR": "paulhodel/jexcel/dist/js/jquery.jcalendar.js",
+    "LIBS.JEXCEL.CSS": "paulhodel/jexcel/dist/css/jquery.jexcel.css",
+	"LIBS.JEXCEL.CSS_DROPDOWN": "paulhodel/jexcel/dist/css/jquery.jdropdown.css",
+	"LIBS.JEXCEL.CSS_CALENDAR": "paulhodel/jexcel/dist/css/jquery.jcalendar.css",
+	
 	"LIBS.FLOT.CORE_FOLDER": "npm-asset/flot-charts/",
 	"LIBS.FLOT.PLUGINS.ORDERBARS": "exface/JEasyUIFacade/Facades/js/flot/plugins/jquery.flot.orderBars.js",
 	"LIBS.FLOT.PLUGINS.AXISLABELS": "exface/JEasyUIFacade/Facades/js/flot/plugins/jquery.flot.orderBars.js",
