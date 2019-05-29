@@ -175,13 +175,11 @@ js;
         buttons:'#{$this->getPresetDialogId($presetId)}_buttons',
         onOpen: function() {
             var jqToolbar = $('#{$this->getPresetDialogId($presetId)}_buttons');
-            console.log('opened', $(jqToolbar).find('.console-preset-button-ok'));
             // Add click handlers to preset dialogs
             $(jqToolbar).find('.exf-console-preset-btn-ok').click(function(event){
                 var placeholders = {};
                 var commands = {$commands};
                 jqDialog.find('.textbox-value').each(function(){
-                    console.log('found ph', this.name);
                     placeholders['<'+ this.name +'>'] = this.value;
                 });
                 {$this->buildJsRunCommands('commands', "$('#{$this->getId()}').terminal()", 'placeholders')};
@@ -287,7 +285,6 @@ function {$this->buildJsFunctionPrefix()}ExecuteCommand(command, terminal) {
         terminal.set_prompt({$this->getStyledPrompt("$('#{$this->getId()}').data('cwd')")});
         terminal.resume();    
     }).fail(function(jqXHR, textStatus, errorThrown){
-        console.log('Error: ', errorThrown);
         {$this->buildJsShowError('jqXHR.responseText', 'jqXHR.status + " " + jqXHR.statusText')}
         terminal.resume();
     }).always({$pauseIfDisabled});
