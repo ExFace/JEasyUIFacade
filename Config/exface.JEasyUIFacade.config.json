@@ -60,10 +60,6 @@
 	"LIBS.JEXCEL.CSS_DROPDOWN": "paulhodel/jexcel/dist/css/jquery.jdropdown.css",
 	"LIBS.JEXCEL.CSS_CALENDAR": "paulhodel/jexcel/dist/css/jquery.jcalendar.css",
 	
-	"LIBS.FLOT.CORE_FOLDER": "npm-asset/flot-charts/",
-	"LIBS.FLOT.PLUGINS.ORDERBARS": "exface/JEasyUIFacade/Facades/js/flot/plugins/jquery.flot.orderBars.js",
-	"LIBS.FLOT.PLUGINS.AXISLABELS": "exface/JEasyUIFacade/Facades/js/flot/plugins/jquery.flot.orderBars.js",
-	
 	"LIBS.MARKDOWN.CSS": "npm-asset/github-markdown-css/github-markdown.css",
 	
 	"LIBS.MASONRY": "bower-asset/masonry/dist/masonry.pkgd.min.js",
@@ -79,6 +75,8 @@
     "LIBS.TERMINAL.ASCII_TABLE_JS": "npm-asset/jquery.terminal/js/ascii_table.js",
     "LIBS.TERMINAL.UNIX_FORMATTING_JS": "npm-asset/jquery.terminal/js/unix_formatting.js",
     "LIBS.TERMINAL.TERMINAL_CSS": "npm-asset/jquery.terminal/css/jquery.terminal.min.css",
+    
+    "LIBS.ECHARTS.ECHARTS_JS": "npm-asset/echarts/dist/echarts-en.common.min.js",
 	
 	"WIDGET.SPACING": 8,
     "WIDGET.BORDERWIDTH": 1,

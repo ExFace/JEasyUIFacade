@@ -12,6 +12,7 @@ use exface\Core\CommonLogic\Constants\Icons;
 use exface\Core\CommonLogic\UxonObject;
 use exface\Core\Exceptions\Facades\FacadeLogicError;
 use exface\Core\Widgets\DataButton;
+use exface\Core\Exceptions\Facades\FacadeOutputError;
 
 /**
  *
@@ -213,14 +214,25 @@ JS;
      */
     public function buildJsValueGetter($column = null, $row = null)
     {
-        $output = "$('#" . $this->getId() . "')";
+        $getSelectedRowsDataJs = "$('#" . $this->getId() . "')";
+        
         if (is_null($row)) {
-            $output .= "." . $this->getElementType() . "('getSelected')";
+            $getSelectedRowsDataJs .= "." . $this->getElementType() . "('getSelected')";
+        } else {
+            $getSelectedRowsDataJs .= "." . $this->getElementType() . "('getSelections')[{$row}]";
         }
+
         if (is_null($column)) {
-            $column = $this->getWidget()->getMetaObject()->getUidAttributeAlias();
+            if ($this->getWidget()->hasUidColumn() === true) {
+                $column = $this->getWidget()->getUidColumn()->getDataColumn();
+            } else {
+                throw new FacadeOutputError('Cannot create a value getter for a data widget without a UID column: either specify a column to get the value from or a UID column for the table.');
+            }
         }
-        return "(" . $output . " ? " . $output . "['" . $column . "'] : '')";
+        
+        // TODO need to list values if multi_select is on instead of just returning the value
+        // of the first row (becuase getSelection returns the first row in jEasyUI datagrid)
+        return "({$getSelectedRowsDataJs} ? {$getSelectedRowsDataJs}['{$column}'] : '')";
     }
 
     public function buildJsChangesGetter()
@@ -239,7 +251,7 @@ JS;
         $rows = '';
         $filters = '';
         if (is_null($action)) {
-            $rows = "$('#" . $this->getId() . "')." . $this->getElementType() . "('getData')";
+            $rows = "$('#" . $this->getId() . "')." . $this->getElementType() . "('getData').rows";
         } elseif ($action instanceof iReadData) {
             // If we are reading, than we need the special data from the configurator 
             // widget: filters, sorters, etc.

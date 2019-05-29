@@ -2,7 +2,7 @@
 namespace exface\JEasyUIFacade\Facades\Elements;
 
 use exface\Core\Widgets\Chart;
-use exface\Core\Facades\AbstractAjaxFacade\Elements\JqueryFlotTrait;
+use exface\Core\Facades\AbstractAjaxFacade\Elements\EChartsTrait;
 use exface\Core\Facades\AbstractAjaxFacade\Elements\JqueryToolbarsTrait;
 
 /**
@@ -15,7 +15,7 @@ use exface\Core\Facades\AbstractAjaxFacade\Elements\JqueryToolbarsTrait;
 class EuiChart extends EuiData
 {
     
-    use JqueryFlotTrait;
+    use EChartsTrait;
     
     use JqueryToolbarsTrait;
 
@@ -64,26 +64,20 @@ class EuiChart extends EuiData
         $header_html = '';
         if (! $widget->getDataWidgetLink()) {
             $header_html = $this->buildHtmlTableHeader();
-            // Set the height of the canvas-div to auto. Otherwise the chart will be to high in some cases
-            // (e.g. in vertical splits, where the chart has filters etc.)
-            $canvas_height = '100%';
-        } else {
-            // If the chart has no customizir, set the height to 100%. Auto will not work for some reason...
-            $canvas_height = '100%';
         }
         
         $chart_panel_options = ", title: '{$this->getCaption()}'";
         
         $onResizeScript = <<<JS
-        
+
 setTimeout(function(){
     var chartDiv = $('#{$this->getId()}');
     chartDiv.height(chartDiv.parent().height() - chartDiv.prev().height());
+    {$this->buildJsEChartsResize()};
 }, 0);
 
 JS;
         $this->addOnResizeScript($onResizeScript);
-    
         
         // Create the panel for the chart
         // overflow: hidden loest ein Problem im JavaFX WebView-Browser, bei dem immer wieder
@@ -96,7 +90,7 @@ JS;
 <div class="exf-grid-item {$this->getMasonryItemClass()}" style="width:{$this->getWidth()};min-width:{$this->getMinWidth()};height:{$this->getHeight()};padding:{$this->getPadding()};box-sizing:border-box;">
     <div class="easyui-panel" style="height: auto;" id="{$this->getId()}_wrapper" data-options="fit: true {$chart_panel_options}, onResize: function(){ {$this->getOnResizeScript()} }">
     	{$header_html}
-    	<div id="{$this->getId()}" style="height:{$canvas_height}; min-height: 100px; overflow: hidden;"></div>
+    	{$this->buildHtmlChart()}
     </div>
 </div>
 
@@ -135,7 +129,10 @@ HTML;
                     
 JS;
         
+        $output .= $this->buildJsEChartsInit();
         $output .= $this->buildJsFunctions();
+        $output .= $this->buildJsOnClickHandlers();
+        $output .= $this->buildJsRefresh();
         
         return $output;
     }
@@ -145,7 +142,7 @@ JS;
      *
      * @return string
      */
-    protected function buildJsDataLoader()
+    protected function buildJsDataLoadFunctionBody()
     {
         $widget = $this->getWidget();
         $output = '';
@@ -191,7 +188,7 @@ JS;
                             
                         },
 						success: function(data){
-							' . $this->buildJsRedraw('data') . ';
+							' . $this->buildJsRedraw('data.rows') . '
 							' . $this->buildJsBusyIconHide() . ';
 						},
 						error: function(jqXHR, textStatus, errorThrown){
@@ -233,7 +230,7 @@ JS;
      */
     public function buildJsBusyIconShow()
     {
-        return "$('#{$this->getId()}_wrapper').prepend('<div class=\"panel-loading\" style=\"height: 15px;\"></div>');";
+        return "$('#{$this->getId()}').prepend('<div class=\"panel-loading\" style=\"height: 15px;\"></div>');";
     }
     
     /**
