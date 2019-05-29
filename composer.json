@@ -14,7 +14,7 @@
 	},
 	"require" : {
 		"exface/core" : "~0.1",
-		"paulhodel/jexcel", "^2.1.0",
+		"paulhodel/jexcel" : "^2.1.0",
 		"bower-asset/jeasyui" : "1.4.3",
 		"bower-asset/masonry" : "^4",
 		"bower-asset/blueimp-file-upload" : "^9.12",
