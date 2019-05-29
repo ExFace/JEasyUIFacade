@@ -7,8 +7,7 @@ use exface\Core\Facades\AbstractAjaxFacade\Elements\JqueryToolbarsTrait;
 
 class EuiDataImporter extends EuiAbstractElement
 {
-    use JExcelTrait;#
-    use EuiPanelWrapperTrait;
+    use JExcelTrait;
     use JqueryToolbarsTrait;
     
     /**
@@ -18,7 +17,16 @@ class EuiDataImporter extends EuiAbstractElement
      */
     public function buildHtml()
     {
-        return $this->buildHtmlJExcel();
+        $toolbar = $this->buildHtmlToolbars();
+        
+        return <<<HTML
+
+        <div class="datatable-toolbar datagrid-toolbar" style="height: 36px">
+            {$toolbar}
+        </div>
+        {$this->buildHtmlJExcel()}
+
+HTML;
     }
     
     /**
@@ -28,7 +36,28 @@ class EuiDataImporter extends EuiAbstractElement
      */
     public function buildJs()
     {
-        return $this->buildJsJExcelInit();
+        if ($this->getWidget()->hasPreview() === true) {
+            $dataRefresh = <<<JS
+
+var aData = [];
+if (response.rows) {
+    response.rows.forEach(function(oRow) {
+        aData.push(Object.values(oRow));
+    });
+}
+if (aData.length > 0) {
+    $('#{$this->getId()}').jexcel('setData', aData);
+}
+
+JS;
+            $this->getFacade()->getElement($this->getWidget()->getPreviewButton())->addOnSuccessScript($dataRefresh);
+        }
+        return <<<JS
+
+        {$this->buildJsJExcelInit()}
+        {$this->buildJsToolbars()}
+
+JS;
     }
     
     /**
