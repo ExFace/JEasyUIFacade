@@ -68,8 +68,8 @@
         {
             "CREATED_ON": "2017-05-12 08:43:47",
             "MODIFIED_ON": "2017-05-12 08:49:26",
-            "CREATED_BY_USER": "",
-            "MODIFIED_BY_USER": "",
+            "CREATED_BY_USER": "0x31000000000000000000000000000000",
+            "MODIFIED_BY_USER": "0x31000000000000000000000000000000",
             "UID": "0x11e736ef1deebf87987574e5434dc47d",
             "APP": "0x11e6c930ff1f486693cce4b318306b9a",
             "CODE": "6V6C2HY",
@@ -82,8 +82,8 @@
         {
             "CREATED_ON": "2017-05-12 08:45:31",
             "MODIFIED_ON": "2017-05-12 08:59:10",
-            "CREATED_BY_USER": "",
-            "MODIFIED_BY_USER": "",
+            "CREATED_BY_USER": "0x31000000000000000000000000000000",
+            "MODIFIED_BY_USER": "0x31000000000000000000000000000000",
             "UID": "0x11e736ef5b8e1f2c987574e5434dc47d",
             "APP": "0x11e6c930ff1f486693cce4b318306b9a",
             "CODE": "6V6C3AP",
