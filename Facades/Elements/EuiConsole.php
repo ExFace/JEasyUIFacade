@@ -4,6 +4,7 @@ namespace exface\JEasyUIFacade\Facades\Elements;
 use exface\Core\Facades\WebConsoleFacade;
 use exface\Core\Factories\FacadeFactory;
 use exface\Core\Widgets\Parts\ConsoleCommandPreset;
+use exface\JEasyUIFacade\Facades\Elements\Traits\EuiPanelWrapperTrait;
 
 /**
  * JEasyUI Element to Display Console Terminal in the browser
@@ -13,6 +14,7 @@ use exface\Core\Widgets\Parts\ConsoleCommandPreset;
  */
 class EuiConsole extends EuiAbstractElement
 {
+    use EuiPanelWrapperTrait;
     
     /**
      * 
