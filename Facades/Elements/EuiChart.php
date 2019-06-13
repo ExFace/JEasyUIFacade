@@ -55,7 +55,7 @@ class EuiChart extends EuiData
      * {@inheritDoc}
      * @see \exface\JEasyUIFacade\Facades\Elements\EuiData::buildHtml()
      */
-    public function buildHtml()
+    public function buildHtml() : string
     {
         $output = '';
         $widget = $this->getWidget();
@@ -104,7 +104,7 @@ HTML;
      * {@inheritDoc}
      * @see \exface\JEasyUIFacade\Facades\Elements\EuiData::buildJs()
      */
-    public function buildJs()
+    public function buildJs() : string
     {
         /* @var $widget \exface\Core\Widgets\Chart */
         $widget = $this->getWidget();
@@ -142,7 +142,7 @@ JS;
      *
      * @return string
      */
-    protected function buildJsDataLoadFunctionBody()
+    protected function buildJsDataLoadFunctionBody() : string
     {
         $widget = $this->getWidget();
         $output = '';
@@ -207,7 +207,7 @@ JS;
      * {@inheritdoc}
      * @see \exface\JEasyUIFacade\Facades\Elements\EuiAbstractElement::getHeight()
      */
-    public function getHeight()
+    public function getHeight() : string
     {
         // Die Hoehe des Charts passt sich nicht automatisch dem Inhalt an. Wenn er also
         // nicht den gesamten Container ausfuellt, kollabiert er vollstaendig. Deshalb
@@ -228,7 +228,7 @@ JS;
      * {@inheritDoc}
      * @see \exface\JEasyUIFacade\Facades\Elements\EuiAbstractElement::buildJsBusyIconShow()
      */
-    public function buildJsBusyIconShow()
+    public function buildJsBusyIconShow() : string
     {
         return "$('#{$this->getId()}').prepend('<div class=\"panel-loading\" style=\"height: 15px;\"></div>');";
     }
@@ -238,7 +238,7 @@ JS;
      * {@inheritDoc}
      * @see \exface\JEasyUIFacade\Facades\Elements\EuiAbstractElement::buildJsBusyIconHide()
      */
-    public function buildJsBusyIconHide()
+    public function buildJsBusyIconHide() : string
     {
         return "$('#{$this->getId()}_wrapper .panel-loading').remove();";
     }
@@ -248,7 +248,7 @@ JS;
      * {@inheritDoc}
      * @see \exface\Core\Facades\AbstractAjaxFacade\Elements\AbstractJqueryElement::buildHtmlHeadTags()
      */
-    public function buildHtmlHeadTags()
+    public function buildHtmlHeadTags() : array
     {
         $widget = $this->getWidget();
         $dataIncludes = $widget->getDataWidgetLink() === null ? $this->getFacade()->getElement($this->getWidget()->getData())->buildHtmlHeadTags() : [];
