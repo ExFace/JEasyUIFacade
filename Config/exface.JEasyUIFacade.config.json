@@ -76,7 +76,7 @@
     "LIBS.TERMINAL.UNIX_FORMATTING_JS": "npm-asset/jquery.terminal/js/unix_formatting.js",
     "LIBS.TERMINAL.TERMINAL_CSS": "npm-asset/jquery.terminal/css/jquery.terminal.min.css",
     
-    "LIBS.ECHARTS.ECHARTS_JS": "npm-asset/echarts/dist/echarts-en.min.js",
+    "LIBS.ECHARTS.ECHARTS_JS": "exface/Core/Facades/AbstractAjaxFacade/js/echarts/echarts.custom.min.js",
 	
 	"WIDGET.SPACING": 8,
     "WIDGET.BORDERWIDTH": 1,
