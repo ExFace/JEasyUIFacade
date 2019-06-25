@@ -177,7 +177,7 @@ JS;
             
             // Loader function
             $output .= '
-					' . $this->buildJsBusyIconShow() . '
+					' . $this->buildJsEChartsShowLoading() . '
 					$.ajax({
 						url: "' . $this->getAjaxUrl() . '",
                         method: "POST",
@@ -189,11 +189,11 @@ JS;
                         },
 						success: function(data){
 							' . $this->buildJsRedraw('data.rows') . '
-							' . $this->buildJsBusyIconHide() . ';
+							' . $this->buildJsEChartsHideLoading() . '
 						},
 						error: function(jqXHR, textStatus, errorThrown){
 							' . $this->buildJsShowError('jqXHR.responseText', 'jqXHR.status + " " + jqXHR.statusText') . '
-							' . $this->buildJsBusyIconHide() . '
+							' . $this->buildJsEChartsHideLoading() . '
 						}
 					});
 				';
