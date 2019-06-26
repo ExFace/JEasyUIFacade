@@ -59,6 +59,7 @@ class EuiChart extends EuiData
     {
         $output = '';
         $widget = $this->getWidget();
+        $this->addChartButtons();
         
         // Create the header if the chart has it's own controls and is not bound to another data widget
         $header_html = '';
