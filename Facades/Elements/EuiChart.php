@@ -59,6 +59,7 @@ class EuiChart extends EuiData
     {
         $output = '';
         $widget = $this->getWidget();
+        $this->addChartButtons();
         
         // Create the header if the chart has it's own controls and is not bound to another data widget
         $header_html = '';
@@ -177,7 +178,7 @@ JS;
             
             // Loader function
             $output .= '
-					' . $this->buildJsEChartsShowLoading() . '
+					' . $this->buildJsBusyIconShow() . '
 					$.ajax({
 						url: "' . $this->getAjaxUrl() . '",
                         method: "POST",
@@ -189,11 +190,11 @@ JS;
                         },
 						success: function(data){
 							' . $this->buildJsRedraw('data.rows') . '
-							' . $this->buildJsEChartsHideLoading() . '
+							' . $this->buildJsBusyIconHide() . '
 						},
 						error: function(jqXHR, textStatus, errorThrown){
 							' . $this->buildJsShowError('jqXHR.responseText', 'jqXHR.status + " " + jqXHR.statusText') . '
-							' . $this->buildJsEChartsHideLoading() . '
+							' . $this->buildJsBusyIconHide() . '
 						}
 					});
 				';
@@ -230,9 +231,8 @@ JS;
      */
     public function buildJsBusyIconShow() : string
     {
-        return "$('#{$this->getId()}').prepend('<div class=\"panel-loading\" style=\"height: 15px;\"></div>');";
+        return $this->buildJsEChartsShowLoading();
     }
-    
     /**
      * 
      * {@inheritDoc}
@@ -240,7 +240,7 @@ JS;
      */
     public function buildJsBusyIconHide() : string
     {
-        return "$('#{$this->getId()}_wrapper .panel-loading').remove();";
+        return $this->buildJsEChartsHideLoading();
     }
     
     /**
