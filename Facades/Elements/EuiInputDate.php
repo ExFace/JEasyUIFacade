@@ -81,7 +81,9 @@ $(function() {
         }
     });
     
-    $("#{$this->getId()}").{$this->getElementType()}({
+    $("#{$this->getId()}")
+    .data("_internalValue", "{$this->getValueWithDefaults()}")
+    .{$this->getElementType()}({
         {$this->buildJsDataOptions()}
     });
 
@@ -161,7 +163,7 @@ JS;
 
         (function(){
             var jqself = $("#{$this->getId()}");
-            if (! jqself.{$this->getElementType()}("getText")) {
+            if (jqself.data("{$this->getElementType()}") !== undefined && ! jqself.{$this->getElementType()}("getText")) {
                 jqself.data("_internalValue", "");
             }
             return jqself.data("_internalValue");
