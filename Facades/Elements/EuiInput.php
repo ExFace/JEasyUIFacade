@@ -6,6 +6,7 @@ use exface\Core\Widgets\Input;
 use exface\Core\Facades\AbstractAjaxFacade\Elements\JqueryLiveReferenceTrait;
 use exface\Core\Factories\WidgetLinkFactory;
 use exface\Core\Facades\AbstractAjaxFacade\Elements\JqueryDisableConditionTrait;
+use exface\Core\Facades\AbstractAjaxFacade\Elements\JqueryInputValidationTrait;
 
 /**
  *
@@ -18,6 +19,9 @@ class EuiInput extends EuiValue
 {
     use JqueryLiveReferenceTrait;
     use JqueryDisableConditionTrait;
+    use JqueryInputValidationTrait {
+        buildJsValidator as buildJsValidatorViaTrait;
+    }
 
     /**
      * 
@@ -173,23 +177,16 @@ JS;
     /**
      *
      * {@inheritdoc}
-     *
      * @see \exface\Core\Facades\AbstractAjaxFacade\Elements\AbstractJqueryElement::buildJsValidator()
+     * @see \exface\Core\Facades\AbstractAjaxFacade\Elements\JqueryInputValidationTrait::buildJsValidator()
      */
-    function buildJsValidator()
+    public function buildJsValidator()
     {
-        $widget = $this->getWidget();
-        
-        $must_be_validated = ! ($widget->isHidden() || $widget->isReadonly() || $widget->isDisabled() || $widget->isDisplayOnly());
-        if ($must_be_validated) {
-            $output = "$('#{$this->getId()}').{$this->getElementType()}('isValid')";
-        } elseif ($widget->isRequired()) {
-            $output = '(' . $this->buildJsValueGetter() . ' === "" ? false : true)';
-        } else {
-            $output = 'true';
+        if ($this->isValidationRequired() === true) {
+            return "$('#{$this->getId()}').{$this->getElementType()}('isValid')";
         }
         
-        return $output;
+        return $this->buildJsValidatorViaTrait();
     }
 
     /**

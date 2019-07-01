@@ -69,6 +69,6 @@ class EuiInputText extends EuiInput
      */
     function buildJsValidator()
     {
-        return 'true';
+        return $this->buildJsValidatorViaTrait();
     }
 }
