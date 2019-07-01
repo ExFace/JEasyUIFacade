@@ -187,27 +187,40 @@ JS;
             }
             
             // Loader function
-            $output .= '
-					' . $this->buildJsBusyIconShow() . '
+            $configurator_element = $this->getFacade()->getElement($widget->getConfiguratorWidget());
+            $output .= <<<JS
+					{$this->buildJsBusyIconShow()}
+
+                    try {
+                        if (! {$configurator_element->buildJsValidator()}) {
+                            {$this->buildJsDataResetter()}
+                            {$this->buildJsMessageOverlayShow($this->getWidget()->getData()->getAutoloadDisabledHint())}
+                            {$this->buildJsBusyIconHide()}
+                            return false;
+                        }
+                    } catch (e) {
+                        console.warn('Could not check filter validity - ', e);
+                    }
+
 					$.ajax({
-						url: "' . $this->getAjaxUrl() . '",
+						url: "{$this->getAjaxUrl()}",
                         method: "POST",
-                        ' . $headers . '
+                        {$headers}
                         data: {
-                            ' . $url_params . '
-                            , data: ' . $this->getFacade()->getElement($widget->getConfiguratorWidget())->buildJsDataGetter() . '
+                            {$url_params}
+                            , data: {$configurator_element->buildJsDataGetter()}
                             
                         },
 						success: function(data){
-							' . $this->buildJsRedraw('data.rows') . '
-							' . $this->buildJsBusyIconHide() . '
+							{$this->buildJsRedraw('data.rows')}
+							{$this->buildJsBusyIconHide()}
 						},
 						error: function(jqXHR, textStatus, errorThrown){
-							' . $this->buildJsShowError('jqXHR.responseText', 'jqXHR.status + " " + jqXHR.statusText') . '
-							' . $this->buildJsBusyIconHide() . '
+							{$this->buildJsShowError('jqXHR.responseText', 'jqXHR.status + " " + jqXHR.statusText')}
+							{$this->buildJsBusyIconHide()}
 						}
 					});
-				';
+JS;
         }
         
         return $output;
