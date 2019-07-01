@@ -107,19 +107,15 @@ HTML;
      */
     public function buildJs() : string
     {
-        /* @var $widget \exface\Core\Widgets\Chart */
         $widget = $this->getWidget();
         
-        $output = '';
-        
-        // Add Scripts for the configurator widget first as they may be needed for the others
+         // Add Scripts for the configurator widget first as they may be needed for the others
         $configurator_element = $this->getFacade()->getElement($widget->getConfiguratorWidget());
-        $output .= $configurator_element->buildJs();
         
-        // Add scripts for the buttons
-        $output .= $this->buildJsButtons();
-        
-        $output .= <<<JS
+        return <<<JS
+
+                    {$configurator_element->buildJs()}
+                    {$this->buildJsButtons()}
 
                     $('#{$configurator_element->getId()}').find('.grid').on( 'layoutComplete', function( event, items ) {
                         setTimeout(function(){
@@ -127,15 +123,29 @@ HTML;
                             $('#{$this->getId()}').height($('#{$this->getId()}').parent().height()-newHeight);
                         }, 0);               
                     });
+
+                    {$this->buildJsFunctions()}
                     
+                    var {$this->buildJsEChartsVar()};
+                    setTimeout(function(){
+                        {$this->buildJsEChartsInit()}
+                        {$this->buildJsEventHandlers()}
+                        {$this->buildJsRefresh()}
+                    });
 JS;
-        
-        $output .= $this->buildJsEChartsInit();
-        $output .= $this->buildJsFunctions();
-        $output .= $this->buildJsEventHandlers();
-        $output .= $this->buildJsRefresh();
-        
-        return $output;
+    }
+           
+    /**
+     * 
+     * @see \exface\Core\Facades\AbstractAjaxFacade\Elements\EChartTrait
+     */
+    public function buildJsEChartsInit(string $theme = null) : string
+    {
+        return <<<JS
+
+    {$this->buildJsEChartsVar()} = echarts.init(document.getElementById('{$this->getId()}'), '{$theme}');
+    
+JS;
     }
 
     /**
