@@ -108,19 +108,29 @@ class EuiDataTree extends EuiDataTable
             
             // The jEasyUI treegrid cannot build trees itself, so we need to form a hierarchy here, if we have
             // parents and their children within our data.
-            $parentId = $row[$parentCol];
             // We save references to all rows in an array indexed with row UIDs
             $rowsById[$row[$idCol]] =& $result['rows'][$nr];
+        }
+        
+        // The jEasyUI treegrid cannot build trees itself, so we need to form a hierarchy here, if we have
+        // parents and their children within our data.
+        $rowCnt = count($result['rows']);
+        for ($nr = $rowCnt-1; $nr >= 0; $nr--) {
+            $row = $result['rows'][$nr];
+            $parentId = $row[$parentCol];
+            
             // Now, if the parent id is found in our array, we need to remove the row from the flat data array
             // and put it into the children-array of it's parent row. We need to use references here as the
             // next row may be a child of one of the children in-turn.
-            // TODO This will probably only work well if the initial rows are in the correct order...
             if ($rowsById[$parentId] !== null) {
                 $rowsById[$parentId]['children'][] =& $result['rows'][$nr];
                 $rowsById[$parentId]['state'] = 'open';
                 unset ($result['rows'][$nr]);
             }
         }
+        
+        // Get rid of gaps in row numbers
+        $result['rows'] = array_values($result['rows']);
         
         $result['footer'][0][$widget->getTreeColumn()->getDataColumnName()] = '';
         
