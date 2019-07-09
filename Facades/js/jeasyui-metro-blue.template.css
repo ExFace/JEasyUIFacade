@@ -155,3 +155,4 @@ pre.sf-dump .sf-dump-private, pre.sf-dump .sf-dump-public, pre.sf-dump .sf-dump-
 /* jExcel */
 .jexcel_contextmenu {z-index: 1000000 !important}
 .jexcel, .jexcel td, .jexcel_corner {z-index: 100000 !important}
+.jexcel {border-top: 0 !important; border-left: 0 !important;}

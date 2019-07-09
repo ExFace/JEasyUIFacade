@@ -52,13 +52,10 @@
     "LIBS.JEASYUI.EXTENSIONS.DATAGRID_DETAILVIEW": "exface/JEasyUIFacade/Facades/js/jeasyui/extensions/datagridview/datagrid-detailview.js",
     "LIBS.JEASYUI.PATCHES": "exface/JEasyUIFacade/Facades/js/jquery.easyui.patch.1.43.js",
 	
-	"LIBS.JEXCEL.JS": "paulhodel/jexcel/dist/js/jquery.jexcel.js",
-    "LIBS.JEXCEL.JS_DROPDOWN": "paulhodel/jexcel/dist/js/jquery.jdropdown.js",
-    "LIBS.JEXCEL.JS_FORMULAS": "paulhodel/jexcel/dist/js/jexcel-formula.min.js",
-    "LIBS.JEXCEL.JS_CALENDAR": "paulhodel/jexcel/dist/js/jquery.jcalendar.js",
-    "LIBS.JEXCEL.CSS": "paulhodel/jexcel/dist/css/jquery.jexcel.css",
-	"LIBS.JEXCEL.CSS_DROPDOWN": "paulhodel/jexcel/dist/css/jquery.jdropdown.css",
-	"LIBS.JEXCEL.CSS_CALENDAR": "paulhodel/jexcel/dist/css/jquery.jcalendar.css",
+   	"LIBS.JEXCEL.JS": "npm-asset/jexcel/dist/jexcel.js",
+   	"LIBS.JEXCEL.JS_JSUITES": "npm-asset/jsuites/dist/jsuites.js",
+   	"LIBS.JEXCEL.CSS": "npm-asset/jexcel/dist/jexcel.min.css",
+ 	"LIBS.JEXCEL.CSS_JSUITES": "npm-asset/jsuites/dist/jsuites.css",
 	
 	"LIBS.MARKDOWN.CSS": "npm-asset/github-markdown-css/github-markdown.css",
 	

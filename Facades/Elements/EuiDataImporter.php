@@ -36,25 +36,15 @@ HTML;
      */
     public function buildJs()
     {
+        // If there is a preview-button, we need to call the data setter with it's
+        // result after it's action was called successfully. 
         if ($this->getWidget()->hasPreview() === true) {
-            $dataRefresh = <<<JS
-
-var aData = [];
-if (response.rows) {
-    response.rows.forEach(function(oRow) {
-        aData.push(Object.values(oRow));
-    });
-}
-if (aData.length > 0) {
-    $('#{$this->getId()}').jexcel('setData', aData);
-}
-
-JS;
-            $this->getFacade()->getElement($this->getWidget()->getPreviewButton())->addOnSuccessScript($dataRefresh);
+            $this->getFacade()->getElement($this->getWidget()->getPreviewButton())->addOnSuccessScript($this->buildJsDataSetter('response'));
         }
         return <<<JS
-
-        {$this->buildJsJExcelInit()}
+        setTimeout(function(){
+            {$this->buildJsJExcelInit()}
+        }, 0);
         {$this->buildJsToolbars()}
 
 JS;
