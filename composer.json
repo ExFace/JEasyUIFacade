@@ -14,7 +14,6 @@
 	},
 	"require" : {
 		"exface/core" : "~0.1",
-		"paulhodel/jexcel" : "^2.1.0",
 		"bower-asset/jeasyui" : "1.4.3",
 		"bower-asset/masonry" : "^4",
 		"bower-asset/blueimp-file-upload" : "^9.12",
@@ -28,7 +27,8 @@
 		"npm-asset/blueimp-load-image" : "^2.6",
 		"npm-asset/github-markdown-css" : "^2.10.0",
 		"npm-asset/jquery.terminal" : "^2.5.0",
-		"npm-asset/echarts" : "^4.2.1"
+		"npm-asset/echarts" : "^4.2.1",
+		"npm-asset/jexcel" : "^3.2.0"
 	},
 	"extra" : {
 		"app" : {
