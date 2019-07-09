@@ -140,6 +140,7 @@ class EuiButton extends EuiAbstractElement
 							url: '{$this->getAjaxUrl()}',
                             {$headers}
 							dataType: 'html',
+                            cache: false,
 							data: {
 								action: '{$widget->getActionAlias()}',
 								resource: '{$widget->getPage()->getAliasWithNamespace()}',
