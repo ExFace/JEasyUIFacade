@@ -65,7 +65,8 @@ class JEasyUIFacade extends AbstractAjaxFacade
         
         // FIXME get the correct lang include accoring to the user's language
         
-        $patches = $this->getConfig()->getOption('LIBS.JEASYUI.PATCHES');
+        $config = $this->getConfig();
+        $patches = $config->getOption('LIBS.JEASYUI.PATCHES');
         if (! empty($patches)) {
             foreach (explode(',', $patches) as $patch) {
                 $includes[] = '<script type="text/javascript" src="' . $this->getWorkbench()->getCMS()->buildUrlToInclude($patch) . '"></script>';
@@ -73,6 +74,16 @@ class JEasyUIFacade extends AbstractAjaxFacade
         }
         
         $includes = array_merge($includes, $this->buildHtmlHeadIcons());
+        
+        if ($config->getOption('CACHE_AJAX_SCRIPTS') === true) {
+            $includes[] = '<script type="text/javascript">
+$.ajaxPrefilter(function( options ) {
+	if ( options.type==="GET" && options.dataType ==="script" ) {
+		options.cache=true;
+	}
+});
+</script>';
+        }
         
         return $includes;        
     }
