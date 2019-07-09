@@ -1,10 +1,10 @@
 // Remove 'use strict'; from all JS files loaded via jQuery.ajax because otherwise they
 // won't be able to create global variables, which will prevent many vanilla-js libs 
 // from working (e.g. jExcel)
-jQuery.ajaxSetup({
+$.ajaxSetup({
     dataFilter: function(data, type) {
         if (type === 'script') {
-            data = data.replace("\'use strict\';", '');
+            data = data.replace(/['"]use strict['"];/, '');
         }
         return data;
     }
