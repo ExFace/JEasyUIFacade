@@ -4,6 +4,8 @@ namespace exface\JEasyUIFacade\Facades\Elements;
 use exface\Core\Widgets\Chart;
 use exface\Core\Facades\AbstractAjaxFacade\Elements\EChartsTrait;
 use exface\Core\Facades\AbstractAjaxFacade\Elements\JqueryToolbarsTrait;
+use exface\JEasyUIFacade\Facades\Elements\Traits\EuiDataElementTrait;
+use exface\Core\Interfaces\Widgets\iShowData;
 
 /**
  * 
@@ -14,12 +16,13 @@ use exface\Core\Facades\AbstractAjaxFacade\Elements\JqueryToolbarsTrait;
  */
 class EuiChart extends EuiData
 {
-    
-    use EChartsTrait;
-    
-    use JqueryToolbarsTrait;
-
-    private $on_change_script = '';
+    use EChartsTrait, EuiDataElementTrait {
+        EChartsTrait::buildJsDataLoadFunctionName insteadof EuiDataElementTrait;
+        EChartsTrait::buildJsRefresh insteadof EuiDataElementTrait;
+        EChartsTrait::buildJsMessageOverlayShow insteadof EuiDataElementTrait;
+        EChartsTrait::buildJsMessageOverlayHide insteadof EuiDataElementTrait;
+        EuiDataElementTrait::buildJsDataLoadFunctionBody as buildJsDataLoadFunctionBodyViaTrait;
+    }
 
     protected function init()
     {
@@ -31,23 +34,21 @@ class EuiChart extends EuiData
         // Disable global buttons because jEasyUI charts do not have data getters yet
         $widget->getToolbarMain()->setIncludeGlobalActions(false);
         
-        // Make the configurator resize together with the chart layout.
-        $configurator_element = $this->getFacade()->getElement($widget->getConfiguratorWidget());
-        // FIXME how to make the configurator resize when the chart is resized?
-        $this->addOnResizeScript("
-            /*if(typeof $('#" . $configurator_element->getId() . "')." . $configurator_element->getElementType() . "() !== 'undefined') {
-                setTimeout(function(){
-                    $('#" . $configurator_element->getId() . "')." . $configurator_element->getElementType() . "('resize');
-                }, 0);     
-            }*/
-        ");
-        
         if ($widget->getHideHeader()){
             $this->addOnResizeScript("
                  var newHeight = $('#{$this->getId()}_wrapper > .panel').height();
                  $('#{$this->getId()}').height($('#{$this->getId()}').parent().height() - newHeight);
             ");
         }
+    }
+    
+    /**
+     * 
+     * @see EuiDataElementTrait::getDataWidget()
+     */
+    protected function getDataWidget() : iShowData
+    {
+        return $this->getWidget()->getData();
     }
 
     /**
@@ -57,20 +58,16 @@ class EuiChart extends EuiData
      */
     public function buildHtml() : string
     {
-        $output = '';
         $widget = $this->getWidget();
         $this->addChartButtons();
         
-        // Create the header if the chart has it's own controls and is not bound to another data widget
-        $header_html = '';
-        if (! $widget->getDataWidgetLink()) {
-            $header_html = $this->buildHtmlTableHeader();
+        // Create empty custom header if the chart does not have it's own controls and is bound to another data widget
+        if ($widget->getDataWidgetLink()) {
+            $customHeaderHtml = '';
         }
         
-        $chart_panel_options = ", title: '{$this->getCaption()}'";
-        
         $onResizeScript = <<<JS
-
+        
 setTimeout(function(){
     var chartDiv = $('#{$this->getId()}');
     chartDiv.height(chartDiv.parent().height() - chartDiv.prev().height());
@@ -80,24 +77,7 @@ setTimeout(function(){
 JS;
         $this->addOnResizeScript($onResizeScript);
         
-        // Create the panel for the chart
-        // overflow: hidden loest ein Problem im JavaFX WebView-Browser, bei dem immer wieder
-        // Scrollbars ein- und wieder ausgeblendet wurden. Es trat in Verbindung mit Masonry
-        // auf, wenn mehrere Elemente auf einer Seite angezeigt wurden (u.a. ein Chart) und
-        // das Layout umgebrochen hat. Da sich die Groesse des Charts sowieso an den Container
-        // anpasst sollte overflow: hidden keine weiteren Auswirkungen haben.
-        $output = <<<HTML
-
-<div class="exf-grid-item {$this->getMasonryItemClass()}" style="width:{$this->getWidth()};min-width:{$this->getMinWidth()};height:{$this->getHeight()};padding:{$this->getPadding()};box-sizing:border-box;">
-    <div class="easyui-panel" style="height: auto;" id="{$this->getId()}_wrapper" data-options="fit: true {$chart_panel_options}, onResize: function(){ {$this->getOnResizeScript()} }">
-    	{$header_html}
-    	{$this->buildHtmlChart()}
-    </div>
-</div>
-
-HTML;
-        
-        return $output;
+        return $this->buildHtmlPanelWrapper($this->buildHtmlChart(), $customHeaderHtml);
     }
 
     /**
@@ -107,22 +87,9 @@ HTML;
      */
     public function buildJs() : string
     {
-        $widget = $this->getWidget();
-        
-         // Add Scripts for the configurator widget first as they may be needed for the others
-        $configurator_element = $this->getFacade()->getElement($widget->getConfiguratorWidget());
-        
         return <<<JS
 
-                    {$configurator_element->buildJs()}
-                    {$this->buildJsButtons()}
-
-                    $('#{$configurator_element->getId()}').find('.grid').on( 'layoutComplete', function( event, items ) {
-                        setTimeout(function(){
-                            var newHeight = $('#{$this->getId()}_wrapper > .panel').height();
-                            $('#{$this->getId()}').height($('#{$this->getId()}').parent().height()-newHeight);
-                        }, 0);               
-                    });
+                    {$this->buildJsForPanel()}
 
                     {$this->buildJsFunctions()}
                     
@@ -154,76 +121,17 @@ JS;
      * @return string
      */
     protected function buildJsDataLoadFunctionBody() : string
+    {        
+        return ! $this->getWidget()->getDataWidgetLink() ? $this->buildJsDataLoadFunctionBodyViaTrait() : '';
+    }
+    
+    /**
+     * 
+     * @see EuiDataElementTrait::buildJsDataLoaderOnLoaded()
+     */
+    protected function buildJsDataLoaderOnLoaded(string $dataJs) : string
     {
-        $widget = $this->getWidget();
-        $output = '';
-        if (! $widget->getDataWidgetLink()) {
-            
-            $headers = ! empty($this->getAjaxHeaders()) ? 'headers: ' . json_encode($this->getAjaxHeaders()) . ',' : '';
-            
-            $url_params = '
-                            resource: "' . $widget->getPage()->getAliasWithNamespace() . '"
-                            , element: "' . $widget->getData()->getId(). '"
-                            , object: "' . $widget->getMetaObject()->getId(). '"
-                            , action: "' . $widget->getLazyLoadingActionAlias(). '"
-            ';
-            
-            // send sort information
-            if (count($widget->getData()->getSorters()) > 0) {
-                foreach ($widget->getData()->getSorters() as $sorter) {
-                    $sort .= ',' . urlencode($sorter->getProperty('attribute_alias'));
-                    $order .= ',' . urldecode($sorter->getProperty('direction'));
-                }
-                $url_params .= '
-                            , sort: "' . substr($sort, 1) . '"
-                            , order: "' . substr($order, 1) . '"';
-            }
-            
-            // send pagination/limit information. Charts currently do not support real pagination, but just a TOP-X display.
-            if ($widget->getData()->isPaged()) {
-                $url_params .= '
-                            , page: 1
-                            , rows: ' . $widget->getData()->getPaginator()->getPageSize($this->getFacade()->getConfig()->getOption('WIDGET.CHART.PAGE_SIZE'));
-            }
-            
-            // Loader function
-            $configurator_element = $this->getFacade()->getElement($widget->getConfiguratorWidget());
-            $output .= <<<JS
-					{$this->buildJsBusyIconShow()}
-
-                    try {
-                        if (! {$configurator_element->buildJsValidator()}) {
-                            {$this->buildJsDataResetter()}
-                            {$this->buildJsMessageOverlayShow($this->getWidget()->getData()->getAutoloadDisabledHint())}
-                            {$this->buildJsBusyIconHide()}
-                            return false;
-                        }
-                    } catch (e) {
-                        console.warn('Could not check filter validity - ', e);
-                    }
-
-					$.ajax({
-						url: "{$this->getAjaxUrl()}",
-                        method: "POST",
-                        {$headers}
-                        data: {
-                            {$url_params}
-                            , data: {$configurator_element->buildJsDataGetter()}
-                            
-                        },
-						success: function(data){
-							{$this->buildJsRedraw('data.rows')}
-							{$this->buildJsBusyIconHide()}
-						},
-						error: function(jqXHR, textStatus, errorThrown){
-							{$this->buildJsShowError('jqXHR.responseText', 'jqXHR.status + " " + jqXHR.statusText')}
-							{$this->buildJsBusyIconHide()}
-						}
-					});
-JS;
-        }
-        
-        return $output;
+        return $this->buildJsRedraw($dataJs . '.rows');
     }
 
     /**
@@ -271,7 +179,7 @@ JS;
      * {@inheritDoc}
      * @see \exface\Core\Facades\AbstractAjaxFacade\Elements\AbstractJqueryElement::buildHtmlHeadTags()
      */
-    public function buildHtmlHeadTags() : array
+    public function buildHtmlHeadTags()
     {
         $widget = $this->getWidget();
         $dataIncludes = $widget->getDataWidgetLink() === null ? $this->getFacade()->getElement($this->getWidget()->getData())->buildHtmlHeadTags() : [];

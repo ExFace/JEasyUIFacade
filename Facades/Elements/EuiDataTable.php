@@ -319,8 +319,6 @@ JS;
     {
         $facade = $this->getFacade();
         $includes = parent::buildHtmlHeadTags();
-        // Masonry is neede to align filters nicely
-        $includes[] = '<script type="text/javascript" src="' . $facade->buildUrlToSource('LIBS.MASONRY') . '"></script>';
         // Row details view
         if ($this->getWidget()->hasRowDetails()) {
             $includes[] = '<script type="text/javascript" src="' . $facade->buildUrlToSource('LIBS.JEASYUI.EXTENSIONS.DATAGRID_DETAILVIEW') . '"></script>';
