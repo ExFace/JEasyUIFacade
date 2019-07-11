@@ -35,7 +35,7 @@ class EuiInputNumber extends EuiInput
     {
         $widget = $this->getWidget();
         $output = parent::buildJsDataOptions();
-        $output = ($output ? ',' : '') . $output;
+        $output .= ($output ? ',' : '');
         
         $precision_max = $widget->getPrecisionMax();
         $precision_min = $widget->getPrecisionMin();
