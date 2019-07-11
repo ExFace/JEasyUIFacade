@@ -6,6 +6,11 @@ use exface\Core\Exceptions\DependencyNotFoundError;
 use exface\JEasyUIFacade\Facades\Middleware\EuiDatagridUrlParamsReader;
 use exface\Core\Interfaces\DataSheets\DataSheetInterface;
 use exface\Core\Interfaces\WidgetInterface;
+use Psr\Http\Message\ServerRequestInterface;
+use exface\Core\Interfaces\Model\UiPageInterface;
+use Psr\Http\Message\ResponseInterface;
+use GuzzleHttp\Psr7\Response;
+use exface\Core\Interfaces\Exceptions\ExceptionInterface;
 
 class JEasyUIFacade extends AbstractAjaxFacade
 {
@@ -114,5 +119,55 @@ $.ajaxPrefilter(function( options ) {
         $data['footer'] = $data_sheet->getTotalsRows();
         return $data;
     }
+    
+    protected function buildHtmlFromError(ServerRequestInterface $request, \Throwable $exception, UiPageInterface $page = null) : string
+    {
+        if ($this->isShowingErrorDetails() === false) {
+            $body = '';
+            try {
+                $mode = $request->getAttribute($this->getRequestAttributeForRenderingMode(), static::MODE_FULL);
+                $headTags = implode("\n", $this->buildHtmlHeadCommonIncludes());
+                if ($exception instanceof ExceptionInterface) {
+                    $title = $exception->getMessageType($this->getWorkbench()) . ' ' . $exception->getAlias();
+                    $message = $exception->getMessageTitle($this->getWorkbench());
+                    $details = $exception->getMessage();
+                } else {
+                    $title = 'Internal Error';
+                    $message = $exception->getMessage();
+                    $details = '';
+                }
+                $errorBody = <<<HTML
+
+<div style="width: 100%; height: 100%; position: relative;">
+    <div style="width: 300px;position: absolute;top: 30%;left: calc(50% - 150px);">
+        <h1>{$title}</h1>
+        <p>{$message}</p>
+        <p style="color: grey; font-style: italic;">{$details}</p>
+    </div>
+</div>
+
+HTML;
+                switch ($mode) {
+                    case static::MODE_HEAD:
+                        $body = $headTags;
+                        break;
+                    case static::MODE_BODY:
+                        $body = $errorBody;
+                        break;
+                    case static::MODE_FULL:
+                    default:
+                        $body = $headTags. "\n" . $errorBody;
+                }
+            } catch (\Throwable $e) {
+                // If anything goes wrong when trying to prettify the original error, drop prettifying
+                // and throw the original exception wrapped in a notice about the failed prettification
+                $this->getWorkbench()->getLogger()->logException($e);
+                $log_id = $e instanceof ExceptionInterface ? $e->getId() : '';
+                throw new RuntimeException('Failed to create error report widget: "' . $e->getMessage() . '" - see ' . ($log_id ? 'log ID ' . $log_id : 'logs') . ' for more details! Find the orignal error detail below.', null, $exception);
+            }
+            
+            return $body;
+        }
+        return parent::buildHtmlFromError($request, $exception, $page);
+    }
 }
-?>

@@ -171,6 +171,46 @@ function getPageId(){
 	return $("meta[name='page_id']").attr("content");
 }
 
+function jeasyui_show_error(sTitle, sBody, sSrcElementId) {
+	var oBody, oError, sMessage, sDetails, sHeading;
+	if (sBody && sBody.startsWith('{') && sBody.endsWith('}')) {
+        try {
+            oBody = JSON.parse(sBody)
+        } catch (e) {
+        	oBody = undefined;
+        }
+        if (oBody !== undefined && oBody.error) {
+        	oError = oBody.error;
+        	
+        	// Message
+			if (oError.code) {
+				sHeading = oError.type + ' ' + oError.code;
+				if (oError.title) {
+					sMessage = oError.title;
+					sDetails = oError.message;
+				} else {
+					sMessage = oError.message;
+				}
+			} else {
+				sMessage = oError.message;
+			}
+        	
+        	sTitle = oError.logid ? 'Log-ID ' + oError.logid : 'Error';
+        	
+        	if (sDetails) {
+        		sMessage += ' <a href="javascript:;" onclick="$(this).parents(\'.error-summary\').toggle().next().toggle();"><i class="fa fa-chevron-right"></i></a>';
+        	}
+        	sBody = '<div class="error-summary"><div style="font-weight: bold;">' + sHeading + '</div><div>' + sMessage + '</div></div><div class="error-details" style="font-style: italic; display: none;"><a href="javascript:;" onclick="$(this).parents(\'.error-details\').toggle().prev().toggle();"><i class="fa fa-chevron-left"></i></a> ' + sDetails + '</div>';
+        	
+        	$.messager.alert(sTitle, sBody, 'error');
+        	return;
+        }
+    }
+	
+	jeasyui_create_dialog($("body"), sSrcElementId + "_error", {title: sTitle, width: 800, height: "80%"}, sBody, true);
+	return;
+}
+
 /**
  * Creates an jEasyUI dialog
  */
