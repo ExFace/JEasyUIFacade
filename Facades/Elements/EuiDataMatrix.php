@@ -34,8 +34,8 @@ class EuiDataMatrix extends EuiDataTable
             if ($col instanceof DataColumnTransposed) {
                 $data_cols[] = $col->getDataColumnName();
                 $label_cols[$col->getLabelAttributeAlias()][] = $col->getDataColumnName();
-                if ($col->getFooter()) {
-                    $data_cols_totlas[$col->getDataColumnName()] = $col->getFooter();
+                if ($col->hasFooter() === true && $col->getFooter()->hasAggregator() === true) {
+                    $data_cols_totlas[$col->getDataColumnName()] = $col->getFooter()->getAggregator()->exportString();
                 }
             } elseif (! $col->isHidden()) {
                 $visible_cols[] = $col->getDataColumnName();
