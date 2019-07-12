@@ -6,8 +6,17 @@ use exface\Core\Facades\AbstractAjaxFacade\Elements\JExcelTrait;
 
 class EuiDataSpreadSheet extends EuiData
 {    
-    use EuiDataElementTrait;
+    use EuiDataElementTrait {
+        init as initViaTrait;
+    }
     use JExcelTrait;
+    
+    protected function init()
+    {
+        $this->initViaTrait();
+        $this->registerReferencesAtLinkedElements();
+        $this->addOnLoadSuccess($this->buildJsFooterRefresh('data', 'jqSelf'));
+    }
 
     /**
      * 
@@ -29,9 +38,12 @@ class EuiDataSpreadSheet extends EuiData
         return <<<JS
         
     {$this->buildJsForPanel()}
-    {$this->buildJsJExcelInit()}
+    setTimeout(function() {
+        {$this->buildJsJExcelInit()}
+        {$this->buildJsRefresh()}
+    }, 0);
+    
     {$this->buildJsDataLoadFunction()}
-    {$this->buildJsRefresh()}
 
 JS;
     }

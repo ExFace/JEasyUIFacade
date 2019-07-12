@@ -170,7 +170,9 @@ JS;
                             
                         },
 						success: function(data){
+                            var jqSelf = $('#{$this->getId()}');
 							{$this->buildJsDataLoaderOnLoaded('data')}
+                            {$this->getOnLoadSuccess()}
 							{$this->buildJsBusyIconHide()}
 						},
 						error: function(jqXHR, textStatus, errorThrown){
