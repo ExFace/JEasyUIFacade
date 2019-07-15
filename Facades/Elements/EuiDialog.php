@@ -149,7 +149,14 @@ HTML;
         /* @var $widget \exface\Core\Widgets\Dialog */
         $widget = $this->getWidget();
         // TODO make the Dialog responsive as in http://www.jeasyui.com/demo/main/index.php?plugin=Dialog&theme=default&dir=ltr&pitem=
-        $output = parent::buildJsDataOptions() . ($widget->isMaximizable() ? ', maximizable: true, maximized: ' . ($widget->isMaximized() ? 'true' : 'false') : '') . ", cache: false" . ", closed: false" . ", buttons: '#{$this->buttons_div_id}'" . ", tools: '#{$this->getId()}_window_tools'" . ", modal: true";
+        $output = parent::buildJsDataOptions() 
+            . ($widget->isMaximizable() ? ', maximizable: true, maximized: ' . ($widget->isMaximized() ? 'true' : 'false') : '') 
+            . ", cache: false" 
+            . ", closed: false" 
+            . ", buttons: '#{$this->buttons_div_id}'" 
+            . ", tools: '#{$this->getId()}_window_tools'" 
+            . ", modal: true"
+            . ", onBeforeClose: function() {" . str_replace('"', '\"', $this->buildJsDestroy()) . "}";
         return $output;
     }
 
@@ -244,6 +251,11 @@ JS;
     protected function getFitOption()
     {
         return false;
+    }
+    
+    protected function buildJsOnCloseScript() : string
+    {
+        return $this->buildJsDestroy();
     }
 }
 ?>
