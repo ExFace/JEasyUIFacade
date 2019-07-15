@@ -153,7 +153,10 @@ pre.sf-dump .sf-dump-private, pre.sf-dump .sf-dump-public, pre.sf-dump .sf-dump-
 .slick-carousel.horizontal .slick-slide {margin-left: 10px}
 
 /* jExcel */
-.jexcel {border-top: 0 !important; border-left: 0 !important;}
+.jexcel {border-top: 0 !important; border-left: 0 !important; width: 100% !important; table-layout: auto !important;}
+.jexcel_container {padding-right: 0 !important; overflow-x: auto; width: 100%}
+.jexcel_content {width: 100%}
+.jexcel_row, .jexcel_selectall {max-width: 1em}
 .jexcel td {overflow: hidden; text-overflow: ellipsis;}
 .exf-spreadsheet {overflow: visible;}
 .panel:has(.exf-spreadsheet) {overflow: visible;}

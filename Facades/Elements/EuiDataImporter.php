@@ -46,6 +46,7 @@ HTML;
             {$this->buildJsJExcelInit()}
         }, 0);
         {$this->buildJsToolbars()}
+        {$this->buildJsFunctionsForJExcel()}
 
 JS;
     }
