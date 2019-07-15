@@ -44,6 +44,7 @@ class EuiDataSpreadSheet extends EuiData
     }, 0);
     
     {$this->buildJsDataLoadFunction()}
+    {$this->buildJsFunctionsForJExcel()}
 
 JS;
     }

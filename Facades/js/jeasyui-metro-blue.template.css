@@ -153,9 +153,8 @@ pre.sf-dump .sf-dump-private, pre.sf-dump .sf-dump-public, pre.sf-dump .sf-dump-
 .slick-carousel.horizontal .slick-slide {margin-left: 10px}
 
 /* jExcel */
-.jexcel_contextmenu {z-index: 1000000 !important}
-.jexcel, .jexcel td, .jexcel_corner {z-index: 100000 !important}
 .jexcel {border-top: 0 !important; border-left: 0 !important;}
+.jexcel td {overflow: hidden; text-overflow: ellipsis;}
 .exf-spreadsheet {overflow: visible;}
 .panel:has(.exf-spreadsheet) {overflow: visible;}
 .exf-grid-item:has(.exf-spreadsheet) {overflow: visible;}
