@@ -59,7 +59,11 @@
    	"LIBS.JEXCEL.CSS": "npm-asset/jexcel/dist/jexcel.min.css",
  	"LIBS.JEXCEL.CSS_JSUITES": "npm-asset/jsuites/dist/jsuites.css",
 	
-	"LIBS.MARKDOWN.CSS": "npm-asset/github-markdown-css/github-markdown.css",
+	"LIBS.JSONEDITOR.JS": "npm-asset/jsoneditor/dist/jsoneditor.min.js",
+	"LIBS.JSONEDITOR.CSS": "npm-asset/jsoneditor/dist/jsoneditor.min.css",
+	"LIBS.JSONEDITOR.PICOMODAL": "npm-asset/picomodal/src/picoModal.js",
+ 
+ 	"LIBS.MARKDOWN.CSS": "npm-asset/github-markdown-css/github-markdown.css",
 	
 	"LIBS.MASONRY": "bower-asset/masonry/dist/masonry.pkgd.min.js",
 	
