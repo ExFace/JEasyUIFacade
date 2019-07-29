@@ -14,7 +14,7 @@ class EuiInputCheckBox extends EuiInput
         $output = '	<div style="width: calc(100% + 2px); height: 100%; display: inline-block; text-align:left;">
 						<input type="checkbox" value="1" 
 								id="' . $this->getId() . '_checkbox"
-								onchange="$(\'#' . $this->getId() . '\').val(this.checked);"' . '
+								onchange="$(\'#' . $this->getId() . '\').val(this.checked).change();"' . '
 								' . ($this->getValueWithDefaults() ? 'checked="checked" ' : '') . '
 								' . ($this->getWidget()->isDisabled() ? 'disabled="disabled"' : '') . ' />
 						<input type="hidden" name="' . $this->getWidget()->getAttributeAlias() . '" id="' . $this->getId() . '" value="' . $this->getValueWithDefaults() . '" />
