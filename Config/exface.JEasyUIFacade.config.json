@@ -62,6 +62,8 @@
 	"LIBS.JSONEDITOR.JS": "npm-asset/jsoneditor/dist/jsoneditor.min.js",
 	"LIBS.JSONEDITOR.CSS": "npm-asset/jsoneditor/dist/jsoneditor.min.css",
 	"LIBS.JSONEDITOR.PICOMODAL": "npm-asset/picomodal/src/picoModal.js",
+	"LIBS.JSONEDITOR.SELECTR.JS": "npm-asset/mobius1-selectr/src/selectr.js",
+	"LIBS.JSONEDITOR.SELECTR.CSS": "npm-asset/mobius1-selectr/src/selectr.css",
  
  	"LIBS.MARKDOWN.CSS": "npm-asset/github-markdown-css/github-markdown.css",
 	
