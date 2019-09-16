@@ -21,7 +21,7 @@
 		"bower-asset/google-diff-match-patch-js" : "^1.0.0",
 		"bower-asset/font-awesome" : "^4.7",
 		"npm-asset/slick-carousel" : "^1.8",
-		"npm-asset/jsoneditor" : "^6.1",
+		"npm-asset/jsoneditor" : "^6.1||^7.0",
 		"npm-asset/picomodal" : "^3.0.0",
 		"npm-asset/mobius1-selectr" : "^2.4.12",
 		"npm-asset/jquery-prettytextdiff" : "^1.0.3",
