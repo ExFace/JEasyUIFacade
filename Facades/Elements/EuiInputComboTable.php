@@ -166,7 +166,12 @@ HTML;
     function buildJs()
     {
         $debug_function = ($this->getJsDebugLevel() > 0) ? $this->buildJsDebugDataToStringFunction() : '';
+        if ($this->getWidget()->isHidden() === true) {
+            $hideInitiallyIfNeeded = $this->buildJsHideWidget();
+        }
         
+        // Es werden JavaScript Value-Getter-/Setter- und OnChange-Funktionen fuer die InputComboTable erzeugt,
+        // um duplizierten Code zu vermeiden.
         $output = <<<JS
 
             // Globale Variablen initialisieren.
@@ -182,13 +187,9 @@ HTML;
 
                 // Initialize the disabled state of the widget if a disabled condition is set.
                 {$this->buildJsDisableConditionInitializer()};
+
+                {$hideInitiallyIfNeeded}
             });
-            
-JS;
-        
-        // Es werden JavaScript Value-Getter-/Setter- und OnChange-Funktionen fuer die InputComboTable erzeugt,
-        // um duplizierten Code zu vermeiden.
-        $output .= <<<JS
 
             {$this->buildJsValueGetterFunction()}
             {$this->buildJsValueSetterFunction()}

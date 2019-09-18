@@ -95,6 +95,10 @@ class EuiInput extends EuiValue
      */
     protected function buildJsEventScripts()
     {
+        if ($this->getWidget()->isHidden() === true) {
+            $hideInitiallyIfNeeded = $this->buildJsHideWidget();
+        }
+        
         return <<<JS
 
     // Event scripts for {$this->getId()}
@@ -106,6 +110,7 @@ class EuiInput extends EuiValue
         }
         {$this->buildJsOnChangeHandler()}
         {$this->buildJsDisableConditionInitializer()}
+        {$hideInitiallyIfNeeded}
     });
 
 JS;

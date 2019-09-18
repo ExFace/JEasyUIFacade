@@ -111,5 +111,25 @@ HTML;
     {
         return '';
     }
+    
+    /**
+     * Returns an inline JS-snippet to hide the entire widget (including label, etc.).
+     * 
+     * @return string
+     */
+    public function buildJsHideWidget() : string
+    {
+        return "$('#{$this->getId()}').parents('.exf-control').first().hide()";
+    }
+    
+    /**
+     * Returns an inline JS-snippet to show a previously hidden widget.
+     *
+     * @return string
+     */
+    public function buildJsShowWidget() : string
+    {
+        return "$('#{$this->getId()}').parents('.exf-control').first().show()";
+    }
 }
 ?>
