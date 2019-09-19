@@ -224,7 +224,7 @@ JS;
 
         if (is_null($column)) {
             if ($this->getWidget()->hasUidColumn() === true) {
-                $column = $this->getWidget()->getUidColumn()->getDataColumn();
+                $column = $this->getWidget()->getUidColumn()->getDataColumnName();
             } else {
                 throw new FacadeOutputError('Cannot create a value getter for a data widget without a UID column: either specify a column to get the value from or a UID column for the table.');
             }

@@ -31,6 +31,9 @@ class EuiButton extends EuiAbstractElement
     {
         parent::init();
         $this->setElementType('linkbutton');
+        
+        // Register an onChange-Script on the element linked by a disable condition.
+        $this->registerDisableConditionAtLinkedElement();
     }
 
     public function buildJs()
@@ -228,7 +231,7 @@ JS;
     public function buildJsEnabler()
     {
         // setTimeout() required to make sure, the jEasyUI element was initialized (especially in lazy loading dialogs)
-        return  "setTimeout(function(){ $('#{$this->getId()}').{$this->getElementType()}('disable') }, 0)";
+        return  "setTimeout(function(){ $('#{$this->getId()}').{$this->getElementType()}('enable') }, 0)";
     }
 }
 ?>
