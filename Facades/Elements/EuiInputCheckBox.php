@@ -1,6 +1,8 @@
 <?php
 namespace exface\JEasyUIFacade\Facades\Elements;
 
+use exface\Core\DataTypes\BooleanDataType;
+
 class EuiInputCheckBox extends EuiInput
 {
 
@@ -15,7 +17,7 @@ class EuiInputCheckBox extends EuiInput
 						<input type="checkbox" value="1" 
 								id="' . $this->getId() . '_checkbox"
 								onchange="$(\'#' . $this->getId() . '\').val(this.checked).change();"' . '
-								' . ($this->getValueWithDefaults() ? 'checked="checked" ' : '') . '
+								' . (BooleanDataType::cast($this->getValueWithDefaults()) ? 'checked="checked" ' : '') . '
 								' . ($this->getWidget()->isDisabled() ? 'disabled="disabled"' : '') . ' />
 						<input type="hidden" name="' . $this->getWidget()->getAttributeAlias() . '" id="' . $this->getId() . '" value="' . $this->getValueWithDefaults() . '" />
 					</div>';
