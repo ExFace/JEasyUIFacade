@@ -197,19 +197,17 @@ JS;
             }
         }
         return "";
-    }
-
+    }    
+    
     /**
-     * In jEasyUI the button does not need any extra headers, as all headers needed for whatever the button loads will
-     * come with the AJAX-request.
-     *
-     * {@inheritdoc}
-     *
+     * 
+     * {@inheritDoc}
      * @see \exface\Core\Facades\AbstractAjaxFacade\Elements\AbstractJqueryElement::buildHtmlHeadTags()
      */
     public function buildHtmlHeadTags()
     {
-        return array();
+        $tags = parent::buildHtmlHeadTags();
+        return array_merge($tags, $this->buildHtmlHeadTagsForCustomScriptIncludes());
     }
     
     /**
