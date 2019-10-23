@@ -239,6 +239,7 @@ JS;
  */
 function {$this->buildJsFunctionPrefix()}ExecuteCommand(command, terminal) {
     terminal.pause();
+    var responseCumulated = '';
     return $.ajax( {
 		type: 'POST',
 		url: '{$consoleFacade->buildUrlToFacade()}',
@@ -252,8 +253,15 @@ function {$this->buildJsFunctionPrefix()}ExecuteCommand(command, terminal) {
 			onprogress: function(e){
                 var XMLHttpRequest = e.target;
                 if (XMLHttpRequest.status >= 200 && XMLHttpRequest.status < 300) {
-					var response = XMLHttpRequest.response;
-					terminal.echo(String(response));
+					var response = String(XMLHttpRequest.response);
+					if (responseCumulated.length < response.length) {
+                        if (response.substring(0, responseCumulated.length) === responseCumulated) {
+                            response = response.substring(responseCumulated.length);
+                            responseCumulated += response;
+                        }
+                    }
+                    // Replace trailing newline as .echo() will add one itself.
+                    terminal.echo(response.replace(/\\n$/, ""));
                     terminal.resume();
                     terminal.pause()                    
                 }
