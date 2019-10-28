@@ -21,6 +21,7 @@ class EuiChart extends EuiData
         EChartsTrait::buildJsRefresh insteadof EuiDataElementTrait;
         EChartsTrait::buildJsMessageOverlayShow insteadof EuiDataElementTrait;
         EChartsTrait::buildJsMessageOverlayHide insteadof EuiDataElementTrait;
+        EChartsTrait::buildJsRowCompare as buildJsRowCompareViaEchartsTrait;
         EuiDataElementTrait::buildJsDataLoadFunctionBody as buildJsDataLoadFunctionBodyViaTrait;
     }
 
@@ -188,5 +189,16 @@ JS;
         // masonry for proper filter alignment
         $includes[] = '<script type="text/javascript" src="' . $this->getFacade()->buildUrlToSource('LIBS.MASONRY') . '"></script>';
         return $includes;
+    }
+    
+    /**
+     * 
+     * {@inheritDoc}
+     * @see \exface\JEasyUIFacade\Facades\Elements\EuiData::buildJsRowCompare()
+     * @see \exface\Core\Facades\AbstractAjaxFacade\Elements\EChartsTrait::buildJsRowCompare()
+     */
+    protected function buildJsRowCompare(string $leftRowJs, string $rightRowJs, bool $trustUid = true) : string
+    {
+        return $this->buildJsRowCompareViaEChartsTrait($leftRowJs, $rightRowJs);
     }
 }
