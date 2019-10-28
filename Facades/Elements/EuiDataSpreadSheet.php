@@ -60,10 +60,14 @@ JS;
     
     public function buildHtmlHeadTags()
     {
-        return array_merge(
+        $includes = array_merge(
             parent::buildHtmlHeadTags(),
             $this->buildHtmlHeadTagsForJExcel()
         );
+        
+        array_unshift($includes, '<script type="text/javascript">' . $this->buildJsFixJqueryImportUseStrict() . '</script>');
+        
+        return $includes;
     }
     
     public function buildCssElementClass()
