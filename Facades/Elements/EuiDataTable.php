@@ -228,6 +228,12 @@ JS;
             } else {
                 throw new FacadeOutputError('Cannot create a value getter for a data widget without a UID column: either specify a column to get the value from or a UID column for the table.');
             }
+        } else {
+            if (! $col = $this->getWidget()->getColumnByDataColumnName($column)) {
+                if ($col = $this->getWidget()->getColumnByAttributeAlias($column)) {
+                    $column = $col->getDataColumnName();
+                }
+            }
         }
         
         // TODO need to list values if multi_select is on instead of just returning the value
