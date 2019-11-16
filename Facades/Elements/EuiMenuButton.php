@@ -73,6 +73,21 @@ HTML;
         return $output;
     }
     
+    /**
+     * 
+     * {@inheritDoc}
+     * @see \exface\JEasyUIFacade\Facades\Elements\EuiButton::buildHtmlHeadTags()
+     */
+    public function buildHtmlHeadTags()
+    {
+        return array_merge(parent::buildHtmlHeadTags(), $this->getFacade()->getElement($this->getWidget()->getMenu())->buildHtmlHeadTags());
+    }
+    
+    /**
+     * 
+     * {@inheritDoc}
+     * @see \exface\JEasyUIFacade\Facades\Elements\EuiButton::buildJsDataOptions()
+     */
     protected function buildJsDataOptions()
     {
         $options = parent::buildJsDataOptions();
