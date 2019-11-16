@@ -54,9 +54,9 @@
     "LIBS.JEASYUI.EXTENSIONS.DATAGRID_DETAILVIEW": "exface/JEasyUIFacade/Facades/js/jeasyui/extensions/datagridview/datagrid-detailview.js",
     "LIBS.JEASYUI.PATCHES": "exface/JEasyUIFacade/Facades/js/jquery.easyui.patch.1.43.js",
 	
-   	"LIBS.JEXCEL.JS": "npm-asset/jexcel/dist/jexcel.min.js",
+   	"LIBS.JEXCEL.JS": "npm-asset/jexcel/dist/jexcel.js",
    	"LIBS.JEXCEL.JS_JSUITES": "npm-asset/jsuites/dist/jsuites.js",
-   	"LIBS.JEXCEL.CSS": "npm-asset/jexcel/dist/jexcel.min.css",
+   	"LIBS.JEXCEL.CSS": "npm-asset/jexcel/dist/jexcel.css",
  	"LIBS.JEXCEL.CSS_JSUITES": "npm-asset/jsuites/dist/jsuites.css",
 	
 	"LIBS.JSONEDITOR.JS": "npm-asset/jsoneditor/dist/jsoneditor.min.js",
