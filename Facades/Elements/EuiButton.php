@@ -206,8 +206,13 @@ JS;
      */
     public function buildHtmlHeadTags()
     {
-        $tags = parent::buildHtmlHeadTags();
-        return array_merge($tags, $this->buildHtmlHeadTagsForCustomScriptIncludes());
+        // IMPORTANT: do not include head tags from children! Children of a button are widgets inside
+        // it's action. Including them here would require rendering them, which severely impacts
+        // performanc for complex UIs like the metamodel object editor.
+        // Since this facade renders action-widgets by asking the server when the button is pressed
+        // (see buildJsClickShowWidget() and buildJsClickShowDialog()) it is enough, to get the head
+        // tags for the custom-script actions only.
+        return $this->buildHtmlHeadTagsForCustomScriptIncludes();
     }
     
     /**
