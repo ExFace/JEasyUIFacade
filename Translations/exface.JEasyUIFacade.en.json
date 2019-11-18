@@ -9,9 +9,6 @@
 	"WIDGET.DATATABLE.CONFIGURATOR_EXPAND_COLLAPSE": "Collapse/expand quick filters",
 	
 	"WIDGET.SEARCH": "Search",
-	
-	"DATE.FORMAT.SCREEN": "yyyy-MM-dd",
-	"DATETIME.FORMAT.SCREEN": "yyyy-MM-dd HH:mm:ss",
-	
+		
 	"MESSAGE.INVALID.INPUTDATE": "Please enter a valid date."
 }
