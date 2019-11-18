@@ -101,10 +101,13 @@ JS;
         delay: 1,
         formatter: function (date) {
             // date ist ein date-Objekt und wird zu einem String geparst
-            return (date instanceof Date ? {$this->getDataTypeFormatter()->buildJsDateFormatter('date')} : '');
+            exfTools.date.format(date);
+            console.log('formatter', date, exfTools.date.format(date));
+            return (date instanceof Date ? exfTools.date.format(date) : '');
         },
         parser: function(string) {
-            var date = {$this->getDataTypeFormatter()->buildJsDateParserFunctionName()}(string);
+            var date = exfTools.date.parse(string);
+            console.log('parser', string, date);
             // Ausgabe des geparsten Wertes
             if (date) {
                 $('#{$this->getId()}').data("_internalValue", {$this->getDataTypeFormatter()->buildJsDateStringifier('date')}).data("_isValid", true);
@@ -120,7 +123,9 @@ JS;
             var jqself = $(this);
             currentDate = jqself.{$this->getElementType()}("calendar").calendar("options").current;
             if (currentDate) {
-                jqself.{$this->getElementType()}("setValue", {$this->buildJsValueFormatter('currentDate')});
+                console.log('currentDate', currentDate);
+                console.log('setValue', {$this->buildJsValueFormatter('currentDate')});
+                jqself.{$this->getElementType()}("setValue", exfTools.date.format(currentDate));
             }
         },
         validType: "date['#{$this->getId()}']"
