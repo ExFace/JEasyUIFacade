@@ -50,7 +50,7 @@ class EuiInputTime extends EuiInput
      */
     /*public function buildHtmlHeadTags()
     {
-        $formatter = $this->getDataTypeFormatter();
+        $formatter = $this->getDateFormatter();
         return array_merge(parent::buildHtmlHeadTags(), $formatter->buildHtmlHeadIncludes(), $formatter->buildHtmlBodyIncludes());
     }*/
 }

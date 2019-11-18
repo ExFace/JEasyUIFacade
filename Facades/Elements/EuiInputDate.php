@@ -101,16 +101,16 @@ JS;
         delay: 1,
         formatter: function (date) {
             // date ist ein date-Objekt und wird zu einem String geparst
-            exfTools.date.format(date);
-            console.log('formatter', date, exfTools.date.format(date));
-            return (date instanceof Date ? exfTools.date.format(date) : '');
+            console.log('formatter', date, date instanceof Date ? {$this->getDateFormatter()->buildJsFormatDateObjectToString('date')} : '');
+            return (date instanceof Date ? {$this->getDateFormatter()->buildJsFormatDateObjectToString('date')} : '');
         },
         parser: function(string) {
-            var date = exfTools.date.parse(string);
+            var date = {$this->getDateFormatter()->buildJsParseStringToDateObject('string')};
             console.log('parser', string, date);
             // Ausgabe des geparsten Wertes
             if (date) {
-                $('#{$this->getId()}').data("_internalValue", {$this->getDataTypeFormatter()->buildJsDateStringifier('date')}).data("_isValid", true);
+                console.log('internalValue', {$this->getDateFormatter()->buildJsFormatDateObjectToInternal('date')});
+                $('#{$this->getId()}').data("_internalValue", {$this->getDateFormatter()->buildJsFormatDateObjectToInternal('date')}).data("_isValid", true);
                 return date;
             } else {
                 $('#{$this->getId()}').data("_internalValue", "").data("_isValid", false);
@@ -125,7 +125,7 @@ JS;
             if (currentDate) {
                 console.log('currentDate', currentDate);
                 console.log('setValue', {$this->buildJsValueFormatter('currentDate')});
-                jqself.{$this->getElementType()}("setValue", exfTools.date.format(currentDate));
+                jqself.{$this->getElementType()}("setValue", {$this->buildJsValueFormatter('currentDate')});
             }
         },
         validType: "date['#{$this->getId()}']"
@@ -139,7 +139,7 @@ JS;
      */
     public function buildHtmlHeadTags()
     {
-        $formatter = $this->getDataTypeFormatter();
+        $formatter = $this->getDateFormatter();
         $headers = parent::buildHtmlHeadTags();
         $headers = array_merge($headers, $formatter->buildHtmlHeadIncludes(), $formatter->buildHtmlBodyIncludes());
         return $headers;
