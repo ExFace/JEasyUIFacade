@@ -506,7 +506,7 @@ JS;
         $grouper = $this->getWidget()->getRowGrouper();
         
         // groupView options
-        $prefix = $grouper->getHideCaption() === false ? "'" . $grouper->getCaption() . " ' + " : '';
+        $prefix = ! $grouper->getHideCaption() ? "'" . $grouper->getCaption() . " ' + " : '';
         $counter = $grouper->getShowCounter() ? " + ' (' + rows.length + ')'" : "";
         $grid_head .= ', view: groupview' . ",groupField: '{$grouper->getGroupByColumn()->getDataColumnName()}', groupFormatter:function(value,rows){ return {$prefix}value{$counter};}";
         
