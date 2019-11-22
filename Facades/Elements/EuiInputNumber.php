@@ -84,6 +84,6 @@ class EuiInputNumber extends EuiInput
     public function buildHtmlHeadTags()
     {
         $formatter = $this->getDataTypeFormatter();
-        return array_merge(parent::buildHtmlHeadTags(), $formatter->buildHtmlHeadIncludes(), $formatter->buildHtmlBodyIncludes());
+        return array_merge(parent::buildHtmlHeadTags(), $formatter->buildHtmlHeadIncludes($this->getFacade()), $formatter->buildHtmlBodyIncludes($this->getFacade()));
     }
 }

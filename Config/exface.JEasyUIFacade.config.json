@@ -44,6 +44,8 @@
     	"exface/Core/Facades/AbstractPWAFacade/sw_tools.js"
     ],
     
+    "LIBS.EXFTOOLS.JS": "exface/Core/Facades/AbstractAjaxFacade/js/exfTools.js",
+    
     "LIBS.JQUERY": "bower-asset/jquery/dist/jquery.min.js",
     "LIBS.JQUERY_PRETTY_TEXT_DIFF": "npm-asset/jquery-prettytextdiff/jquery.pretty-text-diff.min.js",
     
@@ -68,6 +70,7 @@
  	"LIBS.MARKDOWN.CSS": "npm-asset/github-markdown-css/github-markdown.css",
 	
 	"LIBS.MASONRY": "bower-asset/masonry/dist/masonry.pkgd.min.js",
+	"LIBS.MOMENT.JS": "npm-asset/moment/min/moment.min.js",
 	
 	"LIBS.FACADE.CSS": "exface/JEasyUIFacade/Facades/js/jeasyui-metro-blue.template.css",
     "LIBS.FACADE.JS": "exface/JEasyUIFacade/Facades/js/jeasyui.facade.js",

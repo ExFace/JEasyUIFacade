@@ -101,6 +101,6 @@ JS;
     public function buildHtmlHeadTags()
     {
         $formatter = $this->getDateFormatter();
-        return array_merge(parent::buildHtmlHeadTags(), $formatter->buildHtmlHeadIncludes(), $formatter->buildHtmlBodyIncludes());
+        return array_merge(parent::buildHtmlHeadTags(), $formatter->buildHtmlHeadIncludes($this->getFacade()), $formatter->buildHtmlBodyIncludes($this->getFacade()));
     }
 }

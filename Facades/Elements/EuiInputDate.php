@@ -136,7 +136,7 @@ JS;
     {
         $formatter = $this->getDateFormatter();
         $headers = parent::buildHtmlHeadTags();
-        $headers = array_merge($headers, $formatter->buildHtmlHeadIncludes(), $formatter->buildHtmlBodyIncludes());
+        $headers = array_merge($headers, $formatter->buildHtmlHeadIncludes($this->getFacade()), $formatter->buildHtmlBodyIncludes($this->getFacade()));
         return $headers;
     }
 
