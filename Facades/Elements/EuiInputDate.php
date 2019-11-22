@@ -101,13 +101,13 @@ JS;
         delay: 1,
         formatter: function (date) {
             // date ist ein date-Objekt und wird zu einem String geparst
-            return (date instanceof Date ? {$this->getDataTypeFormatter()->buildJsDateFormatter('date')} : '');
+            return (date instanceof Date ? {$this->getDateFormatter()->buildJsFormatDateObjectToString('date')} : '');
         },
         parser: function(string) {
-            var date = {$this->getDataTypeFormatter()->buildJsDateParserFunctionName()}(string);
+            var date = {$this->getDateFormatter()->buildJsFormatParserToJsDate('string')};
             // Ausgabe des geparsten Wertes
             if (date) {
-                $('#{$this->getId()}').data("_internalValue", {$this->getDataTypeFormatter()->buildJsDateStringifier('date')}).data("_isValid", true);
+                $('#{$this->getId()}').data("_internalValue", {$this->getDateFormatter()->buildJsFormatDateObjectToInternal('date')}).data("_isValid", true);
                 return date;
             } else {
                 $('#{$this->getId()}').data("_internalValue", "").data("_isValid", false);
@@ -134,7 +134,7 @@ JS;
      */
     public function buildHtmlHeadTags()
     {
-        $formatter = $this->getDataTypeFormatter();
+        $formatter = $this->getDateFormatter();
         $headers = parent::buildHtmlHeadTags();
         $headers = array_merge($headers, $formatter->buildHtmlHeadIncludes(), $formatter->buildHtmlBodyIncludes());
         return $headers;
