@@ -22,7 +22,6 @@ class EuiDisplay extends EuiValue implements JsValueDecoratingInterface
     protected function init()
     {
         parent::init();
-        $this->setElementType($this->getCaption() ? 'span' : 'div');
         $this->setElementType('div');
         return;
     }

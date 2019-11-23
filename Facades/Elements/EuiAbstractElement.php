@@ -267,14 +267,19 @@ abstract class EuiAbstractElement extends AbstractJqueryElement
         }
         
         $style = '';
+        
         // Padding
         if (($padding = $this->getPadding(false)) !== false) {
             $style .= 'padding:' . $padding . ';';
         }
         
+        if ($widget->getWidth()->isUndefined() === true) {
+            $style .= "min-width:{$this->getMinWidth()};";
+        }
+        
         return <<<HTML
         
-            <div title="{$title}" class="{$gridClasses} {$this->buildCssElementClass()}" style="{$style}width:{$this->getWidth()};min-width:{$this->getMinWidth()};height:{$this->getHeight()};box-sizing:border-box;">
+            <div title="{$title}" class="{$gridClasses} {$this->buildCssElementClass()}" style="{$style}width:{$this->getWidth()};height:{$this->getHeight()};box-sizing:border-box;">
                 {$html}
             </div>
 HTML;

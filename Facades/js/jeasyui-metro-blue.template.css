@@ -37,9 +37,9 @@ ul.nav_menu a:hover {color: white; font-weight: bold; text-decoration: none; dis
 .dialog-button .exf-toolbar {padding: 0;}
 
 /* Inputs */
-.exf-labeled-item {width:calc(100% - 167px); display: inline-block; height: 100%; vertical-align: middle;}
+.exf-labeled-item {width: 60%; display: inline-block; height: 100%; vertical-align: middle;}
 .exf-input, .exf-display {box-sizing: border-box; padding:4px; text-align:right;}
-.exf-input label {margin: 0 3px; display: inline-block; max-width: 157px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; vertical-align: middle;}
+.exf-input label {margin: 0 3px; display: inline-block; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; vertical-align: middle;}
 .exf-input textarea {vertical-align:middle;border: 1px solid #c3d9e0; tab-size: 4}
 .exf-display .exf-labeled-item {text-align: left; font-weight: bold; padding-left: 3px;}
 .exf-display * {text-align: initial;}
@@ -49,6 +49,11 @@ fieldset.exface_inputgroup legend {color: #404040; font-weight: bold; padding: 0
 
 /* Widget groups */
 .exf-panel-flat > .panel > .panel-header {background-color: transparent; padding-top: 6px; margin-bottom: 4px;}
+
+/* Inline groups */
+.exf-inline-group .exf-control {padding-left: 0px !important; display: inline-block !important;}
+.exf-inline-group .exf-control:last-of-type {padding-right: 0px !important;}
+.exf-inline-group {padding-top: 0px !important; padding-bottom: 0px !important; padding-right: 2px !important;}
 
 /* Text & headings */
 .panel-body h1, .panel-body h2, .panel-body h3, .panel-body h4, .panel-body h5, .panel-body p, .panel-body pre {padding: 0 10px;}
