@@ -273,7 +273,8 @@ abstract class EuiAbstractElement extends AbstractJqueryElement
             $style .= 'padding:' . $padding . ';';
         }
         
-        if ($widget->getWidth()->isUndefined() === true) {
+        $width = $widget->getWidth();
+        if ($width->isUndefined() === true || $width->isRelative() === true) {
             $style .= "min-width:{$this->getMinWidth()};";
         }
         
