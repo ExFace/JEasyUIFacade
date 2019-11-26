@@ -192,7 +192,8 @@ abstract class EuiAbstractElement extends AbstractJqueryElement
         if ($this->getWidget() instanceof iLayoutWidgets) {
             // z.B. die Filter-Widgets der DataTables sind genau getWidthRelativeUnits breit und
             // wuerden sonst vom Rand teilweise verdeckt werden.
-            $output = ($this->getWidthMinimum() + $this->getSpacing() + 2 * $this->getBorderWidth()) . 'px';
+            $singleColumnWidth = $this->getFacade()->getConfig()->getOption('WIDTH_MINIMUM');
+            $output = ($singleColumnWidth + $this->getSpacing() + 2 * $this->getBorderWidth()) . 'px';
         } else {
             $output = $this->getWidthMinimum() . 'px';
         }
