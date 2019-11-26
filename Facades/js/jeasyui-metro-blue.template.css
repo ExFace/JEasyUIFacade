@@ -37,9 +37,9 @@ ul.nav_menu a:hover {color: white; font-weight: bold; text-decoration: none; dis
 .dialog-button .exf-toolbar {padding: 0;}
 
 /* Inputs */
-.exf-labeled-item {width: 60%; display: inline-block; height: 100%; vertical-align: middle;}
+.exf-labeled-item {display: inline-block; height: 100%; vertical-align: middle;}
 .exf-input, .exf-display {box-sizing: border-box; padding:4px; text-align:right;}
-.exf-input label {margin: 0 3px; display: inline-block; max-width: calc(40% - 10px); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; vertical-align: middle;}
+.exf-input label {margin: 0 3px; display: inline-block; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; vertical-align: middle;}
 .exf-input textarea {vertical-align:middle;border: 1px solid #c3d9e0; tab-size: 4}
 .exf-display .exf-labeled-item {text-align: left; font-weight: bold; padding-left: 3px;}
 .exf-display * {text-align: initial;}

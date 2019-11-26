@@ -3,6 +3,7 @@ namespace exface\JEasyUIFacade\Facades\Elements;
 
 use exface\Core\Interfaces\Widgets\iTakeInput;
 use exface\Core\Widgets\Value;
+use exface\Core\Interfaces\Widgets\iLayoutWidgets;
 
 /**
  * Generates a <div> element for a Value widget and wraps it in a masonry grid item if needed.
@@ -80,9 +81,33 @@ HTML;
     protected function buildHtmlLabelWrapper($html, $make_grid_item = true)
     {
         if ($caption = $this->getCaption()) {
+            // If there is a caption, add a <label> with a width of 40% of a single column.
+            // Note: if the widget has a differen width, the label should still be as wide
+            // as 40% of a single column to look nicely in forms with a mixture of single-size 
+            // and larger widgets - e.g. default editors for actions, behaviors, etc.
+            $labelStyle = '';
+            $innerStyle = '';
+            $width = $this->getWidget()->getWidth();
+            if ($width->isRelative() === true) {
+                if ($width->isMax() === true && $this->getWidget()->getParent() instanceof iLayoutWidgets) {
+                    $parentEl = $this->getFacade()->getElement($this->getWidget()->getParent());
+                    if (method_exists($parentEl, 'getNumberOfColumns')) {
+                        $value = $parentEl->getNumberOfColumns();
+                    } else {
+                        $value = $this->getWidget()->getParent() ?? 1;
+                    }
+                } else {
+                    $value = $width->getValue();
+                }
+                $labelStyle = " max-width: calc(40% / {$value} - 10px);";
+                $innerStyle = " width: calc(100% - 100% / {$value} * 0.4 + 1px);";
+            } else {
+                $labelStyle .= " max-width: calc(40% - 10px);";
+                $innerStyle .= " width: 60%;";
+            }
             $html = '
-						<label>' . $caption . '</label>
-						<div class="exf-labeled-item">' . $html . '</div>';
+						<label style="' . $labelStyle . '">' . $caption . '</label>
+						<div class="exf-labeled-item" style="' . $innerStyle . '">' . $html . '</div>';
         }
         
         if ($make_grid_item) {
