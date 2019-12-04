@@ -54,11 +54,12 @@ fieldset.exface_inputgroup legend {color: #404040; font-weight: bold; padding: 0
 .exf-inline-group .exf-control {padding-left: 0px !important; display: inline-block !important;}
 .exf-inline-group .exf-control:last-of-type {padding-right: 0px !important;}
 .exf-inline-group {padding-top: 0px !important; padding-bottom: 0px !important; padding-right: 2px !important;}
+.exf-inline-group p {display: inline-block !important; padding: 0; margin: 0;}
 
 /* Text & headings */
 .panel-body h1, .panel-body h2, .panel-body h3, .panel-body h4, .panel-body h5, .panel-body p, .panel-body pre {padding: 0 10px;}
 .panel-body h1 {margin: 10px 0 5px 0}
-.exf-text {display: block}
+.exf-text {display: block; width: 100%}
 
 /* Context menus */
 .easyui-menu .menu-item {float: none !important;}
