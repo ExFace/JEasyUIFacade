@@ -71,6 +71,7 @@
 	
 	"LIBS.MASONRY": "bower-asset/masonry/dist/masonry.pkgd.min.js",
 	"LIBS.MOMENT.JS": "npm-asset/moment/min/moment.min.js",
+	"LIBS.MOMENT.LOCALES": "npm-asset/moment/locale",
 	
 	"LIBS.FACADE.CSS": "exface/JEasyUIFacade/Facades/js/jeasyui-metro-blue.template.css",
     "LIBS.FACADE.JS": "exface/JEasyUIFacade/Facades/js/jeasyui.facade.js",
