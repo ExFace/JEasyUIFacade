@@ -4,6 +4,8 @@ namespace exface\JEasyUIFacade\Facades\Elements;
 use exface\Core\Interfaces\Widgets\iTakeInput;
 use exface\Core\Widgets\Value;
 use exface\Core\Interfaces\Widgets\iLayoutWidgets;
+use exface\Core\Widgets\WidgetGroup;
+use exface\Core\Interfaces\Widgets\iContainOtherWidgets;
 
 /**
  * Generates a <div> element for a Value widget and wraps it in a masonry grid item if needed.
@@ -62,7 +64,10 @@ HTML;
     protected function getCaption() : string
     {
         $caption = parent::getCaption();
-        return  $caption . ($caption !== '' && ($this->getWidget() instanceof iTakeInput) === false ?  ':' : '');
+        if ($caption !== '' && ($this->getWidget() instanceof iTakeInput) === false && ($this->getWidget() instanceof iContainOtherWidgets) === false) {
+            $caption .= ':';
+        }
+        return $caption;
     }
     
     /**
