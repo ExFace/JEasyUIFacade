@@ -35,18 +35,31 @@ class EuiTabs extends EuiContainer
                 $style = '';
         }
         $output = <<<HTML
-    <div id="{$this->getId()}" style="{$style}" class="easyui-{$this->getElementType()}" data-options="{$this->buildJsDataOptions()}">
+    <div id="{$this->getId()}" style="{$style}" class="easyui-{$this->getElementType()} {$this->buildCssElementClass()}" data-options="{$this->buildJsDataOptions()}">
     	{$this->buildHtmlForChildren()}
     </div>
 HTML;
         return $output;
     }
 
+    /**
+     * 
+     * @return string
+     */
     public function buildJsDataOptions()
     {
         $widget = $this->getWidget();
         
-        return "border:false, tabPosition: '" . $widget->getTabPosition() . "'" . ($this->getFitOption() ? ", fit: true" : "") . ($this->getStyleAsPills() ? ", pill: true" : "") . ($widget->getTabPosition() == Tabs::TAB_POSITION_LEFT || $widget->getTabPosition() == Tabs::TAB_POSITION_RIGHT ? ', plain: true' : '') . ($widget->getHideTabsCaptions() ? ', headerWidth: 38' : '');
+        return "border:false, tabPosition: '" . $widget->getNavPosition($this->getDefaultNavPosition()) . "'" . ($this->getFitOption() ? ", fit: true" : "") . ($this->getStyleAsPills() ? ", pill: true" : "") . ($widget->getNavPosition() == Tabs::NAV_POSITION_LEFT || $widget->getNavPosition() == Tabs::NAV_POSITION_RIGHT ? ', plain: true' : '') . ($widget->getHideNavCaptions() ? ', headerWidth: 38' : '');
+    }
+    
+    /**
+     * 
+     * @return string
+     */
+    protected function getDefaultNavPosition() : string
+    {
+        return Tabs::NAV_POSITION_TOP;
     }
 
     public function setFitOption($value)

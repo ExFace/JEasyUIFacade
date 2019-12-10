@@ -36,6 +36,7 @@ HTML;
         
         $title = $widget->getHideCaption() ? '' : ' title="' . str_replace('"', "'", $widget->getCaption()) . '"';
         
+        
         $output = <<<HTML
 
     <div {$title} data-options="{$this->buildJsDataOptions()}">
