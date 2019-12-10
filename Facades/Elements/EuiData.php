@@ -67,8 +67,8 @@ class EuiData extends EuiAbstractElement
         
         // Prepare the configurator widget
         $widget->getConfiguratorWidget()
-        ->setTabPosition(Tabs::TAB_POSITION_RIGHT)
-        ->setHideTabsCaptions(true);
+        ->setNavPosition(Tabs::NAV_POSITION_RIGHT)
+        ->setHideNavCaptions(true);
     }
     
     /**
