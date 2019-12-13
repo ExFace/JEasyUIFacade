@@ -3,6 +3,7 @@ namespace exface\JEasyUIFacade\Facades\Elements;
 
 use exface\Core\Widgets\Tabs;
 use exface\Core\DataTypes\BooleanDataType;
+use exface\Core\Exceptions\Facades\FacadeRuntimeError;
 
 /**
  *
@@ -48,18 +49,40 @@ HTML;
      */
     public function buildJsDataOptions()
     {
-        $widget = $this->getWidget();
+        $tabPosition = $this->getTabPosition();
         
-        return "border:false, tabPosition: '" . $widget->getNavPosition($this->getDefaultNavPosition()) . "'" . ($this->getFitOption() ? ", fit: true" : "") . ($this->getStyleAsPills() ? ", pill: true" : "") . ($widget->getNavPosition() == Tabs::NAV_POSITION_LEFT || $widget->getNavPosition() == Tabs::NAV_POSITION_RIGHT ? ', plain: true' : '') . ($widget->getHideNavCaptions() ? ', headerWidth: 38' : '');
+        return "border:false, tabPosition: '$tabPosition'" . ($this->getFitOption() ? ", fit: true" : "") . ($this->getStyleAsPills() ? ", pill: true" : "") . ($tabPosition == 'left' || $tabPosition == 'right' ? ', plain: true' : '') . $this->buildJsDataOptionHeaderWidth();
+    }
+    
+    /**
+     * top, bottom, left, right
+     * @return string
+     */
+    protected function getTabPosition() : string
+    {
+        $pos = strtolower($this->getWidget()->getNavPosition($this->getTabPositionDefault()));
+        if (in_array($pos, ['top', 'bottom', 'left', 'right']) === false) {
+            throw new FacadeRuntimeError('Invalid tab position "' . $pos . '" for eui-tabs!');
+        }
+        return $pos;
+    }
+    
+    /**
+     *
+     * @return string
+     */
+    protected function getTabPositionDefault() : string
+    {
+        return 'top';
     }
     
     /**
      * 
      * @return string
      */
-    protected function getDefaultNavPosition() : string
+    protected function buildJsDataOptionHeaderWidth() : string
     {
-        return Tabs::NAV_POSITION_TOP;
+        return ($this->getWidget()->getHideNavCaptions() ? ', headerWidth: 38' : '');
     }
 
     public function setFitOption($value)

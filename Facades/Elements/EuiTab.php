@@ -18,7 +18,7 @@ class EuiTab extends EuiPanel
         
         $children_html = <<<HTML
 
-            {$this->buildHtmlForChildren()}
+            {$this->buildHtmlForWidgets()}
             <div id="{$this->getId()}_sizer" style="width:calc(100%/{$this->getNumberOfColumns()});min-width:{$this->getMinWidth()};"></div>
 HTML;
         

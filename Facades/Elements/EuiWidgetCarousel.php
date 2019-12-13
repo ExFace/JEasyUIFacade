@@ -28,7 +28,7 @@ class EuiWidgetCarousel extends EuiTabs
         }
     }
     
-    protected function getDefaultNavPosition() : string
+    protected function getTabPositionDefault() : string
     {
         return Tabs::NAV_POSITION_BOTTOM;
     }

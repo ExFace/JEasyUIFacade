@@ -60,6 +60,9 @@ fieldset.exface_inputgroup legend {color: #404040; font-weight: bold; padding: 0
 .exf-widget-carousel ul.tabs {width: 100%; text-align: center}
 .exf-widget-carousel ul.tabs li {float: none;}
 
+/* Wizard */
+.exf-wizard-toolbar > .exf-toolbar {display: inline-block}
+
 /* Text & headings */
 .panel-body h1, .panel-body h2, .panel-body h3, .panel-body h4, .panel-body h5, .panel-body p, .panel-body pre {padding: 0 10px;}
 .panel-body h1 {margin: 10px 0 5px 0}
