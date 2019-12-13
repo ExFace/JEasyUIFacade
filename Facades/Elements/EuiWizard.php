@@ -18,7 +18,10 @@ class EuiWizard extends EuiTabs
         $tabsHtml = parent::buildHtml();
         $toolbarsHtml = '';
         foreach ($this->getStepToolbars() as $tb) {
-            $toolbarsHtml .= $this->getFacade()->getElement($tb)->buildHtml();
+            $tbHtml = $this->getFacade()->getElement($tb)->buildHtml();
+            // Replace the exf-form-toolbar CSS class to be able to distinuish between step-toolbars
+            // and regular form-toolbars
+            $toolbarsHtml .= str_replace('exf-form-toolbar', 'exf-wizard-step-toolbar', $tbHtml);
         }
         foreach ($this->getWidget()->getToolbars() as $tb) {
             $toolbarsHtml .= $this->getFacade()->getElement($tb)->buildHtml();
@@ -28,7 +31,7 @@ class EuiWizard extends EuiTabs
     <div class="easyui-panel exf-wizard-wrapper" data-options="fit: {$this->getFitOption()}, footer: '#{$this->getIdToolbar()}'">
         {$tabsHtml}
     </div>
-    <div id="{$this->getIdToolbar()}" class="exf-wizard-toolbar">
+    <div id="{$this->getIdToolbar()}" class="exf-wizard-buttons">
         {$toolbarsHtml}
     </div>
 

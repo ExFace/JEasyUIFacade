@@ -34,4 +34,3 @@ class EuiToolbar extends EuiAbstractElement
         return $this->buildHtmlToolbarWrapper($this->buildHtmlButtons());
     }
 }
-?>
