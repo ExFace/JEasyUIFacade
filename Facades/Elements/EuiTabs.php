@@ -37,7 +37,7 @@ class EuiTabs extends EuiContainer
         }
         $output = <<<HTML
     <div id="{$this->getId()}" style="{$style}" class="easyui-{$this->getElementType()} {$this->buildCssElementClass()}" data-options="{$this->buildJsDataOptions()}">
-    	{$this->buildHtmlForChildren()}
+    	{$this->buildHtmlForWidgets()}
     </div>
 HTML;
         return $output;
