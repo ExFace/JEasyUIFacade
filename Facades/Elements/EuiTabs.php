@@ -50,8 +50,28 @@ HTML;
     public function buildJsDataOptions()
     {
         $tabPosition = $this->getTabPosition();
+        $fit = ($this->getFitOption() ? ", fit: true" : "");
+        $styleAsPills = ($this->getStyleAsPills() ? ", pill: true" : "");
+        $tabPosition = ($tabPosition == 'left' || $tabPosition == 'right' ? ', plain: true' : '');
+        $headerWidth = $this->buildJsDataOptionHeaderWidth();
+        $selected = $this->buildJsDataOptionSelected();
         
-        return "border:false, tabPosition: '$tabPosition'" . ($this->getFitOption() ? ", fit: true" : "") . ($this->getStyleAsPills() ? ", pill: true" : "") . ($tabPosition == 'left' || $tabPosition == 'right' ? ', plain: true' : '') . $this->buildJsDataOptionHeaderWidth();
+        return "border:false, tabPosition: '$tabPosition'" . $fit . $styleAsPills . $tabPosition . $headerWidth . $selected;
+    }
+    
+    protected function buildJsDataOptionSelected() : string
+    {
+        $widget = $this->getWidget();
+        if ($widget instanceof Tabs) {
+            $idx = $widget->getActiveTabIndex();
+        } else {
+            $idx = 0;
+        }
+        
+        if ($idx > 0) {
+            return ", selected: $idx";
+        }
+        return '';
     }
     
     /**
