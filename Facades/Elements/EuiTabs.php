@@ -52,11 +52,12 @@ HTML;
         $tabPosition = $this->getTabPosition();
         $fit = ($this->getFitOption() ? ", fit: true" : "");
         $styleAsPills = ($this->getStyleAsPills() ? ", pill: true" : "");
-        $tabPosition = ($tabPosition == 'left' || $tabPosition == 'right' ? ', plain: true' : '');
+        $tabPosition = $this->getTabPosition();
+        $plain = ($tabPosition == 'left' || $tabPosition == 'right' ? ', plain: true' : '');
         $headerWidth = $this->buildJsDataOptionHeaderWidth();
         $selected = $this->buildJsDataOptionSelected();
         
-        return "border:false, tabPosition: '$tabPosition'" . $fit . $styleAsPills . $tabPosition . $headerWidth . $selected;
+        return "border:false, tabPosition: '$tabPosition'" . $plain . $fit . $styleAsPills . $headerWidth . $selected;
     }
     
     protected function buildJsDataOptionSelected() : string
