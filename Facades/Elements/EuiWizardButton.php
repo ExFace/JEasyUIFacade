@@ -13,6 +13,15 @@ use exface\Core\Widgets\WizardButton;
 class EuiWizardButton extends EuiButton
 {
     /**
+     * A WizardButton validates it's step, performs it's action and navigates to another step:
+     * 
+     * 1) validate the button's wizard step first if we are going to leave it
+     * 2) perform the regular button's action
+     * 3) navigate to the target wizard step
+     * 
+     * Note, that the action JS will perform step validation in any case - even if the
+     * button does not navigate to another step.
+     * 
      * {@inheritdoc}
      * @see EuiButton::buildJsClickFunction()
      */
@@ -20,26 +29,36 @@ class EuiWizardButton extends EuiButton
     {
         $widget = $this->getWidget();
         $tabsElement = $this->getFacade()->getElement($widget->getWizardStep()->getParent());
-        $goToStepJs = '';
-        if (($nextStep = $widget->getGoToStep()) !== null) {
-            $stepElement = $this->getFacade()->getElement($widget->getWizardStep());
-            $goToStepJs = <<<JS
+        
+        $actionJs = parent::buildJsClickFunction();
 
+        $goToStepJs = '';
+        $validateJs = '';
+        if (($nextStep = $widget->getGoToStepIndex()) !== null) {
+            $stepElement = $this->getFacade()->getElement($widget->getWizardStep());
+            $validateJs = <<<JS
+            
                     if({$stepElement->buildJsValidator()} === false) {
                         {$stepElement->buildJsValidationError()}
                         return;
                     }
+                    
+JS;
+            $goToStepJs = <<<JS
+
                     jqTabs.{$tabsElement->getElementType()}('select', $nextStep);
 
 JS;
             
         }
-        $js = <<<JS
-
+        
+        return <<<JS
+        
 					var jqTabs = $('#{$tabsElement->getId()}');
+                    {$validateJs}
+                    {$actionJs}
                     {$goToStepJs}
-
+                    
 JS;
-        return $js . parent::buildJsClickFunction();
     }
 }

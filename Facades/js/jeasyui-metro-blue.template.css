@@ -61,9 +61,8 @@ fieldset.exface_inputgroup legend {color: #404040; font-weight: bold; padding: 0
 .exf-widget-carousel ul.tabs li {float: none;}
 
 /* Wizard */
-.exf-wizard-buttons > .exf-toolbar {display: inline-block}
-.exf-wizard-buttons > .exf-wizard-step-toolbar {float: right;}
 .exf-wizard-wrapper .tabs li:after {content: "›"; padding: 0 0 0 4px; font-weight: bold; font-size: 120%;}
+.exf-wizard-wrapper .tabs li:last-of-type:after {content: "";}
 
 /* Text & headings */
 .panel-body h1, .panel-body h2, .panel-body h3, .panel-body h4, .panel-body h5, .panel-body p, .panel-body pre {padding: 0 10px;}
