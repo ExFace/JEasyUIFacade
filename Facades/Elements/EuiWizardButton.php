@@ -30,8 +30,6 @@ class EuiWizardButton extends EuiButton
         $widget = $this->getWidget();
         $tabsElement = $this->getFacade()->getElement($widget->getWizardStep()->getParent());
         
-        $actionJs = parent::buildJsClickFunction();
-
         $goToStepJs = '';
         $validateJs = '';
         if (($nextStep = $widget->getGoToStepIndex()) !== null) {
@@ -52,6 +50,14 @@ JS;
 
 JS;
             
+        }
+        
+        // If the button has an action, the step navigation should only happen once
+        // the action is complete!
+        $this->addOnSuccessScript($goToStepJs);
+        $actionJs = parent::buildJsClickFunction();
+        if ($actionJs) {
+            $goToStepJs = '';
         }
         
         return <<<JS
