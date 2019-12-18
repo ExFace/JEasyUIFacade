@@ -36,7 +36,8 @@ class EuiWizardButton extends EuiButton
         $validateJs = '';
         if (($nextStep = $widget->getGoToStepIndex()) !== null) {
             $stepElement = $this->getFacade()->getElement($widget->getWizardStep());
-            $validateJs = <<<JS
+            if ($widget->getValidateCurrentStep() === true) {
+                $validateJs = <<<JS
             
                     if({$stepElement->buildJsValidator()} === false) {
                         {$stepElement->buildJsValidationError()}
@@ -44,6 +45,7 @@ class EuiWizardButton extends EuiButton
                     }
                     
 JS;
+            }
             $goToStepJs = <<<JS
 
                     jqTabs.{$tabsElement->getElementType()}('select', $nextStep);
