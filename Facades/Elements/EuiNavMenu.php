@@ -31,8 +31,7 @@ HTML;
     
     protected function buildHtmlMenu(array $menu, int $level = 1) : string
     {
-        
-        $exface = $this->getWorkbench();
+        //TODO get the link prefix via by a function, its hardcoded right now for testing
         if ($level === 1) {
             $output = "<ul class='nav_menu'>";
         } else {
