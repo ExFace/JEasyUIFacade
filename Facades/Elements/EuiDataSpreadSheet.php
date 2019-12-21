@@ -58,6 +58,11 @@ JS;
         return $this->buildJsDataSetter($dataJs);
     }
     
+    /**
+     * 
+     * {@inheritDoc}
+     * @see \exface\Core\Facades\AbstractAjaxFacade\Elements\AbstractJqueryElement::buildHtmlHeadTags()
+     */
     public function buildHtmlHeadTags()
     {
         $includes = array_merge(

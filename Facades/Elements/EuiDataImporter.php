@@ -61,8 +61,20 @@ JS;
         return 'width: 100%; height: 100%;';
     }
     
+    /**
+     *
+     * {@inheritDoc}
+     * @see \exface\Core\Facades\AbstractAjaxFacade\Elements\AbstractJqueryElement::buildHtmlHeadTags()
+     */
     public function buildHtmlHeadTags()
     {
-        return $this->buildHtmlHeadTagsForJExcel();
+        $includes = array_merge(
+            parent::buildHtmlHeadTags(),
+            $this->buildHtmlHeadTagsForJExcel()
+            );
+        
+        array_unshift($includes, '<script type="text/javascript">' . $this->buildJsFixJqueryImportUseStrict() . '</script>');
+        
+        return $includes;
     }
 }
