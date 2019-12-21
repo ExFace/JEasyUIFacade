@@ -191,4 +191,9 @@ JS;
     {
         return parent::buildJsDataOptions() . ", onSelect: function(title,index){ {$this->buildJsFunctionPrefix()}switchStep(index); }";
     }
+    
+    public function buildCssElementClass()
+    {
+        return parent::buildCssElementClass() . ' exf-wizard';
+    }
 }
