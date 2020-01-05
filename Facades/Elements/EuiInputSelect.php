@@ -55,12 +55,12 @@ class EuiInputSelect extends EuiInput
     {
         // Instantiate the combobox via JS because otherwse all the initializer scripts would fail.
         return <<<JS
-           $(function() {
+            $(function() {
                 $('#{$this->getId()}').{$this->getElementType()}({
                     {$this->buildJsInitOptions()}
                 });
 
-			     // Initialize the live refs, enablers/disablers, etc.
+			    // Initialize the live refs, enablers/disablers, etc.
                 {$this->buildJsEventScripts()};
             });
             
@@ -111,7 +111,8 @@ JS;
     public function buildJsDataOptions()
     {
         $widget = $this->getWidget();
-        return "panelHeight: 'auto'" 
+        $parentOptions = parent::buildJsDataOptions();
+        return ($parentOptions ? $parentOptions . ',' : '') . "panelHeight: 'auto'" 
             // Enable multiselect. Make sure the "none" element is never selected and the selection is cleared when the user clicks on it.
             . ($this->getWidget()->getMultiSelect() ? ", multiple:true, onShowPanel: function(){ $(this).{$this->getElementType()}('unselect',''); }, onSelect: function(record){ if(record.value == '') $(this).{$this->getElementType()}('clear'); }" : '')  
             // Increase hight automatically for multiline selects
