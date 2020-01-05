@@ -198,51 +198,6 @@ JS;
      *
      * {@inheritdoc}
      *
-     * @see \exface\Core\Facades\AbstractAjaxFacade\Elements\JqueryLiveReferenceTrait::buildJsDisableCondition()
-     */
-    public function buildJsDisableCondition()
-    {
-        $output = '';
-        $widget = $this->getWidget();
-        
-        if (($condition = $widget->getDisableCondition()) && $condition->hasProperty('widget_link')) {
-            $link = WidgetLinkFactory::createFromWidget($widget, $condition->getProperty('widget_link'));
-            $linked_element = $this->getFacade()->getElement($link->getTargetWidget());
-            if ($linked_element) {
-                switch ($condition->getProperty('comparator')) {
-                    case EXF_COMPARATOR_IS_NOT: // !=
-                    case EXF_COMPARATOR_EQUALS: // ==
-                    case EXF_COMPARATOR_EQUALS_NOT: // !==
-                    case EXF_COMPARATOR_LESS_THAN: // <
-                    case EXF_COMPARATOR_LESS_THAN_OR_EQUALS: // <=
-                    case EXF_COMPARATOR_GREATER_THAN: // >
-                    case EXF_COMPARATOR_GREATER_THAN_OR_EQUALS: // >=
-                        $enable_widget_script = $widget->isDisabled() ? '' : $this->buildJsEnabler() . ';';
-                        
-                        $output = <<<JS
-
-						if ({$linked_element->buildJsValueGetter($link->getTargetColumnId())} {$condition->getProperty('comparator')} "{$condition->getProperty('value')}") {
-							{$this->buildJsDisabler()};
-						} else {
-							{$enable_widget_script}
-						}
-JS;
-                        break;
-                    case EXF_COMPARATOR_IN: // [
-                    case EXF_COMPARATOR_NOT_IN: // ![
-                    case EXF_COMPARATOR_IS: // =
-                    default:
-                    // TODO fuer diese Comparatoren muss noch der JavaScript generiert werden
-                }
-            }
-        }
-        return $output;
-    }
-
-    /**
-     *
-     * {@inheritdoc}
-     *
      * @see \exface\Core\Facades\AbstractAjaxFacade\Elements\AbstractJqueryElement::buildJsEnabler()
      */
     public function buildJsEnabler()
