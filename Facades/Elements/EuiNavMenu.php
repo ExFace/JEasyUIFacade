@@ -10,39 +10,30 @@ use exface\Core\Widgets\NavMenu;
  * @author Andrej Kabachnik
  *
  */
-class EuiNavMenu extends EuiWidgetGrid 
+class EuiNavMenu extends EuiAbstractElement 
 {
     public function buildHtml()
     {
-        $menu = $this->getWidget()->getMenuArray();
-        $output = <<<HTML
-
-    <!-- OWN MENU -->
-    <div class="easyui-accordion" data-options="fit:true,border:false">
-        <div title="Menü" data-options="selected:true" style="">
-            {$this->buildHtmlMenu($menu)}
-        </div>
-    </div>
-
-
-HTML;
-        return $output;
+        $menu = $this->getWidget()->getMenu();
+            return $this->buildHtmlMenu($menu);
     }
     
     protected function buildHtmlMenu(array $menu, int $level = 1) : string
     {
-        //TODO get the link prefix via by a function, its hardcoded right now for testing
+        //TODO get the link prefix via a function, its hardcoded right now for testing
+        
         if ($level === 1) {
             $output = "<ul class='nav_menu'>";
         } else {
             $output = "<ul>";
         }
-        foreach ($menu as $item) {
-            if (array_key_exists('SUB_MENU', $item)) {
+        foreach ($menu as $node) {
+            $url = $this->getFacade()->buildUrlToPage($node->getPageAlias());
+            if ($node->hasChildNodes()) {
                 $output .= <<<HTML
                 <li class='level{$level} active'>
-                    <a href='/exface/{$item['ALIAS']}.html'>{$item['NAME']}</a>
-{$this->buildHtmlMenu($item['SUB_MENU'], $level+1)}
+                    <a href='{$url}'>{$node->getName()}</a>
+{$this->buildHtmlMenu($node->getChildNodes(), $level+1)}
                 </li>
            
 
@@ -51,7 +42,7 @@ HTML;
                 $output .= <<<HTML
                 
                 <li class='level{$level} closed'>
-                    <a href='/exface/{$item['ALIAS']}.html'>{$item['NAME']}</a>
+                    <a href='{$url}'>{$node->getName()}</a>
                 </li>
 
 HTML;
