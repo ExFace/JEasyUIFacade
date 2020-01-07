@@ -87,6 +87,9 @@
     
     "LIBS.ECHARTS.ECHARTS_JS": "exface/Core/Facades/AbstractAjaxFacade/js/echarts/echarts.custom.min.js",
 	
+	"LIBS.SLICK.SLICK_JS": "npm-asset/slick-carousel/slick/slick.min.js",
+	"LIBS.SLICK.SLICK_CSS": "npm-asset/slick-carousel/slick/slick.css",
+	
 	"WIDGET.SPACING": 8,
     "WIDGET.BORDERWIDTH": 1,
 	
