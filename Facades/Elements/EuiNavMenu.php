@@ -30,21 +30,40 @@ class EuiNavMenu extends EuiAbstractElement
         foreach ($menu as $node) {
             $url = $this->getFacade()->buildUrlToPage($node->getPageAlias());
             if ($node->hasChildNodes()) {
+                if ($node->isInPath()) {
                 $output .= <<<HTML
                 <li class='level{$level} active'>
-                    <a href='{$url}'>{$node->getName()}</a>
+                    <a style="text-decoration:underline;" href='{$url}'>{$node->getName()}</a>
 {$this->buildHtmlMenu($node->getChildNodes(), $level+1)}
                 </li>
            
 
 HTML;
+                } else {
+                    $output .= <<<HTML
+                <li class='level{$level} closed'>
+                    <a href='{$url}'>{$node->getName()}</a>
+{$this->buildHtmlMenu($node->getChildNodes(), $level+1)}
+                </li>                
+                
+HTML;
+                    
+                }
+            } elseif ($node->isInPath()) {
+                $output .= <<<HTML
+                
+                <li class='level{$level} active'>
+                    <a style="text-decoration:underline;" href='{$url}'>{$node->getName()}</a>
+                </li>
+
+HTML;
             } else {
                 $output .= <<<HTML
                 
-                <li class='level{$level} closed'>
+                <li class='level{$level} active'>
                     <a href='{$url}'>{$node->getName()}</a>
                 </li>
-
+                
 HTML;
             }
         }
