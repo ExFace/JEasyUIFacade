@@ -254,6 +254,34 @@ function jeasyui_create_dialog(parentElement, id, options, content, parseContent
 	}
 });*/
 
+// Add method require(bool) to validatebox controls
+$.extend($.fn.textbox.methods, {
+    require: function(jq, value) {
+        return jq.each(function() {
+            const $ctrl = $(this);
+
+            value = value === undefined ? true : Boolean(value);
+
+            $ctrl.textbox('options').required = value;
+            $ctrl.textbox('textbox').validatebox('options').required = value;
+            $ctrl.textbox('validate');
+        });
+    },
+});
+$.extend($.fn.combo.methods, {
+    require: function(jq, value) {
+        return jq.each(function() {
+            const $ctrl = $(this);
+
+            value = value === undefined ? true : Boolean(value);
+
+            $ctrl.combo('options').required = value;
+            $ctrl.combo('textbox').validatebox('options').required = value;
+            $ctrl.combo('validate');
+        });
+    },
+});
+
 // compare arrays (http://stackoverflow.com/questions/7837456/how-to-compare-arrays-in-javascript)
 // Warn if overriding existing method
 if(Array.prototype.equals)

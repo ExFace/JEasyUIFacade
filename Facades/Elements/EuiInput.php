@@ -39,6 +39,10 @@ class EuiInput extends EuiValue
         
         // Register an onChange-Script on the element linked by a disable condition.
         $this->registerDisableConditionAtLinkedElement();
+        
+        if ($requiredIf = $this->getWidget()->getRequiredIf()) {
+            $this->registerConditionalPropertyUpdaterOnLinkedElements($requiredIf, $this->buildJsRequiredSetter(true), $this->buildJsRequiredSetter(false));
+        }
     }
 
     /**
@@ -99,6 +103,13 @@ class EuiInput extends EuiValue
             $hideInitiallyIfNeeded = $this->buildJsHideWidget();
         }
         
+        if ($requiredIf = $this->getWidget()->getRequiredIf()) {
+            $requiredIfInit = $this->buildJsConditionalPropertyInitializer($requiredIf, $this->buildJsRequiredSetter(true), $this->buildJsRequiredSetter(false));
+        } else {
+            $requiredIfInit = '';
+        }
+        
+        
         return <<<JS
 
     // Event scripts for {$this->getId()}
@@ -110,10 +121,16 @@ class EuiInput extends EuiValue
         }
         {$this->buildJsOnChangeHandler()}
         {$this->buildJsDisableConditionInitializer()}
+        {$requiredIfInit}
         {$hideInitiallyIfNeeded}
     });
 
 JS;
+    }
+    
+    protected function buildJsRequiredSetter(bool $required) : string
+    {
+        return "$('#{$this->getId()}').{$this->getElementType()}('require'," . ($required ? 'true' : 'false') . ");";
     }
 
     /**
