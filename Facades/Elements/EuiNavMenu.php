@@ -12,16 +12,18 @@ use exface\Core\Widgets\NavMenu;
  */
 class EuiNavMenu extends EuiAbstractElement 
 {
+    private $currentPage = null;
+    
     public function buildHtml()
     {
+        $this->currentPage = $this->getWidget()->getPage();
         $menu = $this->getWidget()->getMenu();
-            return $this->buildHtmlMenu($menu);
+        return $this->buildHtmlMenu($menu);
     }
     
     protected function buildHtmlMenu(array $menu, int $level = 1) : string
     {
-        //TODO get the link prefix via a function, its hardcoded right now for testing
-        
+        //TODO get the link prefix via a function, its hardcoded right now for testing        
         if ($level === 1) {
             $output = "<ul class='nav_menu'>";
         } else {
@@ -30,7 +32,7 @@ class EuiNavMenu extends EuiAbstractElement
         foreach ($menu as $node) {
             $url = $this->getFacade()->buildUrlToPage($node->getPageAlias());
             if ($node->hasChildNodes()) {
-                if ($node->isInPath()) {
+                if ($node->isAncestorOf($this->currentPage) || $node->isPage($this->currentPage)) {
                 $output .= <<<HTML
                 <li class='level{$level} active'>
                     <a style="text-decoration:underline;" href='{$url}'>{$node->getName()}</a>
@@ -49,7 +51,7 @@ HTML;
 HTML;
                     
                 }
-            } elseif ($node->isInPath()) {
+            } elseif ($node->isAncestorOf($this->currentPage) || $node->isPage($this->currentPage)) {
                 $output .= <<<HTML
                 
                 <li class='level{$level} active'>
