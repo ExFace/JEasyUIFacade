@@ -87,44 +87,44 @@ function contextBarRefresh(data){
 	$.parser.parse($('#contextBar'));
 	
 	$('#contextBar .context-button').tooltip({
-        content: function(){return $('<div id="'+$(this).closest('.toolbar-element').attr('id')+'_tooltip"></div>').panel({
-            width: 200,
-            height: 300,
-            border: false,
-            href: 'exface/api/jeasyui',
-            method: 'POST',
-            cache: false,
-            queryParams: {
-                action: 'exface.Core.ShowContextPopup',
-                resource: getPageId(),
-                element: $(this).parent().data('widget')
-            },
-            onLoad: function() {
-            	var $p = $(this);
-            	setTimeout(function(){
-            		try {
-            			$p.panel('resize', {width: 200, height: 300});
-            		} catch (e) {
-            			// do nothing
-            		}
-            	}, 500);
-            },
-            onLoadError: function(response) {
-            	jeasyui_create_dialog($("body"), $(this).attr('id')+"_error", {title: response.status + " " + response.statusText, width: 800, height: "80%"}, response.responseText, true);
-            }
-        })},
+        content: function(){return $('<div id="'+$(this).closest('.toolbar-element').attr('id')+'_tooltip"></div>')},
         showEvent: 'click',
         onUpdate: function(content){
-        	content.panel('refresh');
+        	content.panel({
+                width: 200,
+                height: 300,
+                border: false,
+                href: 'exface/api/jeasyui',
+                method: 'POST',
+                cache: false,
+                queryParams: {
+                    action: 'exface.Core.ShowContextPopup',
+                    resource: getPageId(),
+                    element: $(this).parent().data('widget')
+                },
+                onLoad: function() {
+                	var $p = $(this);
+                	setTimeout(function(){
+                		try {
+                			$p.panel('resize', {width: 200, height: 300});
+                		} catch (e) {
+                			// do nothing
+                		}
+                	}, 200);
+                },
+                onLoadError: function(response) {
+                	jeasyui_create_dialog($("body"), $(this).attr('id')+"_error", {title: response.status + " " + response.statusText, width: 800, height: "80%"}, response.responseText, true);
+                }
+            });
         },
         onShow: function(){
-	        var t = $(this);
-	        t.tooltip('tip').unbind().bind('mouseenter', function(){
-	            t.tooltip('show');
-	        });
-			$(document).one('click', function(){
-			   t.tooltip('hide');
-			})
+            var t = $(this);
+            t.tooltip('tip').unbind().bind('mouseenter', function(){
+                t.tooltip('show');
+            });
+           $(document).one('click', function(){
+        	   t.tooltip('hide');
+           })
         },
         onHide: function(){
         	$(this).one('click', function(){
@@ -132,8 +132,8 @@ function contextBarRefresh(data){
         	})
         	var tt = $('#'+$(this).closest('.toolbar-element').attr('id')+'_tooltip');
         	if (tt.hasClass('panel-body')){
-        		tt.panel('clear');
-        		//tt.closest('tooltip-content').empty();
+        		tt.panel('destroy');
+        		tt.closest('tooltip-content').empty();
         	}
 		}
     });
@@ -160,7 +160,7 @@ function contextShowMenu(containerSelector){
 			$(containerSelector).find('.dropdown-menu').empty().append('<li></li>').children('li:first-of-type').append($data);
 		},
 		error: function(jqXHR, textStatus, errorThrown){
-			jeasyui_create_dialog($("body"), "error", jqXHR.responseText, jqXHR.status + " " + jqXHR.statusText);
+			adminLteCreateDialog($("body"), "error", jqXHR.responseText, jqXHR.status + " " + jqXHR.statusText);
 		}
 	});
 }
