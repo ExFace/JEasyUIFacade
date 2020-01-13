@@ -22,10 +22,8 @@ use exface\Core\Facades\AbstractAjaxFacade\Elements\JqueryDisableConditionTrait;
  */
 class EuiButton extends EuiAbstractElement
 {
-    
     use JqueryButtonTrait;
     use JqueryAlignmentTrait;
-    use JqueryDisableConditionTrait;
     
     protected function init()
     {
