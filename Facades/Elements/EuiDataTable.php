@@ -442,7 +442,7 @@ JS;
             }
         }
         
-        $grid_head .= ($this->getOnChangeScript() ? ', onSelect: function(index, row){' . $this->buildJsOnChangeScript('row', 'index') . '}' : '');
+        $grid_head .= ($this->getOnChangeScript() ? ', onClickRow: function(index, row){' . $this->buildJsOnChangeScript('row', 'index') . '}' : '');
         $grid_head .= ($widget->getCaption() ? ', title: "' . str_replace('"', '\"', $widget->getCaption()) . '"' : '');
         
         return $grid_head;

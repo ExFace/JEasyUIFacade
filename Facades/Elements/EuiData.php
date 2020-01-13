@@ -288,7 +288,7 @@ JS;
     protected function buildJsOnChangeScript(string $rowJs = 'row', string $indexJs = 'index') : string
     {
         return <<<JS
-                        var prevRow = $(this).data('_prevSelection');
+                        var prevRow = $(this).data('_prevSelection');console.log(prevRow,$rowJs);
                         $(this).data('_prevSelection', {$rowJs});
                         if (prevRow !== undefined && {$this->buildJsRowCompare($rowJs, 'prevRow')}) {
                             return;

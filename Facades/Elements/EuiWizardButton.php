@@ -2,6 +2,7 @@
 namespace exface\JEasyUIFacade\Facades\Elements;
 
 use exface\Core\Widgets\WizardButton;
+use exface\Core\Interfaces\Actions\iResetWidgets;
 
 /**
  *
@@ -30,6 +31,10 @@ class EuiWizardButton extends EuiButton
         $widget = $this->getWidget();
         $tabsElement = $this->getFacade()->getElement($widget->getWizardStep()->getParent());
         
+        if ($widget->getResetInput() === true && ($widget->hasAction() === false || $widget->getAction() instanceof iResetWidgets)) {
+            return $this->buildJsInputReset($widget, $this->getFacade()->getElement($widget->getWizardStep()));
+        }
+        
         $goToStepJs = '';
         $validateJs = '';
         if (($nextStep = $widget->getGoToStepIndex()) !== null) {
@@ -47,6 +52,7 @@ JS;
             $goToStepJs = <<<JS
 
                     jqTabs.{$tabsElement->getElementType()}('select', $nextStep);
+                    {$tabsElement->buildJsFunctionPrefix()}switchStep($nextStep, true);
 
 JS;
             

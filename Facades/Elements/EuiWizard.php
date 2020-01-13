@@ -139,7 +139,13 @@ HTML;
      */
     public function buildJs()
     {
-        return parent::buildJs() . $this->buildJsFunctionSwitchStep();
+        return parent::buildJs() . $this->buildJsFunctionSwitchStep() . <<<JS
+
+    setTimeout(function(){
+        {$this->buildJsFunctionPrefix()}switchStep(0, true);
+    });
+
+JS;
     }
     
     /**
@@ -157,16 +163,19 @@ HTML;
         
         return <<<JS
         
-    function {$this->buildJsFunctionPrefix()}switchStep(iStepIdx) {
+    function {$this->buildJsFunctionPrefix()}switchStep(iStepIdx, bDisableNestSteps) {
         var aToolbarIds = $tbJSONString;
         var iToolbarCnt = aToolbarIds.length;
         var jqTabs = $('#{$this->getId()}');
-        aToolbarIds.forEach(function(sId, iIdx){console.log(sId);
+        bDisableNestSteps = bDisableNestSteps !== undefined ? bDisableNestSteps : false;
+        aToolbarIds.forEach(function(sId, iIdx){
             var jqBtnGroups = $('.' + sId);
             jqBtnGroups.hide();
             if (iIdx == iStepIdx) jqBtnGroups.show();
             if (iIdx > iStepIdx) {
-                jqTabs.{$this->getElementType()}('disableTab', iIdx);
+                if (bDisableNestSteps) {
+                    jqTabs.{$this->getElementType()}('disableTab', iIdx);
+                }
             } else {
                 jqTabs.{$this->getElementType()}('enableTab', iIdx);
             }
@@ -187,13 +196,38 @@ JS;
         return 'exf-step-toolbar-' . $tb->getId();
     }
     
+    /**
+     * 
+     * {@inheritDoc}
+     * @see \exface\JEasyUIFacade\Facades\Elements\EuiTabs::buildJsDataOptions()
+     */
     public function buildJsDataOptions()
     {
         return parent::buildJsDataOptions() . ", onSelect: function(title,index){ {$this->buildJsFunctionPrefix()}switchStep(index); }";
     }
     
+    /**
+     * 
+     * {@inheritDoc}
+     * @see \exface\Core\Facades\AbstractAjaxFacade\Elements\AbstractJqueryElement::buildCssElementClass()
+     */
     public function buildCssElementClass()
     {
         return parent::buildCssElementClass() . ' exf-wizard';
+    }
+    
+    /**
+     *
+     * {@inheritDoc}
+     * @see \exface\Core\Facades\AbstractAjaxFacade\Elements\AbstractJqueryElement::buildJsResetter()
+     */
+    public function buildJsResetter() : string
+    {
+        return parent::buildJsResetter() . <<<JS
+
+            $('#{$this->getId()}').{$this->getElementType()}('select', 0);
+            {$this->buildJsFunctionPrefix()}switchStep(0, true);
+
+JS;
     }
 }
