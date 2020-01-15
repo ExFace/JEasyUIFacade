@@ -11,6 +11,7 @@ use exface\Core\Interfaces\Model\UiPageInterface;
 use Psr\Http\Message\ResponseInterface;
 use GuzzleHttp\Psr7\Response;
 use exface\Core\Interfaces\Exceptions\ExceptionInterface;
+use exface\Core\DataTypes\StringDataType;
 
 class JEasyUIFacade extends AbstractAjaxFacade
 {
@@ -169,5 +170,34 @@ HTML;
             return $body;
         }
         return parent::buildHtmlFromError($request, $exception, $page);
+    }
+    
+    protected function buildHtmlPage(WidgetInterface $widget) : string
+    {
+        $tpl = file_get_contents($this->getApp()->getDirectoryAbsolutePath() . DIRECTORY_SEPARATOR . 'Facades' . DIRECTORY_SEPARATOR . 'Templates' . DIRECTORY_SEPARATOR . 'DefaultTemplate.html');
+        
+        $phs = StringDataType::findPlaceholders($tpl);
+        $phVals = [];
+        foreach ($phs as $ph) {
+            switch (true) {
+                case $ph === '~head':
+                    $phVals[$ph] = $this->buildHtmlHead($widget);
+                    break;
+                case $ph === '~body':
+                    $phVals[$ph] = $this->buildHtmlBody($widget);
+                    break;
+                case StringDataType::startsWith($ph, '~widget:') === true;
+                
+                    break;
+                case StringDataType::startsWith($ph, '~url:') === true;
+                
+                    break;
+                default:
+                    $method = 'get' . StringDataType::convertCaseUnderscoreToPascal($ph);
+                    $phVals[$ph] = call_user_func([$widget->getPage(), $method]);
+            }
+        }
+        
+        return StringDataType::replacePlaceholders($tpl, $phVals, false);
     }
 }
