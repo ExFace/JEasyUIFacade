@@ -55,7 +55,7 @@ function contextBarLoad(delay){
 		if ($('#contextBar .panel-loading').length > 0){
 			$.ajax({
 				type: 'POST',
-				url: 'exface/api/jeasyui/' + getPageId() + '/context',
+				url: 'api/jeasyui/' + getPageId() + '/context',
 				dataType: 'json',
 				success: function(data, textStatus, jqXHR) {
 					contextBarRefresh(data);
@@ -94,7 +94,7 @@ function contextBarRefresh(data){
                 width: 200,
                 height: 300,
                 border: false,
-                href: 'exface/api/jeasyui',
+                href: 'api/jeasyui',
                 method: 'POST',
                 cache: false,
                 queryParams: {
@@ -148,7 +148,7 @@ function contextShowMenu(containerSelector){
 	$(containerSelector).find('.toolbar-element').empty().append('<li class="header"><div class="overlay text-center"><i class="fa fa-refresh fa-spin"></i></div></li>');
 	$.ajax({
 		type: 'POST',
-		url: 'exface/api/jeasyui',
+		url: 'api/jeasyui',
 		dataType: 'html',
 		data: {
 			action: 'exface.Core.ShowContextPopup',

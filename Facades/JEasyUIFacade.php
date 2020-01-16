@@ -12,6 +12,8 @@ use Psr\Http\Message\ResponseInterface;
 use GuzzleHttp\Psr7\Response;
 use exface\Core\Interfaces\Exceptions\ExceptionInterface;
 use exface\Core\DataTypes\StringDataType;
+use exface\Core\Factories\WidgetFactory;
+use exface\Core\CommonLogic\UxonObject;
 
 class JEasyUIFacade extends AbstractAjaxFacade
 {
@@ -75,7 +77,7 @@ class JEasyUIFacade extends AbstractAjaxFacade
         $patches = $config->getOption('LIBS.JEASYUI.PATCHES');
         if (! empty($patches)) {
             foreach (explode(',', $patches) as $patch) {
-                $includes[] = '<script type="text/javascript" src="' . $this->getWorkbench()->getCMS()->buildUrlToInclude($patch) . '"></script>';
+                $includes[] = '<script type="text/javascript" src="' . $this->buildUrlToVendorFile($patch) . '"></script>';
             }
         }
         
@@ -181,16 +183,26 @@ HTML;
         foreach ($phs as $ph) {
             switch (true) {
                 case $ph === '~head':
-                    $phVals[$ph] = $this->buildHtmlHead($widget);
+                    $phVals[$ph] = $this->buildHtmlHead($widget, true);
                     break;
                 case $ph === '~body':
                     $phVals[$ph] = $this->buildHtmlBody($widget);
                     break;
                 case StringDataType::startsWith($ph, '~widget:') === true;
-                
+                    $widgetType = StringDataType::substringAfter($ph, '~widget:');
+                    if (StringDataType::startsWith($widgetType, 'Nav') === true) {
+                        $uxon = new UxonObject([
+                            'object_alias' => 'exface.Core.PAGE'
+                        ]);
+                    }
+                    $phWidget = WidgetFactory::createFromUxon($widget->getPage(), $uxon, null, $widgetType);
+                    $phVals[$ph] = $this->buildHtml($phWidget);
                     break;
                 case StringDataType::startsWith($ph, '~url:') === true;
                 
+                    break;
+                case $ph === 'alias';
+                    $phVals[$ph] = $widget->getPage()->getAliasWithNamespace();
                     break;
                 default:
                     $method = 'get' . StringDataType::convertCaseUnderscoreToPascal($ph);
