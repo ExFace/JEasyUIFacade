@@ -1,7 +1,7 @@
 <?php
 namespace exface\JEasyUIFacade\Facades\Elements;
 
-class EuiDashboard extends EuiPanel
+class EuiDashboard extends EuiWidgetGrid
 {
     /**
      *
