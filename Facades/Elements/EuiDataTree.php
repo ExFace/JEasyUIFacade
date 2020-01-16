@@ -123,6 +123,11 @@ class EuiDataTree extends EuiDataTable
             // and put it into the children-array of it's parent row. We need to use references here as the
             // next row may be a child of one of the children in-turn.
             if ($rowsById[$parentId] !== null) {
+                $val =& $result['rows'][$nr];
+                if ($rowsById[$parentId]['children'] === null) {
+                    $rowsById[$parentId]['children'] = [];
+                }
+                //array_unshift($rowsById[$parentId]['children'], $val);
                 $rowsById[$parentId]['children'][] =& $result['rows'][$nr];
                 $rowsById[$parentId]['state'] = 'open';
                 unset ($result['rows'][$nr]);
@@ -163,6 +168,7 @@ class EuiDataTree extends EuiDataTable
                     
                     // Make parentId a regular filter instead of an extra URL parameter
                     var parentId = {$js_var_param}['id'];
+                    console.log({$js_var_param});
                     if (parentId) {
                         if ({$js_var_param}['data'] !== undefined && {$js_var_param}['data']['filters'] !== undefined && {$js_var_param}['data']['filters']['conditions'] !== undefined) {
                             var conditions = {$js_var_param}['data']['filters']['conditions'];
@@ -173,6 +179,47 @@ class EuiDataTree extends EuiDataTable
                             }
                         }
                         delete {$js_var_param}['id'];
+                    } else {                        
+                        var treeData = $('#{$this->getId()}').{$this->getElementType()}('getData');
+                        console.log('TreeData: ', treeData);
+                        (function (){
+                            function addNode(node) {
+                                if ({$js_var_param}['data'] !== undefined && {$js_var_param}['data']['filters'] !== undefined && {$js_var_param}['data']['filters']['conditions'] !== undefined) {
+                                    var conditions = {$js_var_param}['data']['filters']['conditions'];
+                                    for (var c in conditions) {
+                                        if (conditions[c]['expression'] == '{$this->getWidget()->getTreeParentIdAttributeAlias()}') {
+                                            if (node['children'] !== undefined && node['state'] === 'open') {
+                                                var oldValue = {$js_var_param}['data']['filters']['conditions'][c]['value'];
+                                                {$js_var_param}['data']['filters']['conditions'][c]['value'] = oldValue + ',' + node['{$this->getWidget()->getTreeFolderFilterColumn()->getDataColumnName()}'];
+                                            }
+                                        }
+                                    }
+                                }
+                                if (node['children'] !== undefined && node['state'] === 'open') {
+                                    var children = node['children'];
+                                    children.forEach(function (child) {
+                                        addNode(child);
+                                    });
+                                }
+                                return null;
+                            }                            
+                            if (Array.isArray(treeData) && treeData.length > 0) {
+                                if ({$js_var_param}['data'] !== undefined && {$js_var_param}['data']['filters'] !== undefined && {$js_var_param}['data']['filters']['conditions'] !== undefined) {
+                                    var conditions = {$js_var_param}['data']['filters']['conditions'];
+                                    for (var c in conditions) {
+                                        if (conditions[c]['expression'] == '{$this->getWidget()->getTreeParentIdAttributeAlias()}') {
+                                            var oldValue = {$js_var_param}['data']['filters']['conditions'][c]['value'];
+                                            if (oldValue === '' || oldValue === undefined || oldValue === null) {
+                                                {$js_var_param}['data']['filters']['conditions'][c]['value'] = {$this->getWidget()->getTreeRootUid()};
+                                            }                                           
+                                        }
+                                    }
+                                }
+                                treeData.forEach(function (node) {
+                                    addNode(node);
+                                });
+                            }
+                        })();
                     }
 
 JS;
