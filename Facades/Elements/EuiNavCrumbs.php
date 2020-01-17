@@ -10,7 +10,7 @@ use exface\Core\Widgets\Breadcrumbs;
  * @author Andrej Kabachnik
  *
  */
-class EuiBreadcrumbs extends EuiAbstractElement 
+class EuiNavCrumbs extends EuiAbstractElement 
 {
     public function buildHtml()
     {
