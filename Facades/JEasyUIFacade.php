@@ -8,16 +8,12 @@ use exface\Core\Interfaces\DataSheets\DataSheetInterface;
 use exface\Core\Interfaces\WidgetInterface;
 use Psr\Http\Message\ServerRequestInterface;
 use exface\Core\Interfaces\Model\UiPageInterface;
-use Psr\Http\Message\ResponseInterface;
 use GuzzleHttp\Psr7\Response;
 use exface\Core\Interfaces\Exceptions\ExceptionInterface;
-use exface\Core\DataTypes\StringDataType;
-use exface\Core\Factories\WidgetFactory;
-use exface\Core\CommonLogic\UxonObject;
+use exface\JEasyUIFacade\Facades\Templates\EuiFacadePageTemplateRenderer;
 
 class JEasyUIFacade extends AbstractAjaxFacade
 {
-
     public function init()
     {
         parent::init();
@@ -150,14 +146,13 @@ $.ajaxPrefilter(function( options ) {
 </div>
 
 HTML;
-                switch ($mode) {
-                    case static::MODE_HEAD:
+                switch (true) {
+                    case $mode === static::MODE_HEAD:
                         $body = $headTags;
                         break;
-                    case static::MODE_BODY:
+                    case $mode === static::MODE_BODY:
                         $body = $errorBody;
                         break;
-                    case static::MODE_FULL:
                     default:
                         $body = $headTags. "\n" . $errorBody;
                 }
@@ -176,40 +171,12 @@ HTML;
     
     protected function buildHtmlPage(WidgetInterface $widget) : string
     {
-        $tpl = file_get_contents($this->getApp()->getDirectoryAbsolutePath() . DIRECTORY_SEPARATOR . 'Facades' . DIRECTORY_SEPARATOR . 'Templates' . DIRECTORY_SEPARATOR . 'DefaultTemplate.html');
-        
-        $phs = StringDataType::findPlaceholders($tpl);
-        $phVals = [];
-        foreach ($phs as $ph) {
-            switch (true) {
-                case $ph === '~head':
-                    $phVals[$ph] = $this->buildHtmlHead($widget, true);
-                    break;
-                case $ph === '~body':
-                    $phVals[$ph] = $this->buildHtmlBody($widget);
-                    break;
-                case StringDataType::startsWith($ph, '~widget:') === true;
-                    $widgetType = StringDataType::substringAfter($ph, '~widget:');
-                    if (StringDataType::startsWith($widgetType, 'Nav') === true) {
-                        $uxon = new UxonObject([
-                            'object_alias' => 'exface.Core.PAGE'
-                        ]);
-                    }
-                    $phWidget = WidgetFactory::createFromUxon($widget->getPage(), $uxon, null, $widgetType);
-                    $phVals[$ph] = $this->buildHtml($phWidget);
-                    break;
-                case StringDataType::startsWith($ph, '~url:') === true;
-                
-                    break;
-                case $ph === 'alias';
-                    $phVals[$ph] = $widget->getPage()->getAliasWithNamespace();
-                    break;
-                default:
-                    $method = 'get' . StringDataType::convertCaseUnderscoreToPascal($ph);
-                    $phVals[$ph] = call_user_func([$widget->getPage(), $method]);
-            }
-        }
-        
-        return StringDataType::replacePlaceholders($tpl, $phVals, false);
+        $renderer = new EuiFacadePageTemplateRenderer($this, $this->getPageTemplateFilePath(), $widget);
+        return $renderer->render();
+    }
+    
+    protected function getPageTemplateFilePathDefault() : string
+    {
+        return $this->getApp()->getDirectoryAbsolutePath() . DIRECTORY_SEPARATOR . 'Facades' . DIRECTORY_SEPARATOR . 'Templates' . DIRECTORY_SEPARATOR . 'EuiDefaultTemplate.html';
     }
 }

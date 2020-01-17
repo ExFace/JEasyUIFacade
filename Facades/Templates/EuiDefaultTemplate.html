@@ -5,13 +5,13 @@
 		<meta name="viewport" content="width=device-width, initial-scale=1">
 	    <meta name="apple-mobile-web-app-capable" content="yes">
 	    <meta http-equiv="X-UA-Compatible" content="IE=edge">
-	    <meta name="page_id" content="[#alias#]">
+	    <meta name="page_id" content="[#~page:alias#]">
 	    
 	    <!-- Prevents browsers from sending rerferrer-headers for href, img and ajax-requests.
 	    This for external media content, where requests may get filtered -->
 	    <meta name="referrer" content="no-referrer" />
 		
-		<title>[#name#]</title>
+		<title>[#~page:name#]</title>
 		        
 		<!-- Generated includes -->
 		[#~head#]	
@@ -70,17 +70,17 @@
 		<!-- MENU RIGHT -->
 		<div data-options="region:'east',split:true,collapsed:true,title:'Hinweise'" style="width:200px;">
 			<div class="easyui-accordion" data-options="fit:true,border:false">
-				<div title="Dialog [#name#]" data-options="collapsed:false,collapsible:false" style="">
-					<p style="padding: 5px; box-sizing:border-box;">[#intro#]</p>
+				<div title="Dialog [#~page:name#]" data-options="collapsed:false,collapsible:false" style="">
+					<p style="padding: 5px; box-sizing:border-box;">[#~page:intro#]</p>
 				</div>
-				<div title="Sichten" data-options="selected:true, collapsed: false">
+				<!-- <div title="Sichten" data-options="selected:true, collapsed: false">
 					TODO
-		        </div>
+		        </div>-->
 	        </div>
 		</div>
 		
 		<!-- MAIN -->
-		<div data-options="region:'center',title:''">
+		<div data-options="region:'center',title:'[#breadcrumbs#]'">
 			[#~body#]
 		</div>
 	</body>
