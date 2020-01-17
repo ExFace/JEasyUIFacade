@@ -32,9 +32,13 @@ class EuiNavMenu extends EuiAbstractElement
             $url = $this->getFacade()->buildUrlToPage($node->getPageAlias());
             if ($node->hasChildNodes()) {
                 if ($node->isAncestorOf($this->currentPage) || $node->isPage($this->currentPage)) {
-                $output .= <<<HTML
+                    $aClasses = 'active';
+                    if ($node->getUid() === $this->getWidget()->getPage()->getId()) {
+                        $aClasses .= ' current';
+                    }
+                    $output .= <<<HTML
                 <li class='level{$level} active'>
-                    <a style="text-decoration:underline;" href='{$url}'>{$node->getName()}</a>
+                    <a class="$aClasses" href='{$url}'>{$node->getName()}</a>
 {$this->buildHtmlMenu($node->getChildNodes(), $level+1)}
                 </li>
            
