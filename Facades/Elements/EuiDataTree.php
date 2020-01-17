@@ -31,6 +31,13 @@ class EuiDataTree extends EuiDataTable
         }
     }
     
+    public function buildHtmlHeadTags()
+    {
+        $includes = parent::buildHtmlHeadTags();
+        $includes[] = '<script type="text/javascript" src="exface/vendor/exface/JEasyUIFacade/Facades/js/jeasyui/extensions/treegrid-dnd/treegrid-dnd.js"></script>';
+        return $includes;
+    }
+
     public function buildJsInitOptionsHead()
     {        
         $widget = $this->getWidget();
@@ -52,6 +59,10 @@ class EuiDataTree extends EuiDataTable
             $leafIdCalcScript = 'data.rows[row]["_leafId"] = (parentId ? parentId+"' . $leafIdDelim . '" : "")+data.rows[row]["' . $widget->getUidColumn()->getDataColumnName() . '"];';
         }
         
+        //Enable Drag and Drop
+        $enableDnDJs= "console.log('Enable DragNDrop');$('#{$this->getId()}').{$this->getElementType()}('enableDnd', null);";
+        //$this->addOnLoadSuccess($enableDnDJs);
+        
         $grid_head = parent::buildJsInitOptionsHead() . $calculatedIdField . '
                         , treeField: "' . $widget->getTreeColumn()->getDataColumnName() . '"
                         , lines: false
@@ -72,7 +83,11 @@ class EuiDataTree extends EuiDataTable
                         }
                         ' . $this->buildJsOnLoadSuccessOption() . '
                         ' . ($this->buildJsOnExpandScript() ? ', onExpand: function(row){' . $this->buildJsOnExpandScript() . '}' : '');
-                
+        
+        
+        
+        
+        
         return $grid_head;
     }
 
