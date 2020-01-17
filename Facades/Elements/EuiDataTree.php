@@ -30,7 +30,7 @@ class EuiDataTree extends EuiDataTable
             }
         }
     }
-
+    
     public function buildJsInitOptionsHead()
     {        
         $widget = $this->getWidget();
@@ -72,7 +72,7 @@ class EuiDataTree extends EuiDataTable
                         }
                         ' . $this->buildJsOnLoadSuccessOption() . '
                         ' . ($this->buildJsOnExpandScript() ? ', onExpand: function(row){' . $this->buildJsOnExpandScript() . '}' : '');
-        
+                
         return $grid_head;
     }
 
@@ -122,14 +122,14 @@ class EuiDataTree extends EuiDataTable
             // Now, if the parent id is found in our array, we need to remove the row from the flat data array
             // and put it into the children-array of it's parent row. We need to use references here as the
             // next row may be a child of one of the children in-turn.
-            if ($rowsById[$parentId] !== null) {
-                $val =& $result['rows'][$nr];
+            if ($rowsById[$parentId] !== null) {                
                 if ($rowsById[$parentId]['children'] === null) {
-                    $rowsById[$parentId]['children'] = [];
+                    $rowsById[$parentId]['children'][] =& $result['rows'][$nr];
+                } else {
+                    $val =& $result['rows'][$nr];
+                    array_unshift($rowsById[$parentId]['children'],  $val);
                 }
-                //array_unshift($rowsById[$parentId]['children'], $val);
-                $rowsById[$parentId]['children'][] =& $result['rows'][$nr];
-                $rowsById[$parentId]['state'] = 'open';
+                    $rowsById[$parentId]['state'] = 'open';
                 unset ($result['rows'][$nr]);
             }
         }
