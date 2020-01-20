@@ -69,14 +69,18 @@ class EuiDataTree extends EuiDataTable
                         , loadFilter: function(data, parentId) {
                             
                             var row = 0;
-                            var rowCnt = data.rows.length;
-                            var field, parentRow;
-                            
-                            for (row=0; row<rowCnt; row++) {
-                                if (parentId !== null) {
-                                    data.rows[row]["_parentId"] = parentId;
+                            if ("rows" in data) {
+                                var rowCnt = data.rows.length;
+                                var field, parentRow;
+                                
+                                for (row=0; row<rowCnt; row++) {
+                                    if (parentId !== null) {
+                                        data.rows[row]["_parentId"] = parentId;
+                                    }
+                                    ' . $leafIdCalcScript . '
                                 }
-                                ' . $leafIdCalcScript . '
+                            } else {
+                                data["_parentId"] = parentId;
                             }
 
                             return data;
