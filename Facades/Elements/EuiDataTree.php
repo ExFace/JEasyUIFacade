@@ -60,7 +60,7 @@ class EuiDataTree extends EuiDataTable
         }
         
         //Enable Drag and Drop
-        $enableDnDJs= "console.log('Enable DragNDrop');$('#{$this->getId()}').{$this->getElementType()}('enableDnd', null);";
+        $enableDnDJs= "console.log('Enable DragNDrop', data);$('#{$this->getId()}').{$this->getElementType()}('enableDnd', null);";
         //$this->addOnLoadSuccess($enableDnDJs);
         
         $grid_head = parent::buildJsInitOptionsHead() . $calculatedIdField . '
@@ -139,12 +139,16 @@ class EuiDataTree extends EuiDataTable
             // next row may be a child of one of the children in-turn.
             if ($rowsById[$parentId] !== null) {                
                 if ($rowsById[$parentId]['children'] === null) {
-                    $rowsById[$parentId]['children'][] =& $result['rows'][$nr];
+                    //add children array to parent, add row as child
+                    $rowsById[$parentId]['children'][] =& $result['rows'][$nr];;
                 } else {
+                    //add row as the first object in children array to parent
                     $val =& $result['rows'][$nr];
                     array_unshift($rowsById[$parentId]['children'],  $val);
                 }
                     $rowsById[$parentId]['state'] = 'open';
+                    //set new reference for the row, as current reference will be unset
+                    $rowsById[$row[$idCol]] =& $rowsById[$parentId]['children'][0];
                 unset ($result['rows'][$nr]);
             }
         }
@@ -213,7 +217,9 @@ class EuiDataTree extends EuiDataTable
                                 if (node['children'] !== undefined && node['state'] === 'open') {
                                     var children = node['children'];
                                     children.forEach(function (child) {
-                                        addNode(child);
+                                        if (child['children'] !== undefined && child['state'] === 'open') {
+                                            addNode(child);
+                                        }
                                     });
                                 }
                                 return null;
@@ -231,7 +237,9 @@ class EuiDataTree extends EuiDataTable
                                     }
                                 }
                                 treeData.forEach(function (node) {
-                                    addNode(node);
+                                    if (node['children'] !== undefined && node['state'] === 'open') {
+                                        addNode(node);
+                                    }
                                 });
                             }
                         })();
