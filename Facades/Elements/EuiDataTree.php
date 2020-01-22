@@ -6,6 +6,8 @@ use exface\Core\Interfaces\Actions\ActionInterface;
 use exface\JEasyUIFacade\Facades\JEasyUIFacade;
 use exface\Core\Interfaces\DataSheets\DataSheetInterface;
 use exface\Core\Interfaces\WidgetInterface;
+use exface\Core\Factories\ActionFactory;
+use exface\Core\Actions\UpdateData;
 
 /**
  * @method DataTree getWidget()
@@ -60,11 +62,14 @@ class EuiDataTree extends EuiDataTable
         }
         
         //Enable Drag and Drop
-        $enableDnDJs= "console.log('Enable DragNDrop', data);$('#{$this->getId()}').{$this->getElementType()}('enableDnd', null);";
-        //$this->addOnLoadSuccess($enableDnDJs);
+        $enableDnDJs= "$('#{$this->getId()}').{$this->getElementType()}('enableDnd', null);";
+        $this->addOnLoadSuccess($enableDnDJs);
         
-        $grid_head = parent::buildJsInitOptionsHead() . $calculatedIdField . '
-                        , treeField: "' . $widget->getTreeColumn()->getDataColumnName() . '"
+        $headers = ! empty($this->getAjaxHeaders()) ? 'headers: ' . json_encode($this->getAjaxHeaders()) . ',' : '';
+        $grid_head = parent::buildJsInitOptionsHead() . $calculatedIdField;
+        $grid_head .= <<<JS
+        
+                        , treeField: '{$widget->getTreeColumn()->getDataColumnName()}'
                         , lines: false
                         , loadFilter: function(data, parentId) {
                             
@@ -77,21 +82,37 @@ class EuiDataTree extends EuiDataTable
                                     if (parentId !== null) {
                                         data.rows[row]["_parentId"] = parentId;
                                     }
-                                    ' . $leafIdCalcScript . '
+                                    {$leafIdCalcScript}
                                 }
                             } else {
                                 data["_parentId"] = parentId;
+                                console.log("Data", data);
                             }
 
                             return data;
                         }
-                        ' . $this->buildJsOnLoadSuccessOption() . '
-                        ' . ($this->buildJsOnExpandScript() ? ', onExpand: function(row){' . $this->buildJsOnExpandScript() . '}' : '');
-        
-        
-        
-        
-        
+                        , onDrop: function(targetRow, sourceRow, point) {
+                            console.log(targetRow, sourceRow, point);
+                            if (sourceRow['{$this->getWidget()->getTreeParentIdAttributeAlias()}'] !== sourceRow["_parentId"]) {
+                                if (sourceRow["_parentId"] == undefined) {
+                                    sourceRow['{$this->getWidget()->getTreeParentIdAttributeAlias()}'] = 0;
+                                } else {
+                                    sourceRow['{$this->getWidget()->getTreeParentIdAttributeAlias()}'] = sourceRow["_parentId"];
+                                }
+                            }
+                            var dataGetter = {$this->buildJsDataGetter(ActionFactory::createFromString($this->getWorkbench(), UpdateData::class,$this->getWidget()))};
+                            var parent = $("#{$this->getId()}").{$this->getElementType()}('getParent', sourceRow['{$this->getWidget()->getUidColumn()->getAttributeAlias()}']);
+                            console.log('DataGetter: ', dataGetter);
+                            console.log('Parent: ', parent);
+                            data = $("#{$this->getId()}").{$this->getElementType()}("getData");
+                            $("#{$this->getId()}").{$this->getElementType()}("loadData", data);
+                        }
+                        {$this->buildJsOnLoadSuccessOption()}                        
+
+JS;
+                        
+        $grid_head .= ($this->buildJsOnExpandScript() ? ', onExpand: function(row){' . $this->buildJsOnExpandScript() . '}' : '');
+
         return $grid_head;
     }
 
@@ -191,7 +212,6 @@ class EuiDataTree extends EuiDataTable
                     
                     // Make parentId a regular filter instead of an extra URL parameter
                     var parentId = {$js_var_param}['id'];
-                    console.log({$js_var_param});
                     if (parentId) {
                         if ({$js_var_param}['data'] !== undefined && {$js_var_param}['data']['filters'] !== undefined && {$js_var_param}['data']['filters']['conditions'] !== undefined) {
                             var conditions = {$js_var_param}['data']['filters']['conditions'];
@@ -204,7 +224,6 @@ class EuiDataTree extends EuiDataTable
                         delete {$js_var_param}['id'];
                     } else {                        
                         var treeData = $('#{$this->getId()}').{$this->getElementType()}('getData');
-                        console.log('TreeData: ', treeData);
                         (function (){
                             function addNode(node) {
                                 if ({$js_var_param}['data'] !== undefined && {$js_var_param}['data']['filters'] !== undefined && {$js_var_param}['data']['filters']['conditions'] !== undefined) {
