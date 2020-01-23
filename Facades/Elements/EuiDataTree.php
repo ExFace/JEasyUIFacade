@@ -6,6 +6,7 @@ use exface\Core\Interfaces\Actions\ActionInterface;
 use exface\JEasyUIFacade\Facades\JEasyUIFacade;
 use exface\Core\Interfaces\DataSheets\DataSheetInterface;
 use exface\Core\Interfaces\WidgetInterface;
+use exface\Core\DataTypes\SortingDirectionsDataType;
 use exface\Core\Factories\ActionFactory;
 use exface\Core\Actions\UpdateData;
 
@@ -64,6 +65,109 @@ class EuiDataTree extends EuiDataTable
         //Enable Drag and Drop
         $enableDnDJs= "$('#{$this->getId()}').{$this->getElementType()}('enableDnd', null);";
         $this->addOnLoadSuccess($enableDnDJs);
+        $rowReorderScript = '';
+        if ($widget->getRowReorder()) {
+            $reorderPart = $widget->getRowReorder();
+            $direction = $reorderPart->getDirection();
+            $directionASC = SortingDirectionsDataType::ASC;
+            $directionDESC = SortingDirectionsDataType::DESC;
+            $indexAttributeAlias = $reorderPart->getOrderIndexAttributeAlias();
+            
+            $rowReorderScript = <<<JS
+                        // when node gets moved to new parent by dropping it on parent node, index will be set the highest index + 1
+                        var children = parent['children'];
+                        var count = children.length;
+                        if (point === 'append') {
+                            
+                            if (count === 1) {
+                                changedRows[0]['{$indexAttributeAlias}'] = 0;
+                            } else if (count > 1) {
+                                if ('{$direction}' === '{$directionASC}') {
+                                    changedRows[0]['{$indexAttributeAlias}'] = parseInt(children[count - 2]['{$indexAttributeAlias}']) + 1;
+                                }
+                                if ('{$direction}' === '{$directionDESC}') {
+                                    changedRows[0]['{$indexAttributeAlias}'] = parseInt(children[0]['{$indexAttributeAlias}']) + 1;
+                                }
+                            }
+                        } else {
+                            var targetRowIndex, targetRowPosition, sourceRowIndex;
+                            children.sort(function (a, b) {return a['{$indexAttributeAlias}']-b['{$indexAttributeAlias}']});
+                            if ('{$direction}' === '{$directionDESC}') {                                
+                                if (point === 'top') {
+                                    point = 'bottom';
+                                } else {
+                                    point = 'top';
+                                }
+                            }                            
+                            for (var i = 0; i < count; i++) {
+                                if (children[i]['{$widget->getUidColumn()->getDataColumnName()}'] === targetRow['{$widget->getUidColumn()->getDataColumnName()}']) {
+                                    targetRowIndex = i;
+                                    targetRowPosition = parseInt(targetRow['{$indexAttributeAlias}']);
+                                    break;
+                                }
+                            }
+                            if (targetRow['{$widget->getTreeParentIdAttributeAlias()}'] === sourceRow['{$widget->getTreeParentIdAttributeAlias()}']) {
+                                for (var i = 0; i < count; i++) {
+                                    if (children[i]['{$widget->getUidColumn()->getDataColumnName()}'] === sourceRow['{$widget->getUidColumn()->getDataColumnName()}']) {
+                                        sourceRowIndex = i;
+                                        break;
+                                    }
+                                }
+                            }
+                            if (sourceRowIndex == undefined) {
+                                if (point = 'top') {
+                                    changedRows[0]['{$indexAttributeAlias}'] = targetRowPosition;
+                                    i = targetRowIndex;
+                                } else {
+                                    changedRows[0]['{$indexAttributeAlias}'] = targetRowPosition + 1;
+                                    i = targetRowIndex + 1;
+                                }
+                                for (i; i < count; i++) {
+                                    var row = [];
+                                    row['{$widget->getUidColumn()->getDataColumnName()}'] = children[i]['{$widget->getUidColumn()->getDataColumnName()}'];
+                                    row['{$indexAttributeAlias}'] = parseInt(children[i]['{$indexAttributeAlias}']) + 1;
+                                    changedRows.push(row);
+                                }
+                            } else {
+                                if (sourceRowIndex < targetRowIndex) {
+                                    if (point = 'top') {
+                                        changedRows[0]['{$indexAttributeAlias}'] = targetRowPosition - 1;
+                                        var end = targetRowIndex - 1;
+                                    } else {
+                                        changedRows[0]['{$indexAttributeAlias}'] = targetRowPosition;
+                                        var end = targetRowIndex;
+                                    }
+                                    for (i = sourceRowIndex; i <= end; i++) {
+                                        var row = [];
+                                        row['{$widget->getUidColumn()->getDataColumnName()}'] = children[i]['{$widget->getUidColumn()->getDataColumnName()}'];
+                                        row['{$indexAttributeAlias}'] = parseInt(children[i]['{$indexAttributeAlias}']) + 1 ;
+                                        changedRows.push(row);
+                                    }
+                                } else {
+                                    if (point = 'top') {
+                                        if (targetRowPosition === 0) {
+                                            changedRows[0]['{$indexAttributeAlias}'] = targetRowPosition
+                                        } else {
+                                            changedRows[0]['{$indexAttributeAlias}'] = targetRowPosition - 1;
+                                        }
+                                        var start = targetRowIndex;
+                                    } else {
+                                        changedRows[0]['{$indexAttributeAlias}'] = targetRowPosition;
+                                        var start = targetRowIndex + 1;
+                                    }
+                                    for (i = start; i < sourceRowIndex; i++) {
+                                        var row = [];
+                                        row['{$widget->getUidColumn()->getDataColumnName()}'] = children[i]['{$widget->getUidColumn()->getDataColumnName()}'];
+                                        row['{$indexAttributeAlias}'] = parseInt(children[i]['{$indexAttributeAlias}']) + 1 ;
+                                        changedRows.push(row);
+                                    }
+                                }
+                            }
+                        }
+
+JS;
+            
+        }
         
         $headers = ! empty($this->getAjaxHeaders()) ? 'headers: ' . json_encode($this->getAjaxHeaders()) . ',' : '';
         $grid_head = parent::buildJsInitOptionsHead() . $calculatedIdField;
@@ -85,7 +189,9 @@ class EuiDataTree extends EuiDataTable
                                     {$leafIdCalcScript}
                                 }
                             } else {
-                                data["_parentId"] = parentId;
+                                if (parentId !== null) {
+                                    data[0]["_parentId"] = parentId;
+                                }
                                 console.log("Data", data);
                             }
 
@@ -93,19 +199,76 @@ class EuiDataTree extends EuiDataTable
                         }
                         , onDrop: function(targetRow, sourceRow, point) {
                             console.log(targetRow, sourceRow, point);
-                            if (sourceRow['{$this->getWidget()->getTreeParentIdAttributeAlias()}'] !== sourceRow["_parentId"]) {
-                                if (sourceRow["_parentId"] == undefined) {
-                                    sourceRow['{$this->getWidget()->getTreeParentIdAttributeAlias()}'] = 0;
-                                } else {
-                                    sourceRow['{$this->getWidget()->getTreeParentIdAttributeAlias()}'] = sourceRow["_parentId"];
-                                }
-                            }
-                            var dataGetter = {$this->buildJsDataGetter(ActionFactory::createFromString($this->getWorkbench(), UpdateData::class,$this->getWidget()))};
-                            var parent = $("#{$this->getId()}").{$this->getElementType()}('getParent', sourceRow['{$this->getWidget()->getUidColumn()->getAttributeAlias()}']);
-                            console.log('DataGetter: ', dataGetter);
-                            console.log('Parent: ', parent);
-                            data = $("#{$this->getId()}").{$this->getElementType()}("getData");
-                            $("#{$this->getId()}").{$this->getElementType()}("loadData", data);
+                            setTimeout(function () {
+                                (function (targetRow, sourceRow, point) {
+                                    console.log(targetRow, sourceRow, point);
+                                    var changedRows = [];
+                                    if (sourceRow['{$widget->getTreeParentIdAttributeAlias()}'] !== sourceRow["_parentId"]) {
+                                        if (sourceRow["_parentId"] == undefined) {
+                                            if (point === 'append') {
+                                                sourceRow["_parentId"] = targetRow['{$widget->getUidColumn()->getDataColumnName()}'];
+                                            } else {
+                                                if (targetRow['{$widget->getTreeParentIdAttributeAlias()}'] !== undefined) {
+                                                    sourceRow["_parentId"] = targetRow['{$widget->getTreeParentIdAttributeAlias()}'];
+                                                } else {
+                                                    sourceRow["_parentId"] = 0;
+                                                }  
+                                            }
+                                        }
+                                        var row = {};
+                                        row['{$widget->getUidColumn()->getDataColumnName()}'] = sourceRow['{$widget->getUidColumn()->getDataColumnName()}'];
+                                        row['{$widget->getTreeParentIdAttributeAlias()}'] = sourceRow['_parentId'];
+                                        changedRows.push(row);
+                                    } else {
+                                        var row = {};
+                                        row['{$widget->getUidColumn()->getDataColumnName()}'] = sourceRow['{$widget->getUidColumn()->getDataColumnName()}'];
+                                        changedRows.push(row);
+                                    }
+                                    var dataGetter = {$this->buildJsDataGetter(ActionFactory::createFromString($this->getWorkbench(), UpdateData::class,$widget))};
+                                    var parent = $("#{$this->getId()}").{$this->getElementType()}('getParent', sourceRow['{$widget->getUidColumn()->getDataColumnName()}']);
+                                    console.log('Parent: ', parent);
+                                    {$rowReorderScript}
+                                    dataGetter['rows'] = changedRows;
+                                    console.log('DataGetter: ', dataGetter);
+                                    
+                                    //console.log('changedRows: ', changedRows);
+        
+                                    $.ajax({
+        								type: 'POST',
+        								url: '{$this->getAjaxUrl()}',
+                                        {$headers} 
+        								data: {	
+        									action: 'exface.Core.UpdateData',
+        									resource: '{$widget->getPage()->getAliasWithNamespace()}',
+        									element: '{$widget->getId()}',
+        									object: '{$widget->getMetaObject()->getId()}',
+        									data: dataGetter
+        								},
+        								success: function(data, textStatus, jqXHR) {
+                                            if (typeof data === 'object') {
+                                                response = data;
+                                            } else {
+                                                var response = {};
+            									try {
+            										response = $.parseJSON(data);
+            									} catch (e) {
+            										response.error = data;
+            									}
+                                            }
+        				                   	if (response.success){
+        										$("#{$this->getId()}").{$this->getElementType()}("reload");
+        				                    } else {
+        										{$this->buildJsBusyIconHide()}
+        										{$this->buildJsShowMessageError('response.error', '"Server error"')}
+        				                    }
+        								},
+        								error: function(jqXHR, textStatus, errorThrown){ 
+        									{$this->buildJsShowError('jqXHR.responseText', 'jqXHR.status + " " + jqXHR.statusText')}
+        									{$this->buildJsBusyIconHide()}
+        								}
+        							});
+                                }(targetRow, sourceRow, point));
+                            }, 10);
                         }
                         {$this->buildJsOnLoadSuccessOption()}                        
 
