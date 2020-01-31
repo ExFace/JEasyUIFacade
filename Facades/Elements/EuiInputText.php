@@ -25,7 +25,7 @@ class EuiInputText extends EuiInput
         return ($this->getHeightRelativeUnit() * 2) . 'px';
     }
 
-    function buildHtml()
+    public function buildHtml()
     {
         $output = ' <textarea 
 							name="' . $this->getWidget()->getAttributeAlias() . '" 
@@ -38,7 +38,7 @@ class EuiInputText extends EuiInput
         ;
     }
 
-    function buildJs()
+    public function buildJs()
     {
         $output = '';
         $output .= $this->buildJsLiveReference();
@@ -67,8 +67,28 @@ class EuiInputText extends EuiInput
      *
      * @see \exface\Core\Facades\AbstractAjaxFacade\Elements\AbstractJqueryElement::buildJsValidator()
      */
-    function buildJsValidator()
+    public function buildJsValidator()
     {
         return $this->buildJsValidatorViaTrait();
+    }
+    
+    /**
+     * 
+     * {@inheritDoc}
+     * @see \exface\JEasyUIFacade\Facades\Elements\EuiInput::buildJsEnabler()
+     */
+    public function buildJsEnabler()
+    {
+        return '$("#' . $this->getId() . '").removeAttr("disabled")';
+    }
+    
+    /**
+     * 
+     * {@inheritDoc}
+     * @see \exface\JEasyUIFacade\Facades\Elements\EuiInput::buildJsDisabler()
+     */
+    public function buildJsDisabler()
+    {
+        return '$("#' . $this->getId() . '").attr("disabled", "disabled")';
     }
 }
