@@ -9,6 +9,7 @@ use exface\Core\Interfaces\WidgetInterface;
 use exface\Core\DataTypes\SortingDirectionsDataType;
 use exface\Core\Factories\ActionFactory;
 use exface\Core\Actions\UpdateData;
+use exface\Core\DataTypes\ComparatorDataType;
 
 /**
  * @method DataTree getWidget()
@@ -66,7 +67,7 @@ class EuiDataTree extends EuiDataTable
         $enableDnDJs= "$('#{$this->getId()}').{$this->getElementType()}('enableDnd', null);";
         $this->addOnLoadSuccess($enableDnDJs);
         $rowReorderScript = '';
-        if ($widget->getRowReorder()) {
+        if ($widget->hasRowReorder() === true) {
             $reorderPart = $widget->getRowReorder();
             $direction = $reorderPart->getOrderDirection();
             $directionASC = SortingDirectionsDataType::ASC;
@@ -386,6 +387,9 @@ JS;
     
     protected function buildJsOnBeforeLoadScript($js_var_param = 'param', $js_var_row = 'row')
     {
+        $comparatorIn = ComparatorDataType::IN;
+        $treeFolderFilterCol = $this->getWidget()->getTreeFolderFilterColumn();
+        $treeFolderFilterDelim = $treeFolderFilterCol->getAttribute()->getValueListDelimiter();
         return parent::buildJsOnBeforeLoadScript($js_var_param) . <<<JS
                     
                     // Make parentId a regular filter instead of an extra URL parameter
@@ -410,7 +414,8 @@ JS;
                                         if (conditions[c]['expression'] == '{$this->getWidget()->getTreeParentIdAttributeAlias()}') {
                                             if (node['children'] !== undefined && node['state'] === 'open') {
                                                 var oldValue = {$js_var_param}['data']['filters']['conditions'][c]['value'];
-                                                {$js_var_param}['data']['filters']['conditions'][c]['value'] = oldValue + ',' + node['{$this->getWidget()->getTreeFolderFilterColumn()->getDataColumnName()}'];
+                                                {$js_var_param}['data']['filters']['conditions'][c]['value'] = oldValue + '{$treeFolderFilterDelim}' + node['{$treeFolderFilterCol->getDataColumnName()}'];
+                                                {$js_var_param}['data']['filters']['conditions'][c]['comparator'] = '{$comparatorIn}';
                                             }
                                         }
                                     }
@@ -432,7 +437,7 @@ JS;
                                         if (conditions[c]['expression'] == '{$this->getWidget()->getTreeParentIdAttributeAlias()}') {
                                             var oldValue = {$js_var_param}['data']['filters']['conditions'][c]['value'];
                                             if (oldValue === '' || oldValue === undefined || oldValue === null) {
-                                                {$js_var_param}['data']['filters']['conditions'][c]['value'] = {$this->getWidget()->getTreeRootUid()};
+                                                {$js_var_param}['data']['filters']['conditions'][c]['value'] = '{$this->getWidget()->getTreeRootUid()}';
                                             }                                           
                                         }
                                     }
