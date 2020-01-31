@@ -387,9 +387,6 @@ JS;
     
     protected function buildJsOnBeforeLoadScript($js_var_param = 'param', $js_var_row = 'row')
     {
-        $comparatorIn = ComparatorDataType::IN;
-        $treeFolderFilterCol = $this->getWidget()->getTreeFolderFilterColumn();
-        $treeFolderFilterDelim = $treeFolderFilterCol->getAttribute()->getValueListDelimiter();
         return parent::buildJsOnBeforeLoadScript($js_var_param) . <<<JS
                     
                     // Make parentId a regular filter instead of an extra URL parameter
@@ -405,7 +402,30 @@ JS;
                         }
                         delete {$js_var_param}['id'];
                     } else {                        
-                        var treeData = $('#{$this->getId()}').{$this->getElementType()}('getData');
+                        {$this->buildJsOnBeforeLoadExapndFilters($js_var_param, $js_var_row)}
+                    }
+
+JS;
+    }
+
+    /**
+     * Returns the JS code to add filters for 
+     * @param string $js_var_param
+     * @param string $js_var_row
+     * @return string
+     */
+    protected function buildJsOnBeforeLoadExapndFilters($js_var_param = 'param', $js_var_row = 'row') : string
+    {
+        $widget = $this->getWidget();
+        if ($widget->getKeepExpandedPathsOnRefresh() === false || $widget->isPaged() === false) {
+            return '';
+        }
+        $comparatorIn = ComparatorDataType::IN;
+        $treeFolderFilterCol = $widget->getTreeFolderFilterColumn();
+        $treeFolderFilterDelim = $treeFolderFilterCol->getAttribute()->getValueListDelimiter();
+        return <<<JS
+
+                    var treeData = $('#{$this->getId()}').{$this->getElementType()}('getData');
                         (function (){
                             function addNode(node) {
                                 if ({$js_var_param}['data'] !== undefined && {$js_var_param}['data']['filters'] !== undefined && {$js_var_param}['data']['filters']['conditions'] !== undefined) {
@@ -449,8 +469,6 @@ JS;
                                 });
                             }
                         })();
-                    }
-
 JS;
     }
     
