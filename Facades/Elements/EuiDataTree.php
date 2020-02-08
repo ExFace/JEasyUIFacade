@@ -38,7 +38,9 @@ class EuiDataTree extends EuiDataTable
     public function buildHtmlHeadTags()
     {
         $includes = parent::buildHtmlHeadTags();
-        $includes[] = '<script type="text/javascript" src="exface/vendor/exface/JEasyUIFacade/Facades/js/jeasyui/extensions/treegrid-dnd/treegrid-dnd.js"></script>';
+        if ($this->getWidget()->hasRowReorder() === true) {
+            $includes[] = '<script type="text/javascript" src="' . $this->getFacade()->buildUrlToSource('LIBS.JEASYUI.EXTENSIONS.TREEGRID_DND') . '"></script>';
+        }
         return $includes;
     }
 
@@ -63,127 +65,6 @@ class EuiDataTree extends EuiDataTable
             $leafIdCalcScript = 'data.rows[row]["_leafId"] = (parentId ? parentId+"' . $leafIdDelim . '" : "")+data.rows[row]["' . $widget->getUidColumn()->getDataColumnName() . '"];';
         }
         
-        //Enable Drag and Drop
-        $enableDnDJs= "$('#{$this->getId()}').{$this->getElementType()}('enableDnd', null);";
-        $this->addOnLoadSuccess($enableDnDJs);
-        $rowReorderScript = '';
-        if ($widget->hasRowReorder() === true) {
-            $reorderPart = $widget->getRowReorder();
-            $direction = $reorderPart->getOrderDirection();
-            $directionASC = SortingDirectionsDataType::ASC;
-            $directionDESC = SortingDirectionsDataType::DESC;
-            $indexAttributeAlias = $reorderPart->getOrderIndexAttributeAlias();
-            
-            $rowReorderScript = <<<JS
-
-                            if (changedRows.length > 0) {
-                                // when row gets moved to new parent by dropping it on parent row, index will be set the highest index + 1                            
-                                var children = parent['children'];
-                                var count = children.length;
-                                if (point === 'append') {                            
-                                    if (count === 1) {
-                                        changedRows[0]['{$indexAttributeAlias}'] = 0;
-                                    } else if (count > 1) {
-                                        if ('{$direction}' === '{$directionASC}') {
-                                            changedRows[0]['{$indexAttributeAlias}'] = parseInt(children[count - 2]['{$indexAttributeAlias}']) + 1;
-                                        }
-                                        if ('{$direction}' === '{$directionDESC}') {
-                                            changedRows[0]['{$indexAttributeAlias}'] = parseInt(children[0]['{$indexAttributeAlias}']) + 1;
-                                        }
-                                    }
-        
-                                // if row gets moved to a certain point above or below another row
-                                } else {
-                                    var targetRowIndex, targetRowPosition, sourceRowIndex;
-                                    children.sort(function (a, b) {return a['{$indexAttributeAlias}']-b['{$indexAttributeAlias}']});
-                                    if ('{$direction}' === '{$directionDESC}') {                                
-                                        if (point === 'top') {
-                                            point = 'bottom';
-                                        } else {
-                                            point = 'top';
-                                        }
-                                    }
-        
-                                    // get position of the targetRow                            
-                                    for (var i = 0; i < count; i++) {
-                                        if (children[i]['{$widget->getUidColumn()->getDataColumnName()}'] === targetRow['{$widget->getUidColumn()->getDataColumnName()}']) {
-                                            targetRowIndex = i;
-                                            targetRowPosition = parseInt(targetRow['{$indexAttributeAlias}']);
-                                            break;
-                                        }
-                                    }
-        
-                                    // if the sourceRow had same parent as the targetRow search for old sourceRow position
-                                    if (targetRow['{$widget->getTreeParentIdAttributeAlias()}'] === sourceRow['{$widget->getTreeParentIdAttributeAlias()}']) {
-                                        for (var i = 0; i < count; i++) {
-                                            if (children[i]['{$widget->getUidColumn()->getDataColumnName()}'] === sourceRow['{$widget->getUidColumn()->getDataColumnName()}']) {
-                                                sourceRowIndex = i;
-                                                break;
-                                            }
-                                        }
-                                    }
-        
-                                    // if the sourceRow was moved from another parent
-                                    if (sourceRowIndex == undefined) {
-                                        if (point === 'top') {
-                                            changedRows[0]['{$indexAttributeAlias}'] = targetRowPosition;
-                                            var start = targetRowIndex;
-                                        } else {
-                                            changedRows[0]['{$indexAttributeAlias}'] = targetRowPosition + 1;
-                                            var start = targetRowIndex + 1;
-                                        }
-                                        // as the sourceRow gets already added to the children array, skip element when UID attribute value is same as sourceRow
-                                        for (var i = start; i < count; i++) {
-                                            if (sourceRow['{$widget->getUidColumn()->getDataColumnName()}'] === children[i]['{$widget->getUidColumn()->getDataColumnName()}']) {
-                                                continue;
-                                            }
-                                            var row = {};
-                                            row['{$widget->getUidColumn()->getDataColumnName()}'] = children[i]['{$widget->getUidColumn()->getDataColumnName()}'];
-                                            row['{$widget->getTreeParentIdAttributeAlias()}'] = children[i]['{$widget->getTreeParentIdAttributeAlias()}']
-                                            row['{$indexAttributeAlias}'] = parseInt(children[i]['{$indexAttributeAlias}']) + 1;
-                                            changedRows.push(row);
-                                        }
-        
-                                    // if sourceRow had same parent as targetRow
-                                    } else {
-                                        if (sourceRowIndex < targetRowIndex) {
-                                            if (point === 'top') {
-                                                changedRows[0]['{$indexAttributeAlias}'] = targetRowPosition - 1;
-                                                var end = targetRowIndex - 1;
-                                            } else {
-                                                changedRows[0]['{$indexAttributeAlias}'] = targetRowPosition;
-                                                var end = targetRowIndex;
-                                            }
-                                            for (i = sourceRowIndex + 1; i <= end; i++) {
-                                                var row = {};
-                                                row['{$widget->getUidColumn()->getDataColumnName()}'] = children[i]['{$widget->getUidColumn()->getDataColumnName()}'];
-                                                row['{$indexAttributeAlias}'] = parseInt(children[i]['{$indexAttributeAlias}']) - 1 ;
-                                                changedRows.push(row);
-                                            }
-                                        } else {
-                                            if (point === 'top') {                                                
-                                                changedRows[0]['{$indexAttributeAlias}'] = targetRowPosition;
-                                                var start = targetRowIndex;
-                                            } else {
-                                                changedRows[0]['{$indexAttributeAlias}'] = targetRowPosition + 1;
-                                                var start = targetRowIndex + 1;
-                                            }
-                                            for (i = start; i < sourceRowIndex; i++) {
-                                                var row = {};
-                                                row['{$widget->getUidColumn()->getDataColumnName()}'] = children[i]['{$widget->getUidColumn()->getDataColumnName()}'];
-                                                row['{$indexAttributeAlias}'] = parseInt(children[i]['{$indexAttributeAlias}']) + 1 ;
-                                                changedRows.push(row);
-                                            }
-                                        }
-                                    }
-                                }
-                            }
-
-JS;
-            
-        }
-        
-        $headers = ! empty($this->getAjaxHeaders()) ? 'headers: ' . json_encode($this->getAjaxHeaders()) . ',' : '';
         $grid_head = parent::buildJsInitOptionsHead() . $calculatedIdField;
         $grid_head .= <<<JS
         
@@ -215,11 +96,160 @@ JS;
 
                             return data;
                         }
+                        {$this->buildJsDragNDropInitOptions()}
+                        {$this->buildJsOnLoadSuccessOption()}                        
+
+JS;
+                        
+        $grid_head .= ($this->buildJsOnExpandScript() ? ', onExpand: function(row){' . $this->buildJsOnExpandScript() . '}' : '');
+
+        return $grid_head;
+    }
+    
+    protected function buildJsDragNDropInitOptions() : string
+    {
+        $widget = $this->getWidget();
+        
+        if ($widget->hasRowReorder() === false) {
+            return '';   
+        }
+        
+        //Enable Drag and Drop
+        $this->addOnLoadSuccess("$('#{$this->getId()}').{$this->getElementType()}('enableDnd', null);");
+        
+        $reorderPart = $widget->getRowReorder();
+        $direction = $reorderPart->getOrderDirection();
+        $directionASC = SortingDirectionsDataType::ASC;
+        $directionDESC = SortingDirectionsDataType::DESC;
+        $indexColName = $widget->getColumnByAttributeAlias($reorderPart->getOrderIndexAttributeAlias())->getDataColumnName();
+        $uidColName = $widget->getUidColumn()->getDataColumnName();
+        
+        $headers = ! empty($this->getAjaxHeaders()) ? 'headers: ' . json_encode($this->getAjaxHeaders()) . ',' : '';
+        $rowReorderScript = <<<JS
+        
+                            if (changedRows.length > 0) {
+                                // when row gets moved to new parent by dropping it on parent row, index will be set the highest index + 1
+                                var children = parent['children'];
+                                var count = children.length;
+                                if (point === 'append') {
+                                    if (count === 1) {
+                                        changedRows[0]['{$indexColName}'] = 0;
+                                    } else if (count > 1) {
+                                        if ('{$direction}' === '{$directionASC}') {
+                                            changedRows[0]['{$indexColName}'] = parseInt(children[count - 2]['{$indexColName}']) + 1;
+                                        }
+                                        if ('{$direction}' === '{$directionDESC}') {
+                                            changedRows[0]['{$indexColName}'] = parseInt(children[0]['{$indexColName}']) + 1;
+                                        }
+                                    }
+                                    
+                                // if row gets moved to a certain point above or below another row
+                                } else {
+                                    var targetRowIndex, targetRowPosition, sourceRowIndex;
+                                    children.sort(function (a, b) {return a['{$indexColName}']-b['{$indexColName}']});
+                                    if ('{$direction}' === '{$directionDESC}') {
+                                        if (point === 'top') {
+                                            point = 'bottom';
+                                        } else {
+                                            point = 'top';
+                                        }
+                                    }
+                                    
+                                    // get position of the targetRow
+                                    for (var i = 0; i < count; i++) {
+                                        if (children[i]['{$uidColName}'] === targetRow['{$uidColName}']) {
+                                            targetRowIndex = i;
+                                            targetRowPosition = parseInt(targetRow['{$indexColName}']);
+                                            break;
+                                        }
+                                    }
+                                    
+                                    // if the sourceRow had same parent as the targetRow search for old sourceRow position
+                                    if (targetRow['{$widget->getTreeParentIdAttributeAlias()}'] === sourceRow['{$widget->getTreeParentIdAttributeAlias()}']) {
+                                        for (var i = 0; i < count; i++) {
+                                            if (children[i]['{$uidColName}'] === sourceRow['{$uidColName}']) {
+                                                sourceRowIndex = i;
+                                                break;
+                                            }
+                                        }
+                                    }
+                                    
+                                    // if the sourceRow was moved from another parent
+                                    if (sourceRowIndex == undefined) {
+                                        if (point === 'top') {
+                                            changedRows[0]['{$indexColName}'] = targetRowPosition;
+                                            var start = targetRowIndex;
+                                        } else {
+                                            changedRows[0]['{$indexColName}'] = targetRowPosition + 1;
+                                            var start = targetRowIndex + 1;
+                                        }
+                                        // as the sourceRow gets already added to the children array, skip element when UID attribute value is same as sourceRow
+                                        for (var i = start; i < count; i++) {
+                                            if (sourceRow['{$uidColName}'] === children[i]['{$uidColName}']) {
+                                                continue;
+                                            }
+                                            var row = {};
+                                            row['{$uidColName}'] = children[i]['{$uidColName}'];
+                                            row['{$widget->getTreeParentIdAttributeAlias()}'] = children[i]['{$widget->getTreeParentIdAttributeAlias()}']
+                                            row['{$indexColName}'] = parseInt(children[i]['{$indexColName}']) + 1;
+                                            changedRows.push(row);
+                                        }
+                                        
+                                    // if sourceRow had same parent as targetRow
+                                    } else {
+                                        if (sourceRowIndex < targetRowIndex) {
+                                            if (point === 'top') {
+                                                changedRows[0]['{$indexColName}'] = targetRowPosition - 1;
+                                                var end = targetRowIndex - 1;
+                                            } else {
+                                                changedRows[0]['{$indexColName}'] = targetRowPosition;
+                                                var end = targetRowIndex;
+                                            }
+                                            for (i = sourceRowIndex + 1; i <= end; i++) {
+                                                var row = {};
+                                                row['{$uidColName}'] = children[i]['{$uidColName}'];
+                                                row['{$indexColName}'] = parseInt(children[i]['{$indexColName}']) - 1 ;
+                                                changedRows.push(row);
+                                            }
+                                        } else {
+                                            if (point === 'top') {
+                                                changedRows[0]['{$indexColName}'] = targetRowPosition;
+                                                var start = targetRowIndex;
+                                            } else {
+                                                changedRows[0]['{$indexColName}'] = targetRowPosition + 1;
+                                                var start = targetRowIndex + 1;
+                                            }
+                                            for (i = start; i < sourceRowIndex; i++) {
+                                                var row = {};
+                                                row['{$uidColName}'] = children[i]['{$uidColName}'];
+                                                row['{$indexColName}'] = parseInt(children[i]['{$indexColName}']) + 1 ;
+                                                changedRows.push(row);
+                                            }
+                                        }
+                                    }
+                                }
+                            }
+                            
+JS;
+        
+        
+        // Add system attributes to all rows
+        $keepColumns = [];
+        foreach ($widget->getColumns() as $col) {
+            if ($col->isBoundToAttribute() && $col->getAttribute()->isSystem()) {
+                $keepColumns[] = $col->getDataColumnName();
+            }
+        }
+        $systemColumnsArrayJs = json_encode($keepColumns); 
+        
+        return <<<JS
+
                         , onDrop: function(targetRow, sourceRow, point) {
+                            var aSystemCols = $systemColumnsArrayJs;
                             var changedRows = [];
                             var row = {};
                             var data = $('#{$this->getId()}').{$this->getElementType()}("getData");
-                            row['{$widget->getUidColumn()->getDataColumnName()}'] = sourceRow['{$widget->getUidColumn()->getDataColumnName()}'];
+                            row['{$uidColName}'] = sourceRow['{$uidColName}'];
                             if (targetRow === null && point === 'append') {                                
                                 row['{$widget->getTreeParentIdAttributeAlias()}'] = data[0]['{$widget->getTreeParentIdAttributeAlias()}'];
                                 if (sourceRow['{$widget->getTreeParentIdAttributeAlias()}'] !== data[0]['{$widget->getTreeParentIdAttributeAlias()}']) {
@@ -228,7 +258,7 @@ JS;
                             } else {                                                       
                                 if (sourceRow["_parentId"] == undefined) {
                                     if (point === 'append') {
-                                        sourceRow["_parentId"] = targetRow['{$widget->getUidColumn()->getDataColumnName()}'];
+                                        sourceRow["_parentId"] = targetRow['{$uidColName}'];
                                     } else {
                                         if (targetRow['{$widget->getTreeParentIdAttributeAlias()}'] !== undefined) {
                                             sourceRow["_parentId"] = targetRow['{$widget->getTreeParentIdAttributeAlias()}'];
@@ -240,12 +270,12 @@ JS;
                                 if (sourceRow['{$widget->getTreeParentIdAttributeAlias()}'] !== sourceRow["_parentId"]) {                                                                
                                     row['{$widget->getTreeParentIdAttributeAlias()}'] = sourceRow['_parentId'];
                                 }                            
-                                if (! (point === 'append' && sourceRow['{$widget->getTreeParentIdAttributeAlias()}'] === targetRow['{$widget->getUidColumn()->getDataColumnName()}'])) {
+                                if (! (point === 'append' && sourceRow['{$widget->getTreeParentIdAttributeAlias()}'] === targetRow['{$uidColName}'])) {
                                     changedRows.push(row);
                                 }
                             }
                             var dataGetter = {$this->buildJsDataGetter(ActionFactory::createFromString($this->getWorkbench(), UpdateData::class,$widget))};
-                            var parent = $("#{$this->getId()}").{$this->getElementType()}('getParent', sourceRow['{$widget->getUidColumn()->getDataColumnName()}']);
+                            var parent = $("#{$this->getId()}").{$this->getElementType()}('getParent', sourceRow['{$uidColName}']);
                             if (parent === null) {
                                 parent  = {};
                                 parent['children'] = data;
@@ -286,13 +316,7 @@ JS;
 								}
 							});                                
                         }
-                        {$this->buildJsOnLoadSuccessOption()}                        
-
 JS;
-                        
-        $grid_head .= ($this->buildJsOnExpandScript() ? ', onExpand: function(row){' . $this->buildJsOnExpandScript() . '}' : '');
-
-        return $grid_head;
     }
 
     public static function buildResponseData(JEasyUIFacade $facade, DataSheetInterface $data_sheet, WidgetInterface $widget)
@@ -417,7 +441,7 @@ JS;
     protected function buildJsOnBeforeLoadExapndFilters($js_var_param = 'param', $js_var_row = 'row') : string
     {
         $widget = $this->getWidget();
-        if ($widget->getKeepExpandedPathsOnRefresh() === false || $widget->isPaged() === false) {
+        if (($widget->getKeepExpandedPathsOnRefresh() === false || $widget->isPaged() === false) && $widget->getLazyLoadTreeLevels() !== true) {
             return '';
         }
         $comparatorIn = ComparatorDataType::IN;
