@@ -54,6 +54,7 @@
     "LIBS.JEASYUI.THEME": "exface/JEasyUIFacade/Facades/js/jeasyui/themes/metro-blue/easyui.css",
     "LIBS.JEASYUI.EXTENSIONS.DATAGRID_GROUPVIEW": "exface/JEasyUIFacade/Facades/js/jeasyui/extensions/datagridview/datagrid-groupview.js",
     "LIBS.JEASYUI.EXTENSIONS.DATAGRID_DETAILVIEW": "exface/JEasyUIFacade/Facades/js/jeasyui/extensions/datagridview/datagrid-detailview.js",
+    "LIBS.JEASYUI.EXTENSIONS.TREEGRID_DND": "exface/JEasyUIFacade/Facades/js/jeasyui/extensions/treegrid-dnd/treegrid-dnd.js",
     "LIBS.JEASYUI.PATCHES": "exface/JEasyUIFacade/Facades/js/jquery.easyui.patch.1.43.js",
 	
    	"LIBS.JEXCEL.JS": "npm-asset/jexcel/dist/jexcel.js",

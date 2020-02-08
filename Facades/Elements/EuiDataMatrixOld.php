@@ -53,7 +53,7 @@ class EuiDataMatrixOld extends EuiDataTable
         // add the filters
         foreach ($widget->getFilters() as $fw) {
             if (! is_null($fw->getValue())) {
-                $ds->addFilterFromString($fw->getAttributeAlias(), $fw->getValue());
+                $ds->getFilters()->addConditionFromString($fw->getAttributeAlias(), $fw->getValue());
             }
         }
         // add the sorters
