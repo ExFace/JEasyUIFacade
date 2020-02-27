@@ -31,8 +31,8 @@ class EuiWizardButton extends EuiButton
         $widget = $this->getWidget();
         $tabsElement = $this->getFacade()->getElement($widget->getWizardStep()->getParent());
         
-        if ($widget->getResetInput() === true && ($widget->hasAction() === false || $widget->getAction() instanceof iResetWidgets)) {
-            return $this->buildJsInputReset($widget, $this->getFacade()->getElement($widget->getWizardStep()));
+        if (empty($widget->getResetWidgetIds()) === false && ($widget->hasAction() === false || $widget->getAction() instanceof iResetWidgets)) {
+            return $this->buildJsResetWidgets($widget, $this->getFacade()->getElement($widget->getWizardStep()));
         }
         
         $goToStepJs = '';
