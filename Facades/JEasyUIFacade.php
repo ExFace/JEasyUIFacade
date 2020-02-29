@@ -11,6 +11,7 @@ use exface\Core\Interfaces\Model\UiPageInterface;
 use GuzzleHttp\Psr7\Response;
 use exface\Core\Interfaces\Exceptions\ExceptionInterface;
 use exface\JEasyUIFacade\Facades\Templates\EuiFacadePageTemplateRenderer;
+use exface\Core\Exceptions\Security\AuthenticationFailedError;
 
 class JEasyUIFacade extends AbstractAjaxFacade
 {
@@ -121,7 +122,7 @@ $.ajaxPrefilter(function( options ) {
     
     protected function buildHtmlFromError(ServerRequestInterface $request, \Throwable $exception, UiPageInterface $page = null) : string
     {
-        if ($this->isShowingErrorDetails() === false) {
+        if ($this->isShowingErrorDetails() === false && ! ($exception instanceof AuthenticationFailedError)) {
             $body = '';
             try {
                 $mode = $request->getAttribute($this->getRequestAttributeForRenderingMode(), static::MODE_FULL);
@@ -171,12 +172,22 @@ HTML;
     
     protected function buildHtmlPage(WidgetInterface $widget) : string
     {
-        $renderer = new EuiFacadePageTemplateRenderer($this, $this->getPageTemplateFilePath(), $widget);
+        if ($widget->getPage()->getAlias() === 'login') {
+            $tpl = $this->getPageTemplateFilePathLogin();
+        } else {
+            $tpl = $this->getPageTemplateFilePath();
+        }
+        $renderer = new EuiFacadePageTemplateRenderer($this, $tpl, $widget);
         return $renderer->render();
     }
     
     protected function getPageTemplateFilePathDefault() : string
     {
         return $this->getApp()->getDirectoryAbsolutePath() . DIRECTORY_SEPARATOR . 'Facades' . DIRECTORY_SEPARATOR . 'Templates' . DIRECTORY_SEPARATOR . 'EuiDefaultTemplate.html';
+    }
+    
+    protected function getPageTemplateFilePathLogin() : string
+    {
+        return $this->getApp()->getDirectoryAbsolutePath() . DIRECTORY_SEPARATOR . 'Facades' . DIRECTORY_SEPARATOR . 'Templates' . DIRECTORY_SEPARATOR . 'EuiLoginTemplate.html';
     }
 }
