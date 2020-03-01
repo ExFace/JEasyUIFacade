@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta charset="UTF-8">
+		<meta name="viewport" content="width=device-width, initial-scale=1">
+	    <meta name="apple-mobile-web-app-capable" content="yes">
+	    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+	    <meta name="page_id" content="[#~page:alias#]">
+	    
+	    <!-- Prevents browsers from sending rerferrer-headers for href, img and ajax-requests.
+	    This for external media content, where requests may get filtered -->
+	    <meta name="referrer" content="no-referrer" />
+		
+		<title>[#~page:name#]</title>
+		        
+		<!-- Generated includes -->
+		[#~head#]	
+		
+		<!-- jQuery-Plugin to run in iOS-WebApp window -->
+		<script type="text/javascript" src="vendor/exface/JEasyUIFacade/Facades/js/jquery.stayInWebApp.js"></script>
+		<script type="text/javascript">
+			$(function() {
+				$.stayInWebApp();
+			});
+		</script>
+		
+	</head>
+	<body class="easyui-layout">
+		<div data-options="region:'center'">
+			<div class="exf-message-page" style="position: absolute; top: 30%; width: 100%">
+		        <h1 class="logo" style="float: none; text-align: center; margin: 0; padding: 0 10px 20px 10px">[#~config:exface.Core:title_html#]</h1>
+		        [#~body#]
+		    </div>
+		</div>
+	</body>
+</html>
