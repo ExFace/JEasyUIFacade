@@ -10,5 +10,8 @@
 	
 	"WIDGET.SEARCH": "Search",
 		
-	"MESSAGE.INVALID.INPUTDATE": "Please enter a valid date."
+	"MESSAGE.INVALID.INPUTDATE": "Please enter a valid date.",
+	
+	"TEMPLATE.MENU": "Menu",
+	"TEMPLATE.NAVIGATION": "Navigation"
 }
