@@ -176,3 +176,7 @@ pre.sf-dump .sf-dump-private, pre.sf-dump .sf-dump-public, pre.sf-dump .sf-dump-
 .exf-spreadsheet {overflow: visible;}
 .panel:has(.exf-spreadsheet) {overflow: visible;}
 .exf-grid-item:has(.exf-spreadsheet) {overflow: visible;}
+
+/* Login, Errors, etc. */
+.exf-loginprompt {margin-left: auto; margin-right: auto}
+.exf-loginprompt > .tabs-panels > .panel > .panel-body > .panel > .panel-body {padding: 20px}
