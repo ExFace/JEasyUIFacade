@@ -87,7 +87,7 @@ HTML;
 
 HTML;
                         
-        if ($this->isOnlyVisibleElementInContainer()) {
+        if ($this->isGridItem()) {
             $output = $this->buildHtmlGridItemWrapper($output, $style);
         }
         
