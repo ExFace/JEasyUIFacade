@@ -3,6 +3,7 @@ namespace exface\JEasyUIFacade\Facades\Elements;
 
 use exface\Core\Widgets\Tabs;
 use exface\Core\Interfaces\WidgetInterface;
+use exface\Core\Widgets\MenuButton;
 
 class EuiDialog extends EuiForm
 {
@@ -100,13 +101,31 @@ HTML;
 		{$children_html}
 	</div>
 	<div id="{$this->buttons_div_id}">
-		{$this->buildHtmlToolbars()}
+        {$this->buildHtmlToolbars()}
 	</div>
 	<div id="{$this->getId()}_window_tools">
 		{$window_tools}
 	</div>
 HTML;
         return $output;
+    }
+    
+    /**
+     * 
+     * @return bool
+     */
+    protected function hasButtonsVisible() : bool
+    {
+        foreach ($this->getWidget()->getButtons() as $btn) {
+            if ($btn instanceof MenuButton) {
+                if ($btn->isHidden() === false && $btn->hasButtons() === true) {
+                    return true;
+                }
+            } elseif ($btn->isHidden() === false) {
+                return true;
+            }
+        }
+        return false;
     }
 
     /**
@@ -153,7 +172,7 @@ HTML;
             . ($widget->isMaximizable() ? ', maximizable: true, maximized: ' . ($widget->isMaximized() ? 'true' : 'false') : '') 
             . ", cache: false" 
             . ", closed: false" 
-            . ", buttons: '#{$this->buttons_div_id}'" 
+            . ($this->hasButtonsVisible() ? ", buttons: '#{$this->buttons_div_id}'" : '')
             . ", tools: '#{$this->getId()}_window_tools'" 
             . ", modal: true"
             . ", onBeforeClose: function() {" . str_replace('"', '\"', $this->buildJsDestroy()) . "}";
