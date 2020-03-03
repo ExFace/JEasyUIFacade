@@ -30,8 +30,10 @@ class EuiLoginPrompt extends EuiContainer
     {
         $widget = $this->getWidget();
         
-        $width = $this->getWidthRelativeUnit();
-        $style = "width: {$width}px";
+        $style = '';
+        if ($this->hasFrame()) {
+            $style .= " width: {$this->getWidthRelativeUnit()}px";
+        }
         
         switch ($widget->getVisibility()) {
             case EXF_WIDGET_VISIBILITY_HIDDEN:
@@ -67,8 +69,9 @@ HTML;
      * @return string
      */
     public function buildJsDataOptions()
-    {        
-        return "tabPosition: 'top'";
+    {     
+        $border = $this->hasFrame() ? '' : "border:false,";
+        return "$border tabPosition: 'top'";
     }
 
     protected function getFitOption()
@@ -79,5 +82,10 @@ HTML;
     public function buildCssElementClass()
     {
         return 'exf-loginprompt';
+    }
+    
+    protected function hasFrame() : bool
+    {
+        return $this->getWidget()->hasParent() === false;
     }
 }
