@@ -80,7 +80,7 @@ class JEasyUIFacade extends AbstractAjaxFacade
         
         $includes = array_merge($includes, $this->buildHtmlHeadIcons());
         
-        if ($config->getOption('CACHE_AJAX_SCRIPTS') === true) {
+        if ($config->getOption('FACADE.AJAX.CACHE_SCRIPTS') === true) {
             $includes[] = '<script type="text/javascript">
 $.ajaxPrefilter(function( options ) {
 	if ( options.type==="GET" && options.dataType ==="script" ) {
