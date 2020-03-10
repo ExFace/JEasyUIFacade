@@ -140,6 +140,9 @@ JS;
         $widget = $this->getWidget();
         
         $value = $this->getValueWithDefaults();
+        if ($value === EXF_LOGICAL_NULL) {
+            $value = '';
+        }
         $nameScript = $widget->getAttributeAlias() . ($widget->getMultiSelect() ? '[]' : '');
         $requiredScript = $widget->isRequired() ? 'required="true" ' : '';
         $disabledScript = $widget->isDisabled() ? 'disabled="disabled" ' : '';
