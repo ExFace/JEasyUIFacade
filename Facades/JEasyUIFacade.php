@@ -106,7 +106,7 @@ $.ajaxPrefilter(function( options ) {
         // get instantiated - this is not required and may cause significant overhead because
         // the init() methods of all elements would be called (registering event listeners, etc.)
         if ($widget !== null) {
-            $widgetClass = $this->getClass($widget);
+            $widgetClass = $this->getElementClassForWidget($widget);
             if (method_exists($widgetClass, 'buildResponseData') === true) {
                 return $widgetClass::buildResponseData($this, $data_sheet, $widget);
             }
