@@ -20,11 +20,11 @@ class EuiNavCrumbs extends EuiAbstractElement
     
     protected function buildHtmlBreadcrumbs(array $menu) : string
     {
-        $node = $menu[0];
-        if ($node === null) {
+        if (empty($menu) === true) {
             return '';
-        }
+        } 
         
+        $node = $menu[0];
         $output = <<<HTML
 
 <div>
@@ -38,16 +38,17 @@ HTML;
     <a style="text-decoration:underline;" href='{$url}'>{$node->getName()}</a> »&nbsp;           
 HTML;
                            
-            $node = $node->getChildNodes()[0];
-        }
+                $node = $node->getChildNodes()[0];
+            }
         
         //add breadcrumb for leaf page
-        $output .= <<<HTML
+            $output .= <<<HTML
+
     {$node->getName()}
 </div>
-
 HTML;
         return $output;
+        
     }
     
 }
