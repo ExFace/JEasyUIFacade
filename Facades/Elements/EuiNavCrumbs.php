@@ -21,18 +21,21 @@ class EuiNavCrumbs extends EuiAbstractElement
     protected function buildHtmlBreadcrumbs(array $menu) : string
     {
         $node = $menu[0];
+        if ($node === null) {
+            return '';
+        }
+        
         $output = <<<HTML
 
 <div>
-
 HTML;
         
         //add all breadcrumbs leading to leaf page
         while ($node->hasChildNodes() === true) {
             $url = $this->getFacade()->buildUrlToPage($node->getPageAlias());
             $output .= <<<HTML
-    <a style="text-decoration:underline;" href='{$url}'>{$node->getName()}</a> »&nbsp;           
 
+    <a style="text-decoration:underline;" href='{$url}'>{$node->getName()}</a> »&nbsp;           
 HTML;
                            
             $node = $node->getChildNodes()[0];
