@@ -188,11 +188,15 @@ HTML;
     public function getWidth()
     {
         $width = $this->getWidget()->getWidth();
+        
         if ($width->isUndefined()) {
             $number_of_columns = $this->getNumberOfColumns();
-            //$this->getWidget()->setWidth(($number_of_columns * $this->getWidthRelativeUnit() + 35) . 'px');
             return ($number_of_columns * $this->getWidthRelativeUnit() + 35) . 'px';
         } 
+        
+        if ($width->isMax()) {
+            return '100%';
+        }
         
         if ($width->isRelative()) {
             return $width->getValue() * $this->getWidthRelativeUnit() + 35 . 'px';

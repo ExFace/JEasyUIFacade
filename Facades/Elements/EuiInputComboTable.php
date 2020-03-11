@@ -53,7 +53,7 @@ class EuiInputComboTable extends EuiInput
     {
         parent::init();
         $this->setElementType('combogrid');
-        $this->setJsDebugLevel($this->getFacade()->getConfig()->getOption("JAVASCRIPT_DEBUG_LEVEL"));
+        $this->setJsDebugLevel($this->getFacade()->getConfig()->getOption("FACADE.JAVASCRIPT_DEBUG_LEVEL"));
         
         // Register onChange-Handler for Filters with Live-Reference-Values
         $widget = $this->getWidget();
@@ -140,6 +140,9 @@ JS;
         $widget = $this->getWidget();
         
         $value = $this->getValueWithDefaults();
+        if ($value === EXF_LOGICAL_NULL) {
+            $value = '';
+        }
         $nameScript = $widget->getAttributeAlias() . ($widget->getMultiSelect() ? '[]' : '');
         $requiredScript = $widget->isRequired() ? 'required="true" ' : '';
         $disabledScript = $widget->isDisabled() ? 'disabled="disabled" ' : '';

@@ -80,7 +80,7 @@ class JEasyUIFacade extends AbstractAjaxFacade
         
         $includes = array_merge($includes, $this->buildHtmlHeadIcons());
         
-        if ($config->getOption('CACHE_AJAX_SCRIPTS') === true) {
+        if ($config->getOption('FACADE.AJAX.CACHE_SCRIPTS') === true) {
             $includes[] = '<script type="text/javascript">
 $.ajaxPrefilter(function( options ) {
 	if ( options.type==="GET" && options.dataType ==="script" ) {
@@ -106,7 +106,7 @@ $.ajaxPrefilter(function( options ) {
         // get instantiated - this is not required and may cause significant overhead because
         // the init() methods of all elements would be called (registering event listeners, etc.)
         if ($widget !== null) {
-            $widgetClass = $this->getClass($widget);
+            $widgetClass = $this->getElementClassForWidget($widget);
             if (method_exists($widgetClass, 'buildResponseData') === true) {
                 return $widgetClass::buildResponseData($this, $data_sheet, $widget);
             }
