@@ -255,7 +255,6 @@ JS;
                                     
                                 // if row gets moved to a certain point above or below another row
                                 } else {
-                                    var targetRowIndex, targetRowPosition, sourceRowIndex;
                                     children.sort(function (a, b) {return a['{$indexColName}']-b['{$indexColName}']});
                                     if ('{$direction}' === '{$directionDESC}') {
                                         if ({$pointJs} === 'top') {
