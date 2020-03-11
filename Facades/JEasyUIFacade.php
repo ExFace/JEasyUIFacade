@@ -170,6 +170,11 @@ HTML;
         return parent::buildHtmlFromError($request, $exception, $page);
     }
     
+    /**
+     * 
+     * {@inheritDoc}
+     * @see \exface\Core\Facades\AbstractAjaxFacade\AbstractAjaxFacade::buildHtmlPage()
+     */
     protected function buildHtmlPage(WidgetInterface $widget) : string
     {
         if ($widget->getPage()->getAlias() === 'login') {
