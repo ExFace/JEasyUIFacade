@@ -60,7 +60,7 @@ class EuiDataTree extends EuiDataTable
 					');
         }
         
-        if (($leafIdDelim = $widget->getTreeLeafIdConcatenate()) !== null) {
+        if ($widget->getTreeLeafIdConcatenate() !== null) {
             $calculatedIdField = ', idField: "_leafId"';
         }
         
@@ -109,8 +109,8 @@ JS;
                                 if (parentId !== null && parentId !== undefined) {
                                     data[0]["_parentId"] = parentId;
                                 } else {
-                                    if (data[0]['{$widget->getTreeParentIdAttributeAlias()}'] !== null && data[0]['{$widget->getTreeParentIdAttributeAlias()}'] !== undefined ) {
-                                        data[0]["_parentId"] = data[0]['{$widget->getTreeParentIdAttributeAlias()}'];
+                                    if (data[0]['{$widget->getTreeParentRelationAlias()}'] !== null && data[0]['{$widget->getTreeParentRelationAlias()}'] !== undefined ) {
+                                        data[0]["_parentId"] = data[0]['{$widget->getTreeParentRelationAlias()}'];
                                     }
                                 }
                             }
@@ -155,8 +155,8 @@ JS;
                             //row['{$uidColName}'] = sourceRow['{$uidColName}'];
                             {$this->buildJsCopyAttributesFromRow('row', 'sourceRow')}
                             if (targetRow === null && point === 'append') {                                
-                                row['{$widget->getTreeParentIdAttributeAlias()}'] = data[0]['{$widget->getTreeParentIdAttributeAlias()}'];
-                                if (sourceRow['{$widget->getTreeParentIdAttributeAlias()}'] !== data[0]['{$widget->getTreeParentIdAttributeAlias()}']) {
+                                row['{$widget->getTreeParentRelationAlias()}'] = data[0]['{$widget->getTreeParentRelationAlias()}'];
+                                if (sourceRow['{$widget->getTreeParentRelationAlias()}'] !== data[0]['{$widget->getTreeParentRelationAlias()}']) {
                                     changedRows.push(row);
                                 }                               
                             } else {                                                       
@@ -164,17 +164,17 @@ JS;
                                     if (point === 'append') {
                                         sourceRow["_parentId"] = targetRow['{$uidColName}'];
                                     } else {
-                                        if (targetRow['{$widget->getTreeParentIdAttributeAlias()}'] !== undefined) {
-                                            sourceRow["_parentId"] = targetRow['{$widget->getTreeParentIdAttributeAlias()}'];
+                                        if (targetRow['{$widget->getTreeParentRelationAlias()}'] !== undefined) {
+                                            sourceRow["_parentId"] = targetRow['{$widget->getTreeParentRelationAlias()}'];
                                         } else {
                                             sourceRow["_parentId"] = 0;
                                         }  
                                     }
                                 }
-                                if (sourceRow['{$widget->getTreeParentIdAttributeAlias()}'] !== sourceRow["_parentId"]) {                                                                
-                                    row['{$widget->getTreeParentIdAttributeAlias()}'] = sourceRow['_parentId'];
+                                if (sourceRow['{$widget->getTreeParentRelationAlias()}'] !== sourceRow["_parentId"]) {                                                                
+                                    row['{$widget->getTreeParentRelationAlias()}'] = sourceRow['_parentId'];
                                 }                            
-                                if (! (point === 'append' && sourceRow['{$widget->getTreeParentIdAttributeAlias()}'] === targetRow['{$uidColName}'])) {
+                                if (! (point === 'append' && sourceRow['{$widget->getTreeParentRelationAlias()}'] === targetRow['{$uidColName}'])) {
                                     changedRows.push(row);
                                 }
                             }
@@ -283,7 +283,7 @@ JS;
                                     }
                                     
                                     // if the sourceRow had same parent as the targetRow search for old sourceRow position
-                                    if ({$targetRowJs}['{$widget->getTreeParentIdAttributeAlias()}'] === {$sourceRowJs}['{$widget->getTreeParentIdAttributeAlias()}']) {
+                                    if ({$targetRowJs}['{$widget->getTreeParentRelationAlias()}'] === {$sourceRowJs}['{$widget->getTreeParentRelationAlias()}']) {
                                         for (var i = 0; i < count; i++) {
                                             if (children[i]['{$uidColName}'] === {$sourceRowJs}['{$uidColName}']) {
                                                 sourceRowIndex = i;
@@ -308,7 +308,7 @@ JS;
                                             }
                                             var row = {};
                                             {$this->buildJsCopyAttributesFromRow('row', 'children[i]')}
-                                            row['{$widget->getTreeParentIdAttributeAlias()}'] = children[i]['{$widget->getTreeParentIdAttributeAlias()}']
+                                            row['{$widget->getTreeParentRelationAlias()}'] = children[i]['{$widget->getTreeParentRelationAlias()}']
                                             row['{$indexColName}'] = parseInt(children[i]['{$indexColName}']) + 1;
                                             {$changedRowsJs}.push(row);
                                         }
@@ -376,8 +376,9 @@ JS;
         $result = $facade->buildResponseData($data_sheet);
         /* @var $widget \exface\Core\Widgets\DataTree */
         $folderFlagCol = $widget->hasTreeFolderFlag() ? $widget->getTreeFolderFlagAttributeAlias() : null;
-        $parentCol = $widget->getTreeParentIdAttributeAlias();
-        $idCol = $widget->getUidColumn()->getDataColumnName();
+        $parentCol = $widget->getTreeParentRelationAlias();
+        //$idCol = $widget->getUidColumn()->getDataColumnName();
+        $idCol = $widget->getTreeParentKeyAttribute()->getAliasWithRelationPath();
         $rowsById = [];
         foreach ($result['rows'] as $nr => $row) {
             // If we know, which attribute flags a leaf as a folder, use it to set the node state (open/close)
@@ -471,7 +472,7 @@ JS;
                         if ({$js_var_param}['data'] !== undefined && {$js_var_param}['data']['filters'] !== undefined && {$js_var_param}['data']['filters']['conditions'] !== undefined) {
                             var conditions = {$js_var_param}['data']['filters']['conditions'];
                             for (var c in conditions) {
-                                if (conditions[c]['expression'] == '{$this->getWidget()->getTreeParentIdAttributeAlias()}') {
+                                if (conditions[c]['expression'] == '{$this->getWidget()->getTreeParentRelationAlias()}') {
                                     {$js_var_param}['data']['filters']['conditions'][c]['value'] = row['{$this->getWidget()->getTreeFolderFilterColumn()->getDataColumnName()}'];
                                 }
                             }
@@ -507,7 +508,7 @@ JS;
                                 if ({$js_var_param}['data'] !== undefined && {$js_var_param}['data']['filters'] !== undefined && {$js_var_param}['data']['filters']['conditions'] !== undefined) {
                                     var conditions = {$js_var_param}['data']['filters']['conditions'];
                                     for (var c in conditions) {
-                                        if (conditions[c]['expression'] == '{$this->getWidget()->getTreeParentIdAttributeAlias()}') {
+                                        if (conditions[c]['expression'] == '{$this->getWidget()->getTreeParentRelationAlias()}') {
                                             if (node['children'] !== undefined && node['state'] === 'open') {
                                                 var oldValue = {$js_var_param}['data']['filters']['conditions'][c]['value'];
                                                 {$js_var_param}['data']['filters']['conditions'][c]['value'] = oldValue + '{$treeFolderFilterDelim}' + node['{$treeFolderFilterCol->getDataColumnName()}'];
@@ -530,7 +531,7 @@ JS;
                                 if ({$js_var_param}['data'] !== undefined && {$js_var_param}['data']['filters'] !== undefined && {$js_var_param}['data']['filters']['conditions'] !== undefined) {
                                     var conditions = {$js_var_param}['data']['filters']['conditions'];
                                     for (var c in conditions) {
-                                        if (conditions[c]['expression'] == '{$this->getWidget()->getTreeParentIdAttributeAlias()}') {
+                                        if (conditions[c]['expression'] == '{$this->getWidget()->getTreeParentRelationAlias()}') {
                                             var oldValue = {$js_var_param}['data']['filters']['conditions'][c]['value'];
                                             if (oldValue === '' || oldValue === undefined || oldValue === null) {
                                                 {$js_var_param}['data']['filters']['conditions'][c]['value'] = '{$this->getWidget()->getTreeRootUid()}';
