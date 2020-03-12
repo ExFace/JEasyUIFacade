@@ -62,7 +62,6 @@ class EuiDataTree extends EuiDataTable
         
         if (($leafIdDelim = $widget->getTreeLeafIdConcatenate()) !== null) {
             $calculatedIdField = ', idField: "_leafId"';
-            $leafIdCalcScript = 'data.rows[row]["_leafId"] = (parentId ? parentId+"' . $leafIdDelim . '" : "")+data.rows[row]["' . $widget->getUidColumn()->getDataColumnName() . '"];';
         }
         
         $grid_head = parent::buildJsInitOptionsHead() . $calculatedIdField;
@@ -70,8 +69,30 @@ class EuiDataTree extends EuiDataTable
         
                         , treeField: '{$widget->getTreeColumn()->getDataColumnName()}'
                         , lines: false
-                        , loadFilter: function(data, parentId) {
-                            
+                        {$this->buildJsDragNDropInitOptions()}
+                        {$this->buildJsOnLoadSuccessOption()}                        
+
+JS;
+                        
+        $grid_head .= ($this->buildJsOnExpandScript() ? ', onExpand: function(row){' . $this->buildJsOnExpandScript() . '}' : '');
+
+        return $grid_head;
+    }
+    
+    public function buildJsLoadFilterOption(string $dataJs, string $parentIdJs = 'parentId') : string
+    {
+        $widget = $this->getWidget();
+        
+        if (($leafIdDelim = $widget->getTreeLeafIdConcatenate()) !== null) {
+            $leafIdCalcScript = 'data.rows[row]["_leafId"] = (parentId ? parentId+"' . $leafIdDelim . '" : "")+data.rows[row]["' . $widget->getUidColumn()->getDataColumnName() . '"];';
+        }
+        
+        $script = parent::getLoadFilterScript($dataJs);
+        return <<<JS
+
+                        , loadFilter: function($dataJs, $parentIdJs) {
+                            var data = $dataJs;
+                            var parentId = $parentIdJs;
                             var row = 0;
                             if ("rows" in data) {
                                 var rowCnt = data.rows.length;
@@ -94,16 +115,11 @@ class EuiDataTree extends EuiDataTable
                                 }
                             }
 
+                            $script
+
                             return data;
                         }
-                        {$this->buildJsDragNDropInitOptions()}
-                        {$this->buildJsOnLoadSuccessOption()}                        
-
 JS;
-                        
-        $grid_head .= ($this->buildJsOnExpandScript() ? ', onExpand: function(row){' . $this->buildJsOnExpandScript() . '}' : '');
-
-        return $grid_head;
     }
     
     protected function buildJsDragNDropInitOptions() : string

@@ -212,11 +212,9 @@ class EuiData extends EuiAbstractElement
 					' . $this->buildJsShowError('response.responseText', 'response.status + " " + response.statusText') . '
 					' . $this->getOnLoadError() . '
 				}
-				' . ($this->getLoadFilterScript() ? ', loadFilter: function(data) {
-					' . $this->getLoadFilterScript() . '
-					return data;
-				}' : '') . '
+				' . $this->buildJsLoadFilterOption('data') . '
 				, columns: [ ' . implode(',', $this->buildJsInitOptionsColumns()) . ' ]';
+        
         return $output;
     }
     
@@ -504,9 +502,74 @@ JS;
         $this->load_filter_script .= $javascript;
     }
     
-    public function getLoadFilterScript()
+    protected function getLoadFilterScript(string $dataJs) : ?string
     {
-        return $this->load_filter_script;
+        return $this->load_filter_script . $this->buildJsLoadFilterHandleWidgetLinks($dataJs);
+    }
+    
+    protected function buildJsLoadFilterOption(string $dataJs) : string
+    {
+        $script = $this->getLoadFilterScript($dataJs);
+        if (trim($script)) {
+            return ", loadFilter: function($dataJs) {
+                    $script
+                    return $dataJs;
+            }";
+        } else {
+            return '';
+        }
+    }
+    
+    /**
+     * Return the JS code to add values from widgets links to table data right after loading it.
+     * 
+     * @param string $dataJs
+     * @return string
+     */
+    protected function buildJsLoadFilterHandleWidgetLinks(string $dataJs) : string
+    {
+        $addLocalValuesJs = '';
+        $linkedEls = [];
+        foreach ($this->getWidget()->getColumns() as $col) {
+            $cellWidget = $col->getCellWidget();
+            if ($cellWidget->hasValue() === false) {
+                continue;
+            }
+            $valueExpr = $cellWidget->getValueExpression();
+            switch (true) {
+                case $valueExpr->isReference() === true:
+                    $linkedEl = $this->getFacade()->getElement($valueExpr->getWidgetLink($cellWidget)->getTargetWidget());
+                    $linkedEls[] = $linkedEl;
+                    $val = $linkedEl->buildJsValueGetter();
+                    break;
+                case $valueExpr->isConstant() === true:
+                    $val = json_encode($valueExpr->toString());
+                    break;
+            }
+            $addLocalValuesJs .= <<<JS
+            
+                        oRow["{$col->getDataColumnName()}"] = {$val};
+JS;
+        }
+        if ($addLocalValuesJs) {
+            $addLocalValuesJs = <<<JS
+            
+                    // Add static values
+                    ($dataJs.rows || []).forEach(function(oRow){
+                        {$addLocalValuesJs}
+                    });
+JS;
+            // FIXME need to update the changed rows somehow - otherwise the changes are not visible to the user!
+            $addLocalValuesOnChange = <<<JS
+                        
+                    var $dataJs = $("#{$this->getId()}").{$this->getElementType()}('getData');
+                    {$addLocalValuesJs}
+JS;
+            foreach ($linkedEls as $linkedEl) {
+                $linkedEl->addOnChangeScript($addLocalValuesOnChange);
+            }
+        }
+        return $addLocalValuesJs;
     }
     
     public function buildJsDataLoaderWithoutAjax(DataSheetInterface $data)
