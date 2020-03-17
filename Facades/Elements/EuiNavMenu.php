@@ -29,16 +29,19 @@ class EuiNavMenu extends EuiAbstractElement
             $output = "<ul>";
         }
         foreach ($menu as $node) {
-            $url = $this->getFacade()->buildUrlToPage($node->getPageAlias());
+            $url = $this->getFacade()->buildUrlToPage($node->getPageAlias());            
             if ($node->hasChildNodes()) {
+                //if node has child nodes, add them to menu                
                 if ($node->isAncestorOf($this->currentPage) || $node->isPage($this->currentPage)) {
-                    $aClasses = 'active';
+                    //if the node is ancestor of current page or is current page style if bold (via 'class="active current"')
+                    $aStyle = '';                    
                     if ($node->getUid() === $this->getWidget()->getPage()->getId()) {
-                        $aClasses .= ' current';
+                        //if node is current page style it with underline
+                        $aStyle .= 'text-decoration:underline;';
                     }
                     $output .= <<<HTML
                 <li class='level{$level} active'>
-                    <a class="$aClasses" href='{$url}'>{$node->getName()}</a>
+                    <a class="active current" style="{$aStyle}" href='{$url}'>{$node->getName()}</a>
 {$this->buildHtmlMenu($node->getChildNodes(), $level+1)}
                 </li>
            
@@ -48,17 +51,17 @@ HTML;
                     $output .= <<<HTML
                 <li class='level{$level} closed'>
                     <a href='{$url}'>{$node->getName()}</a>
-{$this->buildHtmlMenu($node->getChildNodes(), $level+1)}
                 </li>                
                 
 HTML;
                     
                 }
-            } elseif ($node->isAncestorOf($this->currentPage) || $node->isPage($this->currentPage)) {
+            } elseif ($node->isPage($this->currentPage)) {
+                //if node is node for current page, style it bold (via 'class="active current"') and with underline
                 $output .= <<<HTML
                 
                 <li class='level{$level} active'>
-                    <a style="text-decoration:underline;" href='{$url}'>{$node->getName()}</a>
+                    <a class="active current" style="text-decoration:underline;" href='{$url}'>{$node->getName()}</a>
                 </li>
 
 HTML;
