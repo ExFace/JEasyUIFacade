@@ -143,9 +143,7 @@ class EuiButton extends EuiAbstractElement
 							dataType: 'html',
                             cache: false,
 							data: {
-								action: '{$widget->getActionAlias()}',
-								resource: '{$widget->getPage()->getAliasWithNamespace()}',
-								element: '{$widget->getId()}',
+								{$this->buildJsRequestCommonParams($widget, $action)}
 								data: requestData
 								{$prefill}
 							},
