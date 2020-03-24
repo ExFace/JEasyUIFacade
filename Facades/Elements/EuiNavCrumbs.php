@@ -1,52 +1,58 @@
 <?php
 namespace exface\JEasyUIFacade\Facades\Elements;
 
-use exface\Core\Widgets\Breadcrumbs;
+use exface\Core\Widgets\NavCrumbs;
 
 /**
  * 
- * @method Breadcrumbs getWidget()
+ * @method NavCrumbs getWidget()
  * 
  * @author Andrej Kabachnik
  *
  */
 class EuiNavCrumbs extends EuiAbstractElement 
 {
+    private $currentPage = null;
+    
     public function buildHtml()
     {
+        $this->currentPage = $this->getWidget()->getPage();
         $breadcrumbs = $this->getWidget()->getBreadcrumbs();
-        return $this->buildHtmlBreadcrumbs($breadcrumbs);
+        if (empty($breadcrumbs) === true) {
+            return '';
+        }
+        $output = <<<HTML
+        
+<div>
+HTML;
+        $output .= $this->buildHtmlBreadcrumbs($breadcrumbs);
+        
+        $output .= <<<HTML
+        
+<div>
+HTML;
+        
+        return $output;
     }
     
     protected function buildHtmlBreadcrumbs(array $menu) : string
     {
-        if (empty($menu) === true) {
-            return '';
-        } 
-        
-        $node = $menu[0];
-        $output = <<<HTML
-
-<div>
+        $output = '';
+        foreach($menu as $node) {
+            if ($node->isAncestorOf($this->currentPage)) {
+                $url = $this->getFacade()->buildUrlToPage($node->getPageAlias());
+                $output .= <<<HTML
+                
+    <a style="text-decoration:underline;" href='{$url}'>{$node->getName()}</a> »&nbsp;
 HTML;
-        
-        //add all breadcrumbs leading to leaf page
-        while ($node->hasChildNodes() === true) {
-            $url = $this->getFacade()->buildUrlToPage($node->getPageAlias());
-            $output .= <<<HTML
-
-    <a style="text-decoration:underline;" href='{$url}'>{$node->getName()}</a> »&nbsp;           
-HTML;
-                           
-                $node = $node->getChildNodes()[0];
+                if ($node->hasChildNodes()) {
+                    $output .= $this->buildHtmlBreadcrumbs($node->getChildNodes());
+                }
+                break;
+            } elseif ($node->isPage($this->currentPage)) {
+                $output .= "{$node->getName()}";
             }
-        
-        //add breadcrumb for leaf page
-            $output .= <<<HTML
-
-    {$node->getName()}
-</div>
-HTML;
+        }
         return $output;
         
     }
