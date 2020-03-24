@@ -214,7 +214,7 @@ function jeasyui_show_error(sTitle, sBody, sSrcElementId) {
  */
 function jeasyui_create_dialog(parentElement, id, options, content, parseContent){
 	parseContent = parseContent ? true : false;
-	var dialog = $('<div id="'+id+'"><div class="spinner-bg"><i class="panel-loading"></i><span class="sr-only">Loading...</span></div></div>');
+	var dialog = $('<div id="'+id+'" class="exf-ajax-error"><div class="spinner-bg"><i class="panel-loading"></i><span class="sr-only">Loading...</span></div></div>');
 	parentElement.append(dialog);
 	dialog.append(content);
 	

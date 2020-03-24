@@ -89,7 +89,7 @@ div.messager-body{overflow-y: auto;}
 
 /* Messages */
 .exf-message-list {margin: 4px 4px 2px 4px;}
-.exf-message {padding: 5px; color: white; margin: 2px 0; min-height: 27px; background-color: lightgray;}
+.exf-message {padding: 5px; color: white; margin: 2px 0; min-height: 38px; background-color: lightgray;}
 .exf-message a {color: white;}
 .exf-message-icon {float: left; width: 50px; text-align: center; height: 2em; line-height: 2em;}
 .exf-message-icon > i {font-size: 2em; color: white;}
@@ -178,5 +178,7 @@ pre.sf-dump .sf-dump-private, pre.sf-dump .sf-dump-public, pre.sf-dump .sf-dump-
 .exf-grid-item:has(.exf-spreadsheet) {overflow: visible;}
 
 /* Login, Errors, etc. */
+.exf-ajax-error > .exf-loginprompt-wrapper {margin-top: 30%}
+.exf-loginprompt-wrapper > .exf-message {margin-left: auto; margin-right: auto}
 .exf-loginprompt {margin-left: auto; margin-right: auto}
 .exf-loginprompt > .tabs-panels > .panel > .panel-body > .panel > .panel-body {padding: 20px}
