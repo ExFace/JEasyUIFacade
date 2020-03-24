@@ -31,7 +31,7 @@ class EuiLoginPrompt extends EuiContainer
         $widget = $this->getWidget();
         
         $style = '';
-        if ($this->hasFrame()) {
+        if ($this->isStandalone()) {
             $style .= " width: {$this->getWidthRelativeUnit()}px";
         }
         
@@ -41,8 +41,21 @@ class EuiLoginPrompt extends EuiContainer
                 break;
         }
         
+        $headerHtml = '';
+        if ($widget->hasMessages()) {
+            foreach ($widget->getMessageList()->getMessages() as $message) {
+                $messageEl = $this->getFacade()->getElement($message);
+                $messageEl->addElementCssStyle($style);
+                $headerHtml .= $messageEl->buildHtml();
+            }
+        }
+        if ($this->isStandalone() && $caption = $this->getCaption()) {
+            $headerHtml = '<h2 class="logo" style="float: none; text-align: center; margin: 0; padding: 0 10px 20px 10px">' . $caption . '</h2>' . $headerHtml;
+        }
+        
         $output = <<<HTML
-    <div style="width: 100%; text-align: center;">
+    <div class="exf-loginprompt-wrapper">
+        {$headerHtml}
         <div id="{$this->getId()}" style="{$style}" class="easyui-{$this->getElementType()} {$this->buildCssElementClass()}" data-options="{$this->buildJsDataOptions()}">
         	{$this->buildHtmlForWidgets()}
         </div>
@@ -70,7 +83,7 @@ HTML;
      */
     public function buildJsDataOptions()
     {     
-        $border = $this->hasFrame() ? '' : "border:false,";
+        $border = $this->isStandalone() ? '' : "border:false,";
         return "$border tabPosition: 'top'";
     }
 
@@ -84,7 +97,7 @@ HTML;
         return 'exf-loginprompt';
     }
     
-    protected function hasFrame() : bool
+    protected function isStandalone() : bool
     {
         return $this->getWidget()->hasParent() === false;
     }
