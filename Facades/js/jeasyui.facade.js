@@ -204,7 +204,7 @@ function jeasyui_show_error(sTitle, sBody, sSrcElementId) {
         	return;
         }
     }
-	
+
 	jeasyui_create_dialog($("body"), sSrcElementId + "_error", {title: sTitle, width: 800, height: "80%"}, sBody, true);
 	return;
 }
@@ -217,6 +217,12 @@ function jeasyui_create_dialog(parentElement, id, options, content, parseContent
 	var dialog = $('<div id="'+id+'"><div class="spinner-bg"><i class="panel-loading"></i><span class="sr-only">Loading...</span></div></div>');
 	parentElement.append(dialog);
 	dialog.append(content);
+	
+	options = $.extend({
+		 onClose: function(){
+			 $('#' + id).dialog('destroy');
+		 }
+	}, options);
 	
 	// Open the dialog right away (it will show the spinner as long as the content is not loaded)
 	dialog.dialog(options);

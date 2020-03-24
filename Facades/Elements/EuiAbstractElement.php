@@ -50,7 +50,7 @@ abstract class EuiAbstractElement extends AbstractJqueryElement
     public function buildJsShowError($message_body_js, $title_js = null)
     {
         $title_js = ! is_null($title_js) ? $title_js : '"Error"';
-        return 'jeasyui_show_error(' . $title_js . ', ' . $message_body_js . ', ' . $this->getId() . ');';
+        return 'jeasyui_show_error(' . $title_js . ', ' . $message_body_js . ', "' . $this->getId() . '");';
     }
 
     /**
