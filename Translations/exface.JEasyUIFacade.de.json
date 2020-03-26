@@ -6,9 +6,14 @@
 	"MESSAGE.SUCCESS_TITLE": "Erfolg",
 	"MESSAGE.FILL_REQUIRED_ATTRIBUTES": "Bitte füllen Sie die benötigten Felder aus: ",
 	
+	"WIDGET.CONFIRM_PASSWORD": "Passwort bestätigen",
+	
 	"WIDGET.DATATABLE.CONFIGURATOR_EXPAND_COLLAPSE": "Filter ein bzw. ausklappen",
 	
 	"WIDGET.SEARCH": "Suchen",
+		
+	"MESSAGE.INVALID.INPUTDATE": "Bitte ein gültiges Datum eintragen.",
 	
-	"MESSAGE.INVALID.INPUTDATE": "Bitte ein gültiges Datum eintragen."
+	"TEMPLATE.MENU": "Menü",
+	"TEMPLATE.NAVIGATION": "Navigation"
 }
