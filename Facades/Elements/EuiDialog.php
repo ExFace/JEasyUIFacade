@@ -44,12 +44,8 @@ class EuiDialog extends EuiForm
         
         $children_html = '';
         if (! $this->isLazyLoading()) {
-            $visibleChildren = $widget->getWidgets(function($w) { 
-                return $w->isHidden() === false; 
-            });
-            if (count($visibleChildren) === 1 && ($visibleChildren[0] instanceof Tabs)) {
-                // FIXME put the messages in the active tab instead of the first tab
-                $visibleChildren[0]->getTab(0)->addWidget($widget->getMessageList(), 0);
+            if ($filler = $widget->getFillerWidget()) {
+                $filler->getAlternativeContainerForOrphanedSiblings()->addWidget($widget->getMessageList(), 0);
                 $messageListHtml = '';
             } else {
                 $messageListHtml = $this->getFacade()->getElement($widget->getMessageList())->buildHtml();
