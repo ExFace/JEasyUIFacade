@@ -32,7 +32,7 @@ class EuiInputPassword extends EuiInput
 						' . ($widget->isDisabled() ? 'disabled="disabled" ' : '') . '
 						/>
 					';
-        return parent::buildHtmlGridItemWrapper('<div>' . $html . '</div>' . '<div>' . $this->getFacade()->getElement($this->getConfirmationInput())->buildHtmlLabelWrapper($secondInputHtml, false) . '</div>', $title);
+        return parent::buildHtmlGridItemWrapper('<div>' . $html . '</div>' . '<div style= "padding: 4px 0 4px 0">' . $this->getFacade()->getElement($this->getConfirmationInput())->buildHtmlLabelWrapper($secondInputHtml, false) . '</div>', $title);
     }
         
     protected function getConfirmationInput() : WidgetInterface
@@ -52,12 +52,29 @@ class EuiInputPassword extends EuiInput
     {
         $initSecondInput = '';
         if ($this->getWidget()->getShowSecondInputForConfirmation() === true) {
-            $initSecondInput = $this->getFacade()->getElement($this->getConfirmationInput())->buildJs();
+            $confirmInputElement = $this->getFacade()->getElement($this->getConfirmationInput());
+            $initSecondInput = $confirmInputElement->buildJs();
+            $onChangeScript = <<<JS
+            
+                        if ({$this->buildJsValueGetter()} === '') {
+                            {$confirmInputElement->buildJsDisabler()}
+                        } else {
+                            {$confirmInputElement->buildJsEnabler()}
+                        }
+JS;
+            $this->addOnChangeScript($onChangeScript);
         }
         
         return parent::buildJs() . <<<JS
         
-				setTimeout(function(){ $('#{$this->getId()}').parent().find('input').prop('type', 'password'); }, 0);
+				setTimeout(function(){
+                    var elements = $('#{$this->getId()}').parent().find('input');
+                    elements.each(function() {
+                        if ($(this).prop('type') !== 'hidden') {
+                            $(this).prop('type', 'password');
+                        }
+                    })                    
+                }, 0);
                 {$initSecondInput}
 JS;
     }
@@ -66,7 +83,7 @@ JS;
     {
         if ($this->getWidget()->getShowSecondInputForConfirmation() === true) {
             $confirmInputElement = $this->getFacade()->getElement($this->getConfirmationInput());
-            return "{$this->buildJsValueGetter()} === {$confirmInputElement->buildJsValueGetter()}";
+            return "({$this->buildJsValueGetter()} === {$confirmInputElement->buildJsValueGetter()})";
         }
         return 'true';
     }

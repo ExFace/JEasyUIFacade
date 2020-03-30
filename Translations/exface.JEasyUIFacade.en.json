@@ -6,7 +6,7 @@
 	"MESSAGE.SUCCESS_TITLE": "Success",
 	"MESSAGE.FILL_REQUIRED_ATTRIBUTES": "Please fill in the required fields: ",
 	
-	"WIDGET.CONFIRM_PASSWORD": "Confirm password",
+	"WIDGET.INPUTPASSWORD.CONFIRM": "Confirm password",
 	
 	"WIDGET.DATATABLE.CONFIGURATOR_EXPAND_COLLAPSE": "Collapse/expand quick filters",
 	
