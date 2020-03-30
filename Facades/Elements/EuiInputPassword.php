@@ -20,6 +20,11 @@ class EuiInputPassword extends EuiInput
             
     private $conformationInputWidget = null;
     
+    /**
+     * 
+     * {@inheritDoc}
+     * @see \exface\JEasyUIFacade\Facades\Elements\EuiAbstractElement::buildHtmlGridItemWrapper()
+     */
     public function buildHtmlGridItemWrapper($html, $title = '')
     {        
         $widget = $this->getWidget();
@@ -35,6 +40,11 @@ class EuiInputPassword extends EuiInput
         return parent::buildHtmlGridItemWrapper('<div>' . $html . '</div>' . '<div style= "padding: 4px 0 4px 0">' . $this->getFacade()->getElement($this->getConfirmationInput())->buildHtmlLabelWrapper($secondInputHtml, false) . '</div>', $title);
     }
         
+    /**
+     * returns the password confirmation input widget
+     * 
+     * @return WidgetInterface
+     */
     protected function getConfirmationInput() : WidgetInterface
     {
         if ($this->conformationInputWidget === null) {
@@ -48,6 +58,11 @@ class EuiInputPassword extends EuiInput
         return $this->conformationInputWidget;
     }
     
+    /**
+     * 
+     * {@inheritDoc}
+     * @see \exface\JEasyUIFacade\Facades\Elements\EuiInput::buildJs()
+     */
     public function buildJs()
     {
         $initSecondInput = '';
@@ -79,6 +94,11 @@ JS;
 JS;
     }
     
+    /**
+     * 
+     * {@inheritDoc}
+     * @see \exface\JEasyUIFacade\Facades\Elements\EuiInput::buildJsValidator()
+     */
     public function buildJsValidator()
     {
         if ($this->getWidget()->getShowSecondInputForConfirmation() === true) {
