@@ -44,8 +44,8 @@ class EuiDialog extends EuiForm
         
         $children_html = '';
         if (! $this->isLazyLoading()) {
-            if ($filler = $widget->getFillerWidget()) {
-                $filler->getAlternativeContainerForOrphanedSiblings()->addWidget($widget->getMessageList(), 0);
+            if (($filler = $widget->getFillerWidget()) && ($alternative = $filler->getAlternativeContainerForOrphanedSiblings())) {
+                $alternative->addWidget($widget->getMessageList(), 0);
                 $messageListHtml = '';
             } else {
                 $messageListHtml = $this->getFacade()->getElement($widget->getMessageList())->buildHtml();
