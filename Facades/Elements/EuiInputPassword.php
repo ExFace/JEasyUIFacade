@@ -31,13 +31,45 @@ class EuiInputPassword extends EuiInput
         if ($widget->getShowSecondInputForConfirmation() === false) {
             return parent::buildHtmlGridItemWrapper($html, $title); 
         }
+        
         $secondInputHtml =  '	<input style="height: 100%; width: 100%;"
 						id="' . $this->getConfirmationInput()->getId() . '"
 						' . ($widget->isRequired() ? 'required="true" ' : '') . '
 						' . ($widget->isDisabled() ? 'disabled="disabled" ' : '') . '
 						/>
 					';
-        return parent::buildHtmlGridItemWrapper('<div>' . $html . '</div>' . '<div style= "padding: 4px 0 4px 0">' . $this->getFacade()->getElement($this->getConfirmationInput())->buildHtmlLabelWrapper($secondInputHtml, false) . '</div>', $title);
+        return parent::buildHtmlGridItemWrapper('<div>' . $html . '</div>' . '<div>' . $this->getFacade()->getElement($this->getConfirmationInput())->buildHtmlLabelWrapper($secondInputHtml, false) . '</div>', $title);
+    }
+    
+    /**
+     *
+     * {@inheritDoc}
+     * @see \exface\JEasyUIFacade\Facades\Elements\EuiValue::buildCssElementClass()
+     */
+    public function buildCssElementClass()
+    {
+        return parent::buildCssElementClass() . ' exf-inputPassword';
+    }
+    
+    /**
+     * 
+     * {@inheritDoc}
+     * @see \exface\JEasyUIFacade\Facades\Elements\EuiAbstractElement::getHeight()
+     */
+    public function getHeight()
+    {
+        $widget = $this->getWidget();
+        if ($widget->getShowSecondInputForConfirmation() === false) {
+            return parent::getHeight();
+        }
+        
+        // double height for confirm input, if in px
+        $output = parent::getHeight();
+        if (substr($output, -2) === 'px') {
+            $height = intval(substr($output, 0, -2)) * 2;
+            $output = $height . 'px';
+        }
+        return $output;
     }
         
     /**
