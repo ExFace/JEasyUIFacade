@@ -101,10 +101,24 @@ class EuiInputPassword extends EuiInput
         if ($this->getWidget()->getShowSecondInputForConfirmation() === true) {
             $confirmInputElement = $this->getFacade()->getElement($this->getConfirmationInput());
             $initSecondInput = $confirmInputElement->buildJs();
+            
+            //add script do disable confirm input if password input is empty initially
+            $initSecondInput .= <<<JS
+            
+                setTimeout(function(){
+                    if ({$this->buildJsValueGetter()} === '') {
+                        {$confirmInputElement->buildJsDisabler()}
+                        {$confirmInputElement->buildJsValueSetter('')}
+                    }
+                }, 0);
+
+JS;
+            
             $onChangeScript = <<<JS
             
                         if ({$this->buildJsValueGetter()} === '') {
                             {$confirmInputElement->buildJsDisabler()}
+                            {$confirmInputElement->buildJsValueSetter('')}
                         } else {
                             {$confirmInputElement->buildJsEnabler()}
                         }
