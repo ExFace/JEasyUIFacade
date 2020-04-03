@@ -46,6 +46,7 @@ ul.nav_menu a:hover {color: white; font-weight: bold; text-decoration: none; dis
 .numberbox input {text-align: right;}
 fieldset.exface_inputgroup {border-color: #95B8E7; border-width: 1px 0 0 0; padding: 10px 0; margin: 15px 0 0 0;}
 fieldset.exface_inputgroup legend {color: #404040; font-weight: bold; padding: 0 6px; margin: 0 10px;}
+.exf-inputPassword>div {padding: 0 0 4px 0}
 
 /* Widget groups */
 .exf-panel-flat > .panel > .panel-header {background-color: transparent; padding-top: 6px; margin-bottom: 4px;}

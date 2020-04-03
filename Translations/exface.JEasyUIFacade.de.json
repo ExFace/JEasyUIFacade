@@ -6,6 +6,8 @@
 	"MESSAGE.SUCCESS_TITLE": "Erfolg",
 	"MESSAGE.FILL_REQUIRED_ATTRIBUTES": "Bitte füllen Sie die benötigten Felder aus: ",
 	
+	"WIDGET.INPUTPASSWORD.CONFIRM": "Passwort bestätigen",
+	
 	"WIDGET.DATATABLE.CONFIGURATOR_EXPAND_COLLAPSE": "Filter ein bzw. ausklappen",
 	
 	"WIDGET.SEARCH": "Suchen",
