@@ -12,6 +12,7 @@ use GuzzleHttp\Psr7\Response;
 use exface\Core\Interfaces\Exceptions\ExceptionInterface;
 use exface\JEasyUIFacade\Facades\Templates\EuiFacadePageTemplateRenderer;
 use exface\Core\Exceptions\Security\AuthenticationFailedError;
+use exface\Core\Exceptions\Security\AccessPermissionDeniedError;
 
 class JEasyUIFacade extends AbstractAjaxFacade
 {
@@ -122,10 +123,9 @@ $.ajaxPrefilter(function( options ) {
     
     protected function buildHtmlFromError(ServerRequestInterface $request, \Throwable $exception, UiPageInterface $page = null) : string
     {
-        if ($this->isShowingErrorDetails() === false && ! ($exception instanceof AuthenticationFailedError)) {
+        if ($this->isShowingErrorDetails() === false && ! ($exception instanceof AuthenticationFailedError) && ! ($exception instanceof AccessPermissionDeniedError && $this->getWorkbench()->getSecurity()->getAuthenticatedToken()->isAnonymous())) {
             $body = '';
             try {
-                $mode = $request->getAttribute($this->getRequestAttributeForRenderingMode(), static::MODE_FULL);
                 $headTags = implode("\n", $this->buildHtmlHeadCommonIncludes());
                 if ($exception instanceof ExceptionInterface) {
                     $title = $exception->getMessageType($this->getWorkbench()) . ' ' . $exception->getAlias();
@@ -147,16 +147,7 @@ $.ajaxPrefilter(function( options ) {
 </div>
 
 HTML;
-                switch (true) {
-                    case $mode === static::MODE_HEAD:
-                        $body = $headTags;
-                        break;
-                    case $mode === static::MODE_BODY:
-                        $body = $errorBody;
-                        break;
-                    default:
-                        $body = $headTags. "\n" . $errorBody;
-                }
+                $body = $headTags. "\n" . $errorBody;
             } catch (\Throwable $e) {
                 // If anything goes wrong when trying to prettify the original error, drop prettifying
                 // and throw the original exception wrapped in a notice about the failed prettification
