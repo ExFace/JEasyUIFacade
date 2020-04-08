@@ -161,24 +161,34 @@ HTML;
         return parent::buildHtmlFromError($request, $exception, $page);
     }
     
+    /**
+     * 
+     * {@inheritDoc}
+     * @see \exface\Core\Facades\AbstractAjaxFacade\AbstractAjaxFacade::buildHtmlPage($widget)
+     */
     protected function buildHtmlPage(WidgetInterface $widget) : string
     {
-        if ($widget->getPage()->getAlias() === 'login') {
-            $tpl = $this->getPageTemplateFilePathLogin();
-        } else {
-            $tpl = $this->getPageTemplateFilePath();
-        }
-        $renderer = new EuiFacadePageTemplateRenderer($this, $tpl, $widget);
+        $renderer = new EuiFacadePageTemplateRenderer($this, $this->getPageTemplateFilePath(), $widget);
         return $renderer->render();
     }
     
+    /**
+     * 
+     * {@inheritDoc}
+     * @see \exface\Core\Facades\AbstractAjaxFacade\AbstractAjaxFacade::getPageTemplateFilePathDefault()
+     */
     protected function getPageTemplateFilePathDefault() : string
     {
         return $this->getApp()->getDirectoryAbsolutePath() . DIRECTORY_SEPARATOR . 'Facades' . DIRECTORY_SEPARATOR . 'Templates' . DIRECTORY_SEPARATOR . 'EuiDefaultTemplate.html';
     }
     
-    protected function getPageTemplateFilePathLogin() : string
+    /**
+     * Returns the path to the unauthorized-page template file (absolute or relative to the vendor folder)
+     *
+     * @return string
+     */
+    protected function getPageTemplateFilePathForUnauthorized() : string
     {
-        return $this->getApp()->getDirectoryAbsolutePath() . DIRECTORY_SEPARATOR . 'Facades' . DIRECTORY_SEPARATOR . 'Templates' . DIRECTORY_SEPARATOR . 'EuiLoginTemplate.html';
+        return $this->getApp()->getDirectoryAbsolutePath() . DIRECTORY_SEPARATOR . 'Facades' . DIRECTORY_SEPARATOR . 'Templates' . DIRECTORY_SEPARATOR . 'EuiMessagePageTemplate.html';
     }
 }
