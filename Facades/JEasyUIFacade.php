@@ -166,9 +166,10 @@ HTML;
      * {@inheritDoc}
      * @see \exface\Core\Facades\AbstractAjaxFacade\AbstractAjaxFacade::buildHtmlPage($widget)
      */
-    protected function buildHtmlPage(WidgetInterface $widget) : string
+    protected function buildHtmlPage(WidgetInterface $widget, string $pagetTemplateFilePath = null) : string
     {
-        $renderer = new EuiFacadePageTemplateRenderer($this, $this->getPageTemplateFilePath(), $widget);
+        $pagetTemplateFilePath = $pagetTemplateFilePath ?? $this->getPageTemplateFilePath();
+        $renderer = new EuiFacadePageTemplateRenderer($this, $pagetTemplateFilePath, $widget);
         return $renderer->render();
     }
     
