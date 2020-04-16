@@ -35,7 +35,7 @@ class EuiNavMenu extends EuiAbstractElement
                 if ($node->isAncestorOf($this->currentPage) || $node->isPage($this->currentPage)) {
                     //if the node is ancestor of current page or is current page style if bold (via 'class="active current"')
                     $aStyle = '';                    
-                    if ($node->getUid() === $this->getWidget()->getPage()->getId()) {
+                    if ($node->getUid() === $this->getWidget()->getPage()->getUid()) {
                         //if node is current page style it with underline
                         $aStyle .= 'text-decoration:underline;';
                     }
