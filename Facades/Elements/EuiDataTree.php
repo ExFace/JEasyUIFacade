@@ -442,7 +442,7 @@ JS;
                         }
                         delete {$js_var_param}['id'];
                     } else {                        
-                        {$this->buildJsOnBeforeLoadExapndFilters($js_var_param, $js_var_row)}
+                        {$this->buildJsOnBeforeLoadExpandFilters($js_var_param, $js_var_row)}
                     }
 
 JS;
@@ -454,7 +454,7 @@ JS;
      * @param string $js_var_row
      * @return string
      */
-    protected function buildJsOnBeforeLoadExapndFilters($js_var_param = 'param', $js_var_row = 'row') : string
+    protected function buildJsOnBeforeLoadExpandFilters($js_var_param = 'param', $js_var_row = 'row') : string
     {
         $widget = $this->getWidget();
         if (($widget->getKeepExpandedPathsOnRefresh() === false || $widget->isPaged() === false) && $widget->getLazyLoadTreeLevels() !== true) {
@@ -540,6 +540,23 @@ function() {
     }
     return data;
 }()
+JS;
+    }
+    
+    protected function buildJsonOnLoadSuccessSelectionFix(string $selfJs = 'jqSelf') : string
+    {
+        $widget = $this->getWidget();
+        return <<<JS
+            
+                    var selection = {$selfJs}.{$this->getElementType()}("getSelections").slice();
+                    {$selfJs}.{$this->getElementType()}("clearSelections");
+                    selection.forEach(function(node) {
+                        var nodeShown = $("#{$this->getId()}").{$this->getElementType()}('find', node['{$this->getWidget()->getTreeLeafIdColumn()->getDataColumnName()}']);
+                        if (nodeShown !== null) {
+                            $("#{$this->getId()}").{$this->getElementType()}('select', node['{$this->getWidget()->getTreeLeafIdColumn()->getDataColumnName()}']);
+                        }
+                    })
+                    
 JS;
     }
 }

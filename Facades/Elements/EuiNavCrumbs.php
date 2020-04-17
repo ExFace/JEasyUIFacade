@@ -14,6 +14,11 @@ class EuiNavCrumbs extends EuiAbstractElement
 {
     private $currentPage = null;
     
+    /**
+     * 
+     * {@inheritDoc}
+     * @see \exface\JEasyUIFacade\Facades\Elements\EuiAbstractElement::buildHtml()
+     */
     public function buildHtml()
     {
         $this->currentPage = $this->getWidget()->getPage();
@@ -29,12 +34,17 @@ HTML;
         
         $output .= <<<HTML
         
-<div>
+</div>
 HTML;
         
         return $output;
     }
     
+    /**
+     * 
+     * @param array $menu
+     * @return string
+     */
     protected function buildHtmlBreadcrumbs(array $menu) : string
     {
         $output = '';
@@ -51,6 +61,7 @@ HTML;
                 break;
             } elseif ($node->isPage($this->currentPage)) {
                 $output .= "{$node->getName()}";
+                break;
             }
         }
         return $output;

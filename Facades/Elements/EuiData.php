@@ -220,6 +220,27 @@ class EuiData extends EuiAbstractElement
     
     protected function buildJsOnLoadSuccessOption() : string
     {
+        return <<<JS
+
+, onLoadSuccess: function(data) {
+                    var jqSelf = $(this);
+                    
+                    {$this->buildJsonOnLoadSuccessSelectionFix('jqSelf')}
+                    
+					{$this->getOnLoadSuccess()}
+				}
+
+JS;
+    }
+    
+    /**
+     * Fix to only keep correct rows selected after refresh
+     * 
+     * @param string $selfJs
+     * @return string
+     */
+    protected function buildJsonOnLoadSuccessSelectionFix(string $selfJs = 'jqSelf') : string
+    {
         $widget = $this->getWidget();
         
         // FIXME these are two different implementations for the selection fixer for
@@ -231,29 +252,29 @@ class EuiData extends EuiAbstractElement
             // -1 for selected but not present rows. Selections outlive a reload but the selected row
             // may have been deleted in the meanwhile. An example is "offene Positionen stornieren" in
             // "Rueckstandsliste".
-            $fixSelection = <<<JS
-
-                    var rows = jqSelf.{$this->getElementType()}("getSelections");
+            return <<<JS
+            
+                    var rows = {$selfJs}.{$this->getElementType()}("getSelections");
                     var selectedRows = [];
                     for (var i = 0; i < rows.length; i++) {
-                        var index = jqSelf.{$this->getElementType()}("getRowIndex", rows[i]);
+                        var index = {$selfJs}.{$this->getElementType()}("getRowIndex", rows[i]);
                         if( index >= 0) {
                             selectedRows.push(index);
                         }
                     }
-                    jqSelf.{$this->getElementType()}("clearSelections");
+                    {$selfJs}.{$this->getElementType()}("clearSelections");
                     for (var i = 0; i < selectedRows.length; i++) {
-                        jqSelf.{$this->getElementType()}("selectRow", selectedRows[i]);
+                        {$selfJs}.{$this->getElementType()}("selectRow", selectedRows[i]);
                     }
-
+                    
 JS;
         } else {
-            $fixSelection = <<<JS
-
-                    var prevSelection = jqSelf.data("_prevSelection");
+            return <<<JS
+            
+                    var prevSelection = {$selfJs}.data("_prevSelection");
                     if (prevSelection !== undefined) {
                         var curSelectedIdx = -1;
-                        var curRows = jqSelf.{$this->getElementType()}('getRows');
+                        var curRows = {$selfJs}.{$this->getElementType()}('getRows');
                         for (var i in curRows) {
                             if ({$this->buildJsRowCompare('curRows[i]', 'prevSelection')}) {
                                 curSelectedIdx = i;
@@ -261,26 +282,15 @@ JS;
                             }
                         }
                         if (curSelectedIdx !== -1) {
-                            jqSelf.{$this->getElementType()}('selectRow', curSelectedIdx);
+                            {$selfJs}.{$this->getElementType()}('selectRow', curSelectedIdx);
                         } else {
                             {$this->buildJsValueResetter()}
                         }
                     }
-
+                    
 JS;
         }
         
-        return <<<JS
-
-, onLoadSuccess: function(data) {
-                    var jqSelf = $(this);
-                    
-                    {$fixSelection}
-                    
-					{$this->getOnLoadSuccess()}
-				}
-
-JS;
     }
     
     protected function buildJsOnChangeScript(string $rowJs = 'row', string $indexJs = 'index') : string
