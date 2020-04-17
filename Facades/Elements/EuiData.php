@@ -233,6 +233,12 @@ class EuiData extends EuiAbstractElement
 JS;
     }
     
+    /**
+     * Fix to only keep correct rows selected after refresh
+     * 
+     * @param string $selfJs
+     * @return string
+     */
     protected function buildJsonOnLoadSuccessSelectionFix(string $selfJs = 'jqSelf') : string
     {
         $widget = $this->getWidget();
