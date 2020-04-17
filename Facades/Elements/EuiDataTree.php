@@ -543,14 +543,13 @@ function() {
 JS;
     }
     
-    protected function buildJsOnLoadSuccessOption() : string
+    protected function buildJsonOnLoadSuccessSelectionFix(string $selfJs = 'jqSelf') : string
     {
         $widget = $this->getWidget();
-            $fixSelection = <<<JS
+        return <<<JS
             
-                    var selection = jqSelf.{$this->getElementType()}("getSelections").slice();
-                    console.log('Selection', selection);
-                    jqSelf.{$this->getElementType()}("clearSelections");
+                    var selection = {$selfJs}.{$this->getElementType()}("getSelections").slice();
+                    {$selfJs}.{$this->getElementType()}("clearSelections");
                     selection.forEach(function(node) {
                         var nodeShown = $("#{$this->getId()}").{$this->getElementType()}('find', node['{$this->getWidget()->getTreeLeafIdColumn()->getDataColumnName()}']);
                         if (nodeShown !== null) {
@@ -558,18 +557,6 @@ JS;
                         }
                     })
                     
-JS;
-                
-        return <<<JS
-        
-, onLoadSuccess: function(data) {
-                    var jqSelf = $(this);
-                    
-                    {$fixSelection}
-                    
-					{$this->getOnLoadSuccess()}
-				}
-				
 JS;
     }
 }
