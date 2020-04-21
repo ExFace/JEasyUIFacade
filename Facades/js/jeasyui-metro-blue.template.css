@@ -90,6 +90,7 @@ div.messager-body{overflow-y: auto;}
 
 /* Messages */
 .exf-message-list {margin: 4px 4px 2px 4px;}
+.exf-message-list:empty {display: none;}
 .exf-message {padding: 5px; color: white; margin: 2px 0; min-height: 38px; background-color: lightgray;}
 .exf-message a {color: white;}
 .exf-message-icon {float: left; width: 50px; text-align: center; height: 2em; line-height: 2em;}
