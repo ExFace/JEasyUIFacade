@@ -508,7 +508,11 @@ JS;
         // groupView options
         $prefix = ! $grouper->getHideCaption() ? "'" . $grouper->getCaption() . " ' + " : '';
         $counter = $grouper->getShowCounter() ? " + ' (' + rows.length + ')'" : "";
-        $grid_head .= ', view: groupview' . ",groupField: '{$grouper->getGroupByColumn()->getDataColumnName()}', groupFormatter:function(value,rows){ return {$prefix}value{$counter};}";
+        $value = "(value || 'empty')";
+        if (! $grouper->getHideCaption()) {
+            $value = "'\"' + $value + '\"'";
+        }
+        $grid_head .= ', view: groupview' . ",groupField: '{$grouper->getGroupByColumn()->getDataColumnName()}', groupFormatter:function(value,rows){ return {$prefix}{$value}{$counter};}";
         
         if (! $grouper->getExpandAllGroups()) {
             $this->addOnLoadSuccess("$('#" . $this->getId() . "')." . $this->getElementType() . "('collapseGroup');");
