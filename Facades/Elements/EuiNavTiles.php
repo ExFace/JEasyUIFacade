@@ -16,16 +16,21 @@ class EuiNavTiles extends EuiWidgetGrid
 {
     public function buildHtml()
     {
-        if ($this->getWidget()->countWidgets() > 1) {
-            foreach ($this->getWidget()->getWidgets() as $tiles) {
-                $tiles->setNumberOfColumns(1);
+        switch ($this->getWidget()->countWidgets()) {
+            case 0:
+                break;
+            case 1:
+                $tiles = $this->getWidget()->getWidgetFirst();
+                $tiles->setHideCaption(true);
                 $this->colorize($tiles);
-            }
-        } else {
-            $tiles = $this->getWidget()->getWidgetFirst();
-            $tiles->setHideCaption(true);
-            $this->colorize($tiles);
-        }
+                break;
+            default: 
+                foreach ($this->getWidget()->getWidgets() as $tiles) {
+                    $tiles->setNumberOfColumns(1);
+                    $this->colorize($tiles);
+                }
+                break;
+        } 
         return parent::buildHtml();
     }
     
