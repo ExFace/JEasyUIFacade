@@ -14,5 +14,5 @@
 require ('UploadHandler.php');
 $upload_handler = new UploadHandler(array(
     'user_dirs' => true,
-    'upload_dir' => '..' . DIRECTORY_SEPARATOR . '..' . DIRECTORY_SEPARATOR . 'UserData' . DIRECTORY_SEPARATOR . 'Uploads' . DIRECTORY_SEPARATOR
+    'upload_dir' => '..' . DIRECTORY_SEPARATOR . '..' . DIRECTORY_SEPARATOR . 'data' . DIRECTORY_SEPARATOR . 'uploads' . DIRECTORY_SEPARATOR
 ));
