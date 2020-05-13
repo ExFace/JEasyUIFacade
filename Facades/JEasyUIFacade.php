@@ -12,7 +12,7 @@ use GuzzleHttp\Psr7\Response;
 use exface\Core\Interfaces\Exceptions\ExceptionInterface;
 use exface\JEasyUIFacade\Facades\Templates\EuiFacadePageTemplateRenderer;
 use exface\Core\Exceptions\Security\AuthenticationFailedError;
-use exface\Core\Exceptions\Security\AccessPermissionDeniedError;
+use exface\Core\Interfaces\Exceptions\AuthorizationExceptionInterface;
 
 class JEasyUIFacade extends AbstractAjaxFacade
 {
@@ -123,7 +123,7 @@ $.ajaxPrefilter(function( options ) {
     
     protected function buildHtmlFromError(ServerRequestInterface $request, \Throwable $exception, UiPageInterface $page = null) : string
     {
-        if ($this->isShowingErrorDetails() === false && ! ($exception instanceof AuthenticationFailedError) && ! ($exception instanceof AccessPermissionDeniedError && $this->getWorkbench()->getSecurity()->getAuthenticatedToken()->isAnonymous())) {
+        if ($this->isShowingErrorDetails() === false && ! ($exception instanceof AuthenticationFailedError) && ! ($exception instanceof AuthorizationExceptionInterface && $this->getWorkbench()->getSecurity()->getAuthenticatedToken()->isAnonymous())) {
             $body = '';
             try {
                 $headTags = implode("\n", $this->buildHtmlHeadCommonIncludes());
