@@ -114,7 +114,7 @@ $.ajaxPrefilter(function( options ) {
         }        
         
         $data = array();
-        $data['rows'] = $data_sheet->getRows();
+        $data['rows'] = $data_sheet->getRowsDecrypted();
         $data['offset'] = $data_sheet->getRowsOffset();
         $data['total'] = $data_sheet->countRowsInDataSource();
         $data['footer'] = $data_sheet->getTotalsRows();
