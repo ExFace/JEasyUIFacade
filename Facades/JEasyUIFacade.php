@@ -13,9 +13,13 @@ use exface\Core\Interfaces\Exceptions\ExceptionInterface;
 use exface\JEasyUIFacade\Facades\Templates\EuiFacadePageTemplateRenderer;
 use exface\Core\Exceptions\Security\AuthenticationFailedError;
 use exface\Core\Interfaces\Exceptions\AuthorizationExceptionInterface;
+use exface\Core\Exceptions\Contexts\ContextOutOfBoundsError;
+use exface\Core\Exceptions\OutOfBoundsException;
 
 class JEasyUIFacade extends AbstractAjaxFacade
 {
+    private $theme = null;
+    
     public function init()
     {
         parent::init();
@@ -59,15 +63,13 @@ class JEasyUIFacade extends AbstractAjaxFacade
      */
     public function buildHtmlHeadCommonIncludes() : array
     {
-        $includes = [
-            '<link rel="stylesheet" type="text/css" href="' . $this->buildUrlToSource('LIBS.JEASYUI.THEME') . '">',
-            '<link rel="stylesheet" type="text/css" href="' . $this->buildUrlToSource('LIBS.FACADE.CSS') . '">',
-            '<script type="text/javascript" src="' . $this->buildUrlToSource('LIBS.JQUERY') . '"></script>',
-            '<script type="text/javascript" src="' . $this->buildUrlToSource('LIBS.JEASYUI.CORE') . '"></script>',
-            '<script type="text/javascript" src="' . $this->buildUrlToSource('LIBS.JEASYUI.LANG_DEFAULT') . '"></script>',
-            '<script type="text/javascript" src="' . $this->buildUrlToSource('LIBS.FACADE.JS') . '"></script>',
-            '<link href="' . $this->buildUrlToSource('LIBS.FONT_AWESOME') . '" rel="stylesheet" type="text/css" />'
-        ];
+        $includes = $this->buildHtmlHeadThemeIncludes();
+        
+        $includes[] = '<script type="text/javascript" src="' . $this->buildUrlToSource('LIBS.JQUERY') . '"></script>';
+        $includes[] = '<script type="text/javascript" src="' . $this->buildUrlToSource('LIBS.JEASYUI.CORE') . '"></script>';
+        $includes[] = '<script type="text/javascript" src="' . $this->buildUrlToSource('LIBS.JEASYUI.LANG_DEFAULT') . '"></script>';
+        $includes[] = '<script type="text/javascript" src="' . $this->buildUrlToSource('LIBS.JEASYUI.FACADE_ADDONS.JS') . '"></script>';
+        $includes[] = '<link href="' . $this->buildUrlToSource('LIBS.FONT_AWESOME') . '" rel="stylesheet" type="text/css" />';
         
         // FIXME get the correct lang include accoring to the user's language
         
@@ -92,6 +94,25 @@ $.ajaxPrefilter(function( options ) {
         }
         
         return $includes;        
+    }
+    
+    /**
+     *
+     * @throws OutOfBoundsException
+     * @return string[]
+     */
+    protected function buildHtmlHeadThemeIncludes() : array
+    {
+        $themes = $this->getConfig()->getOption('FACADE.THEMES');
+        $includes = $themes->getProperty($this->getTheme());
+        if ($includes === null) {
+            throw new OutOfBoundsException('Theme "' . $this->getTheme() . '" not found in the jEasyUI facade!');
+        }
+        $arr = [];
+        foreach ($includes->toArray() as $path) {
+            $arr[] = '<link rel="stylesheet" type="text/css" href="' . $this->buildUrlToVendorFile($path) . '">';
+        }
+        return $arr;
     }
     
     /**
@@ -191,5 +212,30 @@ HTML;
     protected function getPageTemplateFilePathForUnauthorized() : string
     {
         return $this->getApp()->getDirectoryAbsolutePath() . DIRECTORY_SEPARATOR . 'Facades' . DIRECTORY_SEPARATOR . 'Templates' . DIRECTORY_SEPARATOR . 'EuiMessagePageTemplate.html';
+    }
+    
+    /**
+     * 
+     * @return string
+     */
+    public function getTheme() : string
+    {
+        return $this->theme ?? $this->getConfig()->getOption('FACADE.THEME_DEFAULT');
+    }
+    
+    /**
+     * The color theme to use
+     * 
+     * @uxon-property theme
+     * @uxon-type [metro-blue,metro,material,material-teal,material-blue,bootstrap,jeasyui-default,gray,black]
+     * @uxon-default metro-blue
+     * 
+     * @param string $name
+     * @return JEasyUIFacade
+     */
+    protected function setTheme(string $name) : JEasyUIFacade
+    {
+        $this->theme = mb_strtolower($name);
+        return $this;
     }
 }

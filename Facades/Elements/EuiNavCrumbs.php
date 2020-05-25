@@ -28,7 +28,7 @@ class EuiNavCrumbs extends EuiAbstractElement
         }
         $output = <<<HTML
         
-<div>
+<div class="{$this->buildCssElementClass()}">
 HTML;
         $output .= $this->buildHtmlBreadcrumbs($breadcrumbs);
         
@@ -53,7 +53,7 @@ HTML;
                 $url = $this->getFacade()->buildUrlToPage($node->getPageAlias());
                 $output .= <<<HTML
                 
-    <a style="text-decoration:underline;" href='{$url}'>{$node->getName()}</a> »&nbsp;
+    <a href='{$url}'>{$node->getName()}</a> »&nbsp;
 HTML;
                 if ($node->hasChildNodes()) {
                     $output .= $this->buildHtmlBreadcrumbs($node->getChildNodes());
@@ -66,6 +66,16 @@ HTML;
         }
         return $output;
         
+    }
+    
+    /**
+     * 
+     * {@inheritDoc}
+     * @see \exface\Core\Facades\AbstractAjaxFacade\Elements\AbstractJqueryElement::buildCssElementClass()
+     */
+    public function buildCssElementClass() : string
+    {
+        return 'exf-navcrumbs';
     }
     
 }

@@ -11,6 +11,55 @@
 	
 	"FACADE.JAVASCRIPT_DEBUG_LEVEL": 0,
 	
+	"FACADE.THEME_DEFAULT": "metro-blue",
+	"FACADE.THEMES": {
+		"metro-blue": [
+			"exface/JEasyUIFacade/Facades/js/themes/metro-blue/easyui.css",
+			"exface/JEasyUIFacade/Facades/js/themes/jeasyui.exface.css",
+			"exface/JEasyUIFacade/Facades/js/themes/jeasyui-metro-blue.exface.css"
+		],
+		"metro": [
+			"bower-asset/jeasyui/themes/metro/easyui.css",
+			"exface/JEasyUIFacade/Facades/js/themes/jeasyui.exface.css",
+			"exface/JEasyUIFacade/Facades/js/themes/jeasyui-metro.exface.css"
+		],
+		"black": [
+			"bower-asset/jeasyui/themes/black/easyui.css",
+			"exface/JEasyUIFacade/Facades/js/themes/jeasyui.exface.css",
+			"exface/JEasyUIFacade/Facades/js/themes/jeasyui-black.exface.css"
+		],
+		"bootstrap": [
+			"bower-asset/jeasyui/themes/bootstrap/easyui.css",
+			"exface/JEasyUIFacade/Facades/js/themes/jeasyui.exface.css",
+			"exface/JEasyUIFacade/Facades/js/themes/jeasyui-bootstrap.exface.css"
+		],
+		"jeasyui-default": [
+			"bower-asset/jeasyui/themes/default/easyui.css",
+			"exface/JEasyUIFacade/Facades/js/themes/jeasyui.exface.css",
+			"exface/JEasyUIFacade/Facades/js/themes/jeasyui-default.exface.css"
+		],
+		"gray": [
+			"bower-asset/jeasyui/themes/gray/easyui.css",
+			"exface/JEasyUIFacade/Facades/js/themes/jeasyui.exface.css",
+			"exface/JEasyUIFacade/Facades/js/themes/jeasyui-gray.exface.css"
+		],
+		"material": [
+			"exface/JEasyUIFacade/Facades/js/themes/material/easyui.css",
+			"exface/JEasyUIFacade/Facades/js/themes/jeasyui.exface.css",
+			"exface/JEasyUIFacade/Facades/js/themes/jeasyui-material.exface.css"
+		],
+		"material-blue": [
+			"exface/JEasyUIFacade/Facades/js/themes/material-blue/easyui.css",
+			"exface/JEasyUIFacade/Facades/js/themes/jeasyui.exface.css",
+			"exface/JEasyUIFacade/Facades/js/themes/jeasyui-material-blue.exface.css"
+		],
+		"material-teal": [
+			"exface/JEasyUIFacade/Facades/js/themes/material-teal/easyui.css",
+			"exface/JEasyUIFacade/Facades/js/themes/jeasyui.exface.css",
+			"exface/JEasyUIFacade/Facades/js/themes/jeasyui-material-teal.exface.css"
+		]
+	},
+	
 	"ICON_CLASSES.DEFAULT_CLASS_PREFIX": "fa fa-",
     "ICON_CLASSES.INSTALL": "fa fa-hdd-o",
     "ICON_CLASSES.UNINSTALL": "fa fa-trash",
@@ -45,7 +94,6 @@
     
     "LIBS.JQUERY": "bower-asset/jquery/dist/jquery.min.js",
     "LIBS.JQUERY_PRETTY_TEXT_DIFF": "npm-asset/jquery-prettytextdiff/jquery.pretty-text-diff.min.js",
-    
     "LIBS.JEASYUI.CORE": "bower-asset/jeasyui/jquery.easyui.min.js",
     "LIBS.JEASYUI.LANG_DEFAULT": "bower-asset/jeasyui/locale/easyui-lang-de.js",
     "LIBS.JEASYUI.THEME": "exface/JEasyUIFacade/Facades/js/jeasyui/themes/metro-blue/easyui.css",
@@ -53,8 +101,9 @@
     "LIBS.JEASYUI.EXTENSIONS.DATAGRID_DETAILVIEW": "exface/JEasyUIFacade/Facades/js/jeasyui/extensions/datagridview/datagrid-detailview.js",
     "LIBS.JEASYUI.EXTENSIONS.TREEGRID_DND": "exface/JEasyUIFacade/Facades/js/jeasyui/extensions/treegrid-dnd/treegrid-dnd.js",
     "LIBS.JEASYUI.PATCHES": "exface/JEasyUIFacade/Facades/js/jquery.easyui.patch.1.43.js",
+	"LIBS.JEASYUI.FACADE_ADDONS.JS": "exface/JEasyUIFacade/Facades/js/jeasyui.facade.js",
 	
-   	"LIBS.JEXCEL.JS": "npm-asset/jexcel/dist/jexcel.js",
+	"LIBS.JEXCEL.JS": "npm-asset/jexcel/dist/jexcel.js",
    	"LIBS.JEXCEL.JS_JSUITES": "npm-asset/jsuites/dist/jsuites.js",
    	"LIBS.JEXCEL.CSS": "npm-asset/jexcel/dist/jexcel.css",
  	"LIBS.JEXCEL.CSS_JSUITES": "npm-asset/jsuites/dist/jsuites.css",
@@ -70,9 +119,6 @@
 	"LIBS.MASONRY": "bower-asset/masonry/dist/masonry.pkgd.min.js",
 	"LIBS.MOMENT.JS": "npm-asset/moment/min/moment.min.js",
 	"LIBS.MOMENT.LOCALES": "npm-asset/moment/locale",
-	
-	"LIBS.FACADE.CSS": "exface/JEasyUIFacade/Facades/js/jeasyui-metro-blue.template.css",
-    "LIBS.FACADE.JS": "exface/JEasyUIFacade/Facades/js/jeasyui.facade.js",
     
     "LIBS.FONT_AWESOME": "bower-asset/font-awesome/css/font-awesome.min.css",
     
@@ -88,7 +134,7 @@
 	"LIBS.SLICK.SLICK_JS": "npm-asset/slick-carousel/slick/slick.min.js",
 	"LIBS.SLICK.SLICK_CSS": "npm-asset/slick-carousel/slick/slick.css",
 	
-	"WIDGET.SPACING": 8,
+   	"WIDGET.SPACING": 8,
     "WIDGET.BORDERWIDTH": 1,
 	
 	"WIDGET.ALL.FORBIDDEN_CHARS_IN_ELEMENT_ID": ["/", "(", ")", ".", "-"],

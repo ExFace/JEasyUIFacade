@@ -1,0 +1,49 @@
+.logo {color: #999;}
+ul.nav_menu a {color: black;}
+ul.nav_menu a:hover {color: white; background: #6CAEF5}
+
+/* Font awsome */
+.panel-tool-a.fa {color: black;}
+
+/* Context bar */
+.toolbar-element.user-info {border-color: #c3d9e0;}
+.toolbar-element .fa {color: #999}
+
+/* Toolbars for widgets */
+.exf-data-header .tabs-container, .exf-data-header .panel-body {background: #fafafa}
+.exf-data-header .textbox {border-top-color: #fafafa; border-left-color: #fafafa; border-right-color: #fafafa}
+.exf-data-header .textbox > input {background-color: #fafafa}
+.exf-data-header .textbox-addon {border-color: #fafafa; background-color: #fafafa}
+
+/* Inputs */
+.exf-input textarea {border-color: #c3d9e0;}
+fieldset.exface_inputgroup {border-color: #95B8E7;}
+fieldset.exface_inputgroup legend {color: #404040;}
+
+/* jEasyUI customizing */
+div.panel-body{background-color:#fff;}
+
+/* Dialog */
+.exf-dialog-header {background-color: #daeef5 !important;}
+
+/* TextDiff widget */
+.difftext-container {border-color: #c3d9e0;}
+.difftext-diff del {color: white; background-color: red;}
+.difftext-diff ins {color: white; background-color: green;}
+
+/* Messages */
+.exf-message {color: white; background-color: lightgray;}
+.exf-message a {color: white;}
+.exf-message-icon > i {color: white;}
+.exf-message.error {background-color: #dd4b39 !important}
+.exf-message.warning {background-color: #f39c12 !important}
+.exf-message.info {background-color: #00c0ef !important}
+.exf-message.success {background-color: #00a65a !important}
+.exf-message.hint {background-color: transparent; font-style: italic; color: inherit;}
+.exf-message.hint .exf-message-icon > i {color: black}
+
+/* jQuery FileUpload */
+.fileupload-filename {color: grey}
+
+/* Tile widget */
+.exf-tile-box {background-color: #fafafa; border-color: #c3d9e0;}

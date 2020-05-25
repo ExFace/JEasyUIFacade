@@ -45,20 +45,93 @@
     "rows": [
         {
             "CREATED_ON": "1970-01-01 01:00:00",
-            "MODIFIED_ON": "2019-12-17 07:56:57",
+            "MODIFIED_ON": "2020-05-25 08:51:50",
             "CREATED_BY_USER": "0x31000000000000000000000000000000",
             "MODIFIED_BY_USER": "0x31000000000000000000000000000000",
             "UID": "0x11ea2033058cb236aa030205857feb80",
             "APP": "0x11e6c930ff1f486693cce4b318306b9a",
-            "NAME": "Desktop (jEasyUI)",
-            "DESCRIPTION": "Desktop template for ExFace based jQuery EasyUI",
+            "NAME": "Desktop default (jEasyUI metro blue)",
+            "DESCRIPTION": "Desktop facade based jQuery EasyUI with \"metro blue\" theme",
             "FACADE": "exface\/JEasyUIFacade\/Facades\/JEasyUIFacade.php",
             "FACADE_UXON": null
+        },
+        {
+            "CREATED_ON": "2020-05-25 08:11:31",
+            "MODIFIED_ON": "2020-05-25 08:51:59",
+            "CREATED_BY_USER": "0x31000000000000000000000000000000",
+            "MODIFIED_BY_USER": "0x31000000000000000000000000000000",
+            "UID": "0x11ea9e5f4fba3dafbba0e4b318306b9a",
+            "APP": "0x11e6c930ff1f486693cce4b318306b9a",
+            "NAME": "Desktop jEasyUI metro ",
+            "DESCRIPTION": "Desktop facade based jQuery EasyUI with \"metro\" theme",
+            "FACADE": "exface\/JEasyUIFacade\/Facades\/JEasyUIFacade.php",
+            "FACADE_UXON": "{\"theme\":\"metro\"}"
+        },
+        {
+            "CREATED_ON": "2020-05-25 08:12:20",
+            "MODIFIED_ON": "2020-05-25 08:24:17",
+            "CREATED_BY_USER": "0x31000000000000000000000000000000",
+            "MODIFIED_BY_USER": "0x31000000000000000000000000000000",
+            "UID": "0x11ea9e5f6cf303aabba0e4b318306b9a",
+            "APP": "0x11e6c930ff1f486693cce4b318306b9a",
+            "NAME": "Desktop jEasyUI classic",
+            "DESCRIPTION": "Desktop facade based jQuery EasyUI with \"default\" theme",
+            "FACADE": "exface\/JEasyUIFacade\/Facades\/JEasyUIFacade.php",
+            "FACADE_UXON": "{\"theme\":\"jeasyui-default\"}"
+        },
+        {
+            "CREATED_ON": "2020-05-25 08:26:30",
+            "MODIFIED_ON": "2020-05-25 08:26:30",
+            "CREATED_BY_USER": "0x31000000000000000000000000000000",
+            "MODIFIED_BY_USER": "0x31000000000000000000000000000000",
+            "UID": "0x11ea9e6167c40095bba0e4b318306b9a",
+            "APP": "0x11e6c930ff1f486693cce4b318306b9a",
+            "NAME": "Desktop jEasyUI material",
+            "DESCRIPTION": "Desktop facade based jQuery EasyUI with \"material\" theme",
+            "FACADE": "exface\/JEasyUIFacade\/Facades\/JEasyUIFacade.php",
+            "FACADE_UXON": "{\"theme\":\"material\"}"
+        },
+        {
+            "CREATED_ON": "2020-05-25 08:28:08",
+            "MODIFIED_ON": "2020-05-25 08:28:08",
+            "CREATED_BY_USER": "0x31000000000000000000000000000000",
+            "MODIFIED_BY_USER": "0x31000000000000000000000000000000",
+            "UID": "0x11ea9e61a1faccf1bba0e4b318306b9a",
+            "APP": "0x11e6c930ff1f486693cce4b318306b9a",
+            "NAME": "Desktop jEasyUI material teal",
+            "DESCRIPTION": "Desktop facade based jQuery EasyUI with \"material teal\" theme",
+            "FACADE": "exface\/JEasyUIFacade\/Facades\/JEasyUIFacade.php",
+            "FACADE_UXON": "{\"theme\":\"material-teal\"}"
+        },
+        {
+            "CREATED_ON": "2020-05-25 08:35:15",
+            "MODIFIED_ON": "2020-05-25 08:35:15",
+            "CREATED_BY_USER": "0x31000000000000000000000000000000",
+            "MODIFIED_BY_USER": "0x31000000000000000000000000000000",
+            "UID": "0x11ea9e62a01a118cbba0e4b318306b9a",
+            "APP": "0x11e6c930ff1f486693cce4b318306b9a",
+            "NAME": "Desktop jEasyUI material blue",
+            "DESCRIPTION": "Desktop facade based jQuery EasyUI with \"material blue\" theme",
+            "FACADE": "exface\/JEasyUIFacade\/Facades\/JEasyUIFacade.php",
+            "FACADE_UXON": "{\"theme\":\"material-blue\"}"
+        },
+        {
+            "CREATED_ON": "2020-05-25 08:47:05",
+            "MODIFIED_ON": "2020-05-25 08:47:05",
+            "CREATED_BY_USER": "0x31000000000000000000000000000000",
+            "MODIFIED_BY_USER": "0x31000000000000000000000000000000",
+            "UID": "0x11ea9e6447b123c7bba0e4b318306b9a",
+            "APP": "0x11e6c930ff1f486693cce4b318306b9a",
+            "NAME": "Desktop jEasyUI bootstrap",
+            "DESCRIPTION": "Desktop facade based jQuery EasyUI with \"bootstrap\" theme",
+            "FACADE": "exface\/JEasyUIFacade\/Facades\/JEasyUIFacade.php",
+            "FACADE_UXON": "{\"theme\":\"bootstrap\"}"
         }
     ],
     "totals_rows": [],
     "filters": {
         "operator": "AND",
+        "base_object_alias": "exface.Core.PAGE_TEMPLATE",
         "conditions": [
             {
                 "expression": "APP",
