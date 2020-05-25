@@ -183,7 +183,7 @@ pre.sf-dump .sf-dump-private, pre.sf-dump .sf-dump-public, pre.sf-dump .sf-dump-
 .exf-ajax-error > .exf-loginprompt-wrapper {margin-top: 25%}
 .exf-loginprompt-wrapper > .exf-message {margin-left: auto; margin-right: auto}
 .exf-loginprompt {margin-left: auto; margin-right: auto}
-.exf-loginprompt > .tabs-panels > .panel > .panel-body > .panel > .panel-body {padding: 20px}
+.exf-loginprompt > .tabs-panels > .panel > .panel-body > .panel > .panel-body {padding: 20px; height: auto !important; width: auto !important;}
 
 /* NavCrumbs */
 .exf-navcrumbs a {text-decoration: underline;}
