@@ -2,7 +2,10 @@
 	"name" : "exface/JEasyUIFacade",
 	"description" : "UI facade for the ExFace plattform based on jQuery EasyUI",
 	"type" : "library",
-	"license" : "GPL-3.0+",
+	"license" : [
+		"GPL-3.0+",
+		"proprietary"
+	],
 	"authors" : [{
 			"name" : "Andrej Kabachnik",
 			"email" : "kabachnik@gmail.com",
