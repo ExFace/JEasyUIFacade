@@ -1,7 +1,7 @@
 body {font-family: Helvetica,Arial,sans-serif;}
 .logo {float:left; font-size: 24px; color: #999;}
 .logo a {color: inherit; text-decoration: inherit;}
-ul.nav_menu {list-style: none; font-size: 12px; list-style-position: inside; margin:0; padding: 0;}
+ul.nav_menu {list-style: none; font-size: 12px; list-style-position: inside; margin:0; padding: 0; overflow-x: hidden;}
 ul.nav_menu li {border-bottom: 1px solid #ccc;}
 ul.nav_menu li ul {list-style: none; list-style-position: inside; padding: 0 0 5px 20px;}
 ul.nav_menu li ul li {border: none;}
