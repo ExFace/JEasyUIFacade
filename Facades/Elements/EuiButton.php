@@ -10,6 +10,10 @@ use exface\Core\Widgets\Dialog;
 use exface\Core\Widgets\Button;
 use exface\Core\Widgets\ButtonGroup;
 use exface\Core\Facades\AbstractAjaxFacade\Elements\JqueryDisableConditionTrait;
+use exface\Core\Interfaces\Actions\iShowDialog;
+use exface\Core\Interfaces\Widgets\iTriggerAction;
+use exface\Core\Interfaces\WidgetInterface;
+use exface\Core\Interfaces\Widgets\iUseInputWidget;
 
 /**
  * generates jEasyUI-Buttons for ExFace
@@ -167,7 +171,8 @@ class EuiButton extends EuiAbstractElement
 									
 									$(this).dialog('destroy').remove(); 
 									$('#ajax-dialogs').children().last().remove();
-									{$this->buildJsInputRefresh($widget, $input_element)}
+									{$this->buildJsInputRefresh($widget)}
+                                    {$this->buildJsRefreshCascade($widget)}
 								};
                        			$(document).trigger('{$action->getAliasWithNamespace()}.action.performed', [requestData]);
                        			{$this->buildJsBusyIconHide()}
@@ -182,6 +187,11 @@ JS;
         return $output;
     }
 
+    /**
+     * 
+     * {@inheritdoc}
+     * @see JqueryButtonTrait::buildJsCloseDialog()
+     */
     protected function buildJsCloseDialog($widget, $input_element)
     {
         if ($widget instanceof DialogButton && $widget->getCloseDialogAfterActionSucceeds()){
