@@ -10,7 +10,6 @@ use exface\Core\DataTypes\SortingDirectionsDataType;
 use exface\Core\Factories\ActionFactory;
 use exface\Core\Actions\UpdateData;
 use exface\Core\DataTypes\ComparatorDataType;
-
 /**
  * @method DataTree getWidget()
  * 
@@ -474,6 +473,9 @@ JS;
                                         if (conditions[c]['expression'] == '{$this->getWidget()->getTreeParentRelationAlias()}') {
                                             if (node['children'] !== undefined && node['state'] === 'open') {
                                                 var oldValue = {$js_var_param}['data']['filters']['conditions'][c]['value'];
+                                                if (oldValue === '' || oldValue === undefined || oldValue === null) {
+                                                    {$js_var_param}['data']['filters']['conditions'][c]['value'] = '{$this->getWidget()->getTreeRootUid()}';
+                                                }
                                                 {$js_var_param}['data']['filters']['conditions'][c]['value'] = oldValue + '{$treeFolderFilterDelim}' + node['{$treeFolderFilterCol->getDataColumnName()}'];
                                                 {$js_var_param}['data']['filters']['conditions'][c]['comparator'] = '{$comparatorIn}';
                                             }
@@ -492,21 +494,22 @@ JS;
                             }                            
                             if (Array.isArray(treeData) && treeData.length > 0) {
                                 if ({$js_var_param}['data'] !== undefined && {$js_var_param}['data']['filters'] !== undefined && {$js_var_param}['data']['filters']['conditions'] !== undefined) {
+                                    var addNodes = true;
                                     var conditions = {$js_var_param}['data']['filters']['conditions'];
                                     for (var c in conditions) {
-                                        if (conditions[c]['expression'] == '{$this->getWidget()->getTreeParentRelationAlias()}') {
                                             var oldValue = {$js_var_param}['data']['filters']['conditions'][c]['value'];
-                                            if (oldValue === '' || oldValue === undefined || oldValue === null) {
-                                                {$js_var_param}['data']['filters']['conditions'][c]['value'] = '{$this->getWidget()->getTreeRootUid()}';
-                                            }                                           
-                                        }
+                                            if (oldValue !== '' && oldValue !== undefined && oldValue !== null) {
+                                                addNodes = false;
+                                            }
                                     }
                                 }
-                                treeData.forEach(function (node) {
-                                    if (node['children'] !== undefined && node['state'] === 'open') {
-                                        addNode(node);
-                                    }
-                                });
+                                if (addNodes === true) {
+                                    treeData.forEach(function (node) {
+                                        if (node['children'] !== undefined && node['state'] === 'open') {
+                                            addNode(node);
+                                        }
+                                    });
+                                }
                             }
                         })();
 JS;
