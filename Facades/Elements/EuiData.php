@@ -540,6 +540,8 @@ JS;
     {
         $addLocalValuesJs = '';
         $linkedEls = [];
+        $oRowJs = 'oRow';
+        $addValuesJsFunctionName = 'addValues';
         foreach ($this->getWidget()->getColumns() as $col) {
             $cellWidget = $col->getCellWidget();
             if ($cellWidget->hasValue() === false) {
@@ -556,17 +558,18 @@ JS;
                     $val = json_encode($valueExpr->toString());
                     break;
             }
-            $addLocalValuesJs .= <<<JS
-            
-                        oRow["{$col->getDataColumnName()}"] = {$val};
-JS;
+            $addLocalValuesJs .= $this->buildJsAddLocalValues($col, $val, $oRowJs, $addValuesJsFunctionName);
         }
         if ($addLocalValuesJs) {
             $addLocalValuesJs = <<<JS
             
                     // Add static values
-                    ($dataJs.rows || []).forEach(function(oRow){
+                    console.log('Add static values');
+                    function {$addValuesJsFunctionName}({$oRowJs}) {
                         {$addLocalValuesJs}
+                    }
+                    ($dataJs.rows || []).forEach(function({$oRowJs}){
+                        {$addValuesJsFunctionName}({$oRowJs});
                     });
 JS;
             // FIXME need to update the changed rows somehow - otherwise the changes are not visible to the user!
@@ -580,6 +583,23 @@ JS;
             }
         }
         return $addLocalValuesJs;
+    }
+    
+    /**
+     * Build Js to add a value to a row.
+     * 
+     * @param DataColumn $col
+     * @param string $val
+     * @param string $oRowJs
+     * @param string $jsFunctionName
+     * @return string
+     */
+    protected function buildJsAddLocalValues(DataColumn $col, string $val, string $oRowJs = 'oRow', string $addValuesJsFunctionName = 'addValues') : string
+    {
+        return <<<JS
+
+                         {$oRowJs}["{$col->getDataColumnName()}"] = {$val};
+JS;
     }
     
     public function buildJsDataLoaderWithoutAjax(DataSheetInterface $data)

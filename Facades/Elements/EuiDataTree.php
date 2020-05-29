@@ -10,6 +10,7 @@ use exface\Core\DataTypes\SortingDirectionsDataType;
 use exface\Core\Factories\ActionFactory;
 use exface\Core\Actions\UpdateData;
 use exface\Core\DataTypes\ComparatorDataType;
+use exface\Core\Widgets\DataColumn;
 /**
  * @method DataTree getWidget()
  * 
@@ -117,6 +118,24 @@ JS;
                             $script
 
                             return data;
+                        }
+JS;
+    }
+    
+    /**
+     * 
+     * {@inheritDoc}
+     * @see \exface\JEasyUIFacade\Facades\Elements\EuiData::buildJsAddLocalValues()
+     */
+    protected function buildJsAddLocalValues(DataColumn $col, string $val, string $oRowJs = 'oRow', string $addValuesJsFunctionName = 'addValues') : string
+    {
+        return <<<JS
+
+                        {$oRowJs}["{$col->getDataColumnName()}"] = {$val};
+                        if ({$oRowJs}['children'] !== undefined && Array.isArray({$oRowJs}['children'])) {
+                            {$oRowJs}['children'].forEach(function(row) {
+                                {$addValuesJsFunctionName}(row)
+                            });
                         }
 JS;
     }
