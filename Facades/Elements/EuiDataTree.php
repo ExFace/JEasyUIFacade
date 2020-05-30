@@ -10,7 +10,6 @@ use exface\Core\DataTypes\SortingDirectionsDataType;
 use exface\Core\Factories\ActionFactory;
 use exface\Core\Actions\UpdateData;
 use exface\Core\DataTypes\ComparatorDataType;
-use exface\Core\Widgets\DataColumn;
 /**
  * @method DataTree getWidget()
  * 
