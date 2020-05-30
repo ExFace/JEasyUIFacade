@@ -127,16 +127,27 @@ JS;
      * {@inheritDoc}
      * @see \exface\JEasyUIFacade\Facades\Elements\EuiData::buildJsAddLocalValues()
      */
-    protected function buildJsAddLocalValues(DataColumn $col, string $val, string $oRowJs = 'oRow', string $addValuesJsFunctionName = 'addValues') : string
+    protected function buildJsAddLocalValues(string $dataJs, string $addLocalValuesToRowJs, string $oRowJs = 'oRow') : string
     {
-        return <<<JS
+        $addLocalValuesToRowJs .= <<<JS
 
-                        {$oRowJs}["{$col->getDataColumnName()}"] = {$val};
                         if ({$oRowJs}['children'] !== undefined && Array.isArray({$oRowJs}['children'])) {
-                            {$oRowJs}['children'].forEach(function(row) {
-                                {$addValuesJsFunctionName}(row)
+                            {$oRowJs}['children'].forEach(function(childRow) {
+                                addValues(childRow)
                             });
                         }
+JS;
+        
+        return <<<JS
+
+                        // Add static values
+                        function addValues({$oRowJs}) {
+                            {$addLocalValuesToRowJs}
+                        }
+                        ($dataJs.rows || []).forEach(function({$oRowJs}){
+                            addValues({$oRowJs});
+                        });
+                        
 JS;
     }
     

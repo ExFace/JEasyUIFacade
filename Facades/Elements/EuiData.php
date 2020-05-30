@@ -538,10 +538,10 @@ JS;
      */
     protected function buildJsLoadFilterHandleWidgetLinks(string $dataJs) : string
     {
+        $addLocalValuesToRowJs = '';
         $addLocalValuesJs = '';
         $linkedEls = [];
         $oRowJs = 'oRow';
-        $addValuesJsFunctionName = 'addValues';
         foreach ($this->getWidget()->getColumns() as $col) {
             $cellWidget = $col->getCellWidget();
             if ($cellWidget->hasValue() === false) {
@@ -558,20 +558,14 @@ JS;
                     $val = json_encode($valueExpr->toString());
                     break;
             }
-            $addLocalValuesJs .= $this->buildJsAddLocalValues($col, $val, $oRowJs, $addValuesJsFunctionName);
-        }
-        if ($addLocalValuesJs) {
-            $addLocalValuesJs = <<<JS
+            $addLocalValuesToRowJs .= <<<JS
             
-                    // Add static values
-                    console.log('Add static values');
-                    function {$addValuesJsFunctionName}({$oRowJs}) {
-                        {$addLocalValuesJs}
-                    }
-                    ($dataJs.rows || []).forEach(function({$oRowJs}){
-                        {$addValuesJsFunctionName}({$oRowJs});
-                    });
+                            {$oRowJs}["{$col->getDataColumnName()}"] = {$val};
 JS;
+        }
+        if ($addLocalValuesToRowJs) {
+            $addLocalValuesJs = $this->buildJsAddLocalValues($dataJs, $addLocalValuesToRowJs, $oRowJs);
+            
             // FIXME need to update the changed rows somehow - otherwise the changes are not visible to the user!
             $addLocalValuesOnChange = <<<JS
                         
@@ -586,19 +580,21 @@ JS;
     }
     
     /**
-     * Build Js to add a value to a row.
+     * Build Js to add a value to a all rows in given dataJs, with `$addLocalValuesToRow` is the javascript to add values to a single row.
      * 
-     * @param DataColumn $col
-     * @param string $val
+     * @param string $dataJs
+     * @param string $addLocalValuesToRowJs
      * @param string $oRowJs
-     * @param string $jsFunctionName
      * @return string
      */
-    protected function buildJsAddLocalValues(DataColumn $col, string $val, string $oRowJs = 'oRow', string $addValuesJsFunctionName = 'addValues') : string
+    protected function buildJsAddLocalValues(string $dataJs, string $addLocalValuesToRowJs, string $oRowJs = 'oRow') : string
     {
         return <<<JS
-
-                         {$oRowJs}["{$col->getDataColumnName()}"] = {$val};
+        
+                    // Add static values
+                    ($dataJs.rows || []).forEach(function({$oRowJs}){
+                        $addLocalValuesToRowJs;
+                    });
 JS;
     }
     
