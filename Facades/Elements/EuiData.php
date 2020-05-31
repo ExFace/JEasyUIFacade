@@ -538,8 +538,10 @@ JS;
      */
     protected function buildJsLoadFilterHandleWidgetLinks(string $dataJs) : string
     {
+        $addLocalValuesToRowJs = '';
         $addLocalValuesJs = '';
         $linkedEls = [];
+        $oRowJs = 'oRow';
         foreach ($this->getWidget()->getColumns() as $col) {
             $cellWidget = $col->getCellWidget();
             if ($cellWidget->hasValue() === false) {
@@ -556,19 +558,14 @@ JS;
                     $val = json_encode($valueExpr->toString());
                     break;
             }
-            $addLocalValuesJs .= <<<JS
+            $addLocalValuesToRowJs .= <<<JS
             
-                        oRow["{$col->getDataColumnName()}"] = {$val};
+                            {$oRowJs}["{$col->getDataColumnName()}"] = {$val};
 JS;
         }
-        if ($addLocalValuesJs) {
-            $addLocalValuesJs = <<<JS
+        if ($addLocalValuesToRowJs) {
+            $addLocalValuesJs = $this->buildJsAddLocalValues($dataJs, $addLocalValuesToRowJs, $oRowJs);
             
-                    // Add static values
-                    ($dataJs.rows || []).forEach(function(oRow){
-                        {$addLocalValuesJs}
-                    });
-JS;
             // FIXME need to update the changed rows somehow - otherwise the changes are not visible to the user!
             $addLocalValuesOnChange = <<<JS
                         
@@ -580,6 +577,25 @@ JS;
             }
         }
         return $addLocalValuesJs;
+    }
+    
+    /**
+     * Build Js to add a value to a all rows in given dataJs, with `$addLocalValuesToRow` is the javascript to add values to a single row.
+     * 
+     * @param string $dataJs
+     * @param string $addLocalValuesToRowJs
+     * @param string $oRowJs
+     * @return string
+     */
+    protected function buildJsAddLocalValues(string $dataJs, string $addLocalValuesToRowJs, string $oRowJs = 'oRow') : string
+    {
+        return <<<JS
+        
+                    // Add static values
+                    ($dataJs.rows || []).forEach(function({$oRowJs}){
+                        $addLocalValuesToRowJs;
+                    });
+JS;
     }
     
     public function buildJsDataLoaderWithoutAjax(DataSheetInterface $data)
