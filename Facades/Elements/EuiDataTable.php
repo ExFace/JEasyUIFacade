@@ -13,6 +13,8 @@ use exface\Core\CommonLogic\UxonObject;
 use exface\Core\Exceptions\Facades\FacadeLogicError;
 use exface\Core\Widgets\DataButton;
 use exface\Core\Exceptions\Facades\FacadeOutputError;
+use exface\Core\Exceptions\Facades\FacadeRuntimeError;
+use exface\Core\Exceptions\Widgets\WidgetLogicError;
 
 /**
  *
@@ -282,6 +284,9 @@ JS;
                         $relation = $action->getMetaObject()->findRelation($widget->getMetaObject(), true);
                         $relAlias = $relation->getAlias();
                     }
+                }
+                if ($relAlias === null || $relAlias === '') {
+                    throw new WidgetLogicError($widget, 'Cannot use editable table with object "' . $widget->getMetaObject()->getName() . '" (alias ' . $widget->getMetaObject()->getAliasWithNamespace() . ') as input widget for action "' . $action->getName() . '" with object "' . $action->getMetaObject()->getName() . '" (alias ' . $action->getMetaObject()->getAliasWithNamespace() . '): no forward relation could be found from action object to widget object!', '7B7KU9Q');
                 }
                 return <<<JS
 
