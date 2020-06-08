@@ -258,54 +258,59 @@ JS;
         $widget = $this->getWidget();
         $rows = '';
         $filters = '';
-        if (is_null($action)) {
-            $rows = "$('#" . $this->getId() . "')." . $this->getElementType() . "('getData').rows";
-        } elseif ($action instanceof iReadData) {
-            // If we are reading, than we need the special data from the configurator 
-            // widget: filters, sorters, etc.
-            return $this->getFacade()->getElement($widget->getConfiguratorWidget())->buildJsDataGetter($action);
-        } elseif ($this->isEditable()) {
-            // Build the row data from the table
-            
-            if ($action->getMetaObject()->is($widget->getMetaObject()) === true) {
-                if ($widget->getMultiSelect()) {
-                    $rows = "$('#" . $this->getId() . "')." . $this->getElementType() . "('getSelections').length > 0 ? $('#" . $this->getId() . "')." . $this->getElementType() . "('getSelections') : " . $this->buildJsFunctionPrefix() . "getChanges()";
-                } else {
-                    $rows = $this->buildJsFunctionPrefix() . "getChanges()";
-                }
-            } else {
-                // If the data is intended for another object, make it a nested data sheet
-                if ($relPath = $widget->getObjectRelationPathFromParent()) {
-                    $relAlias = $relPath->toString();
-                } else {
-                    if ($relPath = $widget->getObjectRelationPathToParent()) {
-                        $relAlias = $relPath->reverse()->toString();
-                    } else {
-                        $relation = $action->getMetaObject()->findRelation($widget->getMetaObject(), true);
-                        $relAlias = $relation->getAlias();
-                    }
-                }
-                if ($relAlias === null || $relAlias === '') {
-                    throw new WidgetLogicError($widget, 'Cannot use editable table with object "' . $widget->getMetaObject()->getName() . '" (alias ' . $widget->getMetaObject()->getAliasWithNamespace() . ') as input widget for action "' . $action->getName() . '" with object "' . $action->getMetaObject()->getName() . '" (alias ' . $action->getMetaObject()->getAliasWithNamespace() . '): no forward relation could be found from action object to widget object!', '7B7KU9Q');
-                }
-                return <<<JS
-
-    {
-        oId: '{$action->getMetaObject()->getId()}', 
-        rows: [
+        
+        switch (true) {
+            case $action === null:
+                $rows = "$('#" . $this->getId() . "')." . $this->getElementType() . "('getData').rows";
+                break;
+            case $action instanceof iReadData:
+                // If we are reading, than we need the special data from the configurator 
+                // widget: filters, sorters, etc.
+                return $this->getFacade()->getElement($widget->getConfiguratorWidget())->buildJsDataGetter($action);
+            case $this->isEditable():
+                // Build the row data from the table
+                switch (true) {
+                    case $action->getMetaObject()->is($widget->getMetaObject()) === true:
+                    case $action->getInputMapper($widget->getMetaObject()) !== null:
+                        if ($widget->getMultiSelect()) {
+                            $rows = "$('#" . $this->getId() . "')." . $this->getElementType() . "('getSelections').length > 0 ? $('#" . $this->getId() . "')." . $this->getElementType() . "('getSelections') : " . $this->buildJsFunctionPrefix() . "getChanges()";
+                        } else {
+                            $rows = $this->buildJsFunctionPrefix() . "getChanges()";
+                        }
+                        break 2;
+                    default:
+                        // If the data is intended for another object, make it a nested data sheet
+                        if ($relPath = $widget->getObjectRelationPathFromParent()) {
+                            $relAlias = $relPath->toString();
+                        } else {
+                            if ($relPath = $widget->getObjectRelationPathToParent()) {
+                                $relAlias = $relPath->reverse()->toString();
+                            } else {
+                                $relation = $action->getMetaObject()->findRelation($widget->getMetaObject(), true);
+                                $relAlias = $relation->getAlias();
+                            }
+                        }
+                        if ($relAlias === null || $relAlias === '') {
+                            throw new WidgetLogicError($widget, 'Cannot use editable table with object "' . $widget->getMetaObject()->getName() . '" (alias ' . $widget->getMetaObject()->getAliasWithNamespace() . ') as input widget for action "' . $action->getName() . '" with object "' . $action->getMetaObject()->getName() . '" (alias ' . $action->getMetaObject()->getAliasWithNamespace() . '): no forward relation could be found from action object to widget object!', '7B7KU9Q');
+                        }
+                        return <<<JS
+        
             {
-                '{$relAlias}': {
-                    oId: '{$widget->getMetaObject()->getId()}', 
-                    rows: {$this->buildJsFunctionPrefix()}getDataRows()
-                }
+                oId: '{$action->getMetaObject()->getId()}', 
+                rows: [
+                    {
+                        '{$relAlias}': {
+                            oId: '{$widget->getMetaObject()->getId()}', 
+                            rows: {$this->buildJsFunctionPrefix()}getDataRows()
+                        }
+                    }
+                ]
             }
-        ]
-    }
 
 JS;
             }
-        } else {
-            $rows = "$('#" . $this->getId() . "')." . $this->getElementType() . "('getSelections')";
+            default:
+                $rows = "$('#" . $this->getId() . "')." . $this->getElementType() . "('getSelections')";
         }
         return "{oId: '" . $widget->getMetaObject()->getId() . "'" . ($rows ? ", rows: " . $rows : '') . ($filters ? ", filters: " . $filters : "") . "}";
     }
@@ -536,45 +541,56 @@ JS;
         $changes_col_array = array();
         $this->addOnLoadSuccess($this->buildJsEditModeEnabler());
         // add data and changes getter if the grid is editable
-        $output .= "
-						function " . $this->buildJsFunctionPrefix() . "getDataRows(){
+        $output .= <<<JS
+
+						function {$this->buildJsFunctionPrefix()}getDataRows(){
 							var data = [];
-							var rows = $('#" . $this->getId() . "')." . $this->getElementType() . "('getRows');
-							for (var i=0; i<rows.length; i++){
-								$('#" . $this->getId() . "')." . $this->getElementType() . "('endEdit', i);
-								data[$('#" . $this->getId() . "')." . $this->getElementType() . "('getRowIndex', rows[i])] = rows[i];
+							var jqTable = $('#{$this->getId()}');
+							var rows = jqTable.{$this->getElementType()}('getRows');
+                            for (var i=0; i<rows.length; i++){
+								jqTable.{$this->getElementType()}('endEdit', i);
+								data[jqTable.{$this->getElementType()}('getRowIndex', rows[i])] = rows[i];
 							}
 							return data;
-						}";
+						}
+JS;
+        
         foreach ($this->getEditors() as $col_id => $editor) {
             $col = $widget->getColumn($col_id);
+            
             // Skip editors for columns, that are not attributes
-            if (! $col->isBoundToAttribute())
+            if (! $col->isBoundToAttribute()) {
+                $changes_col_array[] = $col->getDataColumnName();
                 continue;
-                // For all other editors, that belong to related attributes, add some JS to update all rows with that
-                // attribute, once the value of one of them changes. This makes sure, that the value of a related attribute
-                // is the same, even if it is shown in multiple rows at all times!
-                $rel_path = $col->getAttribute()->getRelationPath();
-                if ($rel_path && ! $rel_path->isEmpty()) {
-                    $col_obj_uid = $rel_path->getRelationLast()->getRightKeyAttribute(true)->getAliasWithRelationPath();
+            }
+            
+            // For all other editors, that belong to related attributes, add some JS to update all rows with that
+            // attribute, once the value of one of them changes. This makes sure, that the value of a related attribute
+            // is the same, even if it is shown in multiple rows at all times!
+            $rel_path = $col->getAttribute()->getRelationPath();
+            if ($rel_path && ! $rel_path->isEmpty()) {
+                $commonKeyAlias = $rel_path->getRelationLast()->getRightKeyAttribute(true)->getAliasWithRelationPath();
+                if ($commonKeyCol = $widget->getColumnByAttributeAlias($commonKeyAlias)) {
+                    $commonKeyColName = $commonKeyCol->getDataColumnName();
                     $this->addOnLoadSuccess("$('td[field=\'" . $col->getDataColumnName() . "\'] input').change(function(){
-						var rows = $('#" . $this->getId() . "')." . $this->getElementType() . "('getRows');
+    					var rows = $('#" . $this->getId() . "')." . $this->getElementType() . "('getRows');
                         var thisRowIdx = $(this).parents('tr.datagrid-row').attr('datagrid-row-index');
-						var thisRowUID = rows[thisRowIdx]['" . $col_obj_uid . "'];
+    					var thisRowUID = rows[thisRowIdx]['" . $commonKeyColName . "'];
                         var val = $(this).{$editor->buildJsValueGetterMethod()};
-						for (var i=0; i<rows.length; i++) {
-							if (rows[i]['" . $col_obj_uid . "'] == thisRowUID){
-								var ed = $('#" . $this->getId() . "')." . $this->getElementType() . "('getEditor', {index: i, field: '" . $col->getDataColumnName() . "'});
-								var ed$ = $(ed.target);
+    					for (var i=0; i<rows.length; i++) {
+    						if (rows[i]['" . $commonKeyColName . "'] == thisRowUID){
+    							var ed = $('#" . $this->getId() . "')." . $this->getElementType() . "('getEditor', {index: i, field: '" . $col->getDataColumnName() . "'});
+    							var ed$ = $(ed.target);
                                 if (val != ed$.{$editor->buildJsValueGetterMethod()}) {
                                     ed$." . $editor->buildJsValueSetterMethod("val") . ";
                                 }
-							}
-						}
-					});");
+    						}
+    					}
+    				});");
                 }
-                
-                $changes_col_array[] = $widget->getColumn($col_id)->getDataColumnName();
+            }
+            
+            $changes_col_array[] = $col->getDataColumnName();
         }
         
         $changes_cols = implode("','", $changes_col_array);
