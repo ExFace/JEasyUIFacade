@@ -48,10 +48,14 @@ class EuiNavMenu extends EuiAbstractElement
 
 HTML;
                 } else {
+                    $childNodesHtml = '';
+                    if ($this->getWidget()->getExpandAll()) {
+                        $childNodesHtml = $this->buildHtmlMenu($node->getChildNodes(), $level+1);
+                    }
                     $output .= <<<HTML
                 <li class='level{$level} closed'>                    
                     <a href='{$url}'>{$node->getName()}</a>
-{$this->buildHtmlMenu($node->getChildNodes(), $level+1)}
+{$childNodesHtml}
                 </li>                
                 
 HTML;
