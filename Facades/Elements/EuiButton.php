@@ -198,8 +198,10 @@ JS;
             if ($widget->getInputWidget() instanceof Dialog){
                 return "$('#" . $input_element->getId() . "').dialog('close');";
             } else {
-                // IDEA close the closest parent dialog here? This maybe usefull
-                // if the dialog button has a custom input widget - not a dialog.
+                $dialog = $widget->getParentByClass(Dialog::class);
+                if ($dialog) {
+                    return "$('#" . $this->getFacade()->getElement($dialog)->getId() . "').dialog('close');";
+                }
             }
         }
         return "";
