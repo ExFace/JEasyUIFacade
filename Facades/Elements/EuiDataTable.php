@@ -360,7 +360,7 @@ JS;
         // ist.
         $widget = $this->getWidget();
         
-        if ($widget->getHeight()->isUndefined() && ($containerWidget = $widget->getParentByType('exface\\Core\\Interfaces\\Widgets\\iContainOtherWidgets')) && ($containerWidget->countWidgetsVisible() > 1)) {
+        if ($widget->getHeight()->isUndefined() && ($containerWidget = $widget->getParentByClass('exface\\Core\\Interfaces\\Widgets\\iContainOtherWidgets')) && ($containerWidget->countWidgetsVisible() > 1)) {
             $widget->setHeight($this->getFacade()->getConfig()->getOption('WIDGET.DATATABLE.HEIGHT_DEFAULT'));
         }
         return parent::getHeight();
@@ -376,7 +376,7 @@ JS;
             // mehr sichtbar sind (nur noch Header und Footer). Deshalb wird hier die Hoehe der
             // DataTable gesetzt, wenn sie nicht definiert ist, und sie nicht alleine im Container
             // ist.
-            if ($containerWidget = $widget->getParentByType('exface\\Core\\Interfaces\\Widgets\\iContainOtherWidgets') && $containerWidget->countWidgetsVisible() > 1) {
+            if ($containerWidget = $widget->getParentByClass('exface\\Core\\Interfaces\\Widgets\\iContainOtherWidgets') && $containerWidget->countWidgetsVisible() > 1) {
                 return ($this->getHeightRelativeUnit() * $default_height) . 'px';
             }
         }

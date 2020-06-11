@@ -67,7 +67,7 @@ HTML;
         // aus irgendeinem Grund um etwa 1 Pixel zu klein, so dass ein Scrollbalken ange-
         // zeigt wird. Aus diesem Grund wird hier dann overflow-y: hidden gesetzt. Falls
         // das Probleme gibt, muss u.U. eine andere Loesung gefunden werden.
-        if ($widget->getHeight()->isUndefined() && ($containerWidget = $widget->getParentByType('exface\\Core\\Interfaces\\Widgets\\iContainOtherWidgets')) && ($containerWidget->countWidgetsVisible() > 1)) {
+        if ($widget->getHeight()->isUndefined() && ($containerWidget = $widget->getParentByClass('exface\\Core\\Interfaces\\Widgets\\iContainOtherWidgets')) && ($containerWidget->countWidgetsVisible() > 1)) {
             $styleScript = 'overflow-y:hidden;';
         }
         

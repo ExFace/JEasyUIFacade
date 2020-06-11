@@ -94,7 +94,7 @@ abstract class EuiAbstractElement extends AbstractJqueryElement
     public function getMasonryItemClass()
     {
         $output = '';
-        if (($containerWidget = $this->getWidget()->getParentByType('exface\\Core\\Interfaces\\Widgets\\iContainOtherWidgets')) && ($containerWidget instanceof iLayoutWidgets)) {
+        if (($containerWidget = $this->getWidget()->getParentByClass('exface\\Core\\Interfaces\\Widgets\\iContainOtherWidgets')) && ($containerWidget instanceof iLayoutWidgets)) {
             $output = $this->getFacade()->getElement($containerWidget)->getId() . '_masonry_exf-grid-item';
         }
         return $output;
@@ -110,7 +110,7 @@ abstract class EuiAbstractElement extends AbstractJqueryElement
     {
         $widget = $this->getWidget();
         
-        if ($layoutWidget = $widget->getParentByType('exface\\Core\\Interfaces\\Widgets\\iLayoutWidgets')) {
+        if ($layoutWidget = $widget->getParentByClass('exface\\Core\\Interfaces\\Widgets\\iLayoutWidgets')) {
             $columnNumber = $this->getFacade()->getElement($layoutWidget)->getNumberOfColumns();
         } else {
             $columnNumber = $this->getFacade()->getConfig()->getOption("WIDGET.ALL.COLUMNS_BY_DEFAULT");
@@ -169,7 +169,7 @@ abstract class EuiAbstractElement extends AbstractJqueryElement
             // Ein "grosses" Widget ohne angegebene Hoehe fuellt die gesamte Hoehe des
             // Containers aus, ausser es ist nicht alleine in diesem Container.
             $output = '100%';
-            if (($containerWidget = $widget->getParentByType('exface\\Core\\Interfaces\\Widgets\\iContainOtherWidgets')) && ($containerWidget->countWidgetsVisible() > 1)) {
+            if (($containerWidget = $widget->getParentByClass('exface\\Core\\Interfaces\\Widgets\\iContainOtherWidgets')) && ($containerWidget->countWidgetsVisible() > 1)) {
                 $output = 'auto';
             }
         } else {
@@ -226,7 +226,7 @@ abstract class EuiAbstractElement extends AbstractJqueryElement
      */
     public function getPadding($default = 0)
     {
-        if (($containerWidget = $this->getWidget()->getParentByType('exface\\Core\\Interfaces\\Widgets\\iContainOtherWidgets')) && ($containerWidget->countWidgetsVisible() > 1)) {
+        if (($containerWidget = $this->getWidget()->getParentByClass('exface\\Core\\Interfaces\\Widgets\\iContainOtherWidgets')) && ($containerWidget->countWidgetsVisible() > 1)) {
             $output = round($this->getSpacing() / 2) . 'px';
         }
         return isset($output) ? $output : $default;
@@ -260,7 +260,7 @@ abstract class EuiAbstractElement extends AbstractJqueryElement
     protected function buildHtmlGridItemWrapper($html, $title = '')
     {
         $widget = $this->getWidget();
-        $grid = $widget->getParentByType('exface\\Core\\Interfaces\\Widgets\\iLayoutWidgets');
+        $grid = $widget->getParentByClass('exface\\Core\\Interfaces\\Widgets\\iLayoutWidgets');
         if ($grid && $grid->countWidgetsVisible() > 1){
             $gridClasses = 'exf-grid-item ' . $this->getMasonryItemClass();
         } else {

@@ -199,7 +199,7 @@ JS;
         $widget = $this->getWidget();
         
         if ($widget->getHeight()->isUndefined()) {
-            if (($containerWidget = $widget->getParentByType('exface\\Core\\Interfaces\\Widgets\\iContainOtherWidgets')) && ($containerWidget->countWidgetsVisible() > 1)) {
+            if (($containerWidget = $widget->getParentByClass('exface\\Core\\Interfaces\\Widgets\\iContainOtherWidgets')) && ($containerWidget->countWidgetsVisible() > 1)) {
                 $widget->setHeight($this->getFacade()->getConfig()->getOption('WIDGET.CHART.HEIGHT_DEFAULT'));
             }
         }
