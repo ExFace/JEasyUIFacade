@@ -187,3 +187,6 @@ pre.sf-dump .sf-dump-private, pre.sf-dump .sf-dump-public, pre.sf-dump .sf-dump-
 
 /* NavCrumbs */
 .exf-navcrumbs a {text-decoration: underline;}
+
+/* Cards */
+.exf-card > .panel > .easyui-panel > .panel > .easyui-panel > .easyui-menu.menu {padding: 1px;}

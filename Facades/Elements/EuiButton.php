@@ -9,14 +9,9 @@ use exface\Core\Facades\AbstractAjaxFacade\Elements\AbstractJqueryElement;
 use exface\Core\Widgets\Dialog;
 use exface\Core\Widgets\Button;
 use exface\Core\Widgets\ButtonGroup;
-use exface\Core\Facades\AbstractAjaxFacade\Elements\JqueryDisableConditionTrait;
-use exface\Core\Interfaces\Actions\iShowDialog;
-use exface\Core\Interfaces\Widgets\iTriggerAction;
-use exface\Core\Interfaces\WidgetInterface;
-use exface\Core\Interfaces\Widgets\iUseInputWidget;
 
 /**
- * generates jEasyUI-Buttons for ExFace
+ * Generates jEasyUI linkbutton controls for Button widgets
  * 
  * @method Button getWidget()
  * @method EuiAbstractElement getInputElement()
@@ -109,7 +104,7 @@ class EuiButton extends EuiAbstractElement
     {
         $widget = $this->getWidget();
         $data_options = '';
-        if ($widget->getVisibility() != EXF_WIDGET_VISIBILITY_PROMOTED) {
+        if ($widget->getVisibility() !== EXF_WIDGET_VISIBILITY_PROMOTED) {
             $data_options .= 'plain: true';
         } else {
             $data_options .= 'plain: false';
@@ -117,9 +112,12 @@ class EuiButton extends EuiAbstractElement
         if ($widget->isDisabled()) {
             $data_options .= ', disabled: true, plain: true';
         }
-        if ($widget->getIcon() && $widget->getShowIcon(true)) {
+        
+        $showIconByDefault = $widget->getAppearance() !== Button::APPEARANCE_LINK;
+        if ($widget->getIcon() && $widget->getShowIcon($showIconByDefault)) {
             $data_options .= ", iconCls: '" . $this->buildCssIconClass($widget->getIcon()) . "'";
         }
+        
         return $data_options;
     }
 
@@ -244,5 +242,15 @@ JS;
         // setTimeout() required to make sure, the jEasyUI element was initialized (especially in lazy loading dialogs)
         return  "setTimeout(function(){ $('#{$this->getId()}').{$this->getElementType()}('enable') }, 0)";
     }
+    
+    public function buildCssElementClass()
+    {
+        $class = 'exf-button';
+        switch ($this->getWidget()->getAppearance()) {
+            case Button::APPEARANCE_LINK: $class .= ' exf-btn-link'; break;
+            case Button::APPEARANCE_STROKED: $class .= ' exf-btn-stroked'; break;
+            case Button::APPEARANCE_FILLED: $class .= ' exf-btn-filled'; break;
+        }
+        return $class;
+    }
 }
-?>
