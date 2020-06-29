@@ -66,6 +66,10 @@
     "ICON_CLASSES.PENCIL_MULTIPLE": "fa fa-pencil-square",
     "ICON_CLASSES.COMPARE": "fa fa-files-o",
     
+    "ICONS.ICON_SETS": {
+    	"fa": "Font Awesome 4.7"
+    },
+    
     "INSTALLER.SERVICEWORKER.DISABLED": true, 
     "INSTALLER.SERVICEWORKER.ROUTES": {
     	"GET data": {
