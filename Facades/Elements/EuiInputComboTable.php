@@ -667,13 +667,24 @@ JS;
         $widget = $this->getWidget();
         $valueFilterParam = UrlDataType::urlEncode($this->getFacade()->getUrlFilterPrefix().$widget->getValueColumn()->getAttributeAlias());
         
+        // If there are links to this combo, that point to additional column, we need a lazy load right
+        // at the start to make sure all columns are loaded. Otherwise no columns accespt value/text
+        // will have empty values.
+        $allColumnsRequired = false;
+        foreach ($widget->getValueLinksToThisWidget() as $link) {
+            if ($link->getTargetColumnId() !== $widget->getValueColumnId() && $link->getTargetColumnId() !== $widget->getTextColumnId()) {
+                $allColumnsRequired = true;
+                break;
+            }
+        }
+        
         // If the value is set data is loaded from the backend. Same if also value-text is set, because otherwise
         // live-references don't work at the beginning. If no value is set, loading from the backend is prevented.
         // The trouble here is, that if the first loading is prevented, the next time the user clicks on the dropdown button,
         // an empty table will be shown, because the last result is cached. To fix this, we bind a reload of the table to
         // onShowPanel in case the grid is empty (see above).
         if (! is_null($this->getValueWithDefaults()) && $this->getValueWithDefaults() !== '') {
-            if (trim($widget->getValueText())) {
+            if (! $allColumnsRequired && trim($widget->getValueText())) {
                 // If the text is already known, set it and prevent initial backend request
                 $widget_value_text = str_replace('"', '\"', trim($widget->getValueText()));
                 $first_load_script = <<<JS
