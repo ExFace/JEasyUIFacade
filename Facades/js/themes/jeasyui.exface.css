@@ -49,7 +49,7 @@ fieldset.exface_inputgroup legend {color: #404040; font-weight: bold; padding: 0
 .exf-inputPassword>div {padding: 0 0 4px 0}
 
 /* Widget groups */
-.exf-widget-group > .panel > .panel-body {width: 100% !important}
+.exf-widget-group > .panel > .panel-body {height: auto !important}
 .exf-panel-flat > .panel > .panel-header {background-color: transparent; padding-top: 6px; margin-bottom: 4px;}
 
 /* Inline groups */
