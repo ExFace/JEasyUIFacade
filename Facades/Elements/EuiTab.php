@@ -54,7 +54,7 @@ HTML;
         return $output;
     }
     
-    protected function getFitOption()
+    protected function getFitOption() : bool
     {
         return false;
     }

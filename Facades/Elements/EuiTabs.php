@@ -106,13 +106,13 @@ HTML;
         return ($this->getWidget()->getHideNavCaptions() ? ', headerWidth: 38' : '');
     }
 
-    public function setFitOption($value)
+    public function setFitOption(bool $value)
     {
-        $this->fit_option = BooleanDataType::cast($value);
+        $this->fit_option = $value;
         return $this;
     }
 
-    protected function getFitOption()
+    protected function getFitOption() : bool
     {
         return $this->fit_option;
     }

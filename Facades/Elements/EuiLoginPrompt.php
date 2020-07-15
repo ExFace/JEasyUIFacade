@@ -87,7 +87,7 @@ HTML;
         return "$border tabPosition: 'top'";
     }
 
-    protected function getFitOption()
+    protected function getFitOption() : bool
     {
         return $this->fit_option;
     }

@@ -267,7 +267,7 @@ JS;
         return false;
     }
     
-    protected function getFitOption()
+    protected function getFitOption() : bool
     {
         return false;
     }

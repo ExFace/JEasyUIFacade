@@ -138,9 +138,6 @@ HTML;
      */
     public function buildJsDataOptions()
     {
-        /** @var Panel $widget */
-        $widget = $this->getWidget();
-        
         if ($this->getNumberOfColumns() > $this->getMinChildWidthRelative()) {
             $this->addOnLoadScript($this->buildJsLayouter() . ';');
             // The resize-script seems to get called too early sometimes if the
@@ -170,13 +167,13 @@ HTML;
         return ltrim($onLoadScript . $onResizeScript . $fit, ", ");
     }
     
-    public function setFitOption(int $value)
+    public function setFitOption(bool $value)
     {
         $this->fit_option = $value;
         return $this;
     }
     
-    protected function getFitOption()
+    protected function getFitOption() : bool
     {
         return $this->fit_option;
     }
