@@ -191,3 +191,8 @@ pre.sf-dump .sf-dump-private, pre.sf-dump .sf-dump-public, pre.sf-dump .sf-dump-
 
 /* Cards */
 .exf-card > .panel > .easyui-panel > .panel > .easyui-panel > .easyui-menu.menu {padding: 1px;}
+
+
+/* Tabs */
+.tabs-panels > .panel {width: 100% !important}
+.tabs-panels > .panel > .panel-body {width: 100% !important}
