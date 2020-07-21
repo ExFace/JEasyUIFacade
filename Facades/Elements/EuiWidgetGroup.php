@@ -1,18 +1,15 @@
 <?php
 namespace exface\JEasyUIFacade\Facades\Elements;
 
+/**
+ * 
+ * @author Andrej Kabachnik
+ * 
+ * @method \exface\Core\Widgets\WidgetGroup getWidget()
+ *
+ */
 class EuiWidgetGroup extends EuiPanel
-{
-    /**
-     * 
-     * {@inheritDoc}
-     * @see \exface\JEasyUIFacade\Facades\Elements\EuiWidgetGrid::init()
-     */
-    protected function init(){
-        parent::init();
-        $this->addElementCssClass('exf-panel-flat exf-widget-group');
-    }
-    
+{    
     /**
      * 
      * {@inheritDoc}
@@ -31,5 +28,20 @@ class EuiWidgetGroup extends EuiPanel
     public function getFitOption() : bool
     {
         return true;
+    }
+    
+    /**
+     * 
+     * {@inheritDoc}
+     * @see \exface\Core\Facades\AbstractAjaxFacade\Elements\AbstractJqueryElement::buildCssElementClass()
+     */
+    public function buildCssElementClass()
+    {
+        $classes = 'exf-panel-flat exf-widget-group';
+        $widget = $this->getWidget();
+        if ($widget->getHeight()->isUndefined() && ! $widget->isFilledBySingleWidget()) {
+            $classes .= ' exf-autoheight';
+        }
+        return parent::buildCssElementClass() . ' ' . $classes;
     }
 }
