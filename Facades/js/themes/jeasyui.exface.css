@@ -180,6 +180,9 @@ pre.sf-dump .sf-dump-private, pre.sf-dump .sf-dump-public, pre.sf-dump .sf-dump-
 .panel:has(.exf-spreadsheet) {overflow: visible;}
 .exf-grid-item:has(.exf-spreadsheet) {overflow: visible;}
 
+/* DataImporter */
+.exf-dataimporter > .jexcel_container {height: calc(100% - 42px)}
+
 /* Login, Errors, etc. */
 .exf-ajax-error > .exf-loginprompt-wrapper {margin-top: 25%}
 .exf-loginprompt-wrapper > .exf-message {margin-left: auto; margin-right: auto}

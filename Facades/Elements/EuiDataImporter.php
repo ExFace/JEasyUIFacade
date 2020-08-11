@@ -4,6 +4,7 @@ namespace exface\JEasyUIFacade\Facades\Elements;
 use exface\Core\Facades\AbstractAjaxFacade\Elements\JExcelTrait;
 use exface\JEasyUIFacade\Facades\Elements\Traits\EuiPanelWrapperTrait;
 use exface\Core\Facades\AbstractAjaxFacade\Elements\JqueryToolbarsTrait;
+use exface\Core\Interfaces\Widgets\iContainOtherWidgets;
 
 class EuiDataImporter extends EuiAbstractElement
 {
@@ -18,13 +19,23 @@ class EuiDataImporter extends EuiAbstractElement
     public function buildHtml()
     {
         $toolbar = $this->buildHtmlToolbars();
+        $widget = $this->getWidget();
+        
+        $style = '';
+        
+        if ($widget->hasParent() && ($parent = $widget->getParent()) instanceof iContainOtherWidgets) {
+            if ($parent->isFilledBySingleWidget()) {
+                $style .= 'height: 100%';
+            }
+        }
         
         return <<<HTML
-
-        <div class="datatable-toolbar datagrid-toolbar" style="height: 36px">
-            {$toolbar}
+        <div class="{$this->buildCssElementClass()}" style="$style">
+            <div class="datatable-toolbar datagrid-toolbar" style="height: 36px">
+                {$toolbar}
+            </div>
+            {$this->buildHtmlJExcel()}
         </div>
-        {$this->buildHtmlJExcel()}
 
 HTML;
     }
@@ -52,16 +63,6 @@ JS;
     }
     
     /**
-     * 
-     * {@inheritDoc}
-     * @see \exface\Core\Facades\AbstractAjaxFacade\Elements\HtmlBrowserTrait::buildCssElementStyle()
-     */
-    public function buildCssElementStyle()
-    {
-        return 'width: 100%; height: 100%;';
-    }
-    
-    /**
      *
      * {@inheritDoc}
      * @see \exface\Core\Facades\AbstractAjaxFacade\Elements\AbstractJqueryElement::buildHtmlHeadTags()
@@ -76,5 +77,15 @@ JS;
         array_unshift($includes, '<script type="text/javascript">' . $this->buildJsFixJqueryImportUseStrict() . '</script>');
         
         return $includes;
+    }
+    
+    /**
+     * 
+     * {@inheritDoc}
+     * @see \exface\Core\Facades\AbstractAjaxFacade\Elements\AbstractJqueryElement::buildCssElementClass()
+     */
+    public function buildCssElementClass()
+    {
+        return 'exf-dataimporter';
     }
 }
