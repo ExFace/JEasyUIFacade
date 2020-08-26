@@ -18,10 +18,14 @@ class EuiInputJson extends EuiInputText
         $this->setElementType('div');
     }
     
+    /**
+     * 
+     * {@inheritDoc}
+     * @see \exface\JEasyUIFacade\Facades\Elements\EuiInputText::buildHtml()
+     */
     public function buildHtml()
     {
-        $output = '<div id="' . $this->getId() . '" style="height: 100%; width: 100%;"></div>';
-        return $this->buildHtmlLabelWrapper($output);
+        return $this->buildHtmlLabelWrapper($this->buildHtmlJsonEditor());
     }
     
     public function buildJs()
