@@ -69,7 +69,7 @@ JS;
     {
         $widget = $this->getWidget();
         $values = json_decode($widget->getValue(), true);
-        $keys = array_keys($values);
+        $keys = array_keys($values) ?? [];
         foreach ($widget->getReferenceValues() as $refVals) {
             $refKeys = array_keys($refVals);
             $keys = $refKeys + $keys;
