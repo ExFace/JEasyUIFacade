@@ -44,3 +44,6 @@ div.panel-body{background-color:#fff;}
 
 /* Tile widget */
 .exf-tile-box {background-color: #fafafa; border-color: #c3d9e0;}
+
+/* Promoted panels */
+.panel-header.promoted {background-color: #c3d9e0}

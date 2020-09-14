@@ -2,6 +2,7 @@
 namespace exface\JEasyUIFacade\Facades\Elements;
 
 use exface\Core\Widgets\SplitPanel;
+use exface\Core\DataTypes\WidgetVisibilityDataType;
 
 /**
  *
@@ -74,6 +75,10 @@ HTML;
         
         $output .= ($output ? ',' : '') . 'region:\'' . $this->getRegion() . '\'
 					,title:\'' . $widget->getCaption() . '\'' . ($this->getRegion() !== 'center' ? ',split:' . ($widget->getResizable() ? 'true' : 'false') : '');
+        
+        if ($this->getWidget()->getVisibility() >= WidgetVisibilityDataType::PROMOTED) {
+            $output .= ($output ? ',' : '') . "headerCls:'promoted'";
+        }
         
         return $output;
     }

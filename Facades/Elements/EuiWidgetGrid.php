@@ -4,6 +4,7 @@ namespace exface\JEasyUIFacade\Facades\Elements;
 use exface\Core\Facades\AbstractAjaxFacade\Elements\JqueryLayoutTrait;
 use exface\Core\Facades\AbstractAjaxFacade\Elements\JqueryMasonryGridTrait;
 use exface\Core\Widgets\WidgetGrid;
+use exface\Core\DataTypes\WidgetVisibilityDataType;
 
 /**
  * The WidgetGrid widget is mapped to a masonry container in jEasyUI
@@ -164,7 +165,9 @@ HTML;
         // extending classes!
         $fit = $this->getFitOption() ? ', fit: true' : '';
         
-        return ltrim($onLoadScript . $onResizeScript . $fit, ", ");
+        $promoted = $this->getWidget()->getVisibility() >= WidgetVisibilityDataType::PROMOTED ? ", headerCls: 'promoted'" : '';
+        
+        return ltrim($onLoadScript . $onResizeScript . $fit . $promoted, ", ");
     }
     
     public function setFitOption(bool $value)

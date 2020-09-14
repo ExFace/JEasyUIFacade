@@ -6,6 +6,7 @@ use exface\Core\Widgets\Value;
 use exface\Core\Interfaces\Widgets\iLayoutWidgets;
 use exface\Core\Widgets\WidgetGroup;
 use exface\Core\Interfaces\Widgets\iContainOtherWidgets;
+use exface\Core\DataTypes\WidgetVisibilityDataType;
 
 /**
  * Generates a <div> element for a Value widget and wraps it in a masonry grid item if needed.
@@ -129,7 +130,7 @@ HTML;
      */
     public function buildCssElementClass()
     {
-        return parent::buildCssElementClass() . ' exf-control';
+        return parent::buildCssElementClass() . ' exf-control' . ($this->getWidget()->getVisibility() >= WidgetVisibilityDataType::PROMOTED ? ' promoted' : '');
     }
     
     /**
