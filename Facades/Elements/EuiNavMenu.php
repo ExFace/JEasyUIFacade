@@ -41,7 +41,7 @@ class EuiNavMenu extends EuiAbstractElement
                     }
                     $output .= <<<HTML
                 <li class='level{$level} active'>
-                    <a class="active current" style="{$aStyle}" href='{$url}'>{$node->getName()}</a>
+                    <a class="active current" style="{$aStyle}" href='{$url}' title="{$node->getDescription()}">{$node->getName()}</a>
 {$this->buildHtmlMenu($node->getChildNodes(), $level+1)}
                 </li>
            
@@ -54,7 +54,7 @@ HTML;
                     }
                     $output .= <<<HTML
                 <li class='level{$level} closed'>                    
-                    <a href='{$url}'>{$node->getName()}</a>
+                    <a href='{$url}' title="{$node->getDescription()}">{$node->getName()}</a>
 {$childNodesHtml}
                 </li>                
                 
@@ -66,7 +66,7 @@ HTML;
                 $output .= <<<HTML
                 
                 <li class='level{$level} active'>
-                    <a class="active current" style="text-decoration:underline;" href='{$url}'>{$node->getName()}</a>
+                    <a class="active current" style="text-decoration:underline;" href='{$url}' title="{$node->getDescription()}">{$node->getName()}</a>
                 </li>
 
 HTML;
@@ -74,7 +74,7 @@ HTML;
                 $output .= <<<HTML
                 
                 <li class='level{$level} active'>
-                    <a href='{$url}'>{$node->getName()}</a>
+                    <a href='{$url}' title="{$node->getDescription()}">{$node->getName()}</a>
                 </li>
                 
 HTML;
