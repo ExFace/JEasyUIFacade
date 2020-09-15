@@ -129,6 +129,7 @@ div.messager-body{overflow-y: auto;}
 .datagrid .tree-icon {background: none; width: 2px;}
 .datagrid-footer .tree-icon {background: none; width: 2px;}
 .datagrid td .datagrid-cell {text-overflow: inherit;} /* makes the use of text-overflow in cell styler possible */
+.datagrid-empty {top: 50% !important;}
 
 /* spinnter */
 .spinner-bg {height: 100%; text-align: center;}

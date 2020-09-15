@@ -454,6 +454,7 @@ JS;
         
         $grid_head .= ($this->getOnChangeScript() ? ', onClickRow: function(index, row){' . $this->buildJsOnChangeScript('row', 'index') . '}' : '');
         $grid_head .= ($widget->getCaption() ? ', title: "' . str_replace('"', '\"', $widget->getCaption()) . '"' : '');
+        $grid_head .= ', emptyMsg : ' . json_encode($widget->getEmptyText());
         
         return $grid_head;
     }
@@ -475,7 +476,7 @@ JS;
     				, detailFormatter: function(index,row){
     					return '<div id="{$details_element->getId()}_'+row.{$widget->getMetaObject()->getUidAttributeAlias()}+'"></div>';
     				}
-    				, onExpandRow: function(index,row){
+                    , onExpandRow: function(index,row){
     					$('#{$details_element->getId()}_'+row.{$widget->getMetaObject()->getUidAttributeAlias()}).panel({
     		            	border: false,
                             href: "{$this->getAjaxUrl()}",
