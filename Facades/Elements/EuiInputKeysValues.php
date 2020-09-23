@@ -72,7 +72,7 @@ JS;
         $keys = array_keys($values) ?? [];
         foreach ($widget->getReferenceValues() as $refVals) {
             $refKeys = array_keys($refVals);
-            $keys = $refKeys + $keys;
+            $keys = array_diff($refKeys, $keys) + $keys;
         }
         
         foreach ($keys as $key) {
