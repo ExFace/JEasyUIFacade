@@ -242,7 +242,7 @@ function {$this->buildJsFunctionPrefix()}ExecuteCommand(command, terminal) {
     var responseCumulated = '';
     return $.ajax( {
 		type: 'POST',
-		url: '{$consoleFacade->buildUrlToFacade()}',
+		url: '{$consoleFacade->buildUrlToFacade(true)}',
 		data: {
             page: '{$this->getWidget()->getPage()->getAliasWithNamespace()}',
             widget: '{$this->getWidget()->getId()}',
