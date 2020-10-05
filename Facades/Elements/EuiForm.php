@@ -1,7 +1,6 @@
 <?php
 namespace exface\JEasyUIFacade\Facades\Elements;
 
-use exface\Core\Widgets\Form;
 use exface\Core\Facades\AbstractAjaxFacade\Elements\JqueryToolbarsTrait;
 use exface\Core\DataTypes\WidgetVisibilityDataType;
 
@@ -10,7 +9,7 @@ use exface\Core\DataTypes\WidgetVisibilityDataType;
  * The HTML form cannot be used here, because form widgets can contain
  * tabs and the tabs implementation in jEasyUI is using HTML forms, so it does not work within a <form> element.
  *
- * @method Form getWidget()
+ * @method \exface\Core\Widgets\Form getWidget()
  *        
  * @author Andrej Kabachnik
  *        
@@ -80,33 +79,13 @@ HTML;
     }
     
     /**
-     * Returns JS code to trigger the action of the default button of the form on enter
-     * 
-     * The default button is
-     * - the only promoted button if there is only one promoted button
-     * - the only button with normal visibility if there are no promoted buttons and only one normal one
+     * Returns JS code to trigger the action of the primary action button of the form on enter
      * 
      * @return string
      */
     protected function buildJsSubmitOnEnter()
     {
-        $promotedButtons = [];
-        $regularButtons = [];
-        foreach ($this->getWidget()->getButtons() as $btn) {
-            if ($btn->getVisibility() == WidgetVisibilityDataType::PROMOTED) {
-                $promotedButtons[] = $btn;
-            }
-            if ($btn->getVisibility() == WidgetVisibilityDataType::NORMAL) {
-                $regularButtons[] = $btn;
-            }
-        }
-        
-        $defaultBtn = null;
-        if (count($promotedButtons) === 1) {
-            $defaultBtn = $promotedButtons[0];
-        } elseif (empty($promotedButtons) && count($regularButtons) === 1) {
-            $defaultBtn = $regularButtons[0];
-        }
+        $defaultBtn = $this->getWidget()->getButtonWithPrimaryAction();
         
         if ($defaultBtn === null) {
             return '';
