@@ -70,10 +70,6 @@ JS;
         $widget = $this->getWidget();
         $values = json_decode($widget->getValue(), true);
         $keys = array_keys($values) ?? [];
-        foreach ($widget->getReferenceValues() as $refVals) {
-            $refKeys = array_keys($refVals);
-            $keys = array_diff($refKeys, $keys) + $keys;
-        }
         
         foreach ($keys as $key) {
             $row = [$key, $values[$key]];
