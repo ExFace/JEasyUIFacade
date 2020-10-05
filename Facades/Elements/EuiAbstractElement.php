@@ -52,6 +52,29 @@ abstract class EuiAbstractElement extends AbstractJqueryElement
         $title_js = ! is_null($title_js) ? $title_js : '"Error"';
         return 'jeasyui_show_error(' . $title_js . ', ' . $message_body_js . ', "' . $this->getId() . '");';
     }
+    
+    public function buildJsShowErrorAjax(string $jqXHR) : string
+    {
+        return <<<JS
+
+        switch ($jqXHR.status) {
+            case 0: 
+                var sError = JSON.stringify({
+                    error: {
+                        type: 'ERROR ',
+                        code: '7CX9G68',
+                        title: "{$this->translate('ERROR.NO_CONNECTION')}",
+                        message: "{$this->translate('ERROR.NO_CONNECTION_HINT')}"
+                    }
+                });
+                {$this->buildJsShowError('sError')}
+                break;
+            default:  
+                {$this->buildJsShowError("$jqXHR.responseText", "$jqXHR.status + ' ' + $jqXHR.statusText")}   
+        }
+
+JS;
+    }
 
     /**
      *

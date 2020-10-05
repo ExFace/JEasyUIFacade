@@ -275,7 +275,7 @@ function {$this->buildJsFunctionPrefix()}ExecuteCommand(command, terminal) {
         terminal.set_prompt({$this->getStyledPrompt("$('#{$this->getId()}').data('cwd')")});
         terminal.resume();    
     }).fail(function(jqXHR, textStatus, errorThrown){
-        {$this->buildJsShowError('jqXHR.responseText', 'jqXHR.status + " " + jqXHR.statusText')}
+        {$this->buildJsShowErrorAjax('jqXHR')}
         terminal.resume();
     }).always({$pauseIfDisabled});
 }

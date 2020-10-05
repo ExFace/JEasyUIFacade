@@ -209,7 +209,7 @@ class EuiData extends EuiAbstractElement
 				' . ($this->buildJsOnBeforeLoadFunction() ? ', onBeforeLoad: ' . $this->buildJsOnBeforeLoadFunction() : '') . '
 				' . $this->buildJsOnLoadSuccessOption() . '
 				, onLoadError: function(response) {
-					' . $this->buildJsShowError('response.responseText', 'response.status + " " + response.statusText') . '
+					' . $this->buildJsShowErrorAjax('response') . '
 					' . $this->getOnLoadError() . '
 				}
 				' . $this->buildJsLoadFilterOption('data') . '

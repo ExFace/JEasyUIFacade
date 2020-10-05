@@ -498,7 +498,7 @@ JS;
     		                   	$('#{$this->getId()}').{$this->getElementType()}('fixDetailRowHeight',index);
     		            	},
     		                onLoadError: function(response){
-    		                	{$this->buildJsShowError('response.responseText', 'response.status + " " + response.statusText')}
+    		                	{$this->buildJsShowErrorAjax('response')}
     						},
     		       			onResize: function(){
     		                	$('#{$this->getId()}').{$this->getElementType()}('fixDetailRowHeight',index);

@@ -132,7 +132,7 @@ JS;
 		},
 		error: function(jqXHR, textStatus,errorThrown){
 		   {$this->buildJsBusyIconHide()}
-		   {$this->buildJsShowError('jqXHR.responseText', 'jqXHR.status + " " + jqXHR.statusText')}
+		   {$this->buildJsShowErrorAjax('jqXHR')}
 		}
 	});
 	

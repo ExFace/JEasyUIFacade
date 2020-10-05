@@ -246,7 +246,7 @@ JS;
         				                    }
         								},
         								error: function(jqXHR, textStatus, errorThrown){ 
-        									{$this->buildJsShowError('jqXHR.responseText', 'jqXHR.status + " " + jqXHR.statusText')}
+        									{$this->buildJsShowErrorAjax('jqXHR')}
         								}
         							});
                                 } catch (e) {

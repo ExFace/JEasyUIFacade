@@ -160,7 +160,7 @@ function contextShowMenu(containerSelector){
 			$(containerSelector).find('.dropdown-menu').empty().append('<li></li>').children('li:first-of-type').append($data);
 		},
 		error: function(jqXHR, textStatus, errorThrown){
-			adminLteCreateDialog($("body"), "error", jqXHR.responseText, jqXHR.status + " " + jqXHR.statusText);
+			jeasyui_show_error($("body"), "error", jqXHR.responseText, jqXHR.status + " " + jqXHR.statusText);
 		}
 	});
 }
@@ -173,7 +173,7 @@ function jeasyui_show_error(sTitle, sBody, sSrcElementId) {
 	var oBody, oError, sMessage, sDetails, sHeading;
 	if (sBody && sBody.startsWith('{') && sBody.endsWith('}')) {
         try {
-            oBody = JSON.parse(sBody)
+            oBody = JSON.parse(sBody);
         } catch (e) {
         	oBody = undefined;
         }

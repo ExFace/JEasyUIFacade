@@ -2,6 +2,9 @@
 	"REFRESH": "Refresh",
 	"HELP": "Help",
 	
+	"ERROR.NO_CONNECTION": "No connection to server!",
+	"ERROR.NO_CONNECTION_HINT": "Please check your network connection and try again. If this does not help, please contact the support!",
+	
 	"MESSAGE.ERROR_TITLE": "Error",
 	"MESSAGE.SUCCESS_TITLE": "Success",
 	"MESSAGE.FILL_REQUIRED_ATTRIBUTES": "Please fill in the required fields: ",
