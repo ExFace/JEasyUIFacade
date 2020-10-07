@@ -280,16 +280,15 @@ JS;
                         break 2;
                     default:
                         // If the data is intended for another object, make it a nested data sheet
-                        if ($relPath = $widget->getObjectRelationPathFromParent()) {
+                        // If the action is based on the same object as the widget's parent, use the widget's
+                        // logic to find the relation to the parent. Otherwise try to find a relation to the
+                        // action's object and throw an error if this fails.
+                        if ($widget->hasParent() && $action->getMetaObject()->is($widget->getParent()->getMetaObject()) && $relPath = $widget->getObjectRelationPathFromParent()) {
                             $relAlias = $relPath->toString();
-                        } else {
-                            if ($relPath = $widget->getObjectRelationPathToParent()) {
-                                $relAlias = $relPath->reverse()->toString();
-                            } else {
-                                $relation = $action->getMetaObject()->findRelation($widget->getMetaObject(), true);
-                                $relAlias = $relation->getAlias();
-                            }
+                        } elseif ($relPath = $action->getMetaObject()->findRelationPath($widget->getMetaObject())) {
+                            $relAlias = $relPath->getAlias();
                         }
+                        
                         if ($relAlias === null || $relAlias === '') {
                             throw new WidgetLogicError($widget, 'Cannot use editable table with object "' . $widget->getMetaObject()->getName() . '" (alias ' . $widget->getMetaObject()->getAliasWithNamespace() . ') as input widget for action "' . $action->getName() . '" with object "' . $action->getMetaObject()->getName() . '" (alias ' . $action->getMetaObject()->getAliasWithNamespace() . '): no forward relation could be found from action object to widget object!', '7B7KU9Q');
                         }
