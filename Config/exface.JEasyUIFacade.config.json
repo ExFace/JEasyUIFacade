@@ -75,7 +75,7 @@
     	"GET data": {
 			"description": "Cache data from the facade API",
 			"matcher": "/.*\\/api\\/jeasyui\\?(?!.*context).*/",
-			"strategy": "workbox.strategies.networkFirst",
+			"strategy": "workbox.strategies.NetworkFirst",
 			"cacheName": "jeasyui-cache",
     		"maxEntries": 50,
     		"maxAgeSeconds": 86400
