@@ -39,7 +39,7 @@ class EuiWidgetGroup extends EuiPanel
     {
         $classes = 'exf-panel-flat exf-widget-group';
         $widget = $this->getWidget();
-        if ($widget->getHeight()->isUndefined() && ! $widget->isFilledBySingleWidget()) {
+        if ($widget->getHeight()->isUndefined() && ! $widget->isFilledBySingleWidget() && $this->getNumberOfColumns() === 1) {
             $classes .= ' exf-autoheight';
         }
         return parent::buildCssElementClass() . ' ' . $classes;
