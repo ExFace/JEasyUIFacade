@@ -126,6 +126,8 @@
     
     "LIBS.DIFF_MATCH_PATCH": "bower-asset/google-diff-match-patch-js/diff_match_patch.js",
     
+    "LIBS.QRCODE.JS": "bower-asset/jquery-qrcode/jquery.qrcode.min.js",
+    
     "LIBS.TERMINAL.TERMINAL_JS": "npm-asset/jquery.terminal/js/jquery.terminal.min.js",
     "LIBS.TERMINAL.ASCII_TABLE_JS": "npm-asset/jquery.terminal/js/ascii_table.js",
     "LIBS.TERMINAL.UNIX_FORMATTING_JS": "npm-asset/jquery.terminal/js/unix_formatting.js",

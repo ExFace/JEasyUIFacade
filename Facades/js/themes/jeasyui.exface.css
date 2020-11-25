@@ -202,3 +202,6 @@ pre.sf-dump .sf-dump-private, pre.sf-dump .sf-dump-public, pre.sf-dump .sf-dump-
 /* Tabs */
 .tabs-panels > .panel {width: 100% !important}
 .tabs-panels > .panel > .panel-body {width: 100% !important}
+
+/* QR code */
+.exf-qrcode {text-align: center;}
