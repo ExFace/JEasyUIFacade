@@ -65,7 +65,9 @@
             "NAME": "Desktop jEasyUI metro ",
             "DESCRIPTION": "Desktop facade based jQuery EasyUI with \"metro\" theme",
             "FACADE": "exface\/JEasyUIFacade\/Facades\/JEasyUIFacade.php",
-            "FACADE_UXON": "{\"theme\":\"metro\"}"
+            "FACADE_UXON": {
+                "theme": "metro"
+            }
         },
         {
             "CREATED_ON": "2020-05-25 08:12:20",
@@ -77,7 +79,9 @@
             "NAME": "Desktop jEasyUI classic",
             "DESCRIPTION": "Desktop facade based jQuery EasyUI with \"default\" theme",
             "FACADE": "exface\/JEasyUIFacade\/Facades\/JEasyUIFacade.php",
-            "FACADE_UXON": "{\"theme\":\"jeasyui-default\"}"
+            "FACADE_UXON": {
+                "theme": "jeasyui-default"
+            }
         },
         {
             "CREATED_ON": "2020-05-25 08:26:30",
@@ -89,7 +93,9 @@
             "NAME": "Desktop jEasyUI material",
             "DESCRIPTION": "Desktop facade based jQuery EasyUI with \"material\" theme",
             "FACADE": "exface\/JEasyUIFacade\/Facades\/JEasyUIFacade.php",
-            "FACADE_UXON": "{\"theme\":\"material\"}"
+            "FACADE_UXON": {
+                "theme": "material"
+            }
         },
         {
             "CREATED_ON": "2020-05-25 08:28:08",
@@ -101,7 +107,9 @@
             "NAME": "Desktop jEasyUI material teal",
             "DESCRIPTION": "Desktop facade based jQuery EasyUI with \"material teal\" theme",
             "FACADE": "exface\/JEasyUIFacade\/Facades\/JEasyUIFacade.php",
-            "FACADE_UXON": "{\"theme\":\"material-teal\"}"
+            "FACADE_UXON": {
+                "theme": "material-teal"
+            }
         },
         {
             "CREATED_ON": "2020-05-25 08:35:15",
@@ -113,7 +121,9 @@
             "NAME": "Desktop jEasyUI material blue",
             "DESCRIPTION": "Desktop facade based jQuery EasyUI with \"material blue\" theme",
             "FACADE": "exface\/JEasyUIFacade\/Facades\/JEasyUIFacade.php",
-            "FACADE_UXON": "{\"theme\":\"material-blue\"}"
+            "FACADE_UXON": {
+                "theme": "material-blue"
+            }
         },
         {
             "CREATED_ON": "2020-05-25 08:47:05",
@@ -125,7 +135,9 @@
             "NAME": "Desktop jEasyUI bootstrap",
             "DESCRIPTION": "Desktop facade based jQuery EasyUI with \"bootstrap\" theme",
             "FACADE": "exface\/JEasyUIFacade\/Facades\/JEasyUIFacade.php",
-            "FACADE_UXON": "{\"theme\":\"bootstrap\"}"
+            "FACADE_UXON": {
+                "theme": "bootstrap"
+            }
         }
     ],
     "totals_rows": [],
