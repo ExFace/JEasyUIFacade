@@ -4,6 +4,9 @@ namespace exface\JEasyUIFacade\Facades\Elements;
 use exface\Core\Widgets\NavTiles;
 use exface\Core\Widgets\Tile;
 use exface\Core\Widgets\Tiles;
+use exface\Core\Factories\WidgetFactory;
+use exface\Core\CommonLogic\UxonObject;
+use exface\Core\DataTypes\MessageTypeDataType;
 
 /**
  * 
@@ -14,10 +17,25 @@ use exface\Core\Widgets\Tiles;
  */
 class EuiNavTiles extends EuiWidgetGrid 
 {
+    /**
+     * 
+     * {@inheritDoc}
+     * @see \exface\JEasyUIFacade\Facades\Elements\EuiWidgetGrid::buildHtml()
+     */
     public function buildHtml()
     {
-        switch ($this->getWidget()->countWidgets()) {
+        switch ($this->getWidget()->countTiles()) {
             case 0:
+                if (! $this->getWidget()->isHiddenIfEmpty()) {
+                    $msg = WidgetFactory::createFromUxonInParent($this->getWidget(), new UxonObject([
+                        'widget_type' => 'Message',
+                        'type' => MessageTypeDataType::INFO,
+                        'caption' => $this->getWidget()->getEmptyText(),
+                        'width' => '100%'
+                    ]));
+                    
+                    return $this->getFacade()->getElement($msg)->buildHtml();
+                }
                 break;
             case 1:
                 $tiles = $this->getWidget()->getWidgetFirst();
