@@ -533,6 +533,10 @@ JS;
     /**
      * Return the JS code to add values from widgets links to table data right after loading it.
      * 
+     * While formulas and other expressions are evaluated in the backend, current values
+     * of linked widgets are only known in the front-end, so they need to be added
+     * here via JS. 
+     * 
      * @param string $dataJs
      * @return string
      */
@@ -548,23 +552,17 @@ JS;
                 continue;
             }
             $valueExpr = $cellWidget->getValueExpression();
-            switch (true) {
-                case $valueExpr->isReference() === true:
-                    $linkedEl = $this->getFacade()->getElement($valueExpr->getWidgetLink($cellWidget)->getTargetWidget());
-                    $linkedEls[] = $linkedEl;
-                    $val = $linkedEl->buildJsValueGetter();
-                    break;
-                case $valueExpr->isConstant() === true:
-                    $val = json_encode($valueExpr->toString());
-                    break;
-            }
-            $addLocalValuesToRowJs .= <<<JS
-            
-                            {$oRowJs}["{$col->getDataColumnName()}"] = {$val};
+            if ($valueExpr->isReference() === true) {
+                $linkedEl = $this->getFacade()->getElement($valueExpr->getWidgetLink($cellWidget)->getTargetWidget());
+                $linkedEls[] = $linkedEl;
+                $addLocalValuesToRowJs .= <<<JS
+                
+                            {$oRowJs}["{$col->getDataColumnName()}"] = {$linkedEl->buildJsValueGetter()};
 JS;
+            }
         }
         if ($addLocalValuesToRowJs) {
-            $addLocalValuesJs = $this->buildJsAddLocalValues($dataJs, $addLocalValuesToRowJs, $oRowJs);
+            $addLocalValuesJs = $this->buildJsRowMutator($dataJs, $addLocalValuesToRowJs, $oRowJs);
             
             // FIXME need to update the changed rows somehow - otherwise the changes are not visible to the user!
             $addLocalValuesOnChange = <<<JS
@@ -580,20 +578,19 @@ JS;
     }
     
     /**
-     * Build Js to add a value to a all rows in given dataJs, with `$addLocalValuesToRow` is the javascript to add values to a single row.
+     * Returns a script, that applies the script in $singleRowJs to each row in $dataJs
      * 
      * @param string $dataJs
-     * @param string $addLocalValuesToRowJs
+     * @param string $singleRowJs
      * @param string $oRowJs
      * @return string
      */
-    protected function buildJsAddLocalValues(string $dataJs, string $addLocalValuesToRowJs, string $oRowJs = 'oRow') : string
+    protected function buildJsRowMutator(string $dataJs, string $singleRowJs, string $oRowJs = 'oRow') : string
     {
         return <<<JS
         
-                    // Add static values
                     ($dataJs.rows || []).forEach(function({$oRowJs}){
-                        $addLocalValuesToRowJs;
+                        $singleRowJs;
                     });
 JS;
     }

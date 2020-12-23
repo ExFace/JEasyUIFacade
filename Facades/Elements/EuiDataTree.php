@@ -124,11 +124,11 @@ JS;
     /**
      * 
      * {@inheritDoc}
-     * @see \exface\JEasyUIFacade\Facades\Elements\EuiData::buildJsAddLocalValues()
+     * @see \exface\JEasyUIFacade\Facades\Elements\EuiData::buildJsRowMutator()
      */
-    protected function buildJsAddLocalValues(string $dataJs, string $addLocalValuesToRowJs, string $oRowJs = 'oRow') : string
+    protected function buildJsRowMutator(string $dataJs, string $singleRowJs, string $oRowJs = 'oRow') : string
     {
-        $addLocalValuesToRowJs .= <<<JS
+        $singleRowJs .= <<<JS
 
                         if ({$oRowJs}['children'] !== undefined && Array.isArray({$oRowJs}['children'])) {
                             {$oRowJs}['children'].forEach(function(childRow) {
@@ -139,9 +139,9 @@ JS;
         
         return <<<JS
 
-                        // Add static values
+                        // Add widget link values
                         function addValues({$oRowJs}) {
-                            {$addLocalValuesToRowJs}
+                            {$singleRowJs}
                         }
                         ($dataJs.rows || []).forEach(function({$oRowJs}){
                             addValues({$oRowJs});
