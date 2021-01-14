@@ -1,7 +1,6 @@
 <?php
 namespace exface\JEasyUIFacade\Facades\Elements;
 
-use exface\Core\Widgets\InlineGroup;
 use exface\Core\Facades\AbstractAjaxFacade\Elements\JqueryContainerTrait;
 use exface\Core\Interfaces\WidgetInterface;
 
@@ -11,7 +10,7 @@ use exface\Core\Interfaces\WidgetInterface;
  *
  * @author Andrej Kabachnik
  *        
- * @method InlineGroup getWidget()
+ * @method \exface\Core\Widgets\InlineGroup getWidget()
  */
 class EuiInlineGroup extends EuiValue
 {
@@ -26,7 +25,9 @@ class EuiInlineGroup extends EuiValue
     {
         parent::init();
         $this->setElementType('div');
-        $this->optimizeChildrenWidths();
+        if ($this->getWidget()->isStretched()) {
+            $this->optimizeChildrenWidths();
+        }
         return;
     }
     
