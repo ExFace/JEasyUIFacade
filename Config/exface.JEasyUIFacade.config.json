@@ -128,6 +128,9 @@
     
     "LIBS.QRCODE.JS": "bower-asset/jquery-qrcode/jquery.qrcode.min.js",
     
+    "LIBS.CRONSTRUE.JS": "npm-asset/cronstrue/dist/cronstrue.min.js",
+    "LIBS.CRONSTRUE.I18N": "npm-asset/cronstrue/dist/cronstrue-i18n.min.js",
+    
     "LIBS.TERMINAL.TERMINAL_JS": "npm-asset/jquery.terminal/js/jquery.terminal.min.js",
     "LIBS.TERMINAL.ASCII_TABLE_JS": "npm-asset/jquery.terminal/js/ascii_table.js",
     "LIBS.TERMINAL.UNIX_FORMATTING_JS": "npm-asset/jquery.terminal/js/unix_formatting.js",
