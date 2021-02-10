@@ -124,7 +124,7 @@
     
     "LIBS.FONT_AWESOME": "bower-asset/font-awesome/css/font-awesome.min.css",
     
-    "LIBS.DIFF_MATCH_PATCH": "bower-asset/google-diff-match-patch-js/diff_match_patch.js",
+    "LIBS.DIFF_MATCH_PATCH": "npm-asset/diff-match-patch/index.js",
     
     "LIBS.QRCODE.JS": "bower-asset/jquery-qrcode/jquery.qrcode.min.js",
     
