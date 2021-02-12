@@ -95,7 +95,7 @@ JS;
     {
         return <<<JS
 
-function {$this->buildJsDataLoadFunctionName()}() {
+function {$this->buildJsDataLoadFunctionName()}(oParams) {
     {$this->buildJsDataLoadFunctionBody()}
 }
 
@@ -113,7 +113,7 @@ JS;
      *
      * @return string
      */
-    protected function buildJsDataLoadFunctionBody() : string
+    protected function buildJsDataLoadFunctionBody(string $oParamsJs = 'oParams') : string
     {
         $widget = $this->getWidget();
         $dataWidget = $this->getDataWidget();
@@ -156,19 +156,21 @@ JS;
                         console.warn('Could not check filter validity - ', e);
                     }
 
-					$.ajax({
+					return $.ajax({
 						url: "{$this->getAjaxUrl()}",
                         method: "POST",
                         {$headers}
-                        data: {
-                            resource: "{$dataWidget->getPage()->getAliasWithNamespace()}", 
-                            element: "{$dataWidget->getId()}",
-                            object: "{$dataWidget->getMetaObject()->getId()}",
-                            action: "{$dataWidget->getLazyLoadingActionAlias()}",
-                            {$url_params}
-                            data: {$configurator_element->buildJsDataGetter()}
-                            
-                        },
+                        data: function(){
+                            return $.extend({
+                                resource: "{$dataWidget->getPage()->getAliasWithNamespace()}", 
+                                element: "{$dataWidget->getId()}",
+                                object: "{$dataWidget->getMetaObject()->getId()}",
+                                action: "{$dataWidget->getLazyLoadingActionAlias()}",
+                                {$url_params}
+                                data: {$configurator_element->buildJsDataGetter()}
+                                
+                            }, ({$oParamsJs} || {}));
+                        }(),
 						success: function(data){
                             var jqSelf = $('#{$this->getId()}');
 							{$this->buildJsDataLoaderOnLoaded('data')}

@@ -34,7 +34,9 @@
 		"npm-asset/jexcel" : "^4.4.1",
 		"npm-asset/moment" : "^2.24.0",
 		"npm-asset/cronstrue" : "^1.108",
-		"npm-asset/diff-match-patch" : "^1.0"
+		"npm-asset/diff-match-patch" : "^1.0",
+		"npm-asset/leaflet" : "^1.7",
+		"npm-asset/leaflet-layerjson" : "~0.3"
 	},
 	"suggest" : {
 		"bower-asset/jeasyui" : "Free (GPL) version of jEasyUI up-to 1.4.3. Otherwise provide your own!"

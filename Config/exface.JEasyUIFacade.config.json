@@ -115,7 +115,11 @@
 	"LIBS.JSONEDITOR.JS": "npm-asset/jsoneditor/dist/jsoneditor.min.js",
 	"LIBS.JSONEDITOR.CSS": "npm-asset/jsoneditor/dist/jsoneditor.min.css",
 	"LIBS.JSONEDITOR.PICOMODAL": "npm-asset/picomodal/src/picoModal.js",
- 
+	
+	"LIBS.LEAFLET.CSS": "npm-asset/leaflet/dist/leaflet.css",
+	"LIBS.LEAFLET.JS": "npm-asset/leaflet/dist/leaflet.js",
+	"LIBS.LEAFLET.LAYERJSON_JS": "npm-asset/leaflet-layerjson/dist/leaflet-layerjson.src.js",
+	
  	"LIBS.MARKDOWN.CSS": "npm-asset/github-markdown-css/github-markdown.css",
 	
 	"LIBS.MASONRY": "bower-asset/masonry/dist/masonry.pkgd.min.js",
