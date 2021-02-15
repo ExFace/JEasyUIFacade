@@ -36,7 +36,8 @@
 		"npm-asset/cronstrue" : "^1.108",
 		"npm-asset/diff-match-patch" : "^1.0",
 		"npm-asset/leaflet" : "^1.7",
-		"npm-asset/leaflet-layerjson" : "~0.3"
+		"npm-asset/leaflet-layerjson" : "~0.3",
+		"npm-asset/leaflet-extra-markers" : "^1.2"
 	},
 	"suggest" : {
 		"bower-asset/jeasyui" : "Free (GPL) version of jEasyUI up-to 1.4.3. Otherwise provide your own!"
