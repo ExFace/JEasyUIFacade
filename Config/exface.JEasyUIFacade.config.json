@@ -121,6 +121,8 @@
 	"LIBS.LEAFLET.LAYERJSON_JS": "npm-asset/leaflet-layerjson/dist/leaflet-layerjson.src.js",
 	"LIBS.LEAFLET.EXTRA_MARKERS_CSS": "npm-asset/leaflet-extra-markers/dist/css/leaflet.extra-markers.min.css",
 	"LIBS.LEAFLET.EXTRA_MARKERS_JS": "npm-asset/leaflet-extra-markers/dist/js/leaflet.extra-markers.min.js",
+	"LIBS.LEAFLET.FULLSCREEN_CSS": "npm-asset/leaflet-fullscreen/dist/Leaflet.fullscreen.css",
+	"LIBS.LEAFLET.FULLSCREEN_JS": "npm-asset/leaflet-fullscreen/dist/Leaflet.fullscreen.min.js",
 	
  	"LIBS.MARKDOWN.CSS": "npm-asset/github-markdown-css/github-markdown.css",
 	
