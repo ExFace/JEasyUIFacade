@@ -26,6 +26,9 @@ class EuiMap extends EuiData
         // Disable global buttons because jEasyUI charts do not have data getters yet
         $widget->getToolbarMain()->setIncludeGlobalActions(false);
         
+        $this->fireRendererExtendedEvent($widget); 
+        $this->registerDefaultLayerRenderers();
+        
         if ($widget->getHideHeader()){
             $this->addOnResizeScript("
                  var newHeight = $('#{$this->getId()}_wrapper > .panel').height();
