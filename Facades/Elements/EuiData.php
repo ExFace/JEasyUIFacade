@@ -24,6 +24,7 @@ use exface\Core\Facades\AbstractAjaxFacade\Interfaces\JsValueDecoratingInterface
 use exface\Core\Interfaces\Widgets\iShowText;
 use exface\Core\Interfaces\Widgets\iDisplayValue;
 use exface\Core\Interfaces\Widgets\iSupportMultiSelect;
+use exface\Core\Widgets\DataToolbar;
 
 /**
  * Implementation of a basic grid.
@@ -656,7 +657,7 @@ JS;
             }
             
             foreach ($widget->getToolbars() as $toolbar){
-                if ($toolbar->getIncludeSearchActions()){
+                if ($toolbar instanceof DataToolbar && $toolbar->getIncludeSearchActions()){
                     $search_button_group = $toolbar->getButtonGroupForSearchActions();
                 } else {
                     $search_button_group = null;
