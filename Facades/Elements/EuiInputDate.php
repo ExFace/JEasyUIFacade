@@ -147,6 +147,7 @@ JS;
      */
     public function buildJsValueGetter()
     {
+        // Löschen des _internalValue
         // Wird der Wert eines EuiInputDates in der Uxon-Beschreibung gesetzt, dann wird das
         // Widget vorbefuellt. Wird dieser vorbefuellte Wert manuell geloescht, dann wird kein
         // onChange getriggert (auch daran zu erkennen, dass das Panel nicht geoeffnet wird)
@@ -157,13 +158,16 @@ JS;
         // bereits geloeschten Wert) und wenn dieser leer ist, wird auch der _internalValue
         // geleert.
         
-        //return '$("#' . $this->getId() . '").data("_internalValue")';
+        // Also return the raw default value if not fully initialized yet. For some reason, the
+        // data of _internalValue is undefined at this point too.
         
         return <<<JS
 
         (function(){
             var jqself = $("#{$this->getId()}");
-            if (jqself.data("{$this->getElementType()}") !== undefined && ! jqself.{$this->getElementType()}("getText")) {
+            if (jqself.data("{$this->getElementType()}") === undefined) {
+                return '{$this->getValueWithDefaults()}';
+            } else if(! jqself.{$this->getElementType()}("getText")) {
                 jqself.data("_internalValue", "");
             }
             return jqself.data("_internalValue");
