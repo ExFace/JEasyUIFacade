@@ -109,7 +109,7 @@ JS;
             return (date instanceof Date ? {$this->getDateFormatter()->buildJsFormatDateObjectToString('date')} : '');
         },
         parser: function(string) {
-            var date = {$this->getDateFormatter()->buildJsFormatParserToJsDate('string')};
+            var date = {$this->getDateFormatter()->buildJsFormatParserToJsDate('string')};console.log('parse');
             // Ausgabe des geparsten Wertes
             if (date) {
                 $(this).data("_internalValue", {$this->getDateFormatter()->buildJsFormatDateObjectToInternal('date')}).data("_isValid", true);
@@ -127,9 +127,11 @@ JS;
             if (currentDate) {
                 jqself.{$this->getElementType()}("setValue", {$this->buildJsValueFormatter('currentDate')});
             }
+            if (jqself.{$this->getElementType()}('isValid')) {
+                jqself.trigger("change") 
+            }
         },
-        validType: "date['#{$this->getId()}']",
-        onChange: function(newValue, oldValue) { $(this).trigger("change") }
+        validType: "date['#{$this->getId()}']"
 JS;
     }
 
