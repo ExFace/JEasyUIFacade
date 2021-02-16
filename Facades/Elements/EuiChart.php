@@ -123,7 +123,7 @@ JS;
      */
     protected function buildJsDataLoadFunctionBody() : string
     {        
-        return ! $this->getWidget()->getDataWidgetLink() ? $this->buildJsDataLoadFunctionBodyViaTrait() : '';
+        return ! $this->getWidget()->getDataWidgetLink() ? 'var oParams = {}; ' . $this->buildJsDataLoadFunctionBodyViaTrait() : '';
     }
     
     /**
