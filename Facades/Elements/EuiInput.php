@@ -113,12 +113,12 @@ class EuiInput extends EuiValue
         return <<<JS
 
     // Event scripts for {$this->getId()}
+    try {
+        {$this->buildJsLiveReference()}
+    } catch (e) {
+        console.warn('Failed to update live reference: ' + e);
+    }
     $(function() { 
-        try {
-            {$this->buildJsLiveReference()}
-        } catch (e) {
-            console.warn('Failed to update live reference: ' + e);
-        }
         {$this->buildJsOnChangeHandler()}
         {$this->buildJsDisableConditionInitializer()}
         {$requiredIfInit}
