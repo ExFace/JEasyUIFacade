@@ -52,7 +52,6 @@ class EuiInputComboTable extends EuiInput
     protected function init()
     {
         parent::init();
-        $this->setElementType('combogrid');
         $this->setJsDebugLevel($this->getFacade()->getConfig()->getOption("FACADE.JAVASCRIPT_DEBUG_LEVEL"));
         
         // Register onChange-Handler for Filters with Live-Reference-Values
@@ -104,6 +103,16 @@ JS;
         if ($widget->getTable()->getPaginator()->getPageSize() === null) {
             $widget->getTable()->getPaginator()->setPageSize($this->getFacade()->getConfig()->getOption('WIDGET.INPUTCOMBOTABLE.PAGE_SIZE'));
         }
+    }
+    
+    /**
+     * 
+     * {@inheritDoc}
+     * @see \exface\Core\Facades\AbstractAjaxFacade\Elements\AbstractJqueryElement::getElementType()
+     */
+    public function getElementType()
+    {
+        return 'combogrid';
     }
 
     /**

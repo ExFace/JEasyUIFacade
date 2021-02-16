@@ -165,7 +165,7 @@ JS;
      */
     public function buildJsValueSetterMethod($value)
     {
-        return $this->getElementType() . '("setValue", ' . $value . ').trigger("change")';
+        return $this->getElementType() . '("setValue", ' . $value . ')';
     }
 
     /**

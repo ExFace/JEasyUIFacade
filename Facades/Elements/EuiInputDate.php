@@ -31,15 +31,18 @@ use exface\Core\Facades\AbstractAjaxFacade\Formatters\JsDateFormatter;
  */
 class EuiInputDate extends EuiInput
 {
-    
     use JqueryInputDateTrait;
 
-    protected function init()
+    /**
+     * 
+     * {@inheritDoc}
+     * @see \exface\Core\Facades\AbstractAjaxFacade\Elements\AbstractJqueryElement::getElementType()
+     */
+    public function getElementType()
     {
-        parent::init();
-        $this->setElementType('datebox');
+        return 'datebox';
     }
-
+    
     function buildHtml()
     {
         /* @var $widget \exface\Core\Widgets\Input */
@@ -87,6 +90,8 @@ $(function() {
         {$this->buildJsDataOptions()}
     });
 
+    {$this->buildJsEventScripts()}
+        
 });
 
 JS;
@@ -107,10 +112,10 @@ JS;
             var date = {$this->getDateFormatter()->buildJsFormatParserToJsDate('string')};
             // Ausgabe des geparsten Wertes
             if (date) {
-                $('#{$this->getId()}').data("_internalValue", {$this->getDateFormatter()->buildJsFormatDateObjectToInternal('date')}).data("_isValid", true);
+                $(this).data("_internalValue", {$this->getDateFormatter()->buildJsFormatDateObjectToInternal('date')}).data("_isValid", true);
                 return date;
             } else {
-                $('#{$this->getId()}').data("_internalValue", "").data("_isValid", false);
+                $(this).data("_internalValue", "").data("_isValid", false);
                 return null;
             }
         },
@@ -123,7 +128,8 @@ JS;
                 jqself.{$this->getElementType()}("setValue", {$this->buildJsValueFormatter('currentDate')});
             }
         },
-        validType: "date['#{$this->getId()}']"
+        validType: "date['#{$this->getId()}']",
+        onChange: function(newValue, oldValue) { $(this).trigger("change") }
 JS;
     }
 
@@ -158,15 +164,27 @@ JS;
         // bereits geloeschten Wert) und wenn dieser leer ist, wird auch der _internalValue
         // geleert.
         
-        // Also return the raw default value if not fully initialized yet. For some reason, the
-        // data of _internalValue is undefined at this point too.
+        // It seems to take a lot of time to initialize the datebox, so we need a fallback
+        // for the time when the getter is requested, but the internal value is not yet
+        // there:
+        // - If the value is a link, use the value of the linked widget directly (don't wait
+        // until the value is set in the datebox)
+        // - If the value is static - return it as string
+        // - otherwise return an empty string
+        
+        if ($link = $this->getWidget()->getValueWidgetLink()) {
+            if ($linkedEl = $this->getFacade()->getElement($link->getTargetWidget())) {
+                $initialValue = $linkedEl->buildJsValueGetter($link->getTargetColumnId());
+            }
+        } else {
+            $initialValue = "'{$this->getValueWithDefaults()}'";
+        }
         
         return <<<JS
-
-        (function(){
+(function(){
             var jqself = $("#{$this->getId()}");
             if (jqself.data("{$this->getElementType()}") === undefined) {
-                return '{$this->getValueWithDefaults()}';
+                return {$initialValue};
             } else if(! jqself.{$this->getElementType()}("getText")) {
                 jqself.data("_internalValue", "");
             }

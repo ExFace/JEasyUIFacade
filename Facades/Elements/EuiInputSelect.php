@@ -13,13 +13,21 @@ use exface\Core\Widgets\InputSelect;
  */
 class EuiInputSelect extends EuiInput
 {
-
-    protected function init()
+    /**
+     * 
+     * {@inheritDoc}
+     * @see \exface\Core\Facades\AbstractAjaxFacade\Elements\AbstractJqueryElement::getElementType()
+     */
+    public function getElementType()
     {
-        parent::init();
-        $this->setElementType('combobox');
+        return 'combobox';
     }
-
+    
+    /**
+     * 
+     * {@inheritDoc}
+     * @see \exface\JEasyUIFacade\Facades\Elements\EuiInput::buildHtml()
+     */
     public function buildHtml()
     {
         $widget = $this->getWidget();

@@ -9,9 +9,13 @@ namespace exface\JEasyUIFacade\Facades\Elements;
  */
 class EuiInputDateTime extends EuiInputDate
 {
-    protected function init()
+    /**
+     * 
+     * {@inheritDoc}
+     * @see \exface\JEasyUIFacade\Facades\Elements\EuiInputDate::getElementType()
+     */
+    public function getElementType()
     {
-        parent::init();
-        $this->setElementType('datetimebox');
+        return 'datetimebox';
     }
 }

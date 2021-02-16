@@ -19,12 +19,11 @@ class EuiInputTime extends EuiInput
     /**
      * 
      * {@inheritDoc}
-     * @see \exface\JEasyUIFacade\Facades\Elements\EuiInput::init()
+     * @see \exface\Core\Facades\AbstractAjaxFacade\Elements\AbstractJqueryElement::getElementType()
      */
-    protected function init()
+    public function getElementType()
     {
-        parent::init();
-        $this->setElementType('timespinner');
+        return 'timespinner';
     }
     
     function buildJs()
