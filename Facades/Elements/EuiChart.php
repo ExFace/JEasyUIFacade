@@ -18,7 +18,6 @@ class EuiChart extends EuiData
 {
     use EChartsTrait, EuiDataElementTrait {
         EChartsTrait::buildJsDataLoadFunctionName insteadof EuiDataElementTrait;
-        EChartsTrait::buildJsRefresh insteadof EuiDataElementTrait;
         EChartsTrait::buildJsMessageOverlayShow insteadof EuiDataElementTrait;
         EChartsTrait::buildJsMessageOverlayHide insteadof EuiDataElementTrait;
         EChartsTrait::buildJsRowCompare as buildJsRowCompareViaEchartsTrait;
