@@ -29,12 +29,7 @@ class EuiMap extends EuiData
         $this->fireRendererExtendedEvent($widget); 
         $this->registerDefaultLayerRenderers();
         
-        if ($widget->getHideHeader()){
-            $this->addOnResizeScript("
-                 var newHeight = $('#{$this->getId()}_wrapper > .panel').height();
-                 $('#{$this->getId()}').height($('#{$this->getId()}').parent().height() - newHeight);
-            ");
-        }
+        $this->addOnResizeScript($this->buildJsResize());
     }
     
     /**
@@ -72,8 +67,25 @@ class EuiMap extends EuiData
                     var {$this->buildJsLeafletVar()};
                     setTimeout(function(){
                         {$this->buildJsLeafletInit()}
+                        {$this->buildJsResize()}
                     });
 
+JS;
+    }
+    
+    /**
+     * Returns the JS code to resize the map to fill out the current wrapper panel size.
+     * @return string
+     */
+    protected function buildJsResize() : string
+    {
+        return <<<JS
+
+                        setTimeout(function() {
+                             var newHeight = $('#{$this->getId()}_wrapper > .panel').height();
+                             $('#{$this->getId()}').height($('#{$this->getId()}').parent().height() - newHeight);
+                             {$this->buildJsLeafletResize()}
+                        },100);
 JS;
     }
     
