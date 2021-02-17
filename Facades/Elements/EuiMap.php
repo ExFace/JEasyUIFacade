@@ -95,4 +95,14 @@ JS;
     {
         return '';
     }
+    
+    /**
+     * Function to refresh the chart
+     *
+     * @return string
+     */
+    public function buildJsRefresh() : string
+    {
+        return $this->buildJsLeafletRefresh();
+    }
 }
