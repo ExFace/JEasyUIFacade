@@ -26,10 +26,10 @@ class EuiMap extends EuiData
         // Disable global buttons because jEasyUI charts do not have data getters yet
         $widget->getToolbarMain()->setIncludeGlobalActions(false);
         
-        $this->fireRendererExtendedEvent($widget); 
-        $this->registerDefaultLayerRenderers();
+        $this->initLeaflet();
         
         $this->addOnResizeScript($this->buildJsResize());
+        return;
     }
     
     /**
@@ -44,10 +44,9 @@ class EuiMap extends EuiData
     
     protected function getDataWidget() : iShowData
     {
-        foreach ($this->getWidget()->getLayers() as $layer) {
-            if ($layer instanceof AbstractDataLayer) {
-                return $layer->getDataWidget();
-            }
+        $layer = $this->getWidget()->getDataLayers()[0];
+        if ($layer) {
+            return $layer->getDataWidget();
         }
         return null;
     }
@@ -86,6 +85,20 @@ JS;
                              $('#{$this->getId()}').height($('#{$this->getId()}').parent().height() - newHeight);
                              {$this->buildJsLeafletResize()}
                         },100);
+JS;
+    }
+    
+    
+    protected function buildJsLeafletDataLoader(string $oRequestParamsJs, string $aResultRowsJs, string $onLoadedJs) : string
+    {
+        return <<<JS
+
+                    {$this->buildJsDataLoadFunctionName()}($oRequestParamsJs)
+                    .then(function(oResponseData){
+                        var $aResultRowsJs = oResponseData.rows || [];
+                        $onLoadedJs
+                    });
+
 JS;
     }
     

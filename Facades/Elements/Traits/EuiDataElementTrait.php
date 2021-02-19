@@ -161,14 +161,13 @@ JS;
                         method: "POST",
                         {$headers}
                         data: function(){
-                            return $.extend({
+                            return $.extend(true, {
                                 resource: "{$dataWidget->getPage()->getAliasWithNamespace()}", 
                                 element: "{$dataWidget->getId()}",
                                 object: "{$dataWidget->getMetaObject()->getId()}",
                                 action: "{$dataWidget->getLazyLoadingActionAlias()}",
                                 {$url_params}
                                 data: {$configurator_element->buildJsDataGetter()}
-                                
                             }, ({$oParamsJs} || {}));
                         }(),
 						success: function(data){
