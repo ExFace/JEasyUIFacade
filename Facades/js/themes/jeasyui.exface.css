@@ -209,3 +209,18 @@ pre.sf-dump .sf-dump-private, pre.sf-dump .sf-dump-public, pre.sf-dump .sf-dump-
 /* Map */
 .exf-map-popup h3 {padding-left: 0}
 .exf-map-popup-table > tbody > tr > td:nth-of-type(2) {font-weight: bold}
+.extra-marker > i.fa-map-marker {margin-top: 8px;}
+.leaflet-marker-icon.selected::before {
+    content: '';
+    display: block;
+    width: 40px;
+    height: 27px;
+    -moz-border-radius: 7.5px;
+    -webkit-border-radius: 7.5px;
+    border-radius: 50%;
+    border: 5px solid gray;
+    position: absolute;
+    top: 23px;
+    left: -7px;
+    z-index: -1;
+}
