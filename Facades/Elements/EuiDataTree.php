@@ -370,27 +370,29 @@ JS;
         $folderFlagCol = $widget->hasTreeFolderFlag() ? $widget->getTreeFolderFlagAttributeAlias() : null;
         $parentCol = $widget->getTreeParentRelationAlias();
         $idCol = $widget->getTreeParentKeyAttribute()->getAliasWithRelationPath();
+        $lazyTree = $widget->getLazyLoadTreeLevels();
         $rowsById = [];
         foreach ($result['rows'] as $nr => $row) {
-            // If we know, which attribute flags a leaf as a folder, use it to set the node state (open/close)
-            if ($folderFlagCol !== null) {
-                if ($row[$folderFlagCol]) {
-                    // $result['rows'][$nr]['state'] = $row[$this->getWidget()->getTreeFolderFlagAttributeAlias()] ? 'closed' : 'open';
-                    $result['rows'][$nr]['state'] = 'closed';
-                    // Dirty hack to remove zero numeric values on folders, because they are easily assumed to be sums
-                    foreach ($row as $fld => $val) {
-                        if (is_numeric($val) && intval($val) == 0) {
-                            $result['rows'][$nr][$fld] = '';
-                        }
+            if ($lazyTree) {
+                // If we know, which attribute flags a leaf as a folder, use it to set the node state (open/close)
+                if ($folderFlagCol !== null) {
+                    if ($row[$folderFlagCol]) {
+                        $result['rows'][$nr]['state'] = 'closed';
+                        // Dirty hack to remove zero numeric values on folders, because they are easily assumed to be sums
+                        /*foreach ($row as $fld => $val) {
+                            if (is_numeric($val) && intval($val) == 0) {
+                                $result['rows'][$nr][$fld] = '';
+                            }
+                        }*/
+                    } else {
+                        $result['rows'][$nr]['state'] = 'open';
                     }
+                    
+                    unset($result['rows'][$nr][$folderFlagCol]);
                 } else {
-                    $result['rows'][$nr]['state'] = 'open';
+                    // If we can't tell, if a node has children - make it close (assume it may have children)
+                    $result['rows'][$nr]['state'] = 'closed';
                 }
-                
-                unset($result['rows'][$nr][$folderFlagCol]);
-            } else {
-                // If we can't tell, if a node has children - make it close (assume it may have children)
-                $result['rows'][$nr]['state'] = 'closed';
             }
             
             // The jEasyUI treegrid cannot build trees itself, so we need to form a hierarchy here, if we have
@@ -418,9 +420,9 @@ JS;
                     $val =& $result['rows'][$nr];
                     array_unshift($rowsById[$parentId]['children'],  $val);
                 }
-                    $rowsById[$parentId]['state'] = 'open';
-                    //set new reference for the row, as current reference will be unset
-                    $rowsById[$row[$idCol]] =& $rowsById[$parentId]['children'][0];
+                $rowsById[$parentId]['state'] = 'open';
+                //set new reference for the row, as current reference will be unset
+                $rowsById[$row[$idCol]] =& $rowsById[$parentId]['children'][0];
                 unset ($result['rows'][$nr]);
             }
         }
