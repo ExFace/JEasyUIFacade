@@ -120,6 +120,8 @@
 	"LIBS.LEAFLET.JS": "npm-asset/leaflet/dist/leaflet.js",
 	"LIBS.LEAFLET.EXTRA_MARKERS_CSS": "npm-asset/leaflet-extra-markers/dist/css/leaflet.extra-markers.min.css",
 	"LIBS.LEAFLET.EXTRA_MARKERS_JS": "npm-asset/leaflet-extra-markers/dist/js/leaflet.extra-markers.min.js",
+	"LIBS.LEAFLET.MARKERCLUSTER_CSS": "npm-asset/leaflet.markercluster/dist/MarkerCluster.css",
+	"LIBS.LEAFLET.MARKERCLUSTER_JS": "npm-asset/leaflet.markercluster/dist/leaflet.markercluster.js",
 	"LIBS.LEAFLET.FULLSCREEN_CSS": "npm-asset/leaflet-fullscreen/dist/Leaflet.fullscreen.css",
 	"LIBS.LEAFLET.FULLSCREEN_JS": "npm-asset/leaflet-fullscreen/dist/Leaflet.fullscreen.min.js",
 	"LIBS.LEAFLET.LOCATECONTROL_CSS": "npm-asset/leaflet.locatecontrol/dist/L.Control.Locate.min.css",
