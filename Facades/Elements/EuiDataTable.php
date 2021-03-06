@@ -518,7 +518,8 @@ JS;
         // groupView options
         $prefix = ! $grouper->getHideCaption() ? "'" . $grouper->getCaption() . " ' + " : '';
         $counter = $grouper->getShowCounter() ? " + ' (' + rows.length + ')'" : "";
-        $value = "(value || 'empty')";
+        $formatter = $this->getFacade()->getDataTypeFormatter($grouper->getGroupByColumn()->getDataType());
+        $value = $formatter->buildJsFormatter("(value || 'empty')");
         if (! $grouper->getHideCaption()) {
             $value = "'\"' + $value + '\"'";
         }
