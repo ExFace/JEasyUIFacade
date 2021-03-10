@@ -216,12 +216,10 @@ JS;
      */
     public function buildJsValueGetter($column = null, $row = null)
     {
-        $getSelectedRowsDataJs = "$('#" . $this->getId() . "')";
-        
         if (is_null($row)) {
-            $getSelectedRowsDataJs .= "." . $this->getElementType() . "('getSelected')";
+            $getSelectedRowsDataJs = $this->getElementType() . "('getSelected')";
         } else {
-            $getSelectedRowsDataJs .= "." . $this->getElementType() . "('getSelections')[{$row}]";
+            $getSelectedRowsDataJs = $this->getElementType() . "('getSelections')[{$row}]";
         }
 
         if (is_null($column)) {
@@ -240,7 +238,16 @@ JS;
         
         // TODO need to list values if multi_select is on instead of just returning the value
         // of the first row (becuase getSelection returns the first row in jEasyUI datagrid)
-        return "({$getSelectedRowsDataJs} ? {$getSelectedRowsDataJs}['{$column}'] : '')";
+        return <<<JS
+(function(){
+    var jqSelf = $('#{$this->getId()}');
+    var aRow;
+    if (jqSelf.{$this->getElementType()} === undefined) {
+        return '';
+    }
+    return jqSelf.{$getSelectedRowsDataJs}['{$column}'] || '';
+})()
+JS;
     }
 
     public function buildJsChangesGetter()
