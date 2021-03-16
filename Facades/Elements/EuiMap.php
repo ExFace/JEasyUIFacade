@@ -4,7 +4,8 @@ namespace exface\JEasyUIFacade\Facades\Elements;
 use exface\Core\Facades\AbstractAjaxFacade\Elements\LeafletTrait;
 use exface\JEasyUIFacade\Facades\Elements\Traits\EuiDataElementTrait;
 use exface\Core\Interfaces\Widgets\iShowData;
-use exface\Core\Widgets\Parts\Maps\AbstractDataLayer;
+use exface\Core\Interfaces\Widgets\iUseData;
+use exface\Core\Widgets\Parts\Maps\DataSelectionMarkerLayer;
 
 /**
  * 
@@ -129,5 +130,26 @@ JS;
     public function buildJsRefresh() : string
     {
         return $this->buildJsLeafletRefresh();
+    }
+    
+    /**
+     * 
+     * @see LeafletTrait::registerLiveReferenceAtLinkedElements()
+     */
+    protected function registerLiveReferenceAtLinkedElements()
+    {
+        foreach ($this->getWidget()->getLayers() as $layer) {
+            if (($layer instanceof iUseData) && $link = $layer->getDataWidgetLink()) {
+                $linked_element = $this->getFacade()->getElement($link->getTargetWidget());
+                if ($linked_element) {
+                    if ($layer instanceof DataSelectionMarkerLayer) {
+                        $linked_element->addOnChangeScript($this->buildJsLeafletRefresh());
+                    } else {
+                        $linked_element->addOnRefreshScript($this->buildJsLeafletRefresh());
+                    }
+                }
+            }
+        }
+        return $this;
     }
 }
