@@ -109,7 +109,7 @@ JS;
             return (date instanceof Date ? {$this->getDateFormatter()->buildJsFormatDateObjectToString('date')} : '');
         },
         parser: function(string) {
-            var date = {$this->getDateFormatter()->buildJsFormatParserToJsDate('string')};console.log('parse');
+            var date = {$this->getDateFormatter()->buildJsFormatParserToJsDate('string')};
             // Ausgabe des geparsten Wertes
             if (date) {
                 $(this).data("_internalValue", {$this->getDateFormatter()->buildJsFormatDateObjectToInternal('date')}).data("_isValid", true);
