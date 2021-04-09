@@ -1,12 +1,11 @@
 <?php
 namespace exface\JEasyUIFacade\Facades\Elements;
 
-use exface\Core\Widgets\DataConfigurator;
 use exface\Core\Facades\AbstractAjaxFacade\Elements\JqueryDataConfiguratorTrait;
 
 /**
  * 
- * @method DataConfigurator getWidget()
+ * @method \exface\Core\Widgets\DataConfigurator getWidget()
  * 
  * @author Andrej Kabachnik
  *
@@ -41,7 +40,7 @@ class EuiDataConfigurator extends EuiTabs
     
     public function buildJs()
     {
-        return parent::buildJs() . $this->buildJsRefreshOnEnter();
+        return parent::buildJs() . $this->buildJsRefreshOnEnter() . $this->buildJsRefreshOnActionEffect();
     }
 }
 ?>

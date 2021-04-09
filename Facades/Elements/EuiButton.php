@@ -169,10 +169,8 @@ class EuiButton extends EuiAbstractElement
 									
 									$(this).dialog('destroy').remove(); 
 									$('#ajax-dialogs').children().last().remove();
-									{$this->buildJsInputRefresh($widget)}
-                                    {$this->buildJsRefreshCascade($widget)}
+									{$this->buildJsTriggerActionEffects($action)}
 								};
-                       			$(document).trigger('{$action->getAliasWithNamespace()}.action.performed', [requestData]);
                        			{$this->buildJsBusyIconHide()}
 							},
 							error: function(jqXHR, textStatus, errorThrown){
