@@ -44,7 +44,7 @@ class EuiSplitPanel extends EuiPanel
         $children_html = <<<HTML
 
                         {$this->buildHtmlForChildren()}
-                        <div id="{$this->getId()}_sizer" style="width:calc(100% / {$this->getNumberOfColumns()});min-width:{$this->getMinWidth()};"></div>
+                        <div id="{$this->getId()}_sizer" style="height: 0px; width:calc(100% / {$this->getNumberOfColumns()});min-width:{$this->getMinWidth()};"></div>
 HTML;
         
         // Wrap children widgets with a grid for masonry layouting - but only if there is something to be layed out
@@ -59,7 +59,7 @@ HTML;
         
         $output = <<<HTML
 
-                <div id="{$this->getId()}" data-options="{$this->buildJsDataOptions()}" style="{$style}">
+                <div id="{$this->getId()}" data-options="{$this->buildJsDataOptions()}" style="{$style}" class="{$this->buildCssElementClass()}">
                     {$children_html}
                 </div>
 HTML;
@@ -69,7 +69,7 @@ HTML;
 
     public function buildJsDataOptions()
     {
-        /* @var $widget \exface\Core\Widgets\LayoutPanel */
+        /* @var $widget \exface\Core\Widgets\SplitPanel */
         $widget = $this->getWidget();
         $output = parent::buildJsDataOptions();
         
@@ -130,6 +130,11 @@ HTML;
 JS;
         
         return $output;
+    }
+    
+    public function buildCssElementClass()
+    {
+        return parent::buildCssElementClass() . ' exf-splitpanel';
     }
 }
 ?>

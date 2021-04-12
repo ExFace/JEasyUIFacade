@@ -227,3 +227,7 @@ pre.sf-dump .sf-dump-private, pre.sf-dump .sf-dump-public, pre.sf-dump .sf-dump-
 .exf-map .marker-cluster {background-clip: padding-box; border-radius: 20px;}
 .exf-map .marker-cluster div {width: 30px; height: 30px; margin-left: 5px; margin-top: 5px; color: white; text-align: center; border-radius: 15px;}
 .exf-map .marker-cluster i {line-height: 30px;}
+
+/* Splits */
+/* Fix for strange margins on the right of splitpanels due to masonry concurrency effects */
+.exf-splitpanel {width: auto !important;}

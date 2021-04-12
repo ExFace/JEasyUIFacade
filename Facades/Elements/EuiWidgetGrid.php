@@ -82,7 +82,8 @@ HTML;
                             id="{$this->getId()}"
                             data-options="{$this->buildJsDataOptions()}"
                             {$title}
-                            style="{$styleScript}">
+                            style="{$styleScript}"
+                            class="{$this->buildCssElementClass()}">
                         {$children_html}
                 </div>
 
@@ -111,6 +112,11 @@ HTML;
 HTML;
     }
     
+    /**
+     * 
+     * {@inheritDoc}
+     * @see \exface\JEasyUIFacade\Facades\Elements\EuiAbstractElement::getHeight()
+     */
     public function getHeight()
     {
         $dimension = $this->getWidget()->getHeight();
@@ -121,6 +127,11 @@ HTML;
         return parent::getHeight();
     }
     
+    /**
+     * 
+     * {@inheritDoc}
+     * @see \exface\JEasyUIFacade\Facades\Elements\EuiContainer::buildJs()
+     */
     public function buildJs()
     {
         $output = parent::buildJs();
@@ -148,12 +159,15 @@ HTML;
             // a corrupted attribute_alias. Just using setTimeout() every time
             // is not an option either as it introduces a visible delay in those
             // cases, when a direct call would have worked.
-            $this->addOnResizeScript('
+            $this->addOnResizeScript("
                 try {
-                    ' . $this->buildJsLayouter() . '
+                    {$this->buildJsLayouter()}
                 } catch (e) {
-                    setTimeout(function(){' . $this->buildJsLayouter() . '}, 0);
-                }');
+                    setTimeout(function(){ 
+                        {$this->buildJsLayouter()} 
+                    }, 0);
+                }
+            ");
         }
         
         $onLoadScript = $this->getOnLoadScript() ? ', onLoad: function(){' . $this->getOnLoadScript() . '}' : '';
@@ -170,47 +184,92 @@ HTML;
         return ltrim($onLoadScript . $onResizeScript . $fit . $promoted, ", ");
     }
     
+    /**
+     * 
+     * @param bool $value
+     * @return \exface\JEasyUIFacade\Facades\Elements\EuiWidgetGrid
+     */
     public function setFitOption(bool $value)
     {
         $this->fit_option = $value;
         return $this;
     }
     
+    /**
+     * 
+     * @return bool
+     */
     protected function getFitOption() : bool
     {
         return $this->fit_option;
     }
     
+    /**
+     * 
+     * @return string
+     */
     public function getOnLoadScript()
     {
         return $this->on_load_script;
     }
     
+    /**
+     * 
+     * @param string $value
+     * @return \exface\JEasyUIFacade\Facades\Elements\EuiWidgetGrid
+     */
     public function addOnLoadScript($value)
     {
         $this->on_load_script .= $value;
         return $this;
     }
     
+    /**
+     * 
+     * {@inheritDoc}
+     * @see \exface\Core\Facades\AbstractAjaxFacade\Elements\AbstractJqueryElement::getOnResizeScript()
+     */
     public function getOnResizeScript()
     {
         return $this->on_resize_script;
     }
     
+    /**
+     * 
+     * {@inheritDoc}
+     * @see \exface\Core\Facades\AbstractAjaxFacade\Elements\AbstractJqueryElement::addOnResizeScript()
+     */
     public function addOnResizeScript($value)
     {
         $this->on_resize_script .= $value;
         return $this;
     } 
 
+    /**
+     * 
+     * @return bool
+     */
     public function inheritsNumberOfColumns() : bool
     {
         return true;
     }
     
+    /**
+     * 
+     * @return int
+     */
     public function getNumberOfColumnsByDefault() : int
     {
         return $this->getFacade()->getConfig()->getOption("WIDGET.PANEL.COLUMNS_BY_DEFAULT");
     }
+    
+    /**
+     * 
+     * {@inheritDoc}
+     * @see \exface\Core\Facades\AbstractAjaxFacade\Elements\AbstractJqueryElement::buildCssElementClass()
+     */
+    public function buildCssElementClass()
+    {
+        return 'exf-widgetgrid';
+    }
 }
-?>
