@@ -160,6 +160,7 @@ class EuiButton extends EuiAbstractElement
 								var onCloseFunc = $('#'+dialogId).panel('options').onClose;
 								$('#'+dialogId).panel('options').onClose = function(){
 									onCloseFunc();
+									{$this->buildJsTriggerActionEffects($action)}
 									
 									// MenuButtons manuell zerstoeren, um Ueberbleibsel im body zu verhindern
 									var menubuttons = $('#'+dialogId).parent().find('.easyui-menubutton');
@@ -169,7 +170,6 @@ class EuiButton extends EuiAbstractElement
 									
 									$(this).dialog('destroy').remove(); 
 									$('#ajax-dialogs').children().last().remove();
-									{$this->buildJsTriggerActionEffects($action)}
 								};
                        			{$this->buildJsBusyIconHide()}
 							},
