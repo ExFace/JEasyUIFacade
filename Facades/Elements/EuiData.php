@@ -949,7 +949,7 @@ JS;
     {
         $widget = $this->getWidget();
         $js = '';
-        if (! $widget->getAutoloadData() && $widget->getLazyLoading()) {
+        if (! $widget->hasAutoloadData() && $widget->getLazyLoading()) {
             // Wrap in setTimeout() to allow the grid to be drawn before placing the message in the middle.
             $js .= <<<JS
             
