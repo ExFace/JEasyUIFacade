@@ -135,6 +135,8 @@ class EuiButton extends EuiAbstractElement
         
         $headers = ! empty($this->getAjaxHeaders()) ? 'headers: ' . json_encode($this->getAjaxHeaders()) . ',' : '';
         
+        // NOTE: trigger action effects AFTER removing the closed dialog - otherwise
+        // this might cause refreshes on the dialog tables that are totally useless!
         $output = $this->buildJsRequestDataCollector($action, $input_element);
         $output .= <<<JS
 						{$this->buildJsBusyIconShow()}
