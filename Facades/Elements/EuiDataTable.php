@@ -241,11 +241,10 @@ JS;
         return <<<JS
 (function(){
     var jqSelf = $('#{$this->getId()}');
-    var aRow;
     if (jqSelf.{$this->getElementType()} === undefined) {
         return '';
     }
-    return jqSelf.{$getSelectedRowsDataJs}['{$column}'] || '';
+    return (jqSelf.{$getSelectedRowsDataJs} || {})['{$column}'] || '';
 })()
 JS;
     }
