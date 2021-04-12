@@ -232,3 +232,5 @@ pre.sf-dump .sf-dump-private, pre.sf-dump .sf-dump-public, pre.sf-dump .sf-dump-
 /* Fix for strange margins on the right of SplitPanels due to masonry concurrency effects */
 .exf-splitpanel {width: auto !important;}
 .datagrid-body {width: auto !important;}
+.easyui-dialog.panel-body {width: auto !important;}
+.dialog-button {width: auto !important;}
