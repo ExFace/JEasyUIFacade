@@ -40,7 +40,7 @@ class EuiDataConfigurator extends EuiTabs
     
     public function buildJs()
     {
-        return parent::buildJs() . $this->buildJsRefreshOnEnter() . $this->buildJsRefreshOnActionEffect();
+        return parent::buildJs() . $this->buildJsRefreshOnEnter() . $this->buildJsRegisterOnActionPerformed($this->buildJsRefreshConfiguredWidget(true));
     }
 }
 ?>
