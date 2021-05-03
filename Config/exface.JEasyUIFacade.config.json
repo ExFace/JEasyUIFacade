@@ -147,6 +147,11 @@
     "LIBS.TERMINAL.ASCII_TABLE_JS": "npm-asset/jquery.terminal/js/ascii_table.js",
     "LIBS.TERMINAL.UNIX_FORMATTING_JS": "npm-asset/jquery.terminal/js/unix_formatting.js",
     "LIBS.TERMINAL.TERMINAL_CSS": "npm-asset/jquery.terminal/css/jquery.terminal.min.css",
+
+	"LIBS.TOASTUI.EDITOR_JS": "npm-asset/toast-ui--editor/dist/toastui-editor.js",
+	"LIBS.TOASTUI.EDITOR_CSS": "npm-asset/toast-ui--editor/dist/toastui-editor.css",
+	"LIBS.CODEMIRROR.JS": "npm-asset/codemirror/lib/codemirror.js",
+	"LIBS.CODEMIRROR.CSS": "npm-asset/codemirror/lib/codemirror.css",
     
     "LIBS.ECHARTS.ECHARTS_JS": "exface/Core/Facades/AbstractAjaxFacade/js/echarts/echarts.custom.min.js",
 	
