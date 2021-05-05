@@ -428,7 +428,14 @@ JS;
         
         // Double click actions. Currently only supports one double click action - the first one in the list of buttons
         if ($dblclick_button = $widget->getButtonsBoundToMouseAction(EXF_MOUSE_ACTION_DOUBLE_CLICK)[0]) {
-            $grid_head .= ', onDblClickRow: function(index, row) {' . $this->getFacade()->getElement($dblclick_button)->buildJsClickFunction() . '}';
+            $grid_head .= <<<JS
+, onDblClickRow: function(index, row) { 
+                        $('#{$this->getId()}')
+                            .{$this->getElementType()}('unselectAll')
+                            .{$this->getElementType()}('selectRow', index);
+                        {$this->getFacade()->getElement($dblclick_button)->buildJsClickFunction()}
+                    }
+JS;
         }
         
         // Left click actions. Currently only supports one double click action - the first one in the list of buttons
