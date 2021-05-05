@@ -239,3 +239,7 @@ pre.sf-dump .sf-dump-private, pre.sf-dump .sf-dump-public, pre.sf-dump .sf-dump-
 /* TOAST UI Editor */
 .tui-tooltip {z-index: 999999 !important;}
 .exf-input-markdown > .markdown-editor {text-align: left;}
+
+/* InputTags */
+.exf-tag {margin: 4px 0px;}
+.exf-tag-container {padding: 0 4px 4px 4px;}

@@ -1,14 +1,14 @@
 <?php
 namespace exface\JEasyUIFacade\Facades\Elements;
 
-use exface\Core\Widgets\InputComboTable;
 use exface\Core\Exceptions\Widgets\WidgetConfigurationError;
 use exface\Core\Exceptions\InvalidArgumentException;
 use exface\Core\DataTypes\UrlDataType;
+use exface\Core\Interfaces\Actions\ActionInterface;
 
 /**
  *
- * @method InputComboTable getWidget()
+ * @method \exface\Core\Widgets\InputComboTable getWidget()
  *        
  * @author Andrej Kabachnik
  *        
@@ -1131,6 +1131,74 @@ JS;
     protected function isLazyLoading()
     {
         return $this->getWidget()->getLazyLoading(true);
+    }
+    
+    /**
+     * TODO move to EuiInputCombo once it is there
+     * 
+     * {@inheritDoc}
+     * @see \exface\JEasyUIFacade\Facades\Elements\EuiInput::buildJsDataGetter()
+     */
+    public function buildJsDataGetter(ActionInterface $action = null)
+    {
+        // If the object of the action is the same as that of the widget, treat
+        // it as a regular input.
+        if ($action === null || $this->getMetaObject()->is($action->getMetaObject()) || $action->getInputMapper($this->getMetaObject()) !== null) {
+            return parent::buildJsDataGetter($action);
+        }
+        
+        $widget = $this->getWidget();
+        // If it's another object, we need to decide, whether to place the data in a
+        // subsheet.
+        if ($action->getMetaObject()->is($widget->getTableObject())) {
+            // FIXME not sure what to do if the action is based on the object of the table.
+            // This should be really important in lookup dialogs, but for now we just fall
+            // back to the generic input logic.
+            return parent::buildJsDataGetter($action);
+        } elseif ($relPath = $widget->findRelationPathFromObject($action->getMetaObject())) {
+            $relAlias = $relPath->toString();
+        }
+        
+        if ($relAlias === null || $relAlias === '') {
+            throw new WidgetConfigurationError($widget, 'Cannot use data from widget "' . $widget->getId() . '" with action on object "' . $action->getMetaObject()->getAliasWithNamespace() . '": no relation can be found from widget object to action object', '7CYA39T');
+        }
+        
+        if ($widget->getMultiSelect() === false) {
+            $rows = "[{ {$widget->getDataColumnName()}: {$this->buildJsValueGetter()} }]";
+        } else {
+            $delim = str_replace("'", "\\'", $this->getWidget()->getMultiSelectTextDelimiter());
+            $rows = <<<JS
+                            function(){
+                                var aVals = ({$this->buildJsValueGetter()}).split('{$delim}');
+                                var aRows = [];
+                                aVals.forEach(function(sVal) {
+                                    if (sVal !== undefined && sVal !== null && sVal !== '') {
+                                        aRows.push({
+                                            {$widget->getDataColumnName()}: sVal
+                                        });
+                                    }
+                                })
+                                return aRows;
+                            }()
+                            
+JS;
+        }
+        
+        return <<<JS
+        
+            {
+                oId: '{$action->getMetaObject()->getId()}',
+                rows: [
+                    {
+                        '{$relAlias}': {
+                            oId: '{$widget->getMetaObject()->getId()}',
+                            rows: {$rows}
+                        }
+                    }
+                ]
+            }
+            
+JS;
     }
 }
 ?>
