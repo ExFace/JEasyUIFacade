@@ -1,15 +1,13 @@
 <?php
 namespace exface\JEasyUIFacade\Facades\Elements;
 
-use exface\Core\Interfaces\DataSheets\DataSheetInterface;
-use exface\Core\Factories\DataSheetFactory;
 use exface\Core\Exceptions\Widgets\WidgetConfigurationError;
 use exface\Core\Interfaces\Actions\ActionInterface;
 
 /**
- * The InputSelect widget will be rendered into a combobox in jEasyUI.
+ * A JEasyUI combo with a custom dropdown panel showing preloaded selectable tags
  *
- * @method \exface\Core\Widgets\InputCombo getWidget()
+ * @method \exface\Core\Widgets\InputTags getWidget()
  *        
  * @author Andrej Kabachnik
  *        
@@ -59,6 +57,11 @@ HTML;
         return $this->buildHtmlLabelWrapper($output);
     }
     
+    /**
+     * 
+     * {@inheritDoc}
+     * @see \exface\JEasyUIFacade\Facades\Elements\EuiInputSelect::buildJs()
+     */
     public function buildJs()
     {
         $widget = $this->getWidget();
@@ -137,6 +140,11 @@ JS;
         return $this->getWidget()->getMultiSelect() ? ", multiple:true" : '';
     }
     
+    /**
+     * 
+     * {@inheritDoc}
+     * @see \exface\JEasyUIFacade\Facades\Elements\EuiInputSelect::buildJsOptionValue()
+     */
     protected function buildJsOptionValue() : string
     {
         return '';
