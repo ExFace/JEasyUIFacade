@@ -29,7 +29,7 @@ class EuiDialogHeader extends EuiWidgetGrid
                 'width' => 'max'
             ]), $widget);
             
-            if ($widget->getWidgetFirst() instanceof WidgetGroup) {
+            if ($widget->hasWidgets() && $widget->getWidgetFirst() instanceof WidgetGroup) {
                 $widget->getWidgetFirst()->addWidget($heading, 0);
             } else {
                 $widget->addWidget($heading, 0);
