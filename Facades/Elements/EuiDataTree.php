@@ -78,6 +78,70 @@ JS;
         return $grid_head;
     }
     
+    /**
+     * 
+     * {@inheritDoc}
+     * @see \exface\JEasyUIFacade\Facades\Elements\EuiDataTable::buildJsInitOptionOnDblClickRow()
+     */
+    protected function buildJsInitOptionOnDblClickRow() : string
+    {
+        // Double click actions. Currently only supports one double click action - the first one in the list of buttons
+        if ($dblclick_button = $this->getWidget()->getButtonsBoundToMouseAction(EXF_MOUSE_ACTION_DOUBLE_CLICK)[0]) {
+            if ($this->getWidget()->hasUidColumn()) {
+            return <<<JS
+, onDblClickRow: function(row) {
+                        var mUid = row['{$this->getWidget()->getUidColumn()->getDataColumnName()}'];
+                        $('#{$this->getId()}')
+                            .{$this->getElementType()}('unselectAll')
+                            .{$this->getElementType()}('select', mUid);
+                        {$this->getFacade()->getElement($dblclick_button)->buildJsClickFunction()}
+                    }
+JS;
+            } else {
+                return <<<JS
+, onDblClickRow: function(row) {
+                        {$this->getFacade()->getElement($dblclick_button)->buildJsClickFunction()}
+                    }
+JS;
+            }
+        }
+        return '';
+    }
+    
+    /**
+     * 
+     * {@inheritDoc}
+     * @see \exface\JEasyUIFacade\Facades\Elements\EuiDataTable::buildJsInitOptionOnContxtMenu()
+     */
+    protected function buildJsInitOptionOnContxtMenu() : string
+    {
+        $widget = $this->getWidget();
+        // Right click actions or context menu
+        if ($rightclick_button = $widget->getButtonsBoundToMouseAction(EXF_MOUSE_ACTION_RIGHT_CLICK)[0]) {
+            return ', onContextMenu: function(e, row) {' . $this->getFacade()->getElement($rightclick_button)->buildJsClickFunction() . '}';
+        } else {
+            // Context menu
+            if ($widget->getContextMenuEnabled() && $widget->hasUidColumn()) {
+                return <<<JS
+, onContextMenu: function(e, row) {
+                        var mUid = row['{$this->getWidget()->getUidColumn()->getDataColumnName()}'];
+    					e.preventDefault();
+    					e.stopPropagation();
+                        if (mUid !== undefined && mUid !== null){
+    					   $(this).{$this->getElementType()}("select", mUid);
+                        }
+    	                $("#{$this->getId()}_cmenu").menu("show", {
+    	                    left: e.pageX,
+    	                    top: e.pageY
+    	                });
+    	                return false;
+    				}
+JS;
+            }
+        }
+        return '';
+    }
+    
     public function buildJsLoadFilterOption(string $dataJs, string $parentIdJs = 'parentId') : string
     {
         $widget = $this->getWidget();

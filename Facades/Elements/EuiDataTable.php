@@ -426,10 +426,23 @@ JS;
         
         $grid_head = parent::buildJsInitOptionsHead();
         
+        $grid_head .= $this->buildJsInitOptionOnClickRow();
+        $grid_head .= $this->buildJsInitOptionOnDblClickRow();
+        $grid_head .= $this->buildJsInitOptionOnContxtMenu();
+        
+        $grid_head .= ($this->getOnChangeScript() ? ', onClickRow: function(index, row){' . $this->buildJsOnChangeScript('row', 'index') . '}' : '');
+        $grid_head .= ($widget->getCaption() ? ', title: "' . str_replace('"', '\"', $widget->getCaption()) . '"' : '');
+        $grid_head .= ', emptyMsg : ' . json_encode($widget->getEmptyText());
+        
+        return $grid_head;
+    }
+    
+    protected function buildJsInitOptionOnDblClickRow() : string
+    {
         // Double click actions. Currently only supports one double click action - the first one in the list of buttons
-        if ($dblclick_button = $widget->getButtonsBoundToMouseAction(EXF_MOUSE_ACTION_DOUBLE_CLICK)[0]) {
-            $grid_head .= <<<JS
-, onDblClickRow: function(index, row) { 
+        if ($dblclick_button = $this->getWidget()->getButtonsBoundToMouseAction(EXF_MOUSE_ACTION_DOUBLE_CLICK)[0]) {
+            return <<<JS
+, onDblClickRow: function(index, row) {
                         $('#{$this->getId()}')
                             .{$this->getElementType()}('unselectAll')
                             .{$this->getElementType()}('selectRow', index);
@@ -437,19 +450,19 @@ JS;
                     }
 JS;
         }
-        
-        // Left click actions. Currently only supports one double click action - the first one in the list of buttons
-        if ($leftclick_button = $widget->getButtonsBoundToMouseAction(EXF_MOUSE_ACTION_LEFT_CLICK)[0]) {
-            $grid_head .= ', onClickRow: function(index, row) {' . $this->getFacade()->getElement($leftclick_button)->buildJsClickFunction() . '}';
-        }
-        
+        return '';
+    }
+    
+    protected function buildJsInitOptionOnContxtMenu() : string
+    {
+        $widget = $this->getWidget();
         // Right click actions or context menu
         if ($rightclick_button = $widget->getButtonsBoundToMouseAction(EXF_MOUSE_ACTION_RIGHT_CLICK)[0]) {
-            $grid_head .= ', onClickRow: function(index, row) {' . $this->getFacade()->getElement($rightclick_button)->buildJsClickFunction() . '}';
+            return ', onRowContextMenu: function(index, row) {' . $this->getFacade()->getElement($rightclick_button)->buildJsClickFunction() . '}';
         } else {
             // Context menu
             if ($widget->getContextMenuEnabled()) {
-                $grid_head .= ', onRowContextMenu: function(e, index, row) {
+                return ', onRowContextMenu: function(e, index, row) {console.log(index, row);
     					e.preventDefault();
     					e.stopPropagation();
                         if (index >= 0){
@@ -463,12 +476,16 @@ JS;
     				}';
             }
         }
-        
-        $grid_head .= ($this->getOnChangeScript() ? ', onClickRow: function(index, row){' . $this->buildJsOnChangeScript('row', 'index') . '}' : '');
-        $grid_head .= ($widget->getCaption() ? ', title: "' . str_replace('"', '\"', $widget->getCaption()) . '"' : '');
-        $grid_head .= ', emptyMsg : ' . json_encode($widget->getEmptyText());
-        
-        return $grid_head;
+        return '';
+    }
+    
+    protected function buildJsInitOptionOnClickRow() : string
+    {
+        // Left click actions. Currently only supports one double click action - the first one in the list of buttons
+        if ($leftclick_button = $this->getWidget()->getButtonsBoundToMouseAction(EXF_MOUSE_ACTION_LEFT_CLICK)[0]) {
+            return ', onClickRow: function(index, row) {' . $this->getFacade()->getElement($leftclick_button)->buildJsClickFunction() . '}';
+        }
+        return '';
     }
     
     protected function buildJsInitOptionsRowDetails()
