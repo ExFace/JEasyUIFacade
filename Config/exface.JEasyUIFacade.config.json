@@ -154,6 +154,8 @@
 	"LIBS.CODEMIRROR.CSS": "npm-asset/codemirror/lib/codemirror.css",
     
     "LIBS.ECHARTS.ECHARTS_JS": "exface/Core/Facades/AbstractAjaxFacade/js/echarts/echarts.custom.min.js",
+	"LIBS.TINYCOLOR.JS": "npm-asset/tinycolor2/dist/tinycolor-min.js",
+	"LIBS.TINYGRADIENT.JS": "npm-asset/tinygradient/browser.js",
 	
 	"LIBS.SLICK.SLICK_JS": "npm-asset/slick-carousel/slick/slick.min.js",
 	"LIBS.SLICK.SLICK_CSS": "npm-asset/slick-carousel/slick/slick.css",
