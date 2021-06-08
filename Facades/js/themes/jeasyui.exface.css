@@ -84,7 +84,7 @@ div.messager-body{overflow-y: auto;}
 
 /* Dialog */
 .exf-dialog-header {background-color: #daeef5 !important;}
-.exf-dialog-header .easyui-panel {background-color: transparent !important;}
+.exf-dialog-header .easyui-panel {background-color: transparent !important; border: none;}
 
 /* TextDiff widget */
 .difftext-container {border: 1px solid #c3d9e0;}
