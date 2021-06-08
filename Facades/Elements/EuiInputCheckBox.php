@@ -17,9 +17,9 @@ class EuiInputCheckBox extends EuiInput
 						<input type="checkbox" value="1" 
 								id="' . $this->getId() . '_checkbox"
 								onchange="$(\'#' . $this->getId() . '\').val(this.checked).change();"' . '
-								' . (BooleanDataType::cast($this->getValueWithDefaults()) ? 'checked="checked" ' : '') . '
+								' . (BooleanDataType::cast($this->getWidget()->getValueWithDefaults()) ? 'checked="checked" ' : '') . '
 								' . ($this->getWidget()->isDisabled() ? 'disabled="disabled"' : '') . ' />
-						<input type="hidden" name="' . $this->getWidget()->getAttributeAlias() . '" id="' . $this->getId() . '" value="' . $this->getValueWithDefaults() . '" />
+						<input type="hidden" name="' . $this->getWidget()->getAttributeAlias() . '" id="' . $this->getId() . '" value="' . $this->getWidget()->getValueWithDefaults() . '" />
 					</div>';
         return $this->buildHtmlLabelWrapper($output);
     }

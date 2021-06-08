@@ -57,23 +57,13 @@ class EuiInput extends EuiValue
         
         $output = '	<input style="height: 100%; width: 100%;"
 						name="' . $widget->getAttributeAlias() . '" 
-						value="' . $this->getValueWithDefaults() . '" 
+						value="' . $this->escapeString($widget->getValueWithDefaults(), false, true) . '" 
 						id="' . $this->getId() . '"  
 						' . ($widget->isRequired() ? 'required="true" ' : '') . '
 						' . ($widget->isDisabled() ? 'disabled="disabled" ' : '') . '
 						/>
 					';
         return $this->buildHtmlLabelWrapper($output);
-    }
-
-    /**
-     * Returns the escaped and ready-to-use value of the widget including the default value (if applicable).
-     *
-     * @return string
-     */
-    public function getValueWithDefaults()
-    {
-        return $this->escapeString($this->getWidget()->getValueWithDefaults());
     }
 
     /**

@@ -46,7 +46,7 @@ $(function() {
     });
     
     $("#{$this->getId()}")
-    .data("_internalValue", "{$this->getValueWithDefaults()}")
+    .data("_internalValue", "{$this->getWidget()->getValueWithDefaults()}")
     .{$this->getElementType()}({
         {$this->buildJsDataOptions()}
     });

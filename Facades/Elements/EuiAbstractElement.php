@@ -32,11 +32,6 @@ abstract class EuiAbstractElement extends AbstractJqueryElement
         return parent::getFacade();
     }
 
-    public function escapeString($string)
-    {
-        return str_replace('"', "'", $string);
-    }
-
     public function buildJsBusyIconShow()
     {
         return "$.messager.progress({});";
