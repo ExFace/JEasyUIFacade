@@ -462,7 +462,7 @@ JS;
         } else {
             // Context menu
             if ($widget->getContextMenuEnabled()) {
-                return ', onRowContextMenu: function(e, index, row) {console.log(index, row);
+                return ', onRowContextMenu: function(e, index, row) {
     					e.preventDefault();
     					e.stopPropagation();
                         if (index >= 0){
