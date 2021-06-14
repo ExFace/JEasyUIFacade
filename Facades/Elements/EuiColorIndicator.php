@@ -24,12 +24,7 @@ class EuiColorIndicator extends EuiDisplay
     {
         $widget = $this->getWidget();
         $val = $widget->getValueWithDefaults();
-        if ($val !== null) {
-            $text = $widget->getText($val);
-        } else {
-            $text = null;
-        }
-        $bar = $this->buildHtmlColorIndicator($val, $text, $widget->getColorForValue($val));
-        return $this->buildHtmlLabelWrapper($bar);
+        $indicator = $this->buildHtmlIndicator($val, $val, $widget->getColorForValue($val));
+        return $this->buildHtmlLabelWrapper($indicator);
     }    
 }
