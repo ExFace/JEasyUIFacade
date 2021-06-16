@@ -27,4 +27,15 @@ class EuiColorIndicator extends EuiDisplay
         $indicator = $this->buildHtmlIndicator($val, $val, $widget->getColorForValue($val));
         return $this->buildHtmlLabelWrapper($indicator);
     }    
+    
+    /**
+     * 
+     * {@inheritDoc}
+     * @see \exface\JEasyUIFacade\Facades\Elements\EuiValue::buildJs()
+     */
+    public function buildJs()
+    {
+        return parent::buildJs() 
+                . $this->buildJsValueSetter($this->escapeString($this->getWidget()->getValueWithDefaults()));
+    }
 }

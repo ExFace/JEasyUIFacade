@@ -1,13 +1,11 @@
 <?php
 namespace exface\JEasyUIFacade\Facades\Elements;
 
-use exface\Core\Widgets\ProgressBar;
 use exface\Core\Facades\AbstractAjaxFacade\Elements\HtmlProgressBarTrait;
-use exface\Core\Facades\AbstractAjaxFacade\Elements\JqueryDisplayTrait;
 
 /**
  *
- * @method ProgressBar getWidget()
+ * @method \exface\Core\Widgets\ProgressBar getWidget()
  *        
  * @author Andrej Kabachnik
  *        
@@ -35,5 +33,15 @@ class EuiProgressBar extends EuiDisplay
         $bar = $this->buildHtmlProgressBar($val, $text, $progress, $widget->getColorForValue($val));
         return $this->buildHtmlLabelWrapper($bar);
     }
+    
+    /**
+     * 
+     * {@inheritDoc}
+     * @see \exface\JEasyUIFacade\Facades\Elements\EuiValue::buildJs()
+     */
+    public function buildJs()
+    {
+        return parent::buildJs()
+        . $this->buildJsValueSetter($this->escapeString($this->getWidget()->getValueWithDefaults())) . ';';
+    }
 }
-?>
