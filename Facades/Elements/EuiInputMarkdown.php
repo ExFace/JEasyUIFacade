@@ -69,7 +69,6 @@ window.toastui.Editor.factory({
             el: document.querySelector('#{$this->getId()}'),
             height: 'calc(100% - 6px)',
             initialValue: $contentJs,
-            initialEditType: 'wysiwyg',
             language: 'en',
             $viewerOptions
         });
