@@ -164,13 +164,26 @@ pre.sf-dump .sf-dump-private, pre.sf-dump .sf-dump-public, pre.sf-dump .sf-dump-
 .exf-tile-box p { max-height: 28px; }
 .exf-tile-icon { position: absolute; top: 8px; right: 8px; font-size: 28px; color: rgba(0, 0, 0, 0.15); }
 
-/* slick carousel */
+/* Slick carousel: ImageGallery */
 .slick-carousel.horizontal .slick-list {padding: 10px; box-sizing: border-box;}
 .slick-carousel.horizontal .slick-list, 
 .slick-carousel.horizontal .slick-track, 
 .slick-carousel.horizontal .slick-slide, 
 .slick-carousel.horizontal .slick-slide img {height: 100%}
-.slick-carousel.horizontal .slick-slide {margin-left: 10px}
+.slick-carousel.horizontal .slick-slide {margin-left: 10px; box-sizing: border-box;}
+.slick-carousel.horizontal .slick-prev.slick-arrow {left: 5px; z-index: 1;}
+.slick-carousel.horizontal .slick-next.slick-arrow {right: 5px; z-index: 1;}
+.slick-carousel.horizontal .slick-arrow:before {color: #404040}
+.slick-carousel .slick-slide.selected {border: 5px solid #9cc8f7}
+.slick-lightbox .slick-prev.slick-arrow {z-index: 1}
+.imagecarousel-upload {height: 100%; width: 50px; position: relative; background-color: #f5f5f5; cursor: pointer;}
+.imagecarousel-upload:hover {background-color: #9cc8f7}
+.imagecarousel-upload > i {position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); font-size: 200%}
+.imagecarousel-upload.armed {width: 180px; border: 5px dashed #f5f5f5; background-color: #9cc8f7}
+.imagecarousel-upload.armed > span {position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); text-align: center;}
+.imagecarousel-loading {z-index: 1}
+.imagecarousel-loading > .datagrid-mask {z-index: 1; opacity: 0.5}
+.imagecarousel-loading > .datagrid-mask-msg {z-index: 1; background-position-x: 9px; margin-left: 8px !important}
 
 /* jExcel */
 .jexcel {border-top: 0 !important; border-left: 0 !important; width: 100% !important; table-layout: auto !important;}

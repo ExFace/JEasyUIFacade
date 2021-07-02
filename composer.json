@@ -23,6 +23,7 @@
 		"bower-asset/font-awesome" : "^4.7",
 		"bower-asset/jquery-qrcode" : "^1.0",
 		"npm-asset/slick-carousel" : "^1.8",
+		"npm-asset/slick-lightbox" : "~0.2.12",
 		"npm-asset/jsoneditor" : "^7.0||^8.0||^9.0",
 		"npm-asset/picomodal" : "^3.0.0",
 		"npm-asset/jquery-prettytextdiff" : "^1.0.3",
@@ -42,8 +43,8 @@
 		"npm-asset/esri-leaflet" : "^3.0",
 		"npm-asset/leaflet.markercluster" : "^1.4",
 		"npm-asset/toast-ui--jquery-editor" : "^2.5",
-		"npm-asset/tinycolor2": "^1.4.2",
-		"npm-asset/tinygradient": "^1.1.4"
+		"npm-asset/tinycolor2" : "^1.4.2",
+		"npm-asset/tinygradient" : "^1.1.4"
 	},
 	"suggest" : {
 		"bower-asset/jeasyui" : "Free (GPL) version of jEasyUI up-to 1.4.3. Otherwise provide your own!"

@@ -25,7 +25,7 @@ class EuiFileUploader extends EuiAbstractElement
 	<div class="easyui-panel" title="{$widget->getCaption()}" data-options="fit:true" style="padding:10px;">	
 		<!-- The file input field used as target for the file upload widget -->
 		<div style="float: left; width:100px;">
-			<input id="{$this->getId()}" type="file" name="files[]" multiple style="display: none;">
+			<input id="{$this->getId()}" type="file" multiple style="display: none;">
 			<a href="javascript:;" class="easyui-linkbutton" onclick="$('#{$this->getId()}').trigger('click');" data-options="iconCls: 'fa fa-plus'" style="width:100px;">Add files</a>
 		</div>
 		<div style="width: calc(100% - 105px); margin: 2px 0 0 105px;">
@@ -41,6 +41,7 @@ HTML;
 
     function buildJs()
     {
+        $widget = $this->getWidget();
         $output = <<<JS
 	$('#{$this->getId()}_pastearea').pastableNonInputable();
 	$('#{$this->getId()}_pastearea').on('pasteImage', function(ev, data){
@@ -49,16 +50,24 @@ HTML;
         //$('<div class="result"></div>').text('text: "' + data.text + '"').insertAfter(this);
       });
     $('#{$this->getId()}').fileupload({
-        url: 'exface/vendor/exface/JEasyUIFacade/Facades/upload.php?sid={$this->getFacade()->getWorkbench()->getContext()->getScopeWindow()->getScopeId()}',
+        url: '{$this->getAjaxUrl()}',
         dataType: 'json',
         autoUpload: true,
         {$this->generateFileFilter()}
         maxFileSize: {$this->getWidget()->getMaxFileSizeBytes()},
         previewMaxWidth: 100,
         previewMaxHeight: 100,
-        previewCrop: true
+        previewCrop: true,
+        formData: {
+            resource: "{$widget->getPage()->getAliasWithNamespace()}",
+            element: "{$widget->getId()}",
+            object: '{$this->getWidget()->getMetaObject()->getId()}',
+            action: 'exface.Core.CreateData'
+        }
+    }).on('fileuploadsend', function(oEvent, oData) {
+        console.log(oData, oEvent);
+        return false;
     }).on('fileuploadadd', function (e, data) {
-    	console.log(data);
         data.context = $('<div class="fileupload-wrapper"/>').appendTo('#{$this->getId()}_files');
         $.each(data.files, function (index, file) {
             var node = $('<div class="fileupload-inner"/>').append(
@@ -115,24 +124,24 @@ JS;
     {
         $headers = array();
         // The jQuery UI widget factory, can be omitted if jQuery UI is already included -->
-        $headers[] = '<script src="exface/vendor/bower-asset/blueimp-file-upload/js/vendor/jquery.ui.widget.js"></script>';
+        $headers[] = '<script src="vendor/bower-asset/blueimp-file-upload/js/vendor/jquery.ui.widget.js"></script>';
         // The Load Image plugin is included for the preview images and image resizing functionality -->
-        $headers[] = '<script src="exface/vendor/npm-asset/blueimp-load-image/js/load-image.all.min.js"></script>';
+        $headers[] = '<script src="vendor/npm-asset/blueimp-load-image/js/load-image.all.min.js"></script>';
         // The Iframe Transport is required for browsers without support for XHR file uploads -->
-        $headers[] = '<script src="exface/vendor/bower-asset/blueimp-file-upload/js/jquery.iframe-transport.js"></script>';
+        $headers[] = '<script src="vendor/bower-asset/blueimp-file-upload/js/jquery.iframe-transport.js"></script>';
         // The basic File Upload plugin -->
-        $headers[] = '<script src="exface/vendor/bower-asset/blueimp-file-upload/js/jquery.fileupload.js"></script>';
+        $headers[] = '<script src="vendor/bower-asset/blueimp-file-upload/js/jquery.fileupload.js"></script>';
         // The File Upload processing plugin -->
-        $headers[] = '<script src="exface/vendor/bower-asset/blueimp-file-upload/js/jquery.fileupload-process.js"></script>';
+        $headers[] = '<script src="vendor/bower-asset/blueimp-file-upload/js/jquery.fileupload-process.js"></script>';
         // The File Upload image preview & resize plugin -->
-        $headers[] = '<script src="exface/vendor/bower-asset/blueimp-file-upload/js/jquery.fileupload-image.js"></script>';
+        $headers[] = '<script src="vendor/bower-asset/blueimp-file-upload/js/jquery.fileupload-image.js"></script>';
         // The File Upload audio preview plugin -->
-        $headers[] = '<script src="exface/vendor/bower-asset/blueimp-file-upload/js/jquery.fileupload-audio.js"></script>';
+        $headers[] = '<script src="vendor/bower-asset/blueimp-file-upload/js/jquery.fileupload-audio.js"></script>';
         // The File Upload video preview plugin -->
-        $headers[] = '<script src="exface/vendor/bower-asset/blueimp-file-upload/js/jquery.fileupload-video.js"></script>';
+        $headers[] = '<script src="vendor/bower-asset/blueimp-file-upload/js/jquery.fileupload-video.js"></script>';
         // The File Upload validation plugin -->
-        $headers[] = '<script src="exface/vendor/bower-asset/blueimp-file-upload/js/jquery.fileupload-validate.js"></script>';
-        $headers[] = '<script src="exface/vendor/bower-asset/paste.js/paste.js"></script>';
+        $headers[] = '<script src="vendor/bower-asset/blueimp-file-upload/js/jquery.fileupload-validate.js"></script>';
+        $headers[] = '<script src="vendor/bower-asset/paste.js/paste.js"></script>';
         return $headers;
     }
 
