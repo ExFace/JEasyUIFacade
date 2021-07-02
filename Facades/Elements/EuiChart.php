@@ -31,9 +31,6 @@ class EuiChart extends EuiData
         // Connect to an external data widget if a data link is specified for this chart
         $this->registerLiveReferenceAtLinkedElement();
         
-        // Disable global buttons because jEasyUI charts do not have data getters yet
-        $widget->getToolbarMain()->setIncludeGlobalActions(false);
-        
         if ($widget->getHideHeader()){
             $this->addOnResizeScript("
                  var newHeight = $('#{$this->getId()}_wrapper > .panel').height();
