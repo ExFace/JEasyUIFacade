@@ -30,6 +30,7 @@ class EuiDataMatrix extends EuiDataTable
         $data_cols = array();
         $data_cols_totlas = array();
         $label_cols = array();
+        $formatters = [];
         foreach ($this->getWidget()->getColumns() as $col) {
             if ($col instanceof DataColumnTransposed) {
                 $data_cols[] = $col->getDataColumnName();
@@ -37,6 +38,10 @@ class EuiDataMatrix extends EuiDataTable
                 if ($col->hasFooter() === true && $col->getFooter()->hasAggregator() === true) {
                     $data_cols_totlas[$col->getDataColumnName()] = $col->getFooter()->getAggregator()->exportString();
                 }
+                $formatter = $this->getFacade()->getDataTypeFormatter($col->getDataType());
+                $formatters[$col->getDataColumnName()] = 'function(value){return ' . $formatter->buildJsFormatter('value') . '}'; 
+                $labelCol = $this->getWidget()->getColumnByAttributeAlias($col->getLabelAttributeAlias());
+                $formatters[$labelCol->getDataColumnName()] = 'function(value){return ' . $this->getFacade()->getDataTypeFormatter($labelCol->getDataType())->buildJsFormatter('value') . '}'; 
             } elseif (! $col->isHidden()) {
                 $visible_cols[] = $col->getDataColumnName();
             }
@@ -46,6 +51,11 @@ class EuiDataMatrix extends EuiDataTable
         $label_cols = json_encode($label_cols);
         $data_cols_totlas = json_encode($data_cols_totlas);
         
+        foreach ($formatters as $fld => $fmt) {
+            $formattersJs .= '"' . $fld . '": ' . $fmt . ',';
+        }
+        $formattersJs = '{' . $formattersJs . '}';
+        
         $transpose_js = <<<JS
 
 $("#{$this->getId()}").data("_skipNextLoad", true);
@@ -54,10 +64,18 @@ var dataCols = [ {$data_cols} ];
 var dataColsTotals = {$data_cols_totlas};
 var labelCols = {$label_cols};
 var rows = data.rows;
-var cols = $(this).datagrid('options').columns;
+var cols = $(this).data('_columnsBkp');
 var colsNew = [];
 var colsTransposed = {};
 var colsTranspCount = 0;
+// data_column_name => formatter_callback
+var formatters = $formattersJs;
+
+if (! cols) {
+    cols = $(this).datagrid('options').columns;
+    $(this).data('_columnsBkp', cols);
+}
+
 for (var i=0; i<cols.length; i++){
 	var newColRow = [];
 	for (var j=0; j<cols[i].length; j++){
@@ -96,13 +114,12 @@ for (var i=0; i<cols.length; i++){
 			}
 			for (var l=0; l<labels.length; l++){
 				var newCol = $.extend(true, {}, cols[i][j]);
-				newCol.field = labels[l];
-				newCol.title = '<span title="'+$(newCol.title).text()+' '+labels[l]+'">'+labels[l]+'</title>';
+				newCol.field = labels[l].replaceAll('-', '_').replaceAll(':', '_');
+				newCol.title = '<span title="'+$(newCol.title).text()+' '+labels[l]+'">'+(formatters[fld] ? formatters[fld](labels[l]) : labels[l])+'</title>';
 				newCol._transposedFields = labelCols[fld];
-				// No header sorting if multiple sublines (not clear, what to sort!)
-				if (dataCols.length > 1){
-					newCol.sortable = false;
-				}
+				// No header sorting (not clear, what to sort!)
+				newCol.sortable = false;
+
 				newColRow.push(newCol);
 			}
 			// Create a totals column if there are totals
@@ -151,7 +168,7 @@ if (data.transposed === 0){
 		for (var fld in rows[i]){
 			var val = rows[i][fld];
 			if (labelCols[fld] != undefined){
-				newColId = val;
+				newColId = val.replaceAll('-', '_').replaceAll(':', '_');
 				newColGroup = fld;
 			} else if (dataCols.indexOf(fld) > -1){
 				newColVals[fld] = val; 
@@ -169,7 +186,7 @@ if (data.transposed === 0){
 				newRowsObj[newRowId+fld] = $.extend(true, {}, newRow);
 				newRowsObj[newRowId+fld]['_subRowIndex'] = subRowCounter++;
 			}
-			newRowsObj[newRowId+fld][newColId] = newColVals[fld];
+			newRowsObj[newRowId+fld][newColId] = formatters[fld] ? formatters[fld](newColVals[fld]) : newColVals[fld];
 			newRowsObj[newRowId+fld][newColGroup+'_subtitle'] = '<i>'+colsTransposed[fld].column.title+'</i>';
 			if (dataColsTotals[fld] != undefined){
 				var newVal = parseFloat(newColVals[fld]);
@@ -196,7 +213,7 @@ if (data.transposed === 0){
 	for (var i in newRowsObj){
 		newRows.push(newRowsObj[i]);
 	}
-	
+
 	data.rows = newRows;
 	data.transposed = 1;
 	$(this).datagrid({columns: colsNew});
