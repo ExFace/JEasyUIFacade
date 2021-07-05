@@ -38,8 +38,8 @@ class EuiDataMatrix extends EuiDataTable
                 if ($col->hasFooter() === true && $col->getFooter()->hasAggregator() === true) {
                     $data_cols_totlas[$col->getDataColumnName()] = $col->getFooter()->getAggregator()->exportString();
                 }
-                $formatter = $this->getFacade()->getDataTypeFormatter($col->getDataType());
-                $formatters[$col->getDataColumnName()] = 'function(value){return ' . $formatter->buildJsFormatter('value') . '}'; 
+                $cellElem = $this->getFacade()->getElement($col->getCellWidget());
+                $formatters[$col->getDataColumnName()] = 'function(value){return ' . $cellElem->buildJsValueDecorator('value') . '}'; 
                 $labelCol = $this->getWidget()->getColumnByAttributeAlias($col->getLabelAttributeAlias());
                 $formatters[$labelCol->getDataColumnName()] = 'function(value){return ' . $this->getFacade()->getDataTypeFormatter($labelCol->getDataType())->buildJsFormatter('value') . '}'; 
             } elseif (! $col->isHidden()) {
