@@ -226,11 +226,6 @@ JS;
     protected function buildJsMessageOverlayShow(string $message) : string
     {
         return '';
-        return <<<JS
-        
-$({$this->buildJsEChartsVar()}.getDom()).prepend($('<div class="exf-chart-message" style="position: absolute; padding: 10px; width: 100%; text-align: center;">{$message}</div>'));
-
-JS;
     }
     
     /**
@@ -240,13 +235,6 @@ JS;
      */
     protected function buildJsMessageOverlayHide() : string
     {
-        return '';
-        return <<<JS
-if ($(".exf-chart-message")[0]) {
-    $(".exf-chart-message").remove();
-}
-
-JS;
-        
+        return '';        
     }
 }

@@ -722,7 +722,7 @@ JS;
      * Creates the HTML for the header controls: filters, sorters, buttons, etc.
      * @return string
      */
-    protected function buildHtmlTableHeader($panel_options = "border: false, width: '100%'")
+    protected function buildHtmlTableHeader($panel_options = "border: false")
     {
         $widget = $this->getWidget();
         $toolbar_style = '';
