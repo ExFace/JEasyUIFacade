@@ -31,6 +31,7 @@ class EuiDataMatrix extends EuiDataTable
         $data_cols_totlas = array();
         $label_cols = array();
         $formatters = [];
+        $stylers = [];
         foreach ($this->getWidget()->getColumns() as $col) {
             if ($col instanceof DataColumnTransposed) {
                 $data_cols[] = $col->getDataColumnName();
@@ -40,6 +41,7 @@ class EuiDataMatrix extends EuiDataTable
                 }
                 $cellElem = $this->getFacade()->getElement($col->getCellWidget());
                 $formatters[$col->getDataColumnName()] = 'function(value){return ' . $cellElem->buildJsValueDecorator('value') . '}'; 
+                $stylers[$col->getDataColumnName()] = $this->buildJsInitOptionsColumnStyler($col, 'value', 'oRow', 'iRowIdx', 'null');
                 $labelCol = $this->getWidget()->getColumnByAttributeAlias($col->getLabelAttributeAlias());
                 $formatters[$labelCol->getDataColumnName()] = 'function(value){return ' . $this->getFacade()->getDataTypeFormatter($labelCol->getDataType())->buildJsFormatter('value') . '}'; 
             } elseif (! $col->isHidden()) {
@@ -56,6 +58,11 @@ class EuiDataMatrix extends EuiDataTable
         }
         $formattersJs = '{' . $formattersJs . '}';
         
+        foreach ($stylers as $fld => $fmt) {
+            $stylersJs .= '"' . $fld . '": ' . $fmt . ',';
+        }
+        $stylersJs = '{' . $stylersJs . '}';
+        
         $transpose_js = <<<JS
 
 $("#{$this->getId()}").data("_skipNextLoad", true);
@@ -70,6 +77,8 @@ var colsTransposed = {};
 var colsTranspCount = 0;
 // data_column_name => formatter_callback
 var formatters = $formattersJs;
+// data_column_name => styler_callback returning CSS styles
+var stylers = $stylersJs;
 
 if (! cols) {
     cols = $(this).datagrid('options').columns;
@@ -90,19 +99,23 @@ for (var i=0; i<cols.length; i++){
 		} else if (labelCols[fld] != undefined) {
 			// Add a subtitle column to show a caption for each subrow if there are multiple
 			if (dataCols.length > 1){
-				var newCol = {};
-				newCol.field = '_subRowIndex';
-				newCol.title = '';
-				newCol.align = 'right';
-				newCol.sortable = false;
-				newCol.hidden = true;
+				var newCol = {
+    				field: '_subRowIndex',
+    				title: '',
+    				align: 'right',
+    				sortable: false,
+    				hidden: true
+                }
 				newColRow.push(newCol);
 
-				var newCol = $.extend(true, {}, cols[i][j]);
-				newCol.field = fld+'_subtitle';
-				newCol.title = '';
-				newCol.align = 'right';
-				newCol.sortable = false;
+				var newCol = $.extend(true, {}, cols[i][j], {
+                    field: fld+'_subtitle',
+    				title: '',
+    				align: 'right',
+    				sortable: false,
+                    formatter: false,
+                    styler: false
+                });
 				newColRow.push(newCol);
 			}
 			// Create a column for each value if the label column
@@ -113,13 +126,15 @@ for (var i=0; i<cols.length; i++){
 				}
 			}
 			for (var l=0; l<labels.length; l++){
-				var newCol = $.extend(true, {}, cols[i][j]);
-				newCol.field = labels[l].replaceAll('-', '_').replaceAll(':', '_');
-				newCol.title = '<span title="'+$(newCol.title).text()+' '+labels[l]+'">'+(formatters[fld] ? formatters[fld](labels[l]) : labels[l])+'</title>';
-				newCol._transposedFields = labelCols[fld];
-				// No header sorting (not clear, what to sort!)
-				newCol.sortable = false;
-
+				var newCol = $.extend(true, {}, cols[i][j], {
+                    field: labels[l].replaceAll('-', '_').replaceAll(':', '_'),
+    				title: '<span title="'+$(cols[i][j].title).text()+' '+labels[l]+'">'+(formatters[fld] ? formatters[fld](labels[l]) : labels[l])+'</title>',
+    				_transposedFields: labelCols[fld],
+    				// No header sorting (not clear, what to sort!)
+    				sortable: false,
+                    formatter: false,
+                    styler: false
+                });
 				newColRow.push(newCol);
 			}
 			// Create a totals column if there are totals
@@ -187,7 +202,10 @@ if (data.transposed === 0){
 				newRowsObj[newRowId+fld]['_subRowIndex'] = subRowCounter++;
 			}
 			newRowsObj[newRowId+fld][newColId] = formatters[fld] ? formatters[fld](newColVals[fld]) : newColVals[fld];
-			newRowsObj[newRowId+fld][newColGroup+'_subtitle'] = '<i>'+colsTransposed[fld].column.title+'</i>';
+            if (stylers[fld]) {
+                newRowsObj[newRowId+fld][newColId] = '<span style="' + stylers[fld](newColVals[fld]) + '">' + newRowsObj[newRowId+fld][newColId] + '</span>';
+            }
+			newRowsObj[newRowId+fld][newColGroup+'_subtitle'] = '<i style="' + (stylers[fld] ? stylers[fld]() : '') + '">'+colsTransposed[fld].column.title+'</i>';
 			if (dataColsTotals[fld] != undefined){
 				var newVal = parseFloat(newColVals[fld]);
 				var oldVal = newRowsObj[newRowId+fld][newColGroup+'_'+dataColsTotals[fld]];

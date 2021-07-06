@@ -831,7 +831,30 @@ HTML;
 JS;
         }
         
-        // Styler option
+        // Styler option        
+        if ($styler = $this->buildJsInitOptionsColumnStyler($col, $js_var_value, $js_var_row, $js_var_index)) {
+            $options = ($options ?  $options . ', ' : '') . $styler;
+        }
+        
+        return $options;
+    }
+    
+    /**
+     * Returns a JS callable (function) that returns custom CSS styles for the cells of the given column.
+     * 
+     * E.g. `function(value, row, rowIdx){return 'font-weight: bold;';}` - where `value`, `row` and `rowIdx`
+     * are examples for the PHP arguments $js_var_value, $js_var_row and $js_var_index respectively.
+     * 
+     * @param DataColumn $col
+     * @param string $js_var_value
+     * @param string $js_var_row
+     * @param string $js_var_index
+     * @param string $fallbackJs
+     * @return string
+     */
+    protected function buildJsInitOptionsColumnStyler(DataColumn $col, string $js_var_value, string $js_var_row, string $js_var_index, string $fallbackJs = '') : string
+    {
+        $cellWidget = $col->getCellWidget();
         $styler = $col->getCellStylerScript();
         if (! $styler) {
             $stylerCss = '';
@@ -866,10 +889,10 @@ JS;
         }
         
         if ($styler) {
-            $options = ($options ?  $options . ', ' : '') . "styler: function({$js_var_value},{$js_var_row},{$js_var_index}){" . $styler . "}";
+            return "function({$js_var_value},{$js_var_row},{$js_var_index}){" . $styler . "}";
         }
         
-        return $options;
+        return $fallbackJs;
     }
     
     protected function buildJsOnBeforeLoadScript($js_var_param = 'param')
