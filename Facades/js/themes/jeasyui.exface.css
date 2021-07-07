@@ -193,6 +193,7 @@ pre.sf-dump .sf-dump-private, pre.sf-dump .sf-dump-public, pre.sf-dump .sf-dump-
 .jexcel>thead.footer>tr>td {background-color: white; font-weight: bold; border-top: 1px solid #666;}
 .jexcel td {overflow: hidden; text-overflow: ellipsis;}
 .jexcel td.highlight-selected > * {min-width: 3em; width: auto;}
+.jexcel td.editor > input {width: 100% !important; text-align: inherit !important;}
 .exf-spreadsheet {overflow: visible;}
 .panel:has(.exf-spreadsheet) {overflow: visible;}
 .exf-grid-item:has(.exf-spreadsheet) {overflow: visible;}
