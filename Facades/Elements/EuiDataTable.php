@@ -424,6 +424,18 @@ JS;
             $this->addOnLoadSuccess($singleResultJs);
         }
         
+        // Add empty result message to onLoadSuccess
+        $emptyResultJs = <<<JS
+        
+                        if (data.rows.length === 0 && data.total != undefined) {
+                            {$this->buildJsAutoloadDisabledMessageShow($this->getWidget()->getEmptyText())}
+                        } else {
+                            {$this->buildJsAutoloadDisabledMessageHide()};
+                        }
+                        
+JS;
+        $this->addOnLoadSuccess($emptyResultJs);
+        
         $grid_head = parent::buildJsInitOptionsHead();
         
         $grid_head .= $this->buildJsInitOptionOnClickRow();
