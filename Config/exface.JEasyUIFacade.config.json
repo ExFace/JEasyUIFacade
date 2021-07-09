@@ -154,6 +154,7 @@
 	"LIBS.CODEMIRROR.CSS": "npm-asset/codemirror/lib/codemirror.css",
     
     "LIBS.ECHARTS.ECHARTS_JS": "exface/Core/Facades/AbstractAjaxFacade/js/echarts/echarts49.custom.min.js",
+	"LIBS.ECHARTS.ECHARTSHEATMAP_JS": "exface/Core/Facades/AbstractAjaxFacade/js/echarts/echarts46Heatmap.custom.min.js",
 	"LIBS.TINYCOLOR.JS": "npm-asset/tinycolor2/dist/tinycolor-min.js",
 	"LIBS.TINYGRADIENT.JS": "npm-asset/tinygradient/browser.js",
 	
