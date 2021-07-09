@@ -561,7 +561,7 @@ JS;
         $prefix = ! $grouper->getHideCaption() ? "'" . $grouper->getCaption() . " ' + " : '';
         $counter = $grouper->getShowCounter() ? " + ' (' + rows.length + ')'" : "";
         $formatter = $this->getFacade()->getDataTypeFormatter($grouper->getGroupByColumn()->getDataType());
-        $value = $formatter->buildJsFormatter("(value || 'empty')");
+        $value = $formatter->buildJsFormatter("(value || '{$grouper->getEmptyText()}')");
         if (! $grouper->getHideCaption()) {
             $value = "'\"' + $value + '\"'";
         }

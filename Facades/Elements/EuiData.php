@@ -25,6 +25,7 @@ use exface\Core\Interfaces\Widgets\iShowText;
 use exface\Core\Interfaces\Widgets\iDisplayValue;
 use exface\Core\Interfaces\Widgets\iSupportMultiSelect;
 use exface\Core\Widgets\DataToolbar;
+use exface\Core\Widgets\DataTable;
 
 /**
  * Implementation of a basic grid.
@@ -214,7 +215,7 @@ class EuiData extends EuiAbstractElement
 					' . $this->getOnLoadError() . '
 				}
 				' . $this->buildJsLoadFilterOption('data') . '
-				, columns: [ ' . implode(',', $this->buildJsInitOptionsColumns()) . ' ]';
+				,' . $this->buildJsInitOptionsColumns();
         
         return $output;
     }
@@ -334,12 +335,14 @@ JS;
     
     public function buildJsInitOptionsColumns(array $column_groups = null)
     {
+        $frozenColumns = $this->getWidget() instanceof DataTable ? $this->getWidget()->getFreezeColumns() : 0;
         if (! $column_groups) {
             $column_groups = $this->getWidget()->getColumnGroups();
         }
         
         // render the columns
         $header_rows = array();
+        $header_rows_frozen = array();
         $full_height_column_groups = array();
         if ($this->getWidget()->getMultiSelect()) {
             $header_rows[0][0] = '{field: "ck", checkbox: true}';
@@ -361,6 +364,7 @@ JS;
             }
         }
         // Now loop through all column groups again and built the header definition
+        $visibleColCnt = 0;
         foreach ($column_groups as $column_group) {
             if ($column_group->getCaption()) {
                 $header_rows[0][] = '{title: "' . str_replace('"', '\"', $column_group->getCaption()) . '", colspan: ' . $column_group->countColumnsVisible() . '}';
@@ -369,7 +373,14 @@ JS;
                 $put_into_header_row = 0;
             }
             foreach ($column_group->getColumns() as $col) {
-                $header_rows[$put_into_header_row][] = '{' . $this->buildJsInitOptionsColumn($col) . '}';
+                if (! $col->isHidden()) {
+                    $visibleColCnt++;
+                }
+                if ($visibleColCnt <= $frozenColumns) {
+                    $header_rows_frozen[$put_into_header_row][] = '{' . $this->buildJsInitOptionsColumn($col) . '}';
+                } else {
+                    $header_rows[$put_into_header_row][] = '{' . $this->buildJsInitOptionsColumn($col) . '}';
+                }
             }
         }
         
@@ -377,7 +388,16 @@ JS;
             $header_rows[$i] = '[' . implode(',', $row) . ']';
         }
         
-        return $header_rows;
+        if (! empty($header_rows_frozen)) {
+            foreach ($header_rows_frozen as $i => $row) {
+                $header_rows_frozen[$i] = '[' . implode(',', $row) . ']';
+            }
+            $frozenColumnsJs = 'frozenColumns: [ ' . implode(',', $header_rows_frozen) . ' ],';
+        } else {
+            $frozenColumnsJs = '';
+        }
+        
+        return $frozenColumnsJs . 'columns: [ ' . implode(',', $header_rows) . ' ]';
     }
     
     protected function setColumnHeaderColspan(DataColumnGroup $column_group, $colspan)

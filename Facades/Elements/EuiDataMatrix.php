@@ -32,7 +32,8 @@ class EuiDataMatrix extends EuiDataTable
         $label_cols = array();
         $formatters = [];
         $stylers = [];
-        foreach ($this->getWidget()->getColumns() as $col) {
+        $widget = $this->getWidget();
+        foreach ($widget->getColumns() as $col) {
             if ($col instanceof DataColumnTransposed) {
                 $data_cols[] = $col->getDataColumnName();
                 $label_cols[$col->getLabelAttributeAlias()][] = $col->getDataColumnName();
@@ -42,11 +43,11 @@ class EuiDataMatrix extends EuiDataTable
                 $cellElem = $this->getFacade()->getElement($col->getCellWidget());
                 $formatters[$col->getDataColumnName()] = 'function(value){return ' . $cellElem->buildJsValueDecorator('value') . '}'; 
                 $stylers[$col->getDataColumnName()] = $this->buildJsInitOptionsColumnStyler($col, 'value', 'oRow', 'iRowIdx', 'null');
-                $labelCol = $this->getWidget()->getColumnByAttributeAlias($col->getLabelAttributeAlias());
+                $labelCol = $widget->getColumnByAttributeAlias($col->getLabelAttributeAlias());
                 $formatters[$labelCol->getDataColumnName()] = 'function(value){return ' . $this->getFacade()->getDataTypeFormatter($labelCol->getDataType())->buildJsFormatter('value') . '}'; 
             } elseif (! $col->isHidden()) {
                 $visible_cols[] = $col->getDataColumnName();
-            }
+            } 
         }
         $visible_cols = "'" . implode("','", $visible_cols) . "'";
         $data_cols = "'" . implode("','", $data_cols) . "'";
@@ -70,9 +71,11 @@ $("#{$this->getId()}").data("_skipNextLoad", true);
 var dataCols = [ {$data_cols} ];
 var dataColsTotals = {$data_cols_totlas};
 var labelCols = {$label_cols};
+var freezeCols = {$widget->getFreezeColumns()};
 var rows = data.rows;
 var cols = $(this).data('_columnsBkp');
 var colsNew = [];
+var colsNewFrozen = [];
 var colsTransposed = {};
 var colsTranspCount = 0;
 // data_column_name => formatter_callback
@@ -82,6 +85,11 @@ var stylers = $stylersJs;
 
 if (! cols) {
     cols = $(this).datagrid('options').columns;
+    if (freezeCols > 0) {
+        for (var fi = $(this).datagrid('options').frozenColumns[0].length-1; fi >= 0; fi--) {
+            cols[0].unshift($(this).datagrid('options').frozenColumns[0][fi]);
+        }
+    }
     $(this).data('_columnsBkp', cols);
 }
 
@@ -168,6 +176,16 @@ for (var i=0; i<cols.length; i++){
 			}
 		}
 	}
+    
+    if (freezeCols > 0) {
+        colsNewFrozen.push([]);
+        for (var i = 0; i < newColRow.length; i++) {
+            if (newColRow[i].hidden !== true && i < freezeCols) {
+                colsNewFrozen[0].push(newColRow[i]);
+                newColRow.splice(i, 1);
+            }
+        }
+    }
 	colsNew.push(newColRow);
 }
 
@@ -234,7 +252,7 @@ if (data.transposed === 0){
 
 	data.rows = newRows;
 	data.transposed = 1;
-	$(this).datagrid({columns: colsNew});
+	$(this).datagrid({frozenColumns: colsNewFrozen, columns: colsNew});
 }
 	
 
