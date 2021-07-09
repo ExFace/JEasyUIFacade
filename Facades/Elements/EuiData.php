@@ -974,11 +974,13 @@ JS;
                 try {
                     if (! {$configurator_element->buildJsValidator()}) {
                         {$this->buildJsDataResetter()}
+                        {$this->buildJsAutoloadDisabledMessageShow()}
                         return false;
                     }
                 } catch (e) {
                     console.warn('Could not check filter validity - ', e);
                 }
+                {$this->buildJsAutoloadDisabledMessageHide()}
                 {$paramJs}['data'] = {$configurator_element->buildJsDataGetter()};
                 
 JS;
@@ -1018,17 +1020,21 @@ JS;
      *
      * @return string
      */
-    protected function buildJsAutoloadDisabledMessageShow() : string
+    protected function buildJsAutoloadDisabledMessageShow(string $text = null) : string
     {
+        if ($text === null) {
+            $text = $this->getWidget()->getAutoloadDisabledHint();
+        }
         return <<<JS
-        
+            
+            $("#{$this->getId()}_no_initial_load_message").remove();
             $("#{$this->getId()}").parent().append("\
                 <div id='{$this->getId()}_no_initial_load_message'\
                      class='no-initial-load-message-overlay'>\
                     <table class='no-initial-load-message-overlay-table'>\
                         <tr>\
                             <td style='text-align:center;'>\
-                                {$this->getWidget()->getAutoloadDisabledHint()}\
+                                {$text}\
                             </td>\
                         </tr>\
                     </table>\
@@ -1036,6 +1042,7 @@ JS;
             ");
 JS;
     }
+    
     
     /**
      * Generates JS code to remove the message if the initial load was skipped.
