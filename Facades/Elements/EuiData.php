@@ -26,6 +26,7 @@ use exface\Core\Interfaces\Widgets\iDisplayValue;
 use exface\Core\Interfaces\Widgets\iSupportMultiSelect;
 use exface\Core\Widgets\DataToolbar;
 use exface\Core\Widgets\DataTable;
+use exface\Core\Widgets\InputComboTable;
 
 /**
  * Implementation of a basic grid.
@@ -1025,19 +1026,17 @@ JS;
         if ($text === null) {
             $text = $this->getWidget()->getAutoloadDisabledHint();
         }
+        if ($this->getWidget()->getParent() instanceof InputComboTable) {
+            $gridJs = "$('#{$this->getWidget()->getParent()->getId()}').combogrid('grid')";
+        } else {
+            $gridJs = "$('#{$this->getId()}')";
+        }
         return <<<JS
             
-            $("#{$this->getId()}_no_initial_load_message").remove();
-            $("#{$this->getId()}").parent().append("\
-                <div id='{$this->getId()}_no_initial_load_message'\
-                     class='no-initial-load-message-overlay'>\
-                    <table class='no-initial-load-message-overlay-table'>\
-                        <tr>\
-                            <td style='text-align:center;'>\
-                                {$text}\
-                            </td>\
-                        </tr>\
-                    </table>\
+            {$this->buildJsAutoloadDisabledMessageHide()};
+            $gridJs.parent().append("\
+                <div class='datagrid-empty'>\
+                    {$text}\
                 </div>\
             ");
 JS;
@@ -1051,9 +1050,14 @@ JS;
      */
     protected function buildJsAutoloadDisabledMessageHide() : string
     {
+        if ($this->getWidget()->getParent() instanceof InputComboTable) {
+            $gridJs = "$('#{$this->getWidget()->getParent()->getId()}').combogrid('grid')";
+        } else {
+            $gridJs = "$('#{$this->getId()}')";
+        }
         $output = <<<JS
         
-        $("#{$this->getId()}_no_initial_load_message").remove();
+        $gridJs.siblings(".datagrid-empty").remove();
 JS;
         
         return $output;
