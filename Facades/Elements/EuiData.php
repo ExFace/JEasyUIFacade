@@ -1034,7 +1034,6 @@ JS;
         return <<<JS
             
             {$this->buildJsAutoloadDisabledMessageHide()};
-            console.log({$gridJs});
             $gridJs.parent().append("\
                 <div class='datagrid-empty'>\
                     {$text}\
