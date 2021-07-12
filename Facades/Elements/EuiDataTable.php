@@ -427,7 +427,7 @@ JS;
         // Add empty result message to onLoadSuccess
         $emptyResultJs = <<<JS
         
-                        if (data.rows && data.rows.length === 0 && data.total != undefined) {
+                        if (data && data.rows && data.rows.length === 0 && data.total != undefined) {
                             {$this->buildJsAutoloadDisabledMessageShow($this->getWidget()->getEmptyText())}
                         } else {
                             {$this->buildJsAutoloadDisabledMessageHide()};
