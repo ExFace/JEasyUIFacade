@@ -854,7 +854,7 @@ JS;
         
         // Styler option        
         if ($styler = $this->buildJsInitOptionsColumnStyler($col, $js_var_value, $js_var_row, $js_var_index)) {
-            $options = ($options ?  $options . ', ' : '') . $styler;
+            $options = ($options ?  $options . ', :' : '') . 'styler: ' . $styler;
         }
         
         return $options;
@@ -876,8 +876,8 @@ JS;
     protected function buildJsInitOptionsColumnStyler(DataColumn $col, string $js_var_value, string $js_var_row, string $js_var_index, string $fallbackJs = '') : string
     {
         $cellWidget = $col->getCellWidget();
-        $styler = $col->getCellStylerScript();
-        if (! $styler) {
+        $stylerJs = $col->getCellStylerScript();
+        if (! $stylerJs) {
             $stylerCss = '';
             if ($cellWidget instanceof iShowText){
                 switch ($cellWidget->getStyle()) {
@@ -905,12 +905,12 @@ JS;
             }
             
             if ($stylerCss !== '') {
-                $styler = "return '" . $stylerCss . "';";
+                $stylerJs = "return '" . $stylerCss . "';";
             }
         }
         
-        if ($styler) {
-            return "function({$js_var_value},{$js_var_row},{$js_var_index}){" . $styler . "}";
+        if ($stylerJs) {
+            return "function({$js_var_value},{$js_var_row},{$js_var_index}){" . $stylerJs . "}";
         }
         
         return $fallbackJs;
