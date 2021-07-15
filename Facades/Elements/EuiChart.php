@@ -197,4 +197,14 @@ JS;
     {
         return $this->buildJsRowCompareViaEChartsTrait($leftRowJs, $rightRowJs);
     }
+    
+    /**
+     * 
+     * {@inheritDoc}
+     * @see \exface\Core\Facades\AbstractAjaxFacade\Elements\AbstractJqueryElement::buildCssElementClass()
+     */
+    public function buildCssElementClass()
+    {
+        return 'exf-chart-panel';
+    }
 }
