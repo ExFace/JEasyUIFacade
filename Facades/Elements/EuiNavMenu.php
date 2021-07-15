@@ -66,7 +66,7 @@ HTML;
                 $output .= <<<HTML
                 
                 <li class='level{$level} active'>
-                    <a class="active current" style="text-decoration:underline;" href='{$url}' title="{$node->getDescription()}">{$node->getName()}</a>
+                    <a class="active current current-leaf" href='{$url}' title="{$node->getDescription()}">{$node->getName()}</a>
                 </li>
 
 HTML;

@@ -12,4 +12,14 @@ class EuiDashboard extends EuiWidgetGrid
     {
         return $this->getFacade()->getConfig()->getOption("WIDGET.DASHBOARD.COLUMNS_BY_DEFAULT");
     }
+    
+    /**
+     * 
+     * {@inheritDoc}
+     * @see \exface\JEasyUIFacade\Facades\Elements\EuiWidgetGrid::buildCssElementClass()
+     */
+    public function buildCssElementClass()
+    {
+        return 'exf-dashboard';
+    }
 }

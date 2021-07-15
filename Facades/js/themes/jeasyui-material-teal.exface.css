@@ -10,10 +10,10 @@ ul.nav_menu a:hover {color: white; background: #6CAEF5}
 .toolbar-element .fa {color: #999}
 
 /* Toolbars for widgets */
-.exf-data-header .tabs-container, .exf-data-header .panel-body {background: #fafafa}
-.exf-data-header .textbox {border-top-color: #fafafa; border-left-color: #fafafa; border-right-color: #fafafa}
-.exf-data-header .textbox > input {background-color: #fafafa}
-.exf-data-header .textbox-addon {border-color: #fafafa; background-color: #fafafa}
+.exf-data-header .tabs-container, 
+.exf-data-header .panel-body,
+.datatable-toolbar,
+.datagrid-toolbar {background: #fafafa}
 
 /* Inputs */
 .exf-input textarea {border-color: #c3d9e0;}
@@ -47,3 +47,6 @@ div.panel-body{background-color:#fff;}
 
 /* Tile widget */
 .exf-tile-box {background-color: #fafafa; border-color: #c3d9e0;}
+
+/* Global layout */
+.main-header.layout-body {height:50px;}

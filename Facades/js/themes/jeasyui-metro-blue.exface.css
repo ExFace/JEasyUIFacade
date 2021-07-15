@@ -1,6 +1,7 @@
 .logo {color: #999;}
 ul.nav_menu a {color: black;}
-ul.nav_menu a:hover {color: white; background: #6CAEF5}
+ul.nav_menu a:hover {background: #9cc8f7; color: #404040;}
+ul.nav_menu li.active a.current {color: white; background: #6caef5}
 
 /* Font awsome */
 .panel-tool-a.fa {color: black;}

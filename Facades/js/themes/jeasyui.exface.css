@@ -7,7 +7,10 @@ ul.nav_menu li ul {list-style: none; list-style-position: inside; padding: 0 0 5
 ul.nav_menu li ul li {border: none;}
 ul.nav_menu a {padding: 6px 0 6px 10px; color: black; text-decoration: none; display: block; width: 100%;}
 ul.nav_menu li.active a.current {font-weight: bold; text-decoration: none;}
-ul.nav_menu a:hover {color: white; font-weight: bold; text-decoration: none; display: block; width: 100%; background: #6CAEF5}
+ul.nav_menu a:hover {background: #9cc8f7; color: #404040;}
+ul.nav_menu li.active a.current {color: white; background: #6caef5}
+.main-left-menu.accordion .accordion-header-selected {background: inherit;}
+.main-left-menu.accordion .accordion-header-selected > .panel-title {color: inherit}
 
 /* Font awsome */
 .fa {padding: 1px;}
@@ -52,7 +55,7 @@ fieldset.exface_inputgroup legend {color: #404040; font-weight: bold; padding: 0
 
 /* Widget groups */
 .exf-widget-group.exf-autoheight > .panel > .panel-body {height: auto !important}
-.exf-panel-flat > .panel > .panel-header {background-color: transparent; padding-top: 6px; margin-bottom: 4px;}
+.exf-panel-flat > .panel > .panel-header {background: none; padding-top: 6px; margin-bottom: 4px;}
 
 /* Inline groups */
 .exf-inline-group .exf-control {padding-left: 0px !important; display: inline-block !important;}
@@ -258,3 +261,19 @@ pre.sf-dump .sf-dump-private, pre.sf-dump .sf-dump-public, pre.sf-dump .sf-dump-
 /* InputTags */
 .exf-tag {margin: 4px 0px;}
 .exf-tag-container {padding: 0 4px 4px 4px;}
+
+/* Splits */
+.layout-split-east {border-color: transparent !important}
+.layout-split-west {border-color: transparent !important}
+.layout-split-north {border-color: transparent !important}
+.layout-split-south {border-color: transparent !important}
+.layout-panel > .exf-splitpanel {border: 0}
+.layout-split-north > .panel-body, .layout-panel-center > .panel-body {border-width: 0;}
+
+/* Global layout*/
+.layout-expand-west {border-right: 4px solid #fff}
+.main-content.layout-body {border-top: 5px solid transparent; background-color: transparent;}
+.main-header.layout-body {height:30px; padding:10px; overflow: hidden; background-color: transparent;}
+
+/* Dashboard */
+.exf-dashboard.panel-body {border: 0 !important; margin-left: -4px; margin-top: -4px;}

@@ -78,12 +78,11 @@ HTML;
         // .panel div zusammengefasst).
         $output = <<<HTML
                             
-                <div class="easyui-{$this->getElementType()}"
+                <div class="easyui-{$this->getElementType()} {$this->buildCssElementClass()}"
                             id="{$this->getId()}"
                             data-options="{$this->buildJsDataOptions()}"
                             {$title}
-                            style="{$styleScript}"
-                            class="{$this->buildCssElementClass()}">
+                            style="{$styleScript}"">
                         {$children_html}
                 </div>
 

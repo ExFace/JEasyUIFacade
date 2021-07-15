@@ -28,7 +28,7 @@
 		<script type="text/javascript" src="vendor/exface/JEasyUIFacade/Facades/js/jquery.sparkline.min.js"></script>
 		
 	</head>
-	<body class="easyui-layout">
+	<body class="easyui-layout theme-[#~facade:theme#]">
 	    <!-- Spinner to hide unrendered markup -->
         <div style="height: 100vh; line-height: 100vh;" class="spinner-bg">
             <i class="panel-loading"></i>
@@ -36,7 +36,7 @@
         </div>
         <!-- / Spinner to hide unrendered markup -->
 		<!-- HEADER -->
-		<div data-options="region:'north',border:false" style="height:50px; padding:10px; overflow: hidden;">
+		<div data-options="region:'north',border:false" class="main-header">
 			<div class="logo">
 				<a href="./">[#~config:exface.Core:SERVER.TITLE_HTML#]</a>
 			</div>
@@ -51,14 +51,14 @@
 		
 		<!-- MENU LEFT -->
 		<div data-options="region:'west',split:true,title:'[#~translate:exface.JEasyUIFacade:TEMPLATE.NAVIGATION#]'" style="width:200px;">
-			<div class="easyui-accordion" data-options="fit:true,border:false">
+			<div class="easyui-accordion main-left-menu" data-options="fit:true,border:false">
 		        <!-- <div title="Favoriten" data-options="" style="overflow:auto;">
 		            <ul class="nav_menu">
 		        		<li><a href="#">Artikel-Info</a></li>
 		        		<li><a href="#">Wareneingang</a></li>
 	        		</ul>
 		        </div>-->
-		        <div title="[#~translate:exface.JEasyUIFacade:TEMPLATE.MENU#]" data-options="selected:true" style="">
+		        <div title="[#~translate:exface.JEasyUIFacade:TEMPLATE.MENU#]" data-options="selected:true">
 		        	[#~widget:NavMenu#]      
 		        </div>
 		        <!-- <div title="Verlauf" data-options="" style="">
@@ -68,7 +68,7 @@
 		</div>
 		
 		<!-- MAIN -->
-		<div data-options="region:'center',title:'[#breadcrumbs#]'">
+		<div class="main-content" data-options="region:'center',title:'[#breadcrumbs#]'">
 			[#~body#]
 		</div>
 	</body>
