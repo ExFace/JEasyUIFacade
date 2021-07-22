@@ -27,6 +27,7 @@ use exface\Core\Interfaces\Widgets\iSupportMultiSelect;
 use exface\Core\Widgets\DataToolbar;
 use exface\Core\Widgets\DataTable;
 use exface\Core\Widgets\InputComboTable;
+use exface\Core\Exceptions\Facades\FacadeRuntimeError;
 
 /**
  * Implementation of a basic grid.
@@ -581,6 +582,13 @@ JS;
                 
                             {$oRowJs}["{$col->getDataColumnName()}"] = {$linkedEl->buildJsValueGetter()};
 JS;
+            } elseif ($valueExpr->isConstant()) {
+                $addLocalValuesToRowJs .= <<<JS
+                
+                            {$oRowJs}["{$col->getDataColumnName()}"] = {$valueExpr->toString()};
+JS;
+            } else {
+                throw new FacadeRuntimeError('Cannot use expression "' . $valueExpr->toString() . '" as `value` of a data column - only widget links and scalar values (strings and numbers) are supported by the UI5 facade!');
             }
         }
         if ($addLocalValuesToRowJs) {
