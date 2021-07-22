@@ -587,8 +587,6 @@ JS;
                 
                             {$oRowJs}["{$col->getDataColumnName()}"] = {$valueExpr->toString()};
 JS;
-            } else {
-                throw new FacadeRuntimeError('Cannot use expression "' . $valueExpr->toString() . '" as `value` of a data column - only widget links and scalar values (strings and numbers) are supported by the UI5 facade!');
             }
         }
         if ($addLocalValuesToRowJs) {
