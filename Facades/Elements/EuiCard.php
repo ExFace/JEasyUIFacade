@@ -15,6 +15,6 @@ class EuiCard extends EuiForm
 {
     public function buildCssElementClass()
     {
-        return 'exf-card';
+        return 'exf-card exf-element';
     }
 }

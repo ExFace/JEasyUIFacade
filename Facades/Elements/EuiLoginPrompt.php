@@ -94,7 +94,7 @@ HTML;
     
     public function buildCssElementClass()
     {
-        return 'exf-loginprompt';
+        return 'exf-loginprompt exf-element';
     }
     
     protected function isStandalone() : bool

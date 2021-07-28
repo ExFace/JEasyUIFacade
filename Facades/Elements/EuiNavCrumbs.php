@@ -75,7 +75,7 @@ HTML;
      */
     public function buildCssElementClass() : string
     {
-        return 'exf-navcrumbs';
+        return 'exf-navcrumbs exf-element';
     }
     
 }
