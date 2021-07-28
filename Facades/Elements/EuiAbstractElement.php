@@ -216,6 +216,7 @@ JS;
         var rect;
         var yElemCord;
         var parElem;
+        var contElem = $('#{$this->getFacade()->getElement($containerWidget)->getId()}');
 JS;
         foreach ($containerWidget->getChildren() as $child) {
             if ($child->isHidden()) {
@@ -227,7 +228,7 @@ JS;
             $js.= <<<JS
         elem = $('#{$this->getFacade()->getElement($child)->getId()}');
         // add bottom y-Coord of element to array
-        if (elem.length > 0) {
+        if (elem.length > 0 && elem.parents('#{$this->getFacade()->getElement($containerWidget)->getId()}').length > 0) {
             parElem = elem.closest('.{$gridItemCssClass}').first();
             if (parElem.length > 0) {
                 yElemCord = parElem.offset().top + parElem.outerHeight(true);
@@ -244,8 +245,6 @@ JS;
         // get max y-Coord of all visible elements
         yCoords.sort((a,b)=>(b-a));
         var yMax = yCoords[0];
-
-        var contElem = $('#{$this->getFacade()->getElement($containerWidget)->getId()}');
         parElem = $('#{$this->getId()}').closest('.{$gridItemCssClass}').first();
         
         // if no container element or no top element for elment to change height for is found, dont do anything
