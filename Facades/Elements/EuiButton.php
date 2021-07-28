@@ -245,7 +245,7 @@ JS;
     
     public function buildCssElementClass()
     {
-        $class = 'exf-button';
+        $class = 'exf-button exf-element';
         switch ($this->getWidget()->getAppearance()) {
             case Button::APPEARANCE_LINK: $class .= ' exf-btn-link'; break;
             case Button::APPEARANCE_STROKED: $class .= ' exf-btn-stroked'; break;
