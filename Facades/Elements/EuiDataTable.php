@@ -15,6 +15,7 @@ use exface\Core\Widgets\DataButton;
 use exface\Core\Exceptions\Facades\FacadeOutputError;
 use exface\Core\Exceptions\Facades\FacadeRuntimeError;
 use exface\Core\Exceptions\Widgets\WidgetLogicError;
+use exface\Core\Interfaces\Widgets\iContainOtherWidgets;
 
 /**
  *
@@ -815,5 +816,11 @@ JS;
                     }
 
 JS;
+    }
+    
+    protected function buildJsEuiSetHeigthMax(iContainOtherWidgets $containerWidget, string $onChangeHeightJs = '') : string
+    {
+        $onChangeHeightJs .= "$('#{$this->getId()}').{$this->getElementType()}('resize');";
+        return parent::buildJsEuiSetHeigthMax($containerWidget, $onChangeHeightJs);
     }
 }
