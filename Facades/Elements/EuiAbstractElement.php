@@ -182,7 +182,7 @@ JS;
         $dimension = $widget->getHeight();
         if ($dimension->isMax()) {
             if ($containerWidget = $widget->getParentByClass(iContainOtherWidgets::class)) {
-                $this->getFacade()->getElement($containerWidget)->addOnResizeScript($this->buildEuiJsSetHeigthMax($containerWidget));
+                $this->getFacade()->getElement($containerWidget)->addOnResizeScript($this->buildJsEuiSetHeigthMax($containerWidget));
                 $output = $this->buildCssHeightDefaultValue();
             } else {
                 $output = '100%';
@@ -295,11 +295,10 @@ JS;
 JS;
     }
     
-    protected function buildEuiJsSetHeigthMax(iContainOtherWidgets $containerWidget) : string
+    protected function buildJsEuiSetHeigthMax(iContainOtherWidgets $containerWidget, string $onChangeHeightJs = '') : string
     {
-        $onChangeHeightJs = '';
         if ($this->getFacade()->getElement($containerWidget) instanceof EuiWidgetGrid) {
-            $onChangeHeightJs = $this->getFacade()->getElement($containerWidget)->buildJsLayouter();
+            $onChangeHeightJs .= $this->getFacade()->getElement($containerWidget)->buildJsLayouter();
         }
         return $this->buildJsSetHeightMax($containerWidget, 'exf-element', $onChangeHeightJs);
     }
