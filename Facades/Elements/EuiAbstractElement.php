@@ -210,11 +210,11 @@ JS;
         
         $count = 0;
         $js = <<<JS
+        console.log('CalcualteHeight');
         var yCoords = new Array();
         var elem;
         var rect;
         var yElemCord;
-        var heights = new Array();
         var parElem;
 JS;
         foreach ($containerWidget->getChildren() as $child) {
@@ -227,11 +227,14 @@ JS;
             $js.= <<<JS
         elem = $('#{$this->getFacade()->getElement($child)->getId()}');
         // add bottom y-Coord of element to array
-        if (elem.offset() !== undefined) {
+        if (elem.length > 0) {
             parElem = elem.closest('.{$gridItemCssClass}').first();
-            yElemCord = parElem.offset().top + parElem.outerHeight(true);
+            if (parElem.length > 0) {
+                yElemCord = parElem.offset().top + parElem.outerHeight(true);
+            } else {
+                yElemCord = elem.offset().top + parElem.outerHeight(true);
+            }            
             yCoords.push(yElemCord);
-            heights.push(parElem.outerHeight(true));
         }
 
 JS;
@@ -244,6 +247,11 @@ JS;
 
         var contElem = $('#{$this->getFacade()->getElement($containerWidget)->getId()}');
         parElem = $('#{$this->getId()}').closest('.{$gridItemCssClass}').first();
+        
+        // if no container element or no top element for elment to change height for is found, dont do anything
+        if (contElem.length == 0 || parElem.length == 0) {
+            return;
+        }
         
         // get height and top y-Coord of cointainer Widget
         var contHeight = contElem.innerHeight();
@@ -267,7 +275,7 @@ JS;
         if ((yMax - yContTop) > contHeight) {
             var heightSubst = yMax - yContTop - contHeight;
             var newHeight = elemHeight - heightSubst / countMaxElem;
-            newHeight = newHeight;
+            newHeight = Math.floor(newHeight);
             if (newHeight < elemDefaultHeight) {
                 newHeight = elemDefaultHeight;
             }
@@ -276,6 +284,7 @@ JS;
         } else {
             var newHeight = contHeight - (yMax - yContTop);
             newHeight = newHeight / countMaxElem + elemHeight;
+            newHeight = Math.floor(newHeight);
         }
 
         // if the new height calculated is the same asthe current element height, dont set its new height
