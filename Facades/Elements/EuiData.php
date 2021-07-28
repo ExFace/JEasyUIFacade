@@ -1057,16 +1057,10 @@ JS;
     protected function buildJsAutoloadDisabledMessageHide() : string
     {
         if ($this->getWidget()->getParent() instanceof InputComboTable) {
-            $gridJs = "$('#{$this->getWidget()->getParent()->getId()}').combogrid('grid')";
+            return  "if ($('#{$this->getWidget()->getParent()->getId()}').length > 0) { $('#{$this->getWidget()->getParent()->getId()}').combogrid('grid').siblings('.datagrid-empty').remove(); }";
         } else {
-            $gridJs = "$('#{$this->getId()}')";
+            return "$('#{$this->getId()}').siblings('.datagrid-empty').remove()";
         }
-        $output = <<<JS
-        
-        $gridJs.siblings(".datagrid-empty").remove();
-JS;
-        
-        return $output;
     }
     
     
