@@ -35,6 +35,6 @@ class EuiWidgetCarousel extends EuiTabs
     
     public function buildCssElementClass()
     {
-        return 'exf-widget-carousel';
+        return 'exf-widget-carousel exf-element';
     }
 }

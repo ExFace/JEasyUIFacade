@@ -20,6 +20,6 @@ class EuiDashboard extends EuiWidgetGrid
      */
     public function buildCssElementClass()
     {
-        return 'exf-dashboard';
+        return 'exf-dashboard exf-element';
     }
 }

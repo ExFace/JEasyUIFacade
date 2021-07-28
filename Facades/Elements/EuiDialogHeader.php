@@ -39,7 +39,7 @@ class EuiDialogHeader extends EuiWidgetGrid
     
     public function buildCssElementClass()
     {
-        return 'exf-dialog-header';
+        return 'exf-dialog-header exf-element';
     }
     
     /**

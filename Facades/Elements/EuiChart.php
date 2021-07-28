@@ -205,6 +205,6 @@ JS;
      */
     public function buildCssElementClass()
     {
-        return 'exf-chart-panel';
+        return 'exf-chart-panel exf-element';
     }
 }
