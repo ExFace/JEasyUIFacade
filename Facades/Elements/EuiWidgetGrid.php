@@ -269,6 +269,6 @@ HTML;
      */
     public function buildCssElementClass()
     {
-        return 'exf-widgetgrid';
+        return 'exf-widgetgrid exf-element';
     }
 }

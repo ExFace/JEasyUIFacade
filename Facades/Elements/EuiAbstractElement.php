@@ -5,6 +5,7 @@ use exface\Core\Facades\AbstractAjaxFacade\Elements\AbstractJqueryElement;
 use exface\JEasyUIFacade\Facades\JEasyUIFacade;
 use exface\Core\Interfaces\Widgets\iLayoutWidgets;
 use exface\Core\Interfaces\Widgets\iFillEntireContainer;
+use exface\Core\Interfaces\Widgets\iContainOtherWidgets;
 
 abstract class EuiAbstractElement extends AbstractJqueryElement
 {
@@ -179,7 +180,14 @@ JS;
         $widget = $this->getWidget();
         
         $dimension = $widget->getHeight();
-        if ($dimension->isRelative()) {
+        if ($dimension->isMax()) {
+            if ($containerWidget = $widget->getParentByClass(iContainOtherWidgets::class)) {
+                $this->getFacade()->getElement($containerWidget)->addOnResizeScript($this->buildJsEuiSetHeigthMax($containerWidget));
+                $output = $this->buildCssHeightDefaultValue();
+            } else {
+                $output = '100%';
+            }                        
+        } elseif ($dimension->isRelative()) {
             $output = $this->getHeightRelativeUnit() * $dimension->getValue() . 'px';
         } elseif ($dimension->isFacadeSpecific() || $dimension->isPercentual()) {
             $output = $dimension->getValue();
@@ -195,6 +203,104 @@ JS;
             $output = $this->buildCssHeightDefaultValue();
         }
         return $output;
+    }
+    
+    protected function buildJsSetHeightMax(iContainOtherWidgets $containerWidget, string $gridItemCssClass, string $onChangeHeightJs) : string
+    {
+        
+        $count = 0;
+        $js = <<<JS
+        var yCoords = new Array();
+        var elem;
+        var rect;
+        var yElemCord;
+        var heights = new Array();
+        var parElem;
+JS;
+        foreach ($containerWidget->getChildren() as $child) {
+            if ($child->isHidden()) {
+                continue;
+            }
+            if ($child->getHeight()->isMax()) {
+                $count++;
+            }
+            $js.= <<<JS
+        elem = $('#{$this->getFacade()->getElement($child)->getId()}');
+        // add bottom y-Coord of element to array
+        if (elem.offset() !== undefined) {
+            parElem = elem.closest('.{$gridItemCssClass}').first();
+            yElemCord = parElem.offset().top + parElem.outerHeight(true);
+            yCoords.push(yElemCord);
+            heights.push(parElem.outerHeight(true));
+        }
+
+JS;
+        }
+        
+        $js .= <<<JS
+        // get max y-Coord of all visible elements
+        yCoords.sort((a,b)=>(b-a));
+        var yMax = yCoords[0];
+
+        var contElem = $('#{$this->getFacade()->getElement($containerWidget)->getId()}');
+        parElem = $('#{$this->getId()}').closest('.{$gridItemCssClass}').first();
+        
+        // get height and top y-Coord of cointainer Widget
+        var contHeight = contElem.innerHeight();
+        var yContTop = contElem.offset().top;
+        
+        // get current and default height of element with height 'max'
+        var elemHeight = parElem.outerHeight(true);
+        var elemDefaultHeight = '{$this->buildCssHeightDefaultValue()}';
+        elemDefaultHeight = elemDefaultHeight.substr(0, elemDefaultHeight.length-2);
+        elemDefaultHeight = parseInt(elemDefaultHeight);
+
+        // get widgets in container widgets with height 'max'        
+        var countMaxElem = {$count};
+
+        // if the currently last element is at the bottom of the container dont change heights
+        if ((yMax - yContTop) == contHeight) {
+            return;
+        }
+
+        // if the container height gets reduced and last element is at the bottom, reduces sizes
+        if ((yMax - yContTop) > contHeight) {
+            var heightSubst = yMax - yContTop - contHeight;
+            var newHeight = elemHeight - heightSubst / countMaxElem;
+            newHeight = newHeight;
+            if (newHeight < elemDefaultHeight) {
+                newHeight = elemDefaultHeight;
+            }
+
+        // if there is free space in the container, calculate new height of the element
+        } else {
+            var newHeight = contHeight - (yMax - yContTop);
+            newHeight = newHeight / countMaxElem + elemHeight;
+        }
+
+        // if the new height calculated is the same asthe current element height, dont set its new height
+        if (newHeight == elemHeight) {
+            return;
+        }
+      
+        setTimeout(function() {
+            parElem.innerHeight(newHeight);
+            {$onChangeHeightJs}
+        },0);
+JS;
+        return <<<JS
+    setTimeout(function() {
+        $js
+    },0);
+JS;
+    }
+    
+    protected function buildJsEuiSetHeigthMax(iContainOtherWidgets $containerWidget, string $onChangeHeightJs = '') : string
+    {
+        if ($this->getFacade()->getElement($containerWidget) instanceof EuiWidgetGrid) {
+            $onChangeHeightJs .= $this->getFacade()->getElement($containerWidget)->buildJsLayouter();
+        }
+        return $this->buildJsSetHeightMax($containerWidget, 'exf-element', $onChangeHeightJs);
     }
 
     /**

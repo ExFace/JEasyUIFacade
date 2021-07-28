@@ -86,6 +86,6 @@ JS;
      */
     public function buildCssElementClass()
     {
-        return 'exf-dataimporter';
+        return 'exf-dataimporter exf-element';
     }
 }
