@@ -210,17 +210,15 @@ JS;
         
         $count = 0;
         $js = <<<JS
-        console.log('CalcualteHeight');
         var yCoords = new Array();
         var elem;
-        var rect;
         var yElemCord;
         var parElem;
         var contElem = $('#{$this->getFacade()->getElement($containerWidget)->getId()}');
         var surElem = $('#{$this->getId()}').closest('.{$gridItemCssClass}').first();
         
-        // if no container element or no top element for elment to change height for is found, dont do anything
-        if (contElem.length == 0 || surElem.length == 0) {
+        // if no container element or no top element for element to change height for is found, or the contElem is the top element dont do anything
+        if (contElem.length == 0 || surElem.length == 0 || contElem[0] == surElem[0]) {
             return;
         }
 JS;
@@ -236,7 +234,7 @@ JS;
         // add bottom y-Coord of element to array
         if (elem.length > 0 && elem.parents('#{$this->getFacade()->getElement($containerWidget)->getId()}').length > 0) {
             parElem = elem.closest('.{$gridItemCssClass}').first();
-            if (parElem.length > 0) {
+            if (parElem.length > 0 && parElem[0] !== contElem[0]) {
                 yElemCord = parElem.offset().top + parElem.outerHeight(true);
             } else {
                 yElemCord = elem.offset().top + parElem.outerHeight(true);
