@@ -36,7 +36,7 @@ class EuiImageGallery extends EuiData
         $this->addCarouselFeatureButtons($this->getWidget()->getToolbarMain()->getButtonGroupForSearchActions(), 1);
         $panel = <<<HTML
 
-<div class="exf-grid-item {$this->getMasonryItemClass()} exf-imagecarousel" style="width:{$this->getWidth()};min-width:{$this->getMinWidth()};padding:{$this->getPadding()};box-sizing:border-box;">
+<div class="exf-grid-item {$this->getMasonryItemClass()} exf-imagegallery" style="width:{$this->getWidth()};min-width:{$this->getMinWidth()};padding:{$this->getPadding()};box-sizing:border-box;">
     <div class="easyui-panel" style="height: auto; width: 100%" id="{$this->getIdOfSlick()}_wrapper" data-options="{$chart_panel_options}, onResize: function(){ {$this->getOnResizeScript()} }">
     	{$this->buildHtmlTableHeader()}
         <div style="height:{$this->getHeight()}; width: 100%">
@@ -83,6 +83,7 @@ JS;
     {$this->buildJsFunctionPrefix()}_init();
     setTimeout(function(){
         {$this->buildJsFunctionPrefix()}_load();
+        $('#{$this->getIdOfSlick()}_wrapper').prev().addClass('panel-header-merged');
     }, 0);
 
 JS;

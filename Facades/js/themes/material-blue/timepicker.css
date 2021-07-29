@@ -24,8 +24,8 @@
   cursor: pointer;
 }
 .timepicker-panel .clock .item-selected {
-  background: #2196f3;
-  color: #2196f3;
+  background: #6200ee;
+  color: #6200ee;
 }
 .timepicker-panel .clock .hand {
   width: 2px;
@@ -38,18 +38,18 @@
   position: absolute;
   will-change: transform;
   z-index: 1;
-  background-color: #2196f3;
+  background-color: #6200ee;
 }
 .timepicker-panel .clock .hand .drag {
   top: -16px;
   left: -15px;
   width: 4px;
   height: 4px;
-  border: 14px solid #2196f3;
+  border: 14px solid #6200ee;
   position: absolute;
   box-sizing: content-box;
   border-radius: 100%;
-  background-color: #2196f3;
+  background-color: #6200ee;
 }
 .timepicker-panel .clock .center {
   top: 50%;
@@ -59,7 +59,7 @@
   position: absolute;
   transform: translate(-50%,-50%);
   border-radius: 50%;
-  background-color: #2196f3;
+  background-color: #6200ee;
 }
 .timepicker-panel .panel-header {
   height: 70px;

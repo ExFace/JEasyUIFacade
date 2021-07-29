@@ -21,5 +21,20 @@ class EuiPanel extends EuiWidgetGrid
         $output .= $widget->getIcon() ? ', iconCls:\'' . $this->buildCssIconClass($widget->getIcon()) . '\'' : '';
         return ltrim($output, ", ");
     }
+    
+    public function buildJs()
+    {
+        $addFilledClass = '';
+        if ($this->getWidget()->isFilledBySingleWidget()) {
+            $addFilledClass =  <<<JS
+            
+setTimeout(function(){
+    $('#{$this->getId()}').parent().addClass('panel-filled');
+}, 10);
+
+JS;
+        }
+        return parent::buildJs() . $addFilledClass;
+    }
+    
 }
-?>
