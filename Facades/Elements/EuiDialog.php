@@ -96,7 +96,7 @@ HTML;
 	<div class="easyui-dialog" id="{$this->getId()}" data-options="{$this->buildJsDataOptions()}" title="{$dialog_title}" style="width: {$this->getWidth()}; height: {$this->getHeight()}; max-width: 100%;">
 		{$children_html}
 	</div>
-	<div id="{$this->buttons_div_id}">
+	<div id="{$this->buttons_div_id}" class="exf-dialog-footer">
         {$this->buildHtmlToolbars()}
 	</div>
 	<div id="{$this->getId()}_window_tools">
