@@ -19,7 +19,7 @@ fieldset.exface_inputgroup {border-color: #95B8E7;}
 fieldset.exface_inputgroup legend {color: #404040;}
 
 /* jEasyUI customizing */
-div.panel-body{background-color:#fff;}
+div.panel-body {background-color:#fff;}
 
 /* Dialog */
 .exf-dialog-header {background-color: #daeef5 !important;}
@@ -48,3 +48,6 @@ div.panel-body{background-color:#fff;}
 
 /* Promoted panels */
 .panel-header.promoted {background-color: #c3d9e0}
+
+/* Tabs */
+.tabs li.tabs-selected a.tabs-inner {background-color: #ffff !important; border-bottom-color: #fff;}

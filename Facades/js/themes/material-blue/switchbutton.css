@@ -6,8 +6,8 @@
   margin: 0;
   padding: 0;
   cursor: pointer;
-  background: #2196f3;
-  border: 1px solid #2196f3;
+  background: #6200ee;
+  border: 1px solid #6200ee;
   -moz-border-radius: 2px 2px 2px 2px;
   -webkit-border-radius: 2px 2px 2px 2px;
   border-radius: 2px 2px 2px 2px;
@@ -33,7 +33,7 @@
 }
 .switchbutton-on {
   background: #eee;
-  color: #2196f3;
+  color: #6200ee;
 }
 .switchbutton-off {
   background-color: #ffffff;
@@ -57,10 +57,10 @@
   left: 50%;
   background-color: #ffffff;
   color: #404040;
-  border: 1px solid #2196f3;
-  -moz-box-shadow: 0 0 3px 0 #2196f3;
-  -webkit-box-shadow: 0 0 3px 0 #2196f3;
-  box-shadow: 0 0 3px 0 #2196f3;
+  border: 1px solid #6200ee;
+  -moz-box-shadow: 0 0 3px 0 #6200ee;
+  -webkit-box-shadow: 0 0 3px 0 #6200ee;
+  box-shadow: 0 0 3px 0 #6200ee;
 }
 .switchbutton-value {
   position: absolute;

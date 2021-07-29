@@ -1,9 +1,8 @@
 <?php
 namespace exface\JEasyUIFacade\Facades\Elements;
 
-use exface\Core\Widgets\Tabs;
-use exface\Core\Interfaces\WidgetInterface;
 use exface\Core\Widgets\MenuButton;
+use exface\Core\Widgets\Tabs;
 
 class EuiDialog extends EuiForm
 {
@@ -61,28 +60,28 @@ HTML;
                 // masonry_grid-wrapper wird benoetigt, da sonst die Groesse des Dialogs selbst
                 // veraendert wird -> kein Scrollbalken.
                 $children_html = <<<HTML
-
-        <div class="grid exf-dialog" id="{$this->getId()}_masonry_grid" style="width:100%;height:100%;">
-            {$messageListHtml}
-            {$children_html}
-        </div>
-HTML;
+                
+                        <div class="grid exf-dialog" id="{$this->getId()}_masonry_grid" style="width:100%;height:100%;">
+                            {$messageListHtml}
+                            {$children_html}
+                        </div>
+                HTML;
             }
             
             if ($widget->hasHeader() === true) {
                 $headerElem = $this->getFacade()->getElement($widget->getHeader());
                 $children_html = <<<HTML
-
-    <div class="easyui-layout" data-options="fit:true">
-        <div data-options="region:'north'" class="exf-dialog-header" style="height: {$headerElem->getHeight()}">
-            {$headerElem->buildHtml()}
-        </div>
-        <div data-options="region:'center'">
-            {$children_html}
-        </div>
-    </div>
-
-HTML;
+                
+                    <div class="easyui-layout" data-options="fit:true">
+                        <div data-options="region:'north'" class="exf-dialog-header" style="height: {$headerElem->getHeight()}">
+                            {$headerElem->buildHtml()}
+                        </div>
+                        <div data-options="region:'center'">
+                            {$children_html}
+                        </div>
+                    </div>
+                
+                HTML;
             }
         }
         
@@ -93,16 +92,16 @@ HTML;
         $dialog_title = str_replace('"', '\"', $this->getCaption());
         
         $output = <<<HTML
-	<div class="easyui-dialog" id="{$this->getId()}" data-options="{$this->buildJsDataOptions()}" title="{$dialog_title}" style="width: {$this->getWidth()}; height: {$this->getHeight()}; max-width: 100%;">
-		{$children_html}
-	</div>
-	<div id="{$this->buttons_div_id}" class="exf-dialog-footer">
-        {$this->buildHtmlToolbars()}
-	</div>
-	<div id="{$this->getId()}_window_tools">
-		{$window_tools}
-	</div>
-HTML;
+        	<div class="easyui-dialog" id="{$this->getId()}" data-options="{$this->buildJsDataOptions()}" title="{$dialog_title}" style="width: {$this->getWidth()}; height: {$this->getHeight()}; max-width: 100%;">
+        		{$children_html}
+        	</div>
+        	<div id="{$this->buttons_div_id}" class="exf-dialog-footer">
+                {$this->buildHtmlToolbars()}
+        	</div>
+        	<div id="{$this->getId()}_window_tools">
+        		{$window_tools}
+        	</div>
+        HTML;
         return $output;
     }
     
@@ -133,21 +132,31 @@ HTML;
     public function buildJs()
     {
         $output = '';
+        $widget = $this->getWidget();
         if (! $this->isLazyLoading()) {
             $output .= $this->buildJsForWidgets();
-            if ($this->getWidget()->hasHeader() === true) {
-                $output .= $this->getFacade()->getElement($this->getWidget()->getHeader())->buildJs();
+            if ($widget->hasHeader() === true) {
+                $output .= $this->getFacade()->getElement($widget->getHeader())->buildJs();
             }
         }
         $output .= $this->buildJsButtons();
         
         // Add the help button in the bottom toolbar
-        if (! $this->getWidget()->getHideHelpButton()) {
-            $output .= $this->getFacade()->buildJs($this->getWidget()->getHelpButton());
+        if (! $widget->getHideHelpButton()) {
+            $output .= $this->getFacade()->buildJs($widget->getHelpButton());
         }
-        
+
         // Layout-Funktion hinzufuegen
         $output .= $this->buildJsLayouterFunction();
+
+        // Add special header classes required for styling
+        if ($widget->isFilledBySingleWidget() && $widget->getFillerWidget() instanceof Tabs) {
+            $output .= "setTimeout(function(){ $('#{$this->getId()}').prev().addClass('panel-header-merged'); }, 0);";
+        }
+        
+        if ($widget->hasHeader()) {
+            $output .= "setTimeout(function(){ $('#{$this->getId()}').prev().addClass('panel-header-merged'); }, 0);";
+        }
         
         return $output;
     }
@@ -227,22 +236,22 @@ HTML;
     protected function buildJsLayouterFunction() : string
     {
         $output = <<<JS
-
-    function {$this->buildJsFunctionPrefix()}layouter() {
-        if (!$("#{$this->getId()}_masonry_grid").data("masonry")) {
-            if ($("#{$this->getId()}_masonry_grid").find(".{$this->getId()}_masonry_exf-grid-item").length > 0) {
-                $("#{$this->getId()}_masonry_grid").masonry({
-                    columnWidth: "#{$this->getId()}_sizer",
-                    itemSelector: ".{$this->getId()}_masonry_exf-grid-item",
-                    transitionDuration: 0
-                });
+        
+            function {$this->buildJsFunctionPrefix()}layouter() {
+                if (!$("#{$this->getId()}_masonry_grid").data("masonry")) {
+                    if ($("#{$this->getId()}_masonry_grid").find(".{$this->getId()}_masonry_exf-grid-item").length > 0) {
+                        $("#{$this->getId()}_masonry_grid").masonry({
+                            columnWidth: "#{$this->getId()}_sizer",
+                            itemSelector: ".{$this->getId()}_masonry_exf-grid-item",
+                            transitionDuration: 0
+                        });
+                    }
+                } else {
+                    $("#{$this->getId()}_masonry_grid").masonry("reloadItems");
+                    $("#{$this->getId()}_masonry_grid").masonry();
+                }
             }
-        } else {
-            $("#{$this->getId()}_masonry_grid").masonry("reloadItems");
-            $("#{$this->getId()}_masonry_grid").masonry();
-        }
-    }
-JS;
+        JS;
         
         return $output;
     }

@@ -133,9 +133,9 @@
 }
 .l-btn {
   color: #ffffff;
-  background: #2196f3;
+  background: #6200ee;
   background-repeat: repeat-x;
-  border: 1px solid #2196f3;
+  border: 1px solid #6200ee;
   -moz-border-radius: 2px 2px 2px 2px;
   -webkit-border-radius: 2px 2px 2px 2px;
   border-radius: 2px 2px 2px 2px;
@@ -168,7 +168,7 @@
 .l-btn-disabled:hover {
   opacity: 0.5;
   cursor: default;
-  background: #2196f3;
+  background: #6200ee;
   color: #ffffff;
 }
 .l-btn-disabled .l-btn-text,

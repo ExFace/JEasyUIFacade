@@ -27,8 +27,8 @@
   color: #404040;
 }
 .sidemenu .tree-node-selected {
-  border-right: 2px solid #2196f3;
-  color: #2196f3;
+  border-right: 2px solid #6200ee;
+  color: #6200ee;
   background: #eee;
 }
 .sidemenu .tree-node {
