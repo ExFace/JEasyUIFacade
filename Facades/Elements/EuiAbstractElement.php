@@ -212,10 +212,15 @@ JS;
         $js = <<<JS
         var yCoords = new Array();
         var elem;
-        var rect;
         var yElemCord;
-        var heights = new Array();
         var parElem;
+        var contElem = $('#{$this->getFacade()->getElement($containerWidget)->getId()}');
+        var surElem = $('#{$this->getId()}').closest('.{$gridItemCssClass}').first();
+        
+        // if no container element or no top element for element to change height for is found, or the contElem is the top element dont do anything
+        if (contElem.length == 0 || surElem.length == 0 || contElem[0] == surElem[0]) {
+            return;
+        }
 JS;
         foreach ($containerWidget->getChildren() as $child) {
             if ($child->isHidden()) {
@@ -227,11 +232,14 @@ JS;
             $js.= <<<JS
         elem = $('#{$this->getFacade()->getElement($child)->getId()}');
         // add bottom y-Coord of element to array
-        if (elem.offset() !== undefined) {
+        if (elem.length > 0 && elem.parents('#{$this->getFacade()->getElement($containerWidget)->getId()}').length > 0) {
             parElem = elem.closest('.{$gridItemCssClass}').first();
-            yElemCord = parElem.offset().top + parElem.outerHeight(true);
+            if (parElem.length > 0 && parElem[0] !== contElem[0]) {
+                yElemCord = parElem.offset().top + parElem.outerHeight(true);
+            } else {
+                yElemCord = elem.offset().top + parElem.outerHeight(true);
+            }            
             yCoords.push(yElemCord);
-            heights.push(parElem.outerHeight(true));
         }
 
 JS;
@@ -241,16 +249,13 @@ JS;
         // get max y-Coord of all visible elements
         yCoords.sort((a,b)=>(b-a));
         var yMax = yCoords[0];
-
-        var contElem = $('#{$this->getFacade()->getElement($containerWidget)->getId()}');
-        parElem = $('#{$this->getId()}').closest('.{$gridItemCssClass}').first();
         
         // get height and top y-Coord of cointainer Widget
         var contHeight = contElem.innerHeight();
         var yContTop = contElem.offset().top;
         
         // get current and default height of element with height 'max'
-        var elemHeight = parElem.outerHeight(true);
+        var elemHeight = surElem.outerHeight(true);
         var elemDefaultHeight = '{$this->buildCssHeightDefaultValue()}';
         elemDefaultHeight = elemDefaultHeight.substr(0, elemDefaultHeight.length-2);
         elemDefaultHeight = parseInt(elemDefaultHeight);
@@ -267,7 +272,7 @@ JS;
         if ((yMax - yContTop) > contHeight) {
             var heightSubst = yMax - yContTop - contHeight;
             var newHeight = elemHeight - heightSubst / countMaxElem;
-            newHeight = newHeight;
+            newHeight = Math.floor(newHeight);
             if (newHeight < elemDefaultHeight) {
                 newHeight = elemDefaultHeight;
             }
@@ -276,6 +281,7 @@ JS;
         } else {
             var newHeight = contHeight - (yMax - yContTop);
             newHeight = newHeight / countMaxElem + elemHeight;
+            newHeight = Math.floor(newHeight);
         }
 
         // if the new height calculated is the same asthe current element height, dont set its new height
@@ -284,7 +290,7 @@ JS;
         }
       
         setTimeout(function() {
-            parElem.innerHeight(newHeight);
+            surElem.innerHeight(newHeight);
             {$onChangeHeightJs}
         },0);
 JS;
