@@ -270,6 +270,10 @@ pre.sf-dump .sf-dump-private, pre.sf-dump .sf-dump-public, pre.sf-dump .sf-dump-
 .layout-panel > .exf-splitpanel {border: 0}
 .layout-split-north > .panel-body, .layout-panel-center > .panel-body {border-width: 0;}
 
+.easyui-dialog {border-width: 0 !important}
+.easyui-dialog + .exf-dialog-footer {border-left-width: 0; border-right-width: 0; border-bottom-width: 0;}
+.easyui-dialog > .panel > .exf-widgetgrid {border-width: 0}
+
 /* Global layout*/
 .layout-expand-west {border-right: 4px solid #fff}
 .main-content.layout-body {border-top: 5px solid transparent; background-color: transparent;}
