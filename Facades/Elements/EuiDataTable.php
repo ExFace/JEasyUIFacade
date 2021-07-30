@@ -75,23 +75,6 @@ class EuiDataTable extends EuiData
         
         if ($widget->getHideHeader()){
             $header_style = 'visibility: hidden; height: 0px; padding: 0px;';
-        } else {
-            // Add header collapse button to the toolbar
-            $searchBtnGroup = $widget->getToolbarMain()->getButtonGroupForSearchActions();
-            $collapseButtonId = $this->getId() . '_headerCollapseButton';
-            $collapseButton = WidgetFactory::createFromUxon($widget->getPage(), new UxonObject([
-                'widget_type' => 'Button',
-                'id' => $collapseButtonId,
-                'action' => [
-                    'alias' => 'exface.Core.CustomFacadeScript',
-                    'script' => $this->buildJsFunctionPrefix() . '_toggleHeader();'
-                ],
-                'icon' => $widget->getConfiguratorWidget()->isCollapsed() === true ? Icons::CHEVRON_DOWN : Icons::CHEVRON_UP,
-                'caption' => $this->translate('WIDGET.DATATABLE.CONFIGURATOR_EXPAND_COLLAPSE'),
-                'align' => 'right',
-                'hide_caption' => true
-            ]), $searchBtnGroup);
-            $searchBtnGroup->addButton($collapseButton,0);
         }
         
         $output .= <<<HTML
@@ -176,21 +159,6 @@ $(setTimeout(function(){
 {$editorFunctions}
 
 {$this->buildJsButtons()}
-
-function {$this->buildJsFunctionPrefix()}_toggleHeader() {
-    var confPanel = $('#{$this->getToolbarId()} .exf-data-header');
-    var toggleBtn = $('#{$this->getId()}_headerCollapseButton');
-
-    if (confPanel.css('display') === 'none') {
-        confPanel.panel('expand');
-        toggleBtn.find('.fa-chevron-down').removeClass('fa-chevron-down').addClass('fa-chevron-up');
-    } else {
-        confPanel.panel('collapse');
-        toggleBtn.find('.fa-chevron-up').removeClass('fa-chevron-up').addClass('fa-chevron-down');
-    }
-
-    $('#{$this->getId()}').{$this->getElementType()}('resize');
-}
 
 JS;
     }

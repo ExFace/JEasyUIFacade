@@ -488,11 +488,11 @@
 .window-mask {
   background: #eee;
 }
-.window .panel-footer {
+/*.window .panel-footer {
   border: 1px solid #dfdfdf;
   position: relative;
   top: -1px;
-}
+}*/
 .window-thinborder {
   padding: 0;
 }

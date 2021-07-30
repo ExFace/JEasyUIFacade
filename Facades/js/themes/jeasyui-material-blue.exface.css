@@ -22,16 +22,17 @@ fieldset.exface_inputgroup {border-color: #95B8E7;}
 fieldset.exface_inputgroup legend {color: #404040;}
 
 /* Tables */
-.datagrid-wrap.panel-body {border-top-width: 0}
+.datagrid-wrap.panel-body:not(.panel-body-noheader) {border-top-width: 0}
 .main-content > .exf-element > .datagrid > .datagrid-wrap.panel-body {border-top-width: 1px}
 .panel.datagrid > .panel-header {border-bottom-width: 0;}
 .datagrid-toolbar {border-width: 0;}
+/*.datagrid-wrap.panel-body-noheader {border-top-width: 1px;}*/
 .datagrid-header {border-top-width: 1px}
 
 /* jEasyUI customizing */
-div.panel-body{background-color:#fff;}
+div.panel-body {background-color:#fff;}
 div.panel-header {background-color: #fafafa}
-div.panel-header.panel-header-merged {border-bottom-color: transparent}
+.panel-filled > .panel-body:not(.panel-body-noheader) > .panel-noscroll > .panel > .panel-body-noheader {border-top-width: 0 !important}
 .panel.panel-filled > .panel-header {border-bottom-width: 0;}
 .textbox .m-btn.l-btn .m-btn-downarrow, 
 .m-btn.l-btn-plain .m-btn-downarrow {background-image: none; font: normal normal normal 14px/1 FontAwesome}
@@ -44,11 +45,13 @@ div.panel-header.panel-header-merged {border-bottom-color: transparent}
 .window .window-header .panel-with-icon {padding-left: 30px !important;}
 .window .window-header > .panel-icon.fa {font-size: 15px;}
 .window.panel {padding: 0; border: 0}
-.window .window-body {border-width: 0}
-.window .window-header {background-color: #f5f5f5}
+.window > .window-body {border-width: 0}
+.window > .window-header {background-color: #f5f5f5; border-bottom-color: transparent;}
+.window > .easyui-dialog.panel-header-separated:not(.exf-dialog-with-header) {border-top: 1px solid #dfdfdf !important}
+.window > .easyui-dialogexf-dialog-header.exf-dialog-with-header .exf-dialog-header {border-bottom: 1px solid #dfdfdf !important}
 .exf-dialog-footer {background-color: #fafafa}
-.window > .panel-header {border-bottom-color: #dfdfdf}
 .exf-dialog-header.panel-body {border-top-width: 0; border-left-width: 0; border-right-width: 0;}
+.easyui-dialog .exf-dialog-header.panel-body {border-bottom-width: 0;}
 .window .dialog-button .l-btn:not(.l-btn-plain) {background-color: #6200ee; color: white}
 
 /* TextDiff widget */
@@ -82,6 +85,6 @@ div.panel-header.panel-header-merged {border-bottom-color: transparent}
 /* NavMenu */
 ul.nav_menu li {border-color: #fff}
 ul.nav_menu li.level1 > ul {border-top: 1px solid #c3d9e0; border-bottom: 1px solid #c3d9e0;background: #fafafa}
-ul.nav_menu li.level1.active a.current {background: #fafafa}
-ul.nav_menu a:hover, 
-ul.nav_menu li.active a.current {background-color: #eee; color: #6200ee;}
+ul.nav_menu li.level1.active > a.current {background: #fff}
+ul.nav_menu a:hover {background-color: #eee; color: #6200ee;} 
+ul.nav_menu li.active a.current {background-color: #fafafa; color: #6200ee;}
