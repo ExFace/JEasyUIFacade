@@ -207,12 +207,9 @@ JS;
     
     protected function buildJsSetHeightMax(iContainOtherWidgets $containerWidget, string $gridItemCssClass, string $onChangeHeightJs) : string
     {
-        
         $count = 0;
         $js = <<<JS
         var yCoords = new Array();
-        var elem;
-        var yElemCord;
         var parElem;
         var contElem = $('#{$this->getFacade()->getElement($containerWidget)->getId()}');
         var surElem = $('#{$this->getId()}').closest('.{$gridItemCssClass}').first();
@@ -230,17 +227,24 @@ JS;
                 $count++;
             }
             $js.= <<<JS
-        elem = $('#{$this->getFacade()->getElement($child)->getId()}');
-        // add bottom y-Coord of element to array
-        if (elem.length > 0 && elem.parents('#{$this->getFacade()->getElement($containerWidget)->getId()}').length > 0) {
-            parElem = elem.closest('.{$gridItemCssClass}').first();
-            if (parElem.length > 0 && parElem[0] !== contElem[0]) {
-                yElemCord = parElem.offset().top + parElem.outerHeight(true);
-            } else {
-                yElemCord = elem.offset().top + parElem.outerHeight(true);
-            }            
-            yCoords.push(yElemCord);
-        }
+
+        (function(){
+            var elem = $('#{$this->getFacade()->getElement($child)->getId()}');
+            var yElemCord;
+            // add bottom y-Coord of element to array
+            if (elem.length > 0 && elem.parents('#{$this->getFacade()->getElement($containerWidget)->getId()}').length > 0) {
+                parElem = elem.closest('.{$gridItemCssClass}').first();
+                if (parElem.length > 0 && parElem[0] !== contElem[0]) {
+                    elem = parElem;
+                }
+                // Skip elements that are not above or below the max'ed element
+                if ((elem.offset().left + elem.outerWidth(true)) < surElem.offset().left || elem.offset().left > (surElem.offset().left + surElem.outerWidth(true))) {
+                    return;
+                }
+                yElemCord = elem.offset().top + elem.outerHeight(true);            
+                yCoords.push(yElemCord);
+            }
+        })();
 
 JS;
         }
@@ -305,6 +309,19 @@ JS;
     {
         if ($this->getFacade()->getElement($containerWidget) instanceof EuiWidgetGrid) {
             $onChangeHeightJs .= $this->getFacade()->getElement($containerWidget)->buildJsLayouter();
+            // Double check that we really did not force the container to scroll (may happen with masonry)
+            // If so, decrease the max'ed height to fit without scrolling!
+            $onChangeHeightJs .= <<<JS
+
+            setTimeout(function(){
+                var diff = contElem[0].scrollHeight - contHeight;
+                if (diff > 0) {
+                    surElem.innerHeight(newHeight - diff);
+                    {$onChangeHeightJs}
+                }
+            }, 0);
+
+JS;
         }
         return $this->buildJsSetHeightMax($containerWidget, 'exf-element', $onChangeHeightJs);
     }
