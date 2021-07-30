@@ -26,7 +26,8 @@ class EuiDialogHeader extends EuiWidgetGrid
             $heading = WidgetFactory::createFromUxon($widget->getPage(), new UxonObject([
                 'widget_type' => 'TextHeading',
                 'text' => $caption,
-                'width' => 'max'
+                'width' => 'max',
+                'heading_level' => 2
             ]), $widget);
             
             if ($widget->hasWidgets() && $widget->getWidgetFirst() instanceof WidgetGroup) {

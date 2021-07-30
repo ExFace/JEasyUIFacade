@@ -85,6 +85,14 @@ HTML;
             }
         }
         
+        $dialogClass = '';
+        if ($widget->hasHeader()) {
+            $dialogClass .= ' exf-dialog-with-header';
+        }
+        if (! ($widget->isFilledBySingleWidget() && $widget->getFillerWidget() instanceof Tabs)) {
+            $dialogClass .= ' panel-header-separated';
+        }
+        
         if (! $this->getWidget()->getHideHelpButton()) {
             $window_tools = '<a href="javascript:' . $this->getFacade()->getElement($this->getWidget()->getHelpButton())->buildJsClickFunctionName() . '()" class="fa fa-question-circle-o"></a>';
         }
@@ -92,7 +100,7 @@ HTML;
         $dialog_title = str_replace('"', '\"', $this->getCaption());
         
         $output = <<<HTML
-        	<div class="easyui-dialog" id="{$this->getId()}" data-options="{$this->buildJsDataOptions()}" title="{$dialog_title}" style="width: {$this->getWidth()}; height: {$this->getHeight()}; max-width: 100%;">
+        	<div class="easyui-dialog {$dialogClass}" id="{$this->getId()}" data-options="{$this->buildJsDataOptions()}" title="{$dialog_title}" style="width: {$this->getWidth()}; height: {$this->getHeight()}; max-width: 100%;">
         		{$children_html}
         	</div>
         	<div id="{$this->buttons_div_id}" class="exf-dialog-footer">
@@ -101,7 +109,7 @@ HTML;
         	<div id="{$this->getId()}_window_tools">
         		{$window_tools}
         	</div>
-        HTML;
+HTML;
         return $output;
     }
     
@@ -148,15 +156,6 @@ HTML;
 
         // Layout-Funktion hinzufuegen
         $output .= $this->buildJsLayouterFunction();
-
-        // Add special header classes required for styling
-        if ($widget->isFilledBySingleWidget() && $widget->getFillerWidget() instanceof Tabs) {
-            $output .= "setTimeout(function(){ $('#{$this->getId()}').prev().addClass('panel-header-merged'); }, 0);";
-        }
-        
-        if ($widget->hasHeader()) {
-            $output .= "setTimeout(function(){ $('#{$this->getId()}').prev().addClass('panel-header-merged'); }, 0);";
-        }
         
         return $output;
     }

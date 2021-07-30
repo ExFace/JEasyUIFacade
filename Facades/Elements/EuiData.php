@@ -60,22 +60,6 @@ class EuiData extends EuiAbstractElement
     private $headers_rowspan = array();
     
     /**
-     *
-     * {@inheritDoc}
-     * @see \exface\Core\Facades\AbstractAjaxFacade\Elements\AbstractJqueryElement::init()
-     */
-    protected function init()
-    {
-        parent::init();
-        $widget = $this->getWidget();
-        
-        // Prepare the configurator widget
-        $widget->getConfiguratorWidget()
-        ->setNavPosition(Tabs::NAV_POSITION_RIGHT)
-        ->setHideNavCaptions(true);
-    }
-    
-    /**
      * The Data element by itself does not generate anything - it just offers common utility methods.
      *
      * {@inheritDoc}
@@ -757,25 +741,26 @@ JS;
         // Prepare the header with the configurator and the toolbars
         $configurator_widget = $widget->getConfiguratorWidget();
         /* @var $configurator_element \exface\JEasyUIFacade\Facades\Elements\EuiDataConfigurator */
-        $configurator_element = $this->getFacade()->getElement($this->getWidget()->getConfiguratorWidget())->setFitOption(false)->setStyleAsPills(true);
-        
-        if ($configurator_widget->isEmpty()){
-            $configurator_widget->setHidden(true);
-            $configurator_panel_collapsed = ', collapsed: true';
-        }
+        $configurator_element = $this->getFacade()->getElement($this->getWidget()->getConfiguratorWidget());
         
         // jEasyUI will not resize the configurator once the datagrid is resized
         // (don't know why), so we need to do it manually.
-        // Wrapping the resize-call into a setTimeout( ,0) is another strange
-        // workaround, but if not done so, the configurator will get resized to
-        // the old size, not the new one.
         $this->addOnResizeScript("
-            if(typeof $('#" . $configurator_element->getId() . "')." . $configurator_element->getElementType() . "() !== 'undefined') {
-                setTimeout(function(){
-                    $('#" . $configurator_element->getId() . "')." . $configurator_element->getElementType() . "('resize');
-                }, 0);
-            }
+            {$this->getFacade()->getElement($configurator_widget->getFilterTab())->buildJsLayouter()}
         ");
+        
+        if ($widget->getHideHeader()){
+            $panel_options .= ', collapsed: true';
+            $toolbar_style .= 'display: none; height: 0;';
+        } else {
+            if ($widget->getConfiguratorWidget()->isCollapsed() === true) {
+                $panel_options .= ', collapsed: true';
+            }
+            // Add header collapse button to the toolbar
+            if ($widget->getConfiguratorWidget()->getFilterTab()->countWidgetsVisible() > 0) {
+                $this->getFacade()->getElement($widget->getConfiguratorWidget())->addButtonToCollapseExpand($widget->getToolbarMain()->getButtonGroupForSearchActions(), 0, $this->buildJsResize());
+            }
+        }
         
         // Build the HTML for the button toolbars.
         // IMPORTANT: do it BEFORE the context menu since buttons may be moved
@@ -790,19 +775,10 @@ JS;
             $context_menu_html = '';
         }
         
-        if ($widget->getHideHeader()){
-            $panel_options .= ', collapsed: true';
-            $toolbar_style .= 'display: none; height: 0;';
-        } else {
-            if ($widget->getConfiguratorWidget()->isCollapsed() === true) {
-                $panel_options .= ', collapsed: true';
-            }
-        }
-        
         return <<<HTML
         
                 <div class="easyui-panel exf-data-header" data-options="footer: '#{$this->getToolbarId()}_footer', {$panel_options} {$configurator_panel_collapsed}">
-                    {$configurator_element->buildHtml()}
+                    {$this->getFacade()->getElement($configurator_widget->getFilterTab())->buildHtml()}
                 </div>
                 <div id="{$this->getToolbarId()}_footer" class="datatable-toolbar" style="{$toolbar_style}">
                     {$toolbars_html}
@@ -810,6 +786,15 @@ JS;
                 {$context_menu_html}
                 
 HTML;
+    }
+    
+    /**
+     * 
+     * @return string
+     */
+    protected function buildJsResize() : string
+    {
+        return "$('#{$this->getId()}').datagrid('resize')";
     }
     
     /**
