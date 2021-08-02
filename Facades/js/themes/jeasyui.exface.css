@@ -279,6 +279,7 @@ pre.sf-dump .sf-dump-private, pre.sf-dump .sf-dump-public, pre.sf-dump .sf-dump-
 .main-content.layout-body {border-top: 5px solid transparent; background-color: transparent;}
 .main-header.layout-body {height:30px; padding:10px; overflow: hidden; background-color: transparent;}
 
+
 /* Dashboard */
 .exf-dashboard.panel-body {border: 0 !important; margin-left: -4px; margin-top: -4px;}
 
