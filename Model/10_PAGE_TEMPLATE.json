@@ -45,12 +45,12 @@
     "rows": [
         {
             "CREATED_ON": "1970-01-01 01:00:00",
-            "MODIFIED_ON": "2020-05-25 08:51:50",
+            "MODIFIED_ON": "2021-08-02 14:16:24",
             "CREATED_BY_USER": "0x31000000000000000000000000000000",
             "MODIFIED_BY_USER": "0x31000000000000000000000000000000",
             "UID": "0x11ea2033058cb236aa030205857feb80",
             "APP": "0x11e6c930ff1f486693cce4b318306b9a",
-            "NAME": "Desktop default (jEasyUI metro blue)",
+            "NAME": "Desktop jEasyUI metro blue",
             "DESCRIPTION": "Desktop facade based jQuery EasyUI with \"metro blue\" theme",
             "FACADE": "exface\/JEasyUIFacade\/Facades\/JEasyUIFacade.php",
             "FACADE_UXON": null
@@ -85,13 +85,13 @@
         },
         {
             "CREATED_ON": "2020-05-25 08:26:30",
-            "MODIFIED_ON": "2020-05-25 08:26:30",
+            "MODIFIED_ON": "2021-08-02 14:14:41",
             "CREATED_BY_USER": "0x31000000000000000000000000000000",
             "MODIFIED_BY_USER": "0x31000000000000000000000000000000",
             "UID": "0x11ea9e6167c40095bba0e4b318306b9a",
             "APP": "0x11e6c930ff1f486693cce4b318306b9a",
             "NAME": "Desktop jEasyUI material",
-            "DESCRIPTION": "Desktop facade based jQuery EasyUI with \"material\" theme",
+            "DESCRIPTION": "Desktop facade in material UI style with gray colors",
             "FACADE": "exface\/JEasyUIFacade\/Facades\/JEasyUIFacade.php",
             "FACADE_UXON": {
                 "theme": "material"
@@ -113,16 +113,16 @@
         },
         {
             "CREATED_ON": "2020-05-25 08:35:15",
-            "MODIFIED_ON": "2020-05-25 08:35:15",
+            "MODIFIED_ON": "2021-08-02 14:11:56",
             "CREATED_BY_USER": "0x31000000000000000000000000000000",
             "MODIFIED_BY_USER": "0x31000000000000000000000000000000",
             "UID": "0x11ea9e62a01a118cbba0e4b318306b9a",
             "APP": "0x11e6c930ff1f486693cce4b318306b9a",
-            "NAME": "Desktop jEasyUI material blue",
-            "DESCRIPTION": "Desktop facade based jQuery EasyUI with \"material blue\" theme",
+            "NAME": "Desktop jEasyUI material light",
+            "DESCRIPTION": "Desktop facade in material UI style with light colors",
             "FACADE": "exface\/JEasyUIFacade\/Facades\/JEasyUIFacade.php",
             "FACADE_UXON": {
-                "theme": "material-blue"
+                "theme": "material-light"
             }
         },
         {
