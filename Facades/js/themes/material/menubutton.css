@@ -11,7 +11,7 @@
 }
 .m-btn-active,
 .s-btn-active {
-  background: #eee;
+  background: #ddd;
   color: #404040;
   border: 1px solid #ccc;
   filter: none;
@@ -22,9 +22,9 @@
   padding: 0;
   border-width: 1px;
   border-style: solid;
-  -moz-border-radius: 4px 4px 4px 4px;
-  -webkit-border-radius: 4px 4px 4px 4px;
-  border-radius: 4px 4px 4px 4px;
+  -moz-border-radius: 2px 2px 2px 2px;
+  -webkit-border-radius: 2px 2px 2px 2px;
+  border-radius: 2px 2px 2px 2px;
 }
 .m-btn .l-btn-left .l-btn-text {
   margin-right: 20px;
@@ -89,6 +89,6 @@
 .m-btn-plain-active,
 .s-btn-plain-active {
   border-color: #ccc;
-  background-color: #eee;
+  background-color: #ddd;
   color: #404040;
 }

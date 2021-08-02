@@ -14,7 +14,7 @@
   top: 7px;
   border-width: 1px;
   border-style: solid;
-  border-radius: 4px;
+  border-radius: 2px;
 }
 .slider-handle {
   position: absolute;
@@ -90,11 +90,11 @@
   background: url('images/slider_handle.png') no-repeat;
 }
 .slider-inner {
-  border-color: #ddd;
-  background: #f5f5f5;
+  border-color: #dfdfdf;
+  background: #ebebeb;
 }
 .slider-rule span {
-  border-color: #ddd;
+  border-color: #dfdfdf;
 }
 .slider-rulelabel span {
   color: #404040;

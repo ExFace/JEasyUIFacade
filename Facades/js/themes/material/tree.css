@@ -132,7 +132,7 @@
   border: 1px dotted red;
 }
 .tree-editor {
-  border: 1px solid #ddd;
+  border: 1px solid #dfdfdf;
   font-size: 12px;
   line-height: 16px;
   padding: 0 4px;
@@ -146,15 +146,15 @@
 .tree-node-proxy {
   background-color: #ffffff;
   color: #404040;
-  border-color: #ddd;
+  border-color: #dfdfdf;
 }
 .tree-node-hover {
-  background: #eee;
+  background: #ddd;
   color: #404040;
 }
 .tree-node-selected {
-  background: #00bbee;
-  color: #fff;
+  background: #ddd;
+  color: #6200ee;
 }
 .tree-node-disabled {
   opacity: 0.5;

@@ -109,7 +109,7 @@
 }
 .layout-mask {
   position: absolute;
-  background: #fafafa;
+  background: #f5f5f5;
   filter: alpha(opacity=10);
   opacity: 0.10;
   z-index: 4;
@@ -143,8 +143,8 @@
   border-right: 5px solid #ffffff;
 }
 .layout-expand {
-  background-color: #f5f5f5;
+  background-color: #ebebeb;
 }
 .layout-expand-over {
-  background-color: #f5f5f5;
+  background-color: #ebebeb;
 }
