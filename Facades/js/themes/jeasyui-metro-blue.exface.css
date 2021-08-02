@@ -51,3 +51,6 @@ div.panel-body {background-color:#fff;}
 
 /* Tabs */
 .tabs li.tabs-selected a.tabs-inner {background-color: #ffff !important; border-bottom-color: #fff;}
+
+/* Global Layout */
+.main-content > .easyui-tabs > .tabs-header {border-top: 1px solid #c3d9e0; border-left: 1px solid #c3d9e0; border-right: 1px solid #c3d9e0}
