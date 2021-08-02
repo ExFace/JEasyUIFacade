@@ -83,7 +83,6 @@ JS;
     {$this->buildJsFunctionPrefix()}_init();
     setTimeout(function(){
         {$this->buildJsFunctionPrefix()}_load();
-        $('#{$this->getIdOfSlick()}_wrapper').prev().addClass('panel-header-merged');
     }, 0);
 
 JS;

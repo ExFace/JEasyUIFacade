@@ -23,16 +23,18 @@ fieldset.exface_inputgroup legend {color: #404040;}
 
 /* Tables */
 .datagrid-wrap.panel-body:not(.panel-body-noheader) {border-top-width: 0}
-.main-content > .exf-element > .datagrid > .datagrid-wrap.panel-body {border-top-width: 1px}
 .panel.datagrid > .panel-header {border-bottom-width: 0;}
 .datagrid-toolbar {border-width: 0;}
-/*.datagrid-wrap.panel-body-noheader {border-top-width: 1px;}*/
 .datagrid-header {border-top-width: 1px}
+
+/* ImageGallery */
+.exf-imagegallery > .panel > .panel-header {border-bottom-width: 0}
 
 /* jEasyUI customizing */
 div.panel-body {background-color:#fff;}
 div.panel-header {background-color: #fafafa}
-.panel-filled > .panel-body:not(.panel-body-noheader) > .panel-noscroll > .panel > .panel-body-noheader {border-top-width: 0 !important}
+.panel-filled > .panel-body:not(.panel-body-noheader):not(.exf-panel-flat) > .panel-noscroll > .panel > .panel-body-noheader {border-top-width: 0 !important}
+.panel-filled > .panel-body.exf-panel-flat {margin-top: -2px}
 .panel.panel-filled > .panel-header {border-bottom-width: 0;}
 .textbox .m-btn.l-btn .m-btn-downarrow, 
 .m-btn.l-btn-plain .m-btn-downarrow {background-image: none; font: normal normal normal 14px/1 FontAwesome}
@@ -81,6 +83,7 @@ div.panel-header {background-color: #fafafa}
 
 /* Global layout */
 .main-header.layout-body {height:50px;}
+.main-content > .exf-element > .datagrid > .datagrid-wrap.panel-body {border-top-width: 1px}
 
 /* NavMenu */
 ul.nav_menu li {border-color: #fff}
