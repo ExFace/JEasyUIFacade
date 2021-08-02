@@ -11,7 +11,7 @@
 .pagination-btn-separator {
   float: left;
   height: 24px;
-  border-left: 1px solid #ddd;
+  border-left: 1px solid #dfdfdf;
   border-right: 1px solid #fff;
   margin: 3px 1px;
 }
@@ -67,5 +67,5 @@
 }
 .pagination-page-list,
 .pagination .pagination-num {
-  border-color: #ddd;
+  border-color: #dfdfdf;
 }

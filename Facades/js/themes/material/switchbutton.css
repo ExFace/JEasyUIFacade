@@ -6,11 +6,11 @@
   margin: 0;
   padding: 0;
   cursor: pointer;
-  background: #d9d9d9;
-  border: 1px solid #d9d9d9;
-  -moz-border-radius: 4px 4px 4px 4px;
-  -webkit-border-radius: 4px 4px 4px 4px;
-  border-radius: 4px 4px 4px 4px;
+  background: #6200ee;
+  border: 1px solid #6200ee;
+  -moz-border-radius: 2px 2px 2px 2px;
+  -webkit-border-radius: 2px 2px 2px 2px;
+  border-radius: 2px 2px 2px 2px;
 }
 .switchbutton-inner {
   display: inline-block;
@@ -27,13 +27,13 @@
   height: 100%;
   float: left;
   font-size: 12px;
-  -moz-border-radius: 4px 4px 4px 4px;
-  -webkit-border-radius: 4px 4px 4px 4px;
-  border-radius: 4px 4px 4px 4px;
+  -moz-border-radius: 2px 2px 2px 2px;
+  -webkit-border-radius: 2px 2px 2px 2px;
+  border-radius: 2px 2px 2px 2px;
 }
 .switchbutton-on {
-  background: #00bbee;
-  color: #fff;
+  background: #ddd;
+  color: #6200ee;
 }
 .switchbutton-off {
   background-color: #ffffff;
@@ -41,15 +41,15 @@
 }
 .switchbutton-on,
 .switchbutton-reversed .switchbutton-off {
-  -moz-border-radius: 4px 0 0 4px;
-  -webkit-border-radius: 4px 0 0 4px;
-  border-radius: 4px 0 0 4px;
+  -moz-border-radius: 2px 0 0 2px;
+  -webkit-border-radius: 2px 0 0 2px;
+  border-radius: 2px 0 0 2px;
 }
 .switchbutton-off,
 .switchbutton-reversed .switchbutton-on {
-  -moz-border-radius: 0 4px 4px 0;
-  -webkit-border-radius: 0 4px 4px 0;
-  border-radius: 0 4px 4px 0;
+  -moz-border-radius: 0 2px 2px 0;
+  -webkit-border-radius: 0 2px 2px 0;
+  border-radius: 0 2px 2px 0;
 }
 .switchbutton-handle {
   position: absolute;
@@ -57,10 +57,10 @@
   left: 50%;
   background-color: #ffffff;
   color: #404040;
-  border: 1px solid #d9d9d9;
-  -moz-box-shadow: 0 0 3px 0 #d9d9d9;
-  -webkit-box-shadow: 0 0 3px 0 #d9d9d9;
-  box-shadow: 0 0 3px 0 #d9d9d9;
+  border: 1px solid #6200ee;
+  -moz-box-shadow: 0 0 3px 0 #6200ee;
+  -webkit-box-shadow: 0 0 3px 0 #6200ee;
+  box-shadow: 0 0 3px 0 #6200ee;
 }
 .switchbutton-value {
   position: absolute;

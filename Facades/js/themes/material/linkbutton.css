@@ -132,16 +132,16 @@
   width: 32px;
 }
 .l-btn {
-  color: #404040;
-  background: #fafafa;
+  color: #ffffff;
+  background: #6200ee;
   background-repeat: repeat-x;
-  border: 1px solid #d9d9d9;
-  -moz-border-radius: 4px 4px 4px 4px;
-  -webkit-border-radius: 4px 4px 4px 4px;
-  border-radius: 4px 4px 4px 4px;
+  border: 1px solid #6200ee;
+  -moz-border-radius: 2px 2px 2px 2px;
+  -webkit-border-radius: 2px 2px 2px 2px;
+  border-radius: 2px 2px 2px 2px;
 }
 .l-btn:hover {
-  background: #eee;
+  background: #ddd;
   color: #404040;
   border: 1px solid #ccc;
   filter: none;
@@ -157,19 +157,19 @@
   padding: 0;
 }
 .l-btn-plain:hover {
-  background: #eee;
+  background: #ddd;
   color: #404040;
   border: 1px solid #ccc;
-  -moz-border-radius: 4px 4px 4px 4px;
-  -webkit-border-radius: 4px 4px 4px 4px;
-  border-radius: 4px 4px 4px 4px;
+  -moz-border-radius: 2px 2px 2px 2px;
+  -webkit-border-radius: 2px 2px 2px 2px;
+  border-radius: 2px 2px 2px 2px;
 }
 .l-btn-disabled,
 .l-btn-disabled:hover {
   opacity: 0.5;
   cursor: default;
-  background: #fafafa;
-  color: #404040;
+  background: #6200ee;
+  color: #ffffff;
 }
 .l-btn-disabled .l-btn-text,
 .l-btn-disabled .l-btn-icon {
@@ -182,10 +182,10 @@
 }
 .l-btn-selected,
 .l-btn-selected:hover {
-  background: #00bbee;
+  background: #6ab8f7;
   filter: none;
 }
 .l-btn-plain-selected,
 .l-btn-plain-selected:hover {
-  background: #00bbee;
+  background: #6ab8f7;
 }

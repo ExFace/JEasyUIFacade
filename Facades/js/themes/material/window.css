@@ -56,33 +56,33 @@
 .window,
 .window-shadow {
   position: absolute;
-  -moz-border-radius: 4px 4px 4px 4px;
-  -webkit-border-radius: 4px 4px 4px 4px;
-  border-radius: 4px 4px 4px 4px;
+  -moz-border-radius: 2px 2px 2px 2px;
+  -webkit-border-radius: 2px 2px 2px 2px;
+  border-radius: 2px 2px 2px 2px;
 }
 .window-shadow {
-  background: #fafafa;
-  -moz-box-shadow: 2px 2px 3px #fafafa;
-  -webkit-box-shadow: 2px 2px 3px #fafafa;
-  box-shadow: 2px 2px 3px #fafafa;
+  background: #ccc;
+  -moz-box-shadow: 2px 2px 3px #dfdfdf;
+  -webkit-box-shadow: 2px 2px 3px #dfdfdf;
+  box-shadow: 2px 2px 3px #dfdfdf;
   filter: progid:DXImageTransform.Microsoft.Blur(pixelRadius=2,MakeShadow=false,ShadowOpacity=0.2);
 }
 .window,
 .window .window-body {
-  border-color: #ddd;
+  border-color: #dfdfdf;
 }
 .window {
-  background-color: #f5f5f5;
+  background-color: #ebebeb;
 }
 .window-proxy {
-  border: 1px dashed #ddd;
+  border: 1px dashed #dfdfdf;
 }
 .window-proxy-mask,
 .window-mask {
-  background: #eee;
+  background: #ddd;
 }
 .window .panel-footer {
-  border: 1px solid #ddd;
+  border: 1px solid #dfdfdf;
   position: relative;
   top: -1px;
 }

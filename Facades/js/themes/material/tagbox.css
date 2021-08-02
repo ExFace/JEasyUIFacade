@@ -12,10 +12,10 @@
   float: left;
   vertical-align: top;
   text-decoration: none;
-  -moz-border-radius: 4px 4px 4px 4px;
-  -webkit-border-radius: 4px 4px 4px 4px;
-  border-radius: 4px 4px 4px 4px;
-  background: #eee;
+  -moz-border-radius: 2px 2px 2px 2px;
+  -webkit-border-radius: 2px 2px 2px 2px;
+  border-radius: 2px 2px 2px 2px;
+  background: #ddd;
   color: #404040;
 }
 .tagbox-remove {

@@ -22,13 +22,13 @@
   background-color: #ffffff;
 }
 .combo-arrow {
-  background-color: #f5f5f5;
+  background-color: #ebebeb;
 }
 .combo-arrow-hover {
-  background-color: #eee;
+  background-color: #ddd;
 }
 .combo-arrow:hover {
-  background-color: #eee;
+  background-color: #ddd;
 }
 .combo .textbox-icon-disabled:hover {
   cursor: default;

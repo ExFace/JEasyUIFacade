@@ -48,10 +48,10 @@
 			"exface/JEasyUIFacade/Facades/js/themes/jeasyui.exface.css",
 			"exface/JEasyUIFacade/Facades/js/themes/jeasyui-material.exface.css"
 		],
-		"material-blue": [
-			"exface/JEasyUIFacade/Facades/js/themes/material-blue/easyui.css",
+		"material-light": [
+			"exface/JEasyUIFacade/Facades/js/themes/material-light/easyui.css",
 			"exface/JEasyUIFacade/Facades/js/themes/jeasyui.exface.css",
-			"exface/JEasyUIFacade/Facades/js/themes/jeasyui-material-blue.exface.css"
+			"exface/JEasyUIFacade/Facades/js/themes/jeasyui-material-light.exface.css"
 		],
 		"material-teal": [
 			"exface/JEasyUIFacade/Facades/js/themes/material-teal/easyui.css",

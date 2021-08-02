@@ -60,9 +60,9 @@
   margin-right: 0;
 }
 .menu-active {
-  -moz-border-radius: 4px 4px 4px 4px;
-  -webkit-border-radius: 4px 4px 4px 4px;
-  border-radius: 4px 4px 4px 4px;
+  -moz-border-radius: 2px 2px 2px 2px;
+  -webkit-border-radius: 2px 2px 2px 2px;
+  border-radius: 2px 2px 2px 2px;
 }
 .menu-item-disabled {
   opacity: 0.5;
@@ -75,29 +75,29 @@
 }
 .menu-shadow {
   position: absolute;
-  -moz-border-radius: 4px 4px 4px 4px;
-  -webkit-border-radius: 4px 4px 4px 4px;
-  border-radius: 4px 4px 4px 4px;
-  background: #fafafa;
-  -moz-box-shadow: 2px 2px 3px #fafafa;
-  -webkit-box-shadow: 2px 2px 3px #fafafa;
-  box-shadow: 2px 2px 3px #fafafa;
+  -moz-border-radius: 2px 2px 2px 2px;
+  -webkit-border-radius: 2px 2px 2px 2px;
+  border-radius: 2px 2px 2px 2px;
+  background: #ccc;
+  -moz-box-shadow: 2px 2px 3px #dfdfdf;
+  -webkit-box-shadow: 2px 2px 3px #dfdfdf;
+  box-shadow: 2px 2px 3px #dfdfdf;
   filter: progid:DXImageTransform.Microsoft.Blur(pixelRadius=2,MakeShadow=false,ShadowOpacity=0.2);
 }
 .menu-rightarrow {
   background: url('images/menu_arrows.png') no-repeat -32px center;
 }
 .menu-line {
-  border-left: 1px solid #ddd;
+  border-left: 1px solid #dfdfdf;
   border-right: 1px solid #fff;
 }
 .menu-sep {
-  border-top: 1px solid #ddd;
+  border-top: 1px solid #dfdfdf;
   border-bottom: 1px solid #fff;
 }
 .menu {
   background-color: #fff;
-  border-color: #eee;
+  border-color: #ddd;
   color: #404040;
 }
 .menu-content {
@@ -110,7 +110,7 @@
 .menu-active {
   border-color: #ccc;
   color: #404040;
-  background: #eee;
+  background: #ddd;
 }
 .menu-active-disabled {
   border-color: transparent;
