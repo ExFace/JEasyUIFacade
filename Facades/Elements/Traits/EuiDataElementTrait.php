@@ -82,7 +82,7 @@ HTML;
                     {$configurator_element->buildJs()}
                     {$this->buildJsButtons()}
 
-                    $('#{$configurator_element->getId()}').find('.grid').on( 'layoutComplete', function( event, items ) {
+                    $('#{$configurator_element->getId()}').find('.grid').on('layoutComplete', function( event, items ) {
                         setTimeout(function(){
                             var newHeight = $('#{$this->getId()}_wrapper > .panel').height();
                             $('#{$this->getId()}').height($('#{$this->getId()}').parent().height()-newHeight);

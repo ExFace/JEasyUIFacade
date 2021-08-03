@@ -130,7 +130,7 @@ JS;
                         if (mUid !== undefined && mUid !== null){
     					   $(this).{$this->getElementType()}("select", mUid);
                         }
-    	                $("#{$this->getId()}_cmenu").menu("show", {
+    	                $("#{$this->getIdOfContextMenu()}").menu("show", {
     	                    left: e.pageX,
     	                    top: e.pageY
     	                });

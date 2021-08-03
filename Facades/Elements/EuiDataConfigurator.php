@@ -6,6 +6,7 @@ use exface\Core\Widgets\ButtonGroup;
 use exface\Core\Factories\WidgetFactory;
 use exface\Core\CommonLogic\UxonObject;
 use exface\Core\CommonLogic\Constants\Icons;
+use exface\Core\Interfaces\Widgets\iHaveContextMenu;
 
 /**
  * 
@@ -20,6 +21,8 @@ class EuiDataConfigurator extends EuiTabs
     
     private $btnCollaps = null;
     
+    private $headerPanelId = null;
+    
     public function buildHtml()
     {
         $html = parent::buildHtml();
@@ -32,6 +35,67 @@ class EuiDataConfigurator extends EuiTabs
             return '<div style="display: none">' . $html . '</div>';
         }
         return $html;
+    }
+    
+    public function getIdOfHeaderPanel() : string
+    {
+        if (is_null($this->headerPanelId)) {
+            $this->headerPanelId = $this->getId() . '_toolbar';
+        }
+        return $this->headerPanelId;
+    }
+    
+    /**
+     * Creates the HTML for the header controls: filters, sorters, buttons, etc.
+     * @return string
+     */
+    public function buildHtmlHeaderPanel(string $toolbarHtml = '')
+    {
+        $configuredWidget = $this->getWidget()->getWidgetConfigured();
+        $toolbar_style = '';
+        $panel_options = "border: false";
+        
+        // Prepare the header with the configurator and the toolbars
+        $configuratorWidget = $this->getWidget();
+        
+        // jEasyUI will not resize the configurator once the datagrid is resized
+        // (don't know why), so we need to do it manually. The `setTimeout()` is
+        // also important as without it the flexible width of the filters does not
+        // work and they are rendered too small. The `doLayout` on the other hand
+        // makes sure, that complex filter widgets (like RangeFilter) are rendered
+        // correctly in panels, that are not visible right away - e.g. in secondary
+        // tabs like in the default editor of `axenox.Deployer.project` in the tab
+        // "Deployments".
+        $this->getFacade()->getElement($configuredWidget)->addOnResizeScript("setTimeout(function(){
+            $('#{$this->getIdOfHeaderPanel()}').find('.easyui-panel').panel('doLayout');
+            {$this->getFacade()->getElement($configuratorWidget->getFilterTab())->buildJsLayouter()}
+        },0);");
+            
+        if ($configuredWidget->getHideHeader()){
+            $panel_options .= ', collapsed: true';
+            $toolbar_style .= 'display: none; height: 0;';
+        } else {
+            if ($configuredWidget->getConfiguratorWidget()->isCollapsed() === true) {
+                $panel_options .= ', collapsed: true';
+            }
+        }
+        
+        if ($configuredWidget->getHideHeader()){
+            $header_style = 'visibility: hidden; height: 0px; padding: 0px;';
+        }
+        
+        return <<<HTML
+        
+        <div id="{$this->getIdOfHeaderPanel()}" style="{$header_style}">
+            <div class="easyui-panel exf-data-header" data-options="footer: '#{$this->getIdOfHeaderPanel()}_footer', {$panel_options}">
+                {$this->getFacade()->getElement($configuratorWidget->getFilterTab())->buildHtml()}
+            </div>
+            <div id="{$this->getIdOfHeaderPanel()}_footer" class="datatable-toolbar" style="{$toolbar_style}">
+                {$toolbarHtml}
+            </div>
+        </div>
+                
+HTML;
     }
     
     /**
@@ -48,6 +112,7 @@ class EuiDataConfigurator extends EuiTabs
     {
         return parent::buildJs() . <<<JS
 
+{$this->getFacade()->getElement($this->getWidget()->getFilterTab())->buildJsLayouter()}
 {$this->buildJsRefreshOnEnter()}
 {$this->buildJsRegisterOnActionPerformed($this->buildJsRefreshConfiguredWidget(true))}
 
