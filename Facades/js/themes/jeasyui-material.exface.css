@@ -33,7 +33,7 @@ fieldset.exface_inputgroup legend {color: #404040;}
 /* jEasyUI customizing */
 div.panel-body {background-color:#fff;}
 div.panel-header {background-color: #f5f5f5}
-.panel-filled > .panel-body:not(.panel-body-noheader):not(.exf-panel-flat) > .panel-noscroll > .panel > .panel-body-noheader {border-top-width: 0 !important}
+.panel-filled > .panel-body:not(.panel-body-noheader):not(.exf-panel-flat) > .panel-noscroll > .panel > .panel-body-noheader:not(.exf-data-hide-header) {border-top-width: 0 !important}
 .panel-filled > .panel-body.exf-panel-flat {margin-top: -2px}
 .panel.panel-filled > .panel-header {border-bottom-width: 0;}
 .textbox .m-btn.l-btn .m-btn-downarrow, 
