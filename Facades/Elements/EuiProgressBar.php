@@ -17,26 +17,6 @@ class EuiProgressBar extends EuiDisplay
     /**
      * 
      * {@inheritDoc}
-     * @see \exface\JEasyUIFacade\Facades\Elements\EuiDisplay::buildHtml()
-     */
-    public function buildHtml()
-    {
-        $widget = $this->getWidget();
-        $val = $widget->getValueWithDefaults();
-        if ($val !== null) {
-            $progress = $widget->getProgress($val);
-            $text = $widget->getText($val);
-        } else {
-            $progress = null;
-            $text = null;
-        }
-        $bar = $this->buildHtmlProgressBar($val, $text, $progress, $widget->getColorForValue($val));
-        return $this->buildHtmlLabelWrapper($bar);
-    }
-    
-    /**
-     * 
-     * {@inheritDoc}
      * @see \exface\JEasyUIFacade\Facades\Elements\EuiValue::buildJs()
      */
     public function buildJs()
