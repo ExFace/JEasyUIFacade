@@ -46,6 +46,11 @@ trait EuiDataElementTrait
         
         $panel_options = ", title: '{$this->getCaption()}'";
         
+        $panelClass = $this->buildCssElementClass();
+        if ($this->getWidget()->getHideHeader()) {
+            $panelClass .= ' exf-data-hide-header';
+        }
+        
         // Create the panel for the data widget
         // overflow: hidden loest ein Problem im JavaFX WebView-Browser, bei dem immer wieder
         // Scrollbars ein- und wieder ausgeblendet wurden. Es trat in Verbindung mit Masonry
@@ -55,7 +60,7 @@ trait EuiDataElementTrait
         $output = <<<HTML
 
 <div class="exf-grid-item {$this->getMasonryItemClass()}" style="width:{$this->getWidth()};min-width:{$this->getMinWidth()};height:{$this->getHeight()};padding:{$this->getPadding()};box-sizing:border-box;">
-    <div class="easyui-panel {$this->buildCssElementClass()}" style="height: auto;" id="{$this->getId()}_wrapper" data-options="fit: true {$panel_options}, onResize: function(){ {$this->getOnResizeScript()} }">
+    <div class="easyui-panel {$panelClass}" style="height: auto;" id="{$this->getId()}_wrapper" data-options="fit: true {$panel_options}, onResize: function(){ {$this->getOnResizeScript()} }">
     	{$header_html}
     	{$contentHtml}
     </div>

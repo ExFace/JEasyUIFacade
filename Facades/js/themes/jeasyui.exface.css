@@ -145,17 +145,7 @@ pre.sf-dump {background-color: white !important; margin: 10px;}
 pre.sf-dump .sf-dump-private, pre.sf-dump .sf-dump-public, pre.sf-dump .sf-dump-protected {color: black !important;}
 
 /* DataTables */
-.no-initial-load-message-overlay {
-	position:absolute;
-	top:0;
-	left:0;
-	width:100%;
-	height:100%;
-}
-.no-initial-load-message-overlay-table {
-	width:100%;
-	height:100%;
-}
+.datagrid-empty {line-height: initial; height: auto; min-height: 25px;}
 
 /* Tile widget */
 .exf-tile {padding: 4px;} /* This makes a stand-alone tile have the same padding as .exf-grid-item.exf-tile */
