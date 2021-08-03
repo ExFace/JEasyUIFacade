@@ -43,8 +43,6 @@ class EuiData extends EuiAbstractElement
     
     use JqueryAlignmentTrait;
     
-    private $toolbar_id = null;
-    
     private $show_footer = null;
     
     private $on_before_load = '';
@@ -193,7 +191,7 @@ class EuiData extends EuiAbstractElement
                 , pageSize: ' . $default_page_size . '
 				, striped: ' . ($widget->getStriped() ? 'true' : 'false') . '
 				, nowrap: ' . ($widget->getNowrap() ? 'true' : 'false') . '
-				, toolbar: "#' . $this->getToolbarId() . '"
+				, toolbar: "#' . $this->getFacade()->getElement($widget->getConfiguratorWidget())->getIdOfHeaderPanel() . '"
 				' . ($this->buildJsOnBeforeLoadFunction() ? ', onBeforeLoad: ' . $this->buildJsOnBeforeLoadFunction() : '') . '
 				' . $this->buildJsOnLoadSuccessOption() . '
 				, onLoadError: function(response) {
@@ -435,19 +433,6 @@ JS;
                         " . ($col->isSortable() ? ", order: '" . ($col->getDefaultSortingDirection() === SortingDirectionsDataType::ASC($this->getWorkbench()) ? 'asc' : 'desc') . "'" : '');
         
         return $output;
-    }
-    
-    public function getToolbarId()
-    {
-        if (is_null($this->toolbar_id)) {
-            $this->toolbar_id = $this->getId() . '_toolbar';
-        }
-        return $this->toolbar_id;
-    }
-    
-    public function setToolbarId($value)
-    {
-        $this->toolbar_id = $value;
     }
     
     /**
@@ -733,33 +718,13 @@ JS;
      * Creates the HTML for the header controls: filters, sorters, buttons, etc.
      * @return string
      */
-    protected function buildHtmlTableHeader($panel_options = "border: false")
+    protected function buildHtmlTableHeader()
     {
         $widget = $this->getWidget();
-        $toolbar_style = '';
         
-        // Prepare the header with the configurator and the toolbars
-        $configurator_widget = $widget->getConfiguratorWidget();
-        /* @var $configurator_element \exface\JEasyUIFacade\Facades\Elements\EuiDataConfigurator */
-        $configurator_element = $this->getFacade()->getElement($this->getWidget()->getConfiguratorWidget());
-        
-        // jEasyUI will not resize the configurator once the datagrid is resized
-        // (don't know why), so we need to do it manually.
-        $this->addOnResizeScript("
-            {$this->getFacade()->getElement($configurator_widget->getFilterTab())->buildJsLayouter()}
-        ");
-        
-        if ($widget->getHideHeader()){
-            $panel_options .= ', collapsed: true';
-            $toolbar_style .= 'display: none; height: 0;';
-        } else {
-            if ($widget->getConfiguratorWidget()->isCollapsed() === true) {
-                $panel_options .= ', collapsed: true';
-            }
-            // Add header collapse button to the toolbar
-            if ($widget->getConfiguratorWidget()->getFilterTab()->countWidgetsVisible() > 0) {
-                $this->getFacade()->getElement($widget->getConfiguratorWidget())->addButtonToCollapseExpand($widget->getToolbarMain()->getButtonGroupForSearchActions(), 0, $this->buildJsResize());
-            }
+        // Add header collapse button to the toolbar
+        if ($widget->getConfiguratorWidget()->getFilterTab()->countWidgetsVisible() > 0) {
+            $this->getFacade()->getElement($widget->getConfiguratorWidget())->addButtonToCollapseExpand($widget->getToolbarMain()->getButtonGroupForSearchActions(), 0, $this->buildJsResize());
         }
         
         // Build the HTML for the button toolbars.
@@ -770,22 +735,22 @@ JS;
         // Create a context menu if any items were found
         $context_menu_html = $this->buildHtmlContextMenu();
         if ($context_menu_html && ($widget instanceof iHaveContextMenu) && $widget->getContextMenuEnabled()) {
-            $context_menu_html = '<div id="' . $this->getId() . '_cmenu" class="easyui-menu">' . $context_menu_html . '</div>';
+            $context_menu_html = '<div id="' . $this->getIdOfContextMenu() . '" class="easyui-menu">' . $context_menu_html . '</div>';
         } else {
             $context_menu_html = '';
         }
         
         return <<<HTML
-        
-                <div class="easyui-panel exf-data-header" data-options="footer: '#{$this->getToolbarId()}_footer', {$panel_options} {$configurator_panel_collapsed}">
-                    {$this->getFacade()->getElement($configurator_widget->getFilterTab())->buildHtml()}
-                </div>
-                <div id="{$this->getToolbarId()}_footer" class="datatable-toolbar" style="{$toolbar_style}">
-                    {$toolbars_html}
-                </div>
-                {$context_menu_html}
-                
+
+        {$this->getFacade()->getElement($this->getWidget()->getConfiguratorWidget())->buildHtmlHeaderPanel($toolbars_html)}
+        {$context_menu_html}
+
 HTML;
+    }
+    
+    protected function getIdOfContextMenu() : string
+    {
+        return $this->getId() . '_cmenu';
     }
     
     /**

@@ -9,6 +9,7 @@ use exface\Core\Factories\DataTypeFactory;
 use exface\Core\Facades\AbstractAjaxFacade\Formatters\JsDateFormatter;
 use exface\Core\Facades\AbstractAjaxFacade\Elements\AbstractJqueryElement;
 use exface\Core\CommonLogic\DataSheets\DataColumn;
+use exface\JEasyUIFacade\Facades\Elements\Traits\EuiDataElementTrait;
 
 /**
  * Creates a jEasyUI Panel with a slick image slider for a DataimageGallery widget.
@@ -22,6 +23,7 @@ class EuiImageGallery extends EuiData
 {    
     use SlickGalleryTrait;
     use JsUploaderTrait;
+    use EuiDataElementTrait;
     
     public function buildHtmlHeadTags()
     {
@@ -52,57 +54,34 @@ HTML;
 
     function buildJs()
     {
-        $widget = $this->getWidget();
-        // Add Scripts for the configurator widget first as they may be needed for the others
-        $configurator_element = $this->getFacade()->getElement($widget->getConfiguratorWidget());
-        $output .= $configurator_element->buildJs();
-        
-        // Add scripts for the buttons
-        $output .= $this->buildJsButtons();
-        
-        $output .= <<<JS
-        
-                    $('#{$configurator_element->getId()}').find('.grid').on('layoutComplete', function( event, items ) {
-                        setTimeout(function(){
-                            var newHeight = $('#{$this->getIdOfSlick()}_wrapper > .panel').height();
-                            $('#{$this->getIdOfSlick()}').height($('#{$this->getIdOfSlick()}').parent().height()-newHeight);
-                        }, 0);
-                    });
-                    
-JS;
-        return $output . <<<JS
+        return <<<JS
+
+    {$this->buildJsForPanel()}
 
     function {$this->buildJsFunctionPrefix()}_init(){
         {$this->buildJsSlickInit()}
     }
     
-    function {$this->buildJsFunctionPrefix()}_load(){
-    	{$this->buildJsDataSource()}
-    }
+    {$this->buildJsDataLoadFunction()}
 
     {$this->buildJsFunctionPrefix()}_init();
     setTimeout(function(){
-        {$this->buildJsFunctionPrefix()}_load();
+        {$this->buildJsDataLoadFunctionName()}();
     }, 0);
 
 JS;
     }
     
-    /**
-     *
-     * {@inheritdoc}
-     * @see AbstractJqueryElement::buildJsRefresh()
-     */
-    public function buildJsRefresh($keep_pagination_position = false)
+    protected function buildJsDataLoaderOnLoaded(string $dataJs) : string
     {
-        return $this->buildJsFunctionPrefix() . "_load();";
+        return '';
     }
 
     /**
      * {@inheritDoc}
      * @see \exface\JEasyUIFacade\Facades\Elements\EuiData::buildJsDataSource()
      */
-    public function buildJsDataSource() : string
+    public function buildJsDataLoadFunctionBody(string $oParamsJs = 'oParams') : string
     {
         $widget = $this->getWidget();
         
@@ -131,6 +110,8 @@ JS;
         {$this->buildJsBusyIconHide()}
         return;
     }
+
+    param = $.extend(param, ({$oParamsJs} || {}));
 	
 	$.ajax({
        url: "{$this->getAjaxUrl()}",

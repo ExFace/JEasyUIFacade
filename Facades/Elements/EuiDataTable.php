@@ -71,17 +71,9 @@ class EuiDataTable extends EuiData
      */
     public function buildHtml()
     {
-        $widget = $this->getWidget();
-        
-        if ($widget->getHideHeader()){
-            $header_style = 'visibility: hidden; height: 0px; padding: 0px;';
-        }
-        
         $output .= <<<HTML
             <{$this->getBaseHtmlElement()} id="{$this->getId()}"></{$this->getBaseHtmlElement()}>
-            <div id="{$this->getToolbarId()}" style="{$header_style}">
-                {$this->buildHtmlTableHeader()}
-            </div>
+            {$this->buildHtmlTableHeader()}
 HTML;
         
         return $this->buildHtmlGridItemWrapper($output);
@@ -136,7 +128,7 @@ HTML;
         // get the standard params for grids and put them before the custom grid head
         $grid_head = $this->buildJsInitOptions() . $grid_head;
         
-        return <<<JS
+        return parent::buildJs() . <<<JS
 
 // Add Scripts for the configurator widget first as they may be needed for the others   
 {$configurator_element->buildJs()}
@@ -449,7 +441,7 @@ JS;
                         if (index >= 0){
     					   $(this).' . $this->getElementType() . '("selectRow", index);
                         }
-    	                $("#' . $this->getId() . '_cmenu").menu("show", {
+    	                $("#' . $this->getIdOfContextMenu() . '").menu("show", {
     	                    left: e.pageX,
     	                    top: e.pageY
     	                });
