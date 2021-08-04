@@ -212,7 +212,7 @@ JS;
         var yCoords = new Array();
         var parElem;
         var contElem = $('#{$this->getFacade()->getElement($containerWidget)->getId()}');
-        var surElem = $('#{$this->getId()}').closest('.{$gridItemCssClass}').first();
+        var surElem = $('#{$this->getId()}').parent().closest('.{$gridItemCssClass}').first();
         
         // if no container element or no top element for element to change height for is found, or the contElem is the top element dont do anything
         if (contElem.length == 0 || surElem.length == 0 || contElem[0] == surElem[0]) {
@@ -233,7 +233,7 @@ JS;
             var yElemCord;
             // add bottom y-Coord of element to array
             if (elem.length > 0 && elem.parents('#{$this->getFacade()->getElement($containerWidget)->getId()}').length > 0) {
-                parElem = elem.closest('.{$gridItemCssClass}').first();
+                parElem = elem.parent().closest('.{$gridItemCssClass}').first();
                 if (parElem.length > 0 && parElem[0] !== contElem[0]) {
                     elem = parElem;
                 }
@@ -292,9 +292,13 @@ JS;
         if (newHeight == elemHeight) {
             return;
         }
-      
+        
         setTimeout(function() {
+            if (surElem.innerHeight(true) === newHeight) {
+                return;
+            }                       
             surElem.innerHeight(newHeight);
+            $('#{$this->getId()}').resize();
             {$onChangeHeightJs}
         },0);
 JS;

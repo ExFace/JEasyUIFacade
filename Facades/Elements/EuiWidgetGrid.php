@@ -119,7 +119,7 @@ HTML;
     public function getHeight()
     {
         $dimension = $this->getWidget()->getHeight();
-        if ($dimension->isUndefined() || $dimension->isMax()) {
+        if ($dimension->isUndefined()) {
             return 'auto';
         }
         
