@@ -13,7 +13,7 @@ ul.nav_menu a:hover {color: white; background: #6CAEF5}
 .exf-data-header .tabs-container, .exf-data-header .panel-body {background: #fff}
 
 /* Inputs */
-.exf-input textarea {border-color: #c3d9e0;}
+.exf-input textarea {border-color: #c3d9e0; height: calc(100% - 6px); width: calc(100% - 6px);}
 fieldset.exface_inputgroup {border-color: #95B8E7;}
 fieldset.exface_inputgroup legend {color: #404040;}
 

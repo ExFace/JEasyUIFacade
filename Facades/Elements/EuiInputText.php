@@ -29,37 +29,32 @@ class EuiInputText extends EuiInput
     {
         $output = ' <textarea 
 							name="' . $this->getWidget()->getAttributeAlias() . '" 
-							id="' . $this->getId() . '"  
-							style="height: calc(100% - 6px); width: calc(100% - 6px);"
+							id="' . $this->getId() . '"
 							' . ($this->getWidget()->isRequired() ? 'required="true" ' : '') . '
 							' . ($this->getWidget()->isDisabled() ? 'disabled="disabled" ' : '') . '>' . $this->getWidget()->getValue() . '</textarea>
 					';
         return $this->buildHtmlLabelWrapper($output);
-        ;
     }
 
+    /**
+     * 
+     * {@inheritDoc}
+     * @see \exface\JEasyUIFacade\Facades\Elements\EuiInput::buildJs()
+     */
     public function buildJs()
     {
-        $output = '';
-        $output .= $this->buildJsLiveReference();
-        $output .= $this->buildJsOnChangeHandler();
-        return $output;
+        return $this->buildJsEventScripts();
     }
 
+    /**
+     * 
+     * {@inheritDoc}
+     * @see \exface\JEasyUIFacade\Facades\Elements\EuiInput::buildJsValueSetterMethod()
+     */
     public function buildJsValueSetterMethod($value)
     {
         return 'val(' . $value . ').trigger("change")';
     }
-
-    /*
-     * function buildJsDataOptions(){
-     * return parent::buildJsDataOptions() . ', multiline: true';
-     * }
-     *
-     * function buildJsValueSetterMethod($value){
-     * return $this->getElementType() . '("setText", ' . $value . ').trigger("change")';
-     * }
-     */
     
     /**
      *
@@ -90,5 +85,15 @@ class EuiInputText extends EuiInput
     public function buildJsDisabler()
     {
         return '$("#' . $this->getId() . '").attr("disabled", "disabled")';
+    }
+    
+    /**
+     *
+     * {@inheritDoc}
+     * @see \exface\JEasyUIFacade\Facades\Elements\EuiValue::buildCssElementClass()
+     */
+    public function buildCssElementClass()
+    {
+        return parent::buildCssElementClass() . ' exf-inputtext';
     }
 }
