@@ -17,7 +17,7 @@ ul.nav_menu a:hover {color: white; background: #6CAEF5}
 .l-btn-plain {color: #6200ee;}
 
 /* Inputs */
-.exf-input textarea {border-color: #c3d9e0;}
+.exf-input textarea {border-color: #c3d9e0; height: 100%; width: 100%;}
 fieldset.exface_inputgroup {border-color: #95B8E7;}
 fieldset.exface_inputgroup legend {color: #404040;}
 
