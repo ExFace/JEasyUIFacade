@@ -152,12 +152,20 @@ class EuiButton extends EuiAbstractElement
 								{$prefill}
 							},
 							success: function(data, textStatus, jqXHR) {
-								{$this->buildJsCloseDialog($widget, $input_element)}
+								var dialogId;
+                                {$this->buildJsCloseDialog($widget, $input_element)}
 		                       	if ($('#ajax-dialogs').length < 1){
 		                       		$('body').append('<div id=\"ajax-dialogs\"></div>');
                        			}
 								$('#ajax-dialogs').append('<div class=\"ajax-wrapper\">'+data+'</div>');
-								var dialogId = $('#ajax-dialogs').children().last().children('.easyui-dialog').attr('id');
+								dialogId = $('#ajax-dialogs').children().last().children('.easyui-dialog').attr('id');
+                                
+                                if (! dialogId) {
+                                    {$this->buildJsShowError("'<div style=\"padding: 10px\">' + data + '</div>'", '"Unknown server error: dialog could not beloaded"')}
+                                    $('#ajax-dialogs').children().last().remove();
+                                    return;
+                                }
+
 		                       	$.parser.parse($('#ajax-dialogs').children().last());
 								var onCloseFunc = $('#'+dialogId).panel('options').onClose;
 								$('#'+dialogId).panel('options').onClose = function(){
