@@ -105,10 +105,10 @@ HTML;
                 } else {
                     $value = $width->getValue();
                 }
-                $labelStyle = " max-width: calc(40% / {$value} - 10px);";
+                $labelStyle = " max-width: calc(40% / {$value} - 11px);";
                 $innerStyle = " width: calc(100% - 100% / {$value} * 0.4 + 1px);";
             } else {
-                $labelStyle .= " max-width: calc(40% - 10px);";
+                $labelStyle .= " max-width: calc(40% - 11px);";
                 $innerStyle .= " width: 60%;";
             }
             $html = '
