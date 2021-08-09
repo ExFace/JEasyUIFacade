@@ -223,6 +223,7 @@ JS;
     public function buildJsDataGetter(ActionInterface $action = null)
     {
         $widget = $this->getWidget();
+        $dataObj = $widget->hasParent() ? $widget->getParent()->getMetaObject() : $action->getMetaObject();
         $rows = '';
         $filters = '';
         
@@ -237,7 +238,7 @@ JS;
             case $this->isEditable():
                 // Build the row data from the table
                 switch (true) {
-                    case $action->getMetaObject()->is($widget->getMetaObject()) === true:
+                    case $dataObj->is($widget->getMetaObject()) === true:
                     case $action->getInputMapper($widget->getMetaObject()) !== null:
                         if ($widget->getMultiSelect()) {
                             $rows = "$('#" . $this->getId() . "')." . $this->getElementType() . "('getSelections').length > 0 ? $('#" . $this->getId() . "')." . $this->getElementType() . "('getSelections') : " . $this->buildJsFunctionPrefix() . "getChanges()";
@@ -250,19 +251,19 @@ JS;
                         // If the action is based on the same object as the widget's parent, use the widget's
                         // logic to find the relation to the parent. Otherwise try to find a relation to the
                         // action's object and throw an error if this fails.
-                        if ($widget->hasParent() && $action->getMetaObject()->is($widget->getParent()->getMetaObject()) && $relPath = $widget->getObjectRelationPathFromParent()) {
+                        if ($widget->hasParent() && $dataObj->is($widget->getParent()->getMetaObject()) && $relPath = $widget->getObjectRelationPathFromParent()) {
                             $relAlias = $relPath->toString();
-                        } elseif ($relPath = $action->getMetaObject()->findRelationPath($widget->getMetaObject())) {
+                        } elseif ($relPath = $dataObj->findRelationPath($widget->getMetaObject())) {
                             $relAlias = $relPath->toString();
                         }
                         
                         if ($relAlias === null || $relAlias === '') {
-                            throw new WidgetLogicError($widget, 'Cannot use editable table with object "' . $widget->getMetaObject()->getName() . '" (alias ' . $widget->getMetaObject()->getAliasWithNamespace() . ') as input widget for action "' . $action->getName() . '" with object "' . $action->getMetaObject()->getName() . '" (alias ' . $action->getMetaObject()->getAliasWithNamespace() . '): no forward relation could be found from action object to widget object!', '7B7KU9Q');
+                            throw new WidgetLogicError($widget, 'Cannot use editable table with object "' . $widget->getMetaObject()->getName() . '" (alias ' . $widget->getMetaObject()->getAliasWithNamespace() . ') as input widget for action "' . $action->getName() . '" with object "' . $dataObj->getName() . '" (alias ' . $dataObj->getAliasWithNamespace() . '): no forward relation could be found from action object to widget object!', '7B7KU9Q');
                         }
                         return <<<JS
         
             {
-                oId: '{$action->getMetaObject()->getId()}', 
+                oId: '{$dataObj->getId()}', 
                 rows: [
                     {
                         '{$relAlias}': {

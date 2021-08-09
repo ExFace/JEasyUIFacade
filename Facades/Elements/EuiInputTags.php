@@ -157,26 +157,27 @@ JS;
      */
     public function buildJsDataGetter(ActionInterface $action = null)
     {
+        $widget = $this->getWidget();
+        $dataObj = $widget->hasParent() ? $widget->getParent()->getMetaObject() : $action->getMetaObject();
         // If the object of the action is the same as that of the widget, treat
         // it as a regular input.
-        if ($action === null || $this->getMetaObject()->is($action->getMetaObject()) || $action->getInputMapper($this->getMetaObject()) !== null) {
+        if ($action === null || $this->getMetaObject()->is($dataObj) || $action->getInputMapper($this->getMetaObject()) !== null) {
             return parent::buildJsDataGetter($action);
         }
         
-        $widget = $this->getWidget();
         // If it's another object, we need to decide, whether to place the data in a
         // subsheet.
-        if ($action->getMetaObject()->is($widget->getOptionsObject())) {
+        if ($dataObj->is($widget->getOptionsObject())) {
             // FIXME not sure what to do if the action is based on the object of the table.
             // This should be really important in lookup dialogs, but for now we just fall
             // back to the generic input logic.
             return parent::buildJsDataGetter($action);
-        } elseif ($relPath = $widget->findRelationPathFromObject($action->getMetaObject())) {
+        } elseif ($relPath = $widget->findRelationPathFromObject($dataObj)) {
             $relAlias = $relPath->toString();
         }
         
         if ($relAlias === null || $relAlias === '') {
-            throw new WidgetConfigurationError($widget, 'Cannot use data from widget "' . $widget->getId() . '" with action on object "' . $action->getMetaObject()->getAliasWithNamespace() . '": no relation can be found from widget object to action object', '7CYA39T');
+            throw new WidgetConfigurationError($widget, 'Cannot use data from widget "' . $widget->getId() . '" with action on object "' . $dataObj->getAliasWithNamespace() . '": no relation can be found from widget object to action object', '7CYA39T');
         }
         
         if ($widget->getMultiSelect() === false) {
@@ -203,7 +204,7 @@ JS;
         return <<<JS
         
             {
-                oId: '{$action->getMetaObject()->getId()}',
+                oId: '{$dataObj->getId()}',
                 rows: [
                     {
                         '{$relAlias}': {
