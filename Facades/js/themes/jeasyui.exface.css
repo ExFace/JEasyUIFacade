@@ -273,3 +273,8 @@ pre.sf-dump .sf-dump-private, pre.sf-dump .sf-dump-public, pre.sf-dump .sf-dump-
 
 /* Charts */
 .exf-chart-panel .datatable-toolbar {border-bottom-width: 1px;}
+
+/* ProgressBar */
+.exf-progressbar {width: 100%; padding: 0 3px; border:1px solid #ccc; position:relative; overflow: hidden; white-space:nowrap; color:transparent; box-sizing: border-box;}
+.exf-progressbar-bar {position: absolute; left:0; top:0;}
+.exf-progressbar-text {position:absolute; left:0; top:0; z-index:100; padding:0 2px; width:100%; color:initial; overflow: hidden; text-overflow: ellipsis;}
