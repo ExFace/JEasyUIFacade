@@ -4,6 +4,7 @@
 	
 	"ERROR.NO_CONNECTION": "No connection to server!",
 	"ERROR.NO_CONNECTION_HINT": "Please check your network connection and try again. If this does not help, please contact the support!",
+	"ERROR.LOGOUT_TO_CHANGE_USER": "Re-login with a different user",
 	
 	"MESSAGE.ERROR_TITLE": "Error",
 	"MESSAGE.SUCCESS_TITLE": "Success",

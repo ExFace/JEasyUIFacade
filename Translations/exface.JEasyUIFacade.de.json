@@ -4,6 +4,7 @@
 	
 	"ERROR.NO_CONNECTION": "Server nicht erreichbar!",
 	"ERROR.NO_CONNECTION_HINT": "Überprüfen Sie Ihre Netzwerkverbindung und versuchen Sie es erneut. Wenn das nicht hilft, wenden Sie sich bitte an den Support!",
+	"ERROR.LOGOUT_TO_CHANGE_USER": "Neu anmelden",
 	
 	"MESSAGE.ERROR_TITLE": "Fehler",
 	"MESSAGE.SUCCESS_TITLE": "Erfolg",
