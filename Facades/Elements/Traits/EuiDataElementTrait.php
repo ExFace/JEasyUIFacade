@@ -192,27 +192,6 @@ JS;
     }
     
     /**
-     *
-     * {@inheritdoc}
-     * @see \exface\JEasyUIFacade\Facades\Elements\EuiAbstractElement::getHeight()
-     */
-    public function getHeight() : string
-    {
-        // Die Hoehe des Charts passt sich nicht automatisch dem Inhalt an. Wenn er also
-        // nicht den gesamten Container ausfuellt, kollabiert er vollstaendig. Deshalb
-        // wird hier die Hoehe des Charts gesetzt, wenn sie nicht definiert ist, und
-        // er nicht alleine im Container ist.
-        $widget = $this->getWidget();
-        
-        if ($widget->getHeight()->isUndefined()) {
-            if (($containerWidget = $widget->getParentByClass('exface\\Core\\Interfaces\\Widgets\\iContainOtherWidgets')) && ($containerWidget->countWidgetsVisible() > 1)) {
-                $widget->setHeight($this->getFacade()->getConfig()->getOption('WIDGET.CHART.HEIGHT_DEFAULT'));
-            }
-        }
-        return parent::getHeight();
-    }
-    
-    /**
      * Function to refresh the chart
      *
      * @return string
