@@ -15,6 +15,11 @@ use exface\Core\Exceptions\Security\AuthenticationFailedError;
 use exface\Core\Interfaces\Exceptions\AuthorizationExceptionInterface;
 use exface\Core\Exceptions\Contexts\ContextOutOfBoundsError;
 use exface\Core\Exceptions\OutOfBoundsException;
+use exface\Core\Exceptions\Security\AccessDeniedError;
+use exface\Core\Factories\UiPageFactory;
+use exface\Core\Factories\WidgetFactory;
+use exface\Core\CommonLogic\UxonObject;
+use exface\Core\Exceptions\RuntimeException;
 
 class JEasyUIFacade extends AbstractAjaxFacade
 {
@@ -148,10 +153,30 @@ $.ajaxPrefilter(function( options ) {
             $body = '';
             try {
                 $headTags = implode("\n", $this->buildHtmlHeadCommonIncludes());
+                $action = '';
                 if ($exception instanceof ExceptionInterface) {
                     $title = $exception->getMessageType($this->getWorkbench()) . ' ' . $exception->getAlias();
                     $message = $exception->getMessageTitle($this->getWorkbench());
                     $details = $exception->getMessage();
+                    if ($exception instanceof AccessDeniedError) {
+                        $page = $page ?? UiPageFactory::createEmpty($this->getWorkbench());
+                        $logoutBtn = WidgetFactory::createFromUxon($page, new UxonObject([
+                            'widget_type' => 'Button',
+                            'object_alias' => 'exface.Core.DUMMY',
+                            'action_alias' => 'exface.Core.Logout'
+                        ]));
+                        $logoutEl = $this->getElement($logoutBtn);
+                        $action = <<<HTML
+
+<script type="text/javascript">
+
+    {$logoutEl->buildJs()}
+
+</script>
+<a href="javascript:{$logoutEl->buildJsClickFunctionName()}()">{$this->getApp()->getTranslator()->translate('ERROR.LOGOUT_TO_CHANGE_USER')}</a>.
+
+HTML;
+                    }
                 } else {
                     $title = 'Internal Error';
                     $message = $exception->getMessage();
@@ -164,6 +189,7 @@ $.ajaxPrefilter(function( options ) {
         <h1>{$title}</h1>
         <p>{$message}</p>
         <p style="color: grey; font-style: italic;">{$details}</p>
+        <p>{$action}</p>
     </div>
 </div>
 
