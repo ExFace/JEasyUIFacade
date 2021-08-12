@@ -60,19 +60,24 @@ HTML;
         
         if ($viewer) {
             $viewerOptions ='viewer: true,';
+            $onInitJs = '';
         } else {
             $viewerOptions = '';
+            $onInitJs = "ed.getCodeMirror().refresh();";
         }
         
         return <<<JS
-window.toastui.Editor.factory({
-            el: document.querySelector('#{$this->getId()}'),
-            height: 'calc(100% - 6px)',
-            initialValue: $contentJs,
-            language: 'en',
-            $viewerOptions
-        });
-
+function(){
+            var ed = window.toastui.Editor.factory({
+                el: document.querySelector('#{$this->getId()}'),
+                height: 'calc(100% - 6px)',
+                initialValue: $contentJs,
+                language: 'en',
+                $viewerOptions
+            });
+            {$onInitJs}
+            return ed;
+}();
 JS;
     }
     
