@@ -207,12 +207,22 @@ JS;
     
     protected function buildJsSetHeightMax(iContainOtherWidgets $containerWidget, string $gridItemCssClass, string $onChangeHeightJs) : string
     {
+        $resize = '';
+        if ($this->getWidget() instanceof iContainOtherWidgets) {
+            foreach ($this->getWidget()->getChildren() as $child) {
+                if ($child->getHeight()->isMax()) {
+                    $resize = "$('#{$this->getId()}').resize();";
+                    break;
+                }
+            }
+        }
         $count = 0;
         $js = <<<JS
+        //console.log('Calculated Height: {$this->getId()}');
         var yCoords = new Array();
         var parElem;
         var contElem = $('#{$this->getFacade()->getElement($containerWidget)->getId()}');
-        var surElem = $('#{$this->getId()}').closest('.{$gridItemCssClass}').first();
+        var surElem = $('#{$this->getId()}').parent().closest('.{$gridItemCssClass}').first();
         
         // if no container element or no top element for element to change height for is found, or the contElem is the top element dont do anything
         if (contElem.length == 0 || surElem.length == 0 || contElem[0] == surElem[0]) {
@@ -233,7 +243,7 @@ JS;
             var yElemCord;
             // add bottom y-Coord of element to array
             if (elem.length > 0 && elem.parents('#{$this->getFacade()->getElement($containerWidget)->getId()}').length > 0) {
-                parElem = elem.closest('.{$gridItemCssClass}').first();
+                parElem = elem.parent().closest('.{$gridItemCssClass}').first();
                 if (parElem.length > 0 && parElem[0] !== contElem[0]) {
                     elem = parElem;
                 }
@@ -259,7 +269,7 @@ JS;
         var yContTop = contElem.offset().top;
         
         // get current and default height of element with height 'max'
-        var elemHeight = surElem.outerHeight(true);
+        var elemHeight = surElem.innerHeight();
         var elemDefaultHeight = '{$this->buildCssHeightDefaultValue()}';
         elemDefaultHeight = elemDefaultHeight.substr(0, elemDefaultHeight.length-2);
         elemDefaultHeight = parseInt(elemDefaultHeight);
@@ -288,14 +298,19 @@ JS;
             newHeight = Math.floor(newHeight);
         }
 
-        // if the new height calculated is the same asthe current element height, dont set its new height
+        // if the new height calculated is the same as the current element height, dont set its new height
         if (newHeight == elemHeight) {
             return;
         }
       
         setTimeout(function() {
-            surElem.innerHeight(newHeight);
+            var oldHeight = surElem.innerHeight();
+            if (oldHeight === newHeight) {
+                return;
+            }                       
+            surElem.outerHeight(newHeight);
             {$onChangeHeightJs}
+            {$resize}
         },0);
 JS;
         return <<<JS
@@ -308,7 +323,7 @@ JS;
     protected function buildJsEuiSetHeigthMax(iContainOtherWidgets $containerWidget, string $onChangeHeightJs = '') : string
     {
         if ($this->getFacade()->getElement($containerWidget) instanceof EuiWidgetGrid) {
-            $onChangeHeightJs .= $this->getFacade()->getElement($containerWidget)->buildJsLayouter();
+            //$onChangeHeightJs .= $this->getFacade()->getElement($containerWidget)->buildJsLayouter();
             // Double check that we really did not force the container to scroll (may happen with masonry)
             // If so, decrease the max'ed height to fit without scrolling!
             $onChangeHeightJs .= <<<JS
