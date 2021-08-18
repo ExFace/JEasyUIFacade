@@ -308,7 +308,7 @@ JS;
             if (oldHeight === newHeight) {
                 return;
             }                       
-            surElem.outerHeight(newHeight);
+            surElem.innerHeight(newHeight);
             {$onChangeHeightJs}
             {$resize}
         },0);
@@ -326,17 +326,14 @@ JS;
             //$onChangeHeightJs .= $this->getFacade()->getElement($containerWidget)->buildJsLayouter();
             // Double check that we really did not force the container to scroll (may happen with masonry)
             // If so, decrease the max'ed height to fit without scrolling!
-            $onChangeHeightJs .= <<<JS
-
-            setTimeout(function(){
+            $onChangeHeightJs = <<<JS
+            
                 var diff = contElem[0].scrollHeight - contHeight;
                 if (diff > 0) {
                     surElem.innerHeight(newHeight - diff);
-                    {$onChangeHeightJs}
                 }
-            }, 0);
 
-JS;
+JS . $onChangeHeightJs;
         }
         return $this->buildJsSetHeightMax($containerWidget, 'exf-element', $onChangeHeightJs);
     }
