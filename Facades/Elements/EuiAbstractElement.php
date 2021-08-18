@@ -205,17 +205,19 @@ JS;
         return $output;
     }
     
+    /**
+     * Building the js script to change the height of an element to the maximum free value.
+     * 
+     * TODO there is a very weird issue that you can't put an Input Element into a WidgetGroup in a that has the "height:max" property in a Dialog.
+     * This will lead to the WidgetGroup shrinking indefinetely.
+     * 
+     * @param iContainOtherWidgets $containerWidget
+     * @param string $gridItemCssClass
+     * @param string $onChangeHeightJs
+     * @return string
+     */
     protected function buildJsSetHeightMax(iContainOtherWidgets $containerWidget, string $gridItemCssClass, string $onChangeHeightJs) : string
     {
-        $resize = '';
-        if ($this->getWidget() instanceof iContainOtherWidgets) {
-            foreach ($this->getWidget()->getChildren() as $child) {
-                if ($child->getHeight()->isMax()) {
-                    $resize = "$('#{$this->getId()}').resize();";
-                    break;
-                }
-            }
-        }
         $count = 0;
         $js = <<<JS
         //console.log('Calculated Height: {$this->getId()}');
@@ -265,11 +267,11 @@ JS;
         var yMax = yCoords[0];
         
         // get height and top y-Coord of cointainer Widget
-        var contHeight = contElem.innerHeight();
+        var contHeight = contElem.height();
         var yContTop = contElem.offset().top;
         
         // get current and default height of element with height 'max'
-        var elemHeight = surElem.innerHeight();
+        var elemHeight = surElem.outerHeight(true);
         var elemDefaultHeight = '{$this->buildCssHeightDefaultValue()}';
         elemDefaultHeight = elemDefaultHeight.substr(0, elemDefaultHeight.length-2);
         elemDefaultHeight = parseInt(elemDefaultHeight);
@@ -303,14 +305,14 @@ JS;
             return;
         }
       
-        setTimeout(function() {
-            var oldHeight = surElem.innerHeight();
+        setTimeout(function(){
+            var oldHeight = surElem.outerHeight(true);
             if (oldHeight === newHeight) {
                 return;
             }                       
-            surElem.innerHeight(newHeight);
-            {$onChangeHeightJs}
-            {$resize}
+            surElem.outerHeight(newHeight,true);
+            {$onChangeHeightJs}                    
+            $('#{$this->getId()}').resize();  
         },0);
 JS;
         return <<<JS
@@ -323,17 +325,20 @@ JS;
     protected function buildJsEuiSetHeigthMax(iContainOtherWidgets $containerWidget, string $onChangeHeightJs = '') : string
     {
         if ($this->getFacade()->getElement($containerWidget) instanceof EuiWidgetGrid) {
-            //$onChangeHeightJs .= $this->getFacade()->getElement($containerWidget)->buildJsLayouter();
+            $onChangeHeightJs .= $this->getFacade()->getElement($containerWidget)->buildJsLayouter();
             // Double check that we really did not force the container to scroll (may happen with masonry)
             // If so, decrease the max'ed height to fit without scrolling!
-            $onChangeHeightJs = <<<JS
-            
+            $onChangeHeightJs .= <<<JS
+
+            setTimeout(function(){
                 var diff = contElem[0].scrollHeight - contHeight;
                 if (diff > 0) {
-                    surElem.innerHeight(newHeight - diff);
+                    surElem.outerHeight(newHeight - diff, true);
+                    {$onChangeHeightJs}
                 }
+            }, 0);
 
-JS . $onChangeHeightJs;
+JS;
         }
         return $this->buildJsSetHeightMax($containerWidget, 'exf-element', $onChangeHeightJs);
     }
