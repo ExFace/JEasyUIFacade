@@ -1,9 +1,23 @@
 // Load the context bar initially
 $( document ).ready(function() {
-	
 	contextBarInit();
-	
+	if (! $('body > .layout-split-west').is(':visible')) {
+		$('body').layout('collapse', 'west');
+	}
 });
+
+function toggleMainMenu(){
+	var jqLayout = $('body');
+	if (jqLayout.layout('panel', 'west').is(':visible')) {
+		jqLayout.layout('collapse', 'west');
+	} else {
+		jqLayout.layout('expand', 'west');
+		// Fix for menu not showing after auto-hide on screen orientation change (on tablets)
+		if (! jqLayout.layout('panel', 'west').is(':visible')) {
+			jqLayout.layout('collapse', 'west').layout('expand', 'west');
+		}
+	}
+}
 
 function contextBarInit(){
 	$(document).ajaxSuccess(function(event, jqXHR, ajaxOptions, data){

@@ -1,6 +1,13 @@
 body {font-family: Helvetica,Arial,sans-serif;}
-.logo {float:left; font-size: 24px; color: #999;}
-.logo a {color: inherit; text-decoration: inherit;}
+
+/* Global layout*/
+/*.layout-expand-west {border-right: 4px solid #fff}*/
+.main-header-content {width: 100%; height: 50px; padding: 0; overflow: hidden; background-color: transparent;}
+.main-header-content > .logo {height: 50px; line-height: 50px; padding-right: 10px; vertical-align: middle; display:inline-block; font-size: 24px;}
+.main-header-content > .logo.hamburger {font-size: 17px; padding-left: 12px;}
+.main-header-content > .logo a {color: inherit; text-decoration: inherit; color: #999;}
+.main-header-content .top-toolbar {float:right; padding: 10px;}
+.main-content.layout-body {border-top: 5px solid transparent; border-top-width: 5px !important; background-color: transparent;}
 ul.nav_menu {list-style: none; font-size: 12px; list-style-position: inside; margin:0; padding: 0; overflow-x: hidden;}
 ul.nav_menu li {border-bottom: 1px solid #ccc;}
 ul.nav_menu li ul {list-style: none; list-style-position: inside; padding: 0 0 5px 20px;}
@@ -9,8 +16,13 @@ ul.nav_menu a {padding: 6px 0 6px 10px; color: black; text-decoration: none; dis
 ul.nav_menu li.active a.current {font-weight: bold; text-decoration: none;}
 ul.nav_menu a:hover {background: #9cc8f7; color: #404040;}
 ul.nav_menu li.active a.current {color: white; background: #6caef5}
-.main-left-menu.accordion .accordion-header-selected {background: inherit;}
-.main-left-menu.accordion .accordion-header-selected > .panel-title {color: inherit}
+.main-left-menu {width: 200px;}
+.main-left-menu > .accordion .accordion-header-selected {background: inherit;}
+.main-left-menu > .accordion .accordion-header-selected > .panel-title {color: inherit}
+
+@media only screen and (max-width: 800px) {
+	body > .layout-split-west {display: none;}
+}
 
 /* Font awsome */
 .fa {padding: 1px;}
@@ -261,12 +273,6 @@ pre.sf-dump .sf-dump-private, pre.sf-dump .sf-dump-public, pre.sf-dump .sf-dump-
 .easyui-dialog {border-width: 0 !important}
 .easyui-dialog + .exf-dialog-footer {border-left-width: 0; border-right-width: 0; border-bottom-width: 0;}
 .easyui-dialog > .panel > .exf-widgetgrid {border-width: 0}
-
-/* Global layout*/
-.layout-expand-west {border-right: 4px solid #fff}
-.main-content.layout-body {border-top: 5px solid transparent; background-color: transparent;}
-.main-header.layout-body {height:30px; padding:10px; overflow: hidden; background-color: transparent;}
-
 
 /* Dashboard */
 .exf-dashboard.panel-body {border: 0 !important; margin-left: -4px; margin-top: -4px;}
