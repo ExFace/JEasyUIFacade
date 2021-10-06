@@ -29,7 +29,7 @@ class EuiTiles extends EuiWidgetGrid
      */
     public function buildCssElementClass()
     {
-        return 'exf-panel-flat Eui-tiles ' . parent::buildCssElementClass();
+        return 'exf-panel-flat exf-tiles ' . parent::buildCssElementClass();
     }
     
     /**

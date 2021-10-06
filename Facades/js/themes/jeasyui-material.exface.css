@@ -53,9 +53,9 @@ fieldset.exface_inputgroup legend {color: #404040;}
 
 /* jEasyUI customizing */
 div.panel-body {background-color:#fff;}
-div.panel-header {background-color: #f5f5f5}
-.panel-header {border-bottom-width: 0;}
-.panel-header-noborder + .panel-filled {border-top-width: 1px;}
+div.panel-header {background-color: #f5f5f5; border-bottom-width: 0;}
+div.panel-header-noborder {border-bottom-width: 1px;}
+div.panel-header-noborder + .panel-filled {margin-top: -4px;}
 
 .textbox .m-btn.l-btn .m-btn-downarrow, 
 .m-btn.l-btn-plain .m-btn-downarrow {background-image: none; font: normal normal normal 14px/1 FontAwesome}
@@ -99,4 +99,8 @@ div.panel-header {background-color: #f5f5f5}
 .fileupload-filename {color: grey}
 
 /* Tile widget */
-.exf-tile-box {background-color: #f5f5f5; border-color: #c3d9e0;}
+.exf-tile-box {background-color: #f5f5f5; border-color: #dfdfdf;}
+
+/* Tiles container */
+.exf-tiles {border: 0;}
+.panel-body:not(.panel-body-noheader):not(.main-content) > .panel > .exf-tiles {border-top: 1px solid #dfdfdf;}

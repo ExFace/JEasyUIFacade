@@ -55,6 +55,16 @@ class EuiNavTiles extends EuiWidgetGrid
     /**
      *
      * {@inheritDoc}
+     * @see \exface\Core\Facades\AbstractAjaxFacade\Elements\AbstractJqueryElement::buildCssElementClass()
+     */
+    public function buildCssElementClass()
+    {
+        return 'exf-tiles ' . parent::buildCssElementClass();
+    }
+    
+    /**
+     *
+     * {@inheritDoc}
      * @see \exface\JEasyUIFacade\Facades\Elements\EuiWidgetGrid::getNumberOfColumnsByDefault()
      */
     public function getNumberOfColumnsByDefault() : int
