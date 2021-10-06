@@ -3,6 +3,8 @@ namespace exface\JEasyUIFacade\Facades\Elements;
 
 use exface\Core\Widgets\Panel;
 use exface\Core\DataTypes\BooleanDataType;
+use exface\Core\Widgets\Tiles;
+use exface\Core\Widgets\NavTiles;
 
 /**
  * The Panel widget is mapped to a panel in jEasyUI
@@ -13,6 +15,11 @@ use exface\Core\DataTypes\BooleanDataType;
  */
 class EuiPanel extends EuiWidgetGrid
 {
+    /**
+     * 
+     * {@inheritDoc}
+     * @see \exface\JEasyUIFacade\Facades\Elements\EuiWidgetGrid::buildJsDataOptions()
+     */
     public function buildJsDataOptions()
     {
         $widget = $this->getWidget();
@@ -22,19 +29,18 @@ class EuiPanel extends EuiWidgetGrid
         return ltrim($output, ", ");
     }
     
-    public function buildJs()
+    /**
+     * 
+     * {@inheritDoc}
+     * @see \exface\JEasyUIFacade\Facades\Elements\EuiWidgetGrid::buildCssElementClass()
+     */
+    public function buildCssElementClass()
     {
-        $addFilledClass = '';
-        if ($this->getWidget()->isFilledBySingleWidget()) {
-            $addFilledClass =  <<<JS
-            
-setTimeout(function(){
-    $('#{$this->getId()}').parent().addClass('panel-filled');
-}, 10);
-
-JS;
+        $classes = parent::buildCssElementClass();
+        $widget = $this->getWidget();
+        if ($widget->isFilledBySingleWidget() || ($widget->countWidgetsVisible() === 1 && ($widget->getWidgetFirst() instanceof Tiles || $widget->getWidgetFirst() instanceof NavTiles))) {
+            $classes .= ' panel-filled';
         }
-        return parent::buildJs() . $addFilledClass;
+        return $classes;
     }
-    
 }

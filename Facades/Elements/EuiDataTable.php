@@ -63,6 +63,21 @@ class EuiDataTable extends EuiData
             $widget->getRowGrouper()->getGroupByColumn()->setHidden(true);
         }
     }
+    
+    /**
+     * 
+     * {@inheritDoc}
+     * @see \exface\Core\Facades\AbstractAjaxFacade\Elements\AbstractJqueryElement::buildCssElementClass()
+     */
+    public function buildCssElementClass()
+    {
+        $classes = parent::buildCssElementClass() . ' exf-data-widget';
+        $widget = $this->getWidget();        
+        if ($widget->hasParent() && $widget->getParent()->isFilledBySingleWidget()) {
+            $classes .= ' exf-container-filler';
+        }
+        return $classes;
+    }
 
     /**
      * 
