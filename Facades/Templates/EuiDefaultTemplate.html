@@ -28,7 +28,7 @@
 		<script type="text/javascript" src="vendor/exface/JEasyUIFacade/Facades/js/jquery.sparkline.min.js"></script>
 		
 	</head>
-	<body class="easyui-layout theme-[#~facade:theme#]">
+	<body class="easyui-layout theme-[#~facade:theme#]" >
 	    <!-- Spinner to hide unrendered markup -->
         <div style="height: 100vh; line-height: 100vh;" class="spinner-bg">
             <i class="panel-loading"></i>
@@ -55,7 +55,7 @@
 		</div>
 		
 		<!-- MENU LEFT -->
-		<div data-options="region:'west',split:true,collapsedSize:1,title:'[#~translate:exface.JEasyUIFacade:TEMPLATE.NAVIGATION#]'" class="main-left-menu">
+		<div data-options="region:'west',split:true,collapsedSize:1,onExpand:function(){$('body > .layout-panel-west').removeClass('exf-hidden');},onBeforeCollapse:function(){$('body > .layout-panel-west').addClass('exf-hidden');},title:'[#~translate:exface.JEasyUIFacade:TEMPLATE.NAVIGATION#]'" class="main-left-menu">
 			<div class="easyui-accordion" data-options="fit:true,border:false">
 		        <!-- <div title="Favoriten" data-options="" style="overflow:auto;">
 		            <ul class="nav_menu">

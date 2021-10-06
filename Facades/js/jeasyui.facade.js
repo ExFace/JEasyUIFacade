@@ -2,6 +2,7 @@
 $( document ).ready(function() {
 	contextBarInit();
 	if (! $('body > .layout-split-west').is(':visible')) {
+		$('body > .layout-panel-west').addClass('exf-hidden');
 		$('body').layout('collapse', 'west');
 	}
 });
