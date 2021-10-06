@@ -38,7 +38,7 @@ class EuiPanel extends EuiWidgetGrid
     {
         $classes = parent::buildCssElementClass();
         $widget = $this->getWidget();
-        if ($widget->isFilledBySingleWidget() || ($widget->countWidgetsVisible() === 1 && ($widget->getWidgetFirst() instanceof Tiles || $widget->getWidgetFirst() instanceof NavTiles))) {
+        if ($widget->isFilledBySingleWidget()) {
             $classes .= ' panel-filled';
         }
         return $classes;
