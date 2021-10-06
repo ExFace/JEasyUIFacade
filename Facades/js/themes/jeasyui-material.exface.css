@@ -1,6 +1,26 @@
+/* Global layout */
+.main-header-content {background-color: #ebebeb; border-bottom: 1px solid #bfbfbf;}
+.main-header.layout-body {height:50px;}
+.main-content > .exf-element > .datagrid > .datagrid-wrap.panel-body {border-top-width: 1px}
+.main-content > .easyui-tabs > .tabs-header {border-top: 1px solid #dfdfdf; border-left: 1px solid #dfdfdf; border-right: 1px solid #dfdfdf}
+.main-content.layout-body {border-top: 0 !important}
+body > .layout-panel > .panel-header {background-color: transparent; padding-top: 7px; padding-bottom: 7px;}
+body > .layout-panel-center > .panel-header {border-color: transparent;}
+body > .layout-panel-west > .panel-header {border-top-color: transparent;}
+body > .layout-panel-west > .panel-header > .panel-title {color: transparent;}
 .logo {color: #999;}
+
+/* NavMenu */
+ul.nav_menu li {border-color: #fff}
+ul.nav_menu li.level1 > ul {border-top: 1px solid #c3d9e0; border-bottom: 1px solid #c3d9e0;background: #f5f5f5}
+ul.nav_menu li.level1.active > a.current {background: #fff}
+ul.nav_menu a:hover {background-color: #ddd; color: #6200ee;} 
+ul.nav_menu li.active a.current {background-color: #f5f5f5; color: #6200ee;}
 ul.nav_menu a {color: black;}
 ul.nav_menu a:hover {color: white; background: #6CAEF5}
+
+/* NavCrumbs */
+.exf-navcrumbs a {text-decoration: none; color: #6200ee; font-weight: normal;}
 
 /* Context bar */
 .toolbar-element.user-info {border-color: #c3d9e0;}
@@ -26,16 +46,17 @@ fieldset.exface_inputgroup legend {color: #404040;}
 .panel.datagrid > .panel-header {border-bottom-width: 0;}
 .datagrid-toolbar {border-width: 0;}
 .datagrid-header {border-top-width: 1px}
-
-/* ImageGallery */
-.exf-imagegallery > .panel > .panel-header {border-bottom-width: 0}
+.exf-container-filler > .datagrid > .datagrid-wrap {border-top: 0}
+.exf-data-widget > .panel > .panel-body-noheader {border-top-width: 0}
+.exf-data-widget.exf-data-hide-header > .panel > .panel-header {border-bottom-width: 1px;}
+.exf-data-widget.exf-data-hide-header > .panel > .panel-body-noheader {border-top-width: 1px;}
 
 /* jEasyUI customizing */
 div.panel-body {background-color:#fff;}
 div.panel-header {background-color: #f5f5f5}
-.panel-filled > .panel-body:not(.panel-body-noheader):not(.exf-panel-flat) > .panel-noscroll > .panel > .panel-body-noheader:not(.exf-data-hide-header) {border-top-width: 0 !important}
-.panel-filled > .panel-body.exf-panel-flat {margin-top: -2px}
-.panel.panel-filled > .panel-header {border-bottom-width: 0;}
+.panel-header {border-bottom-width: 0;}
+.panel-header-noborder + .panel-filled {border-top-width: 1px;}
+
 .textbox .m-btn.l-btn .m-btn-downarrow, 
 .m-btn.l-btn-plain .m-btn-downarrow {background-image: none; font: normal normal normal 14px/1 FontAwesome}
 .textbox .m-btn.l-btn .m-btn-downarrow:before, 
@@ -79,18 +100,3 @@ div.panel-header {background-color: #f5f5f5}
 
 /* Tile widget */
 .exf-tile-box {background-color: #f5f5f5; border-color: #c3d9e0;}
-
-/* NavCrumbs */
-.exf-navcrumbs a {text-decoration: none; color: #6200ee; font-weight: normal;}
-
-/* Global layout */
-.main-header.layout-body {height:50px;}
-.main-content > .exf-element > .datagrid > .datagrid-wrap.panel-body {border-top-width: 1px}
-.main-content > .easyui-tabs > .tabs-header {border-top: 1px solid #dfdfdf; border-left: 1px solid #dfdfdf; border-right: 1px solid #dfdfdf}
-
-/* NavMenu */
-ul.nav_menu li {border-color: #fff}
-ul.nav_menu li.level1 > ul {border-top: 1px solid #c3d9e0; border-bottom: 1px solid #c3d9e0;background: #f5f5f5}
-ul.nav_menu li.level1.active > a.current {background: #fff}
-ul.nav_menu a:hover {background-color: #ddd; color: #6200ee;} 
-ul.nav_menu li.active a.current {background-color: #f5f5f5; color: #6200ee;}
