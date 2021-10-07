@@ -39,7 +39,7 @@ ul.nav_menu a:hover {background-color: #6200ee; color: white}
 .l-btn-plain {color: #6200ee;}
 
 /* Inputs */
-.exf-input textarea {border-color: #c3d9e0; height: 100%; width: 100%;}
+.exf-input textarea {border-color: #dfdfdf; border-bottom-color: #c2c2c2; height: 100%; width: 100%;}
 fieldset.exface_inputgroup {border-color: #95B8E7;}
 fieldset.exface_inputgroup legend {color: #404040;}
 
@@ -108,3 +108,7 @@ div.panel-header-noborder + .panel-filled {margin-top: -4px;}
 .exf-tiles {border: 0; margin-right: -2px; margin-left: -2px}
 .exf-tiles.panel-body-noheader {padding-top: 1px;}
 .panel-body:not(.panel-body-noheader):not(.main-content) > .panel > .exf-tiles {border-top: 1px solid #dfdfdf;}
+
+/* JsonEditor */
+.exf-element .jsoneditor {border-color: #dfdfdf; border-bottom-color: #c2c2c2;}
+.exf-element .jsoneditor-menu {background-color: #ccc; border-bottom-color: transparent;}
