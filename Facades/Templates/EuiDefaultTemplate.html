@@ -26,6 +26,20 @@
 		
 		<!-- sparklines -->
 		<script type="text/javascript" src="vendor/exface/JEasyUIFacade/Facades/js/jquery.sparkline.min.js"></script>
+		<style>
+		
+			.main-header-content {background-color: [#~config:exface.JEasyUIFacade:FACADE.THEME_HEADER_COLOR#];}
+			body > .layout-panel-west > .panel-header {background-color: [#~config:exface.JEasyUIFacade:FACADE.THEME_SIDEBAR_COLOR#];}
+			body > .layout-panel-west div.panel-body {background-color: [#~config:exface.JEasyUIFacade:FACADE.THEME_SIDEBAR_COLOR#];}
+			.l-btn:not(.l-btn-plain) {background-color: [#~config:exface.JEasyUIFacade:FACADE.THEME_EMPHASIS_COLOR#]; border-color: [#~config:exface.JEasyUIFacade:FACADE.THEME_EMPHASIS_COLOR#];}
+			.window .dialog-button .l-btn:not(.l-btn-plain) {background-color: [#~config:exface.JEasyUIFacade:FACADE.THEME_EMPHASIS_COLOR#]}
+			ul.nav_menu a:hover {background-color: [#~config:exface.JEasyUIFacade:FACADE.THEME_EMPHASIS_COLOR#]}
+			.l-btn-plain {color: [#~config:exface.JEasyUIFacade:FACADE.THEME_LINK_COLOR#];}
+			.textbox-focused {border-bottom-color: [#~config:exface.JEasyUIFacade:FACADE.THEME_EMPHASIS_COLOR#]}
+			body a {color: [#~config:exface.JEasyUIFacade:FACADE.THEME_LINK_COLOR#];}
+			ul.nav_menu li.active a.current {color: [#~config:exface.JEasyUIFacade:FACADE.THEME_LINK_COLOR#];}
+			
+		</style>
 		
 	</head>
 	<body class="easyui-layout theme-[#~facade:theme#]" >
@@ -47,7 +61,7 @@
 				<div class="top-toolbar">
 					<div id="contextBar">
 					    <div class="toolbar-element">
-							<div class="panel-loading"></div>
+							<div class="spinner"><i class="fa fa-spinner fa-pulse fa-fw"></i></div>
 						</div>
 					</div>
 				</div>
@@ -55,7 +69,14 @@
 		</div>
 		
 		<!-- MENU LEFT -->
-		<div data-options="region:'west',split:true,collapsedSize:1,onExpand:function(){$('body > .layout-panel-west').removeClass('exf-hidden');},onBeforeCollapse:function(){$('body > .layout-panel-west').addClass('exf-hidden');},title:'[#~translate:exface.JEasyUIFacade:TEMPLATE.NAVIGATION#]'" class="main-left-menu">
+		<div data-options="
+				region:'west',
+				split:true,
+				collapsed:[#~config:exface.JEasyUIFacade:FACADE.THEME_SIDEBAR_COLLAPSED#],
+				collapsedSize:1,
+				onExpand:function(){$('body > .layout-panel-west').removeClass('exf-hidden');},
+				onBeforeCollapse:function(){$('body > .layout-panel-west').addClass('exf-hidden');},
+				title:'[#~translate:exface.JEasyUIFacade:TEMPLATE.NAVIGATION#]'" class="main-left-menu">
 			<div class="easyui-accordion" data-options="fit:true,border:false">
 		        <!-- <div title="Favoriten" data-options="" style="overflow:auto;">
 		            <ul class="nav_menu">
