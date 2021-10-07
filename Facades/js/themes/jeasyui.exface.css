@@ -2,12 +2,15 @@ body {font-family: Helvetica,Arial,sans-serif;}
 
 /* Global layout*/
 /*.layout-expand-west {border-right: 4px solid #fff}*/
-.main-header-content {width: 100%; height: 50px; padding: 0; overflow: hidden; background-color: transparent;}
+.main-header-content {width: 100%; height: 50px; padding: 0; overflow: hidden; background-color: white;}
 .main-header-content > .logo {height: 50px; line-height: 50px; padding-right: 10px; vertical-align: middle; display:inline-block; font-size: 24px;}
 .main-header-content > .logo.hamburger {font-size: 17px; padding-left: 12px;}
 .main-header-content > .logo a {color: inherit; text-decoration: inherit; color: #999;}
 .main-header-content .top-toolbar {float:right; padding: 10px;}
+.main-content {padding: 0 5px 5px 0}
 .main-content.layout-body {border-top: 5px solid transparent; border-top-width: 5px !important; background-color: transparent;}
+body > .layout-panel-west.exf-hidden + .layout-panel-center > .main-content {padding-left: 5px}
+
 ul.nav_menu {list-style: none; font-size: 12px; list-style-position: inside; margin:0; padding: 0; overflow-x: hidden;}
 ul.nav_menu li {border-bottom: 1px solid #ccc;}
 ul.nav_menu li ul {list-style: none; list-style-position: inside; padding: 0 0 5px 20px;}
