@@ -1,8 +1,9 @@
 // Load the context bar initially
 $( document ).ready(function() {
+	var jqPanelWest = $('body > .layout-split-west');
 	contextBarInit();
-	if (! $('body > .layout-split-west').is(':visible')) {
-		$('body > .layout-panel-west').addClass('exf-hidden');
+	if (jqPanelWest.length !== 0 && ! jqPanelWest.is(':visible')) {
+		jqPanelWest.addClass('exf-hidden');
 		$('body').layout('collapse', 'west');
 	}
 });
