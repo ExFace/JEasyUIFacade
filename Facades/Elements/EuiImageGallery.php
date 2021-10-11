@@ -36,9 +36,13 @@ class EuiImageGallery extends EuiData
     {
         $chart_panel_options = "title: '{$this->getCaption()}'";
         $this->addCarouselFeatureButtons($this->getWidget()->getToolbarMain()->getButtonGroupForSearchActions(), 1);
+        $gridItemClass = $this->getMasonryItemClass() . ' exf-imagegallery exf-data-widget';
+        if ($this->getWidget()->getHideHeader()) {
+            $gridItemClass .= ' exf-data-hide-header';
+        }
         $panel = <<<HTML
 
-<div class="exf-grid-item {$this->getMasonryItemClass()} exf-imagegallery" style="width:{$this->getWidth()};min-width:{$this->getMinWidth()};padding:{$this->getPadding()};box-sizing:border-box;">
+<div class="exf-grid-item {$gridItemClass}" style="width:{$this->getWidth()};min-width:{$this->getMinWidth()};padding:{$this->getPadding()};box-sizing:border-box;">
     <div class="easyui-panel" style="height: auto; width: 100%" id="{$this->getIdOfSlick()}_wrapper" data-options="{$chart_panel_options}, onResize: function(){ {$this->getOnResizeScript()} }">
     	{$this->buildHtmlTableHeader()}
         <div style="height:{$this->getHeight()}; width: 100%">

@@ -1,9 +1,25 @@
 // Load the context bar initially
 $( document ).ready(function() {
-	
+	var jqPanelWest = $('body > .layout-split-west');
 	contextBarInit();
-	
+	if (jqPanelWest.length !== 0 && ! jqPanelWest.is(':visible')) {
+		jqPanelWest.addClass('exf-hidden');
+		$('body').layout('collapse', 'west');
+	}
 });
+
+function toggleMainMenu(){
+	var jqLayout = $('body');
+	if (jqLayout.layout('panel', 'west').is(':visible')) {
+		jqLayout.layout('collapse', 'west', 0);
+	} else {
+		jqLayout.layout('expand', 'west', 0);
+		// Fix for menu not showing after auto-hide on screen orientation change (on tablets)
+		if (! jqLayout.layout('panel', 'west').is(':visible')) {
+			jqLayout.layout('collapse', 'west').layout('expand', 'west', 0);
+		}
+	}
+}
 
 function contextBarInit(){
 	$(document).ajaxSuccess(function(event, jqXHR, ajaxOptions, data){
@@ -51,8 +67,8 @@ function contextBarLoad(delay){
 		// performance issues. This will be needed for asynchronous contexts like
 		// user messaging, external task management, etc. So put the line back in
 		// place to fetch context data with every request instead of a dedicated one.
-		// if ($.active == 0 && $('#contextBar .panel-loading').length > 0){
-		if ($('#contextBar .panel-loading').length > 0){
+		// if ($.active == 0 && $('#contextBar .spinner').length > 0){
+		if ($('#contextBar .spinner').length > 0){
 			$.ajax({
 				type: 'POST',
 				url: 'api/jeasyui/' + getPageId() + '/context',

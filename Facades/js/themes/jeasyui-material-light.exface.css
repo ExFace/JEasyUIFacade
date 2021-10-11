@@ -1,82 +1,22 @@
-.logo {color: #999;}
-ul.nav_menu a {color: black;}
-ul.nav_menu a:hover {color: white; background: #6CAEF5}
-
-/* Context bar */
-.toolbar-element.user-info {border-color: #c3d9e0;}
-.toolbar-element .fa {color: #999}
-.toolbar-element .l-btn-text {color: #999}
-.tooltip > .tooltip-content > .panel > .panel-body > .panel > .panel-body {border: 0}
-.tooltip > .tooltip-content > .panel > .panel-body > .panel > .panel-footer {border: 0; background: none;}
-.tooltip {-moz-box-shadow: 0 7px 8px -4px rgba(0,0,0,0.2), 0 13px 19px 2px rgba(0,0,0,0.14), 0 5px 24px 4px rgba(0,0,0,0.12); -webkit-box-shadow: 0 7px 8px -4px rgb(0 0 0 / 20%), 0 13px 19px 2px rgb(0 0 0 / 14%), 0 5px 24px 4px rgb(0 0 0 / 12%); box-shadow: 0 7px 8px -4px rgb(0 0 0 / 20%), 0 13px 19px 2px rgb(0 0 0 / 14%), 0 5px 24px 4px rgb(0 0 0 / 12%);}
-
-/* Toolbars for widgets */
+/* Global layout */
+.main-header-content {background-color: #9cc8f7}
 .exf-data-header.panel-body {background: #fafafa}
-
-/* Buttons */
-.l-btn-plain {color: #6200ee;}
-
-/* Inputs */
-.exf-input textarea {border-color: #c3d9e0; height: 100%; width: 100%}
-fieldset.exface_inputgroup {border-color: #95B8E7;}
-fieldset.exface_inputgroup legend {color: #404040;}
-
-/* Tables */
-.datagrid-wrap.panel-body:not(.panel-body-noheader) {border-top-width: 0}
-.panel.datagrid > .panel-header {border-bottom-width: 0;}
-.datagrid-toolbar {border-width: 0;}
-.datagrid-header {border-top-width: 1px}
-
-/* ImageGallery */
-.exf-imagegallery > .panel > .panel-header {border-bottom-width: 0}
-
-/* jEasyUI customizing */
-div.panel-body {background-color:#fff;}
 div.panel-header {background-color: #fafafa}
-.panel-filled > .panel-body:not(.panel-body-noheader):not(.exf-panel-flat) > .panel-noscroll > .panel > .panel-body-noheader:not(.exf-data-hide-header) {border-top-width: 0 !important}
-.panel-filled > .panel-body.exf-panel-flat {margin-top: -2px}
-.panel.panel-filled > .panel-header {border-bottom-width: 0;}
-.textbox .m-btn.l-btn .m-btn-downarrow, 
-.m-btn.l-btn-plain .m-btn-downarrow {background-image: none; font: normal normal normal 14px/1 FontAwesome}
-.textbox .m-btn.l-btn .m-btn-downarrow:before, 
-.m-btn.l-btn-plain .m-btn-downarrow:before {content: "\f0d7";}
-.panel-tool-a.fa {color: #2196f3;}
-
-/* Dialog */
 .exf-dialog-header {background-color: #f5f5f5 !important;}
-.window .window-header .panel-with-icon {padding-left: 30px !important;}
-.window .window-header > .panel-icon.fa {font-size: 15px;}
-.window.panel {padding: 0; border: 0}
-.window > .window-body {border-width: 0}
 .window > .window-header {background-color: #f5f5f5; border-bottom-color: transparent;}
-.window > .easyui-dialog.panel-header-separated:not(.exf-dialog-with-header) {border-top: 1px solid #dfdfdf !important}
-.window > .easyui-dialogexf-dialog-header.exf-dialog-with-header .exf-dialog-header {border-bottom: 1px solid #dfdfdf !important}
 .exf-dialog-footer {background-color: #fafafa}
-.exf-dialog-header.panel-body {border-top-width: 0; border-left-width: 0; border-right-width: 0;}
-.easyui-dialog .exf-dialog-header.panel-body {border-bottom-width: 0;}
-.window .dialog-button .l-btn:not(.l-btn-plain) {background-color: #6200ee; color: white}
-
-/* TextDiff widget */
-.difftext-container {border-color: #c3d9e0;}
-.difftext-diff del {color: white; background-color: red;}
-.difftext-diff ins {color: white; background-color: green;}
-
-/* Messages */
-.exf-message {color: white; background-color: lightgray;}
-.exf-message a {color: white;}
-.exf-message-icon > i {color: white;}
-.exf-message.error {background-color: #dd4b39 !important}
-.exf-message.warning {background-color: #f39c12 !important}
-.exf-message.info {background-color: #00c0ef !important}
-.exf-message.success {background-color: #00a65a !important}
-.exf-message.hint {background-color: transparent; font-style: italic; color: inherit;}
-.exf-message.hint .exf-message-icon > i {color: black}
-
-/* jQuery FileUpload */
-.fileupload-filename {color: grey}
-
-/* Tile widget */
 .exf-tile-box {background-color: #fafafa; border-color: #c3d9e0;}
+body a {color: #9cc8f7;}
+
+.l-btn:not(.l-btn-plain) {background-color: #9cc8f7; border-color: #9cc8f7;}
+.window .dialog-button .l-btn:not(.l-btn-plain) {background-color: #9cc8f7}		
+
+/* NavMenu */
+ul.nav_menu li.level1 > ul {border-top: 1px solid #c3d9e0; border-bottom: 1px solid #c3d9e0; background: #fafafa}
+ul.nav_menu li.level1.active > a.current {background: transparent}
+ul.nav_menu a:hover {background-color: #9cc8f7; color: white;} 
+ul.nav_menu li.active a.current {background-color: #fafafa; color: #6200ee;}
+ul.nav_menu a {color: black;}
 
 /* NavCrumbs */
 .exf-navcrumbs a {text-decoration: none; color: #6200ee; font-weight: normal;}
@@ -85,10 +25,3 @@ div.panel-header {background-color: #fafafa}
 .main-header.layout-body {height:50px;}
 .main-content > .exf-element > .datagrid > .datagrid-wrap.panel-body {border-top-width: 1px}
 .main-content > .easyui-tabs > .tabs-header {border-top: 1px solid #dfdfdf; border-left: 1px solid #dfdfdf; border-right: 1px solid #dfdfdf}
-
-/* NavMenu */
-ul.nav_menu li {border-color: #fff}
-ul.nav_menu li.level1 > ul {border-top: 1px solid #c3d9e0; border-bottom: 1px solid #c3d9e0;background: #fafafa}
-ul.nav_menu li.level1.active > a.current {background: #fff}
-ul.nav_menu a:hover {background-color: #eee; color: #6200ee;} 
-ul.nav_menu li.active a.current {background-color: #fafafa; color: #6200ee;}
