@@ -205,14 +205,23 @@ JS;
         return $output;
     }
     
+    /**
+     * Building the js script to change the height of an element to the maximum free value.
+     *
+     * @param iContainOtherWidgets $containerWidget
+     * @param string $gridItemCssClass
+     * @param string $onChangeHeightJs
+     * @return string
+     */
     protected function buildJsSetHeightMax(iContainOtherWidgets $containerWidget, string $gridItemCssClass, string $onChangeHeightJs) : string
     {
         $count = 0;
         $js = <<<JS
+        //console.log('Calculated Height: {$this->getId()}');
         var yCoords = new Array();
         var parElem;
         var contElem = $('#{$this->getFacade()->getElement($containerWidget)->getId()}');
-        var surElem = $('#{$this->getId()}').closest('.{$gridItemCssClass}').first();
+        var surElem = $('#{$this->getId()}').parent().closest('.{$gridItemCssClass}').first();
         
         // if no container element or no top element for element to change height for is found, or the contElem is the top element dont do anything
         if (contElem.length == 0 || surElem.length == 0 || contElem[0] == surElem[0]) {
@@ -233,7 +242,7 @@ JS;
             var yElemCord;
             // add bottom y-Coord of element to array
             if (elem.length > 0 && elem.parents('#{$this->getFacade()->getElement($containerWidget)->getId()}').length > 0) {
-                parElem = elem.closest('.{$gridItemCssClass}').first();
+                parElem = elem.parent().closest('.{$gridItemCssClass}').first();
                 if (parElem.length > 0 && parElem[0] !== contElem[0]) {
                     elem = parElem;
                 }
@@ -255,7 +264,7 @@ JS;
         var yMax = yCoords[0];
         
         // get height and top y-Coord of cointainer Widget
-        var contHeight = contElem.innerHeight();
+        var contHeight = contElem.height();
         var yContTop = contElem.offset().top;
         
         // get current and default height of element with height 'max'
@@ -288,14 +297,19 @@ JS;
             newHeight = Math.floor(newHeight);
         }
 
-        // if the new height calculated is the same asthe current element height, dont set its new height
+        // if the new height calculated is the same as the current element height, dont set its new height
         if (newHeight == elemHeight) {
             return;
         }
       
-        setTimeout(function() {
-            surElem.innerHeight(newHeight);
-            {$onChangeHeightJs}
+        setTimeout(function(){
+            var oldHeight = surElem.outerHeight(true);
+            if (oldHeight === newHeight) {
+                return;
+            }                       
+            surElem.outerHeight(newHeight,true);
+            {$onChangeHeightJs}                    
+            $('#{$this->getId()}').resize();  
         },0);
 JS;
         return <<<JS
@@ -316,7 +330,7 @@ JS;
             setTimeout(function(){
                 var diff = contElem[0].scrollHeight - contHeight;
                 if (diff > 0) {
-                    surElem.innerHeight(newHeight - diff);
+                    surElem.outerHeight(newHeight - diff, true);
                     {$onChangeHeightJs}
                 }
             }, 0);
