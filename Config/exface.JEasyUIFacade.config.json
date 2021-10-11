@@ -11,37 +11,17 @@
 	
 	"FACADE.JAVASCRIPT_DEBUG_LEVEL": 0,
 	
-	"FACADE.THEME_DEFAULT": "metro-blue",
+	"FACADE.THEME_DEFAULT": "material",
+	"FACADE.THEME_HEADER_COLOR": "",
+	"FACADE.THEME_EMPHASIS_COLOR": "",
+	"FACADE.THEME_LINK_COLOR": "",
+	"FACADE.THEME_SIDEBAR_COLOR": "",
+	"FACADE.THEME_SIDEBAR_COLLAPSED": 0,
 	"FACADE.THEMES": {
 		"metro-blue": [
 			"exface/JEasyUIFacade/Facades/js/themes/metro-blue/easyui.css",
 			"exface/JEasyUIFacade/Facades/js/themes/jeasyui.exface.css",
 			"exface/JEasyUIFacade/Facades/js/themes/jeasyui-metro-blue.exface.css"
-		],
-		"metro": [
-			"bower-asset/jeasyui/themes/metro/easyui.css",
-			"exface/JEasyUIFacade/Facades/js/themes/jeasyui.exface.css",
-			"exface/JEasyUIFacade/Facades/js/themes/jeasyui-metro.exface.css"
-		],
-		"black": [
-			"bower-asset/jeasyui/themes/black/easyui.css",
-			"exface/JEasyUIFacade/Facades/js/themes/jeasyui.exface.css",
-			"exface/JEasyUIFacade/Facades/js/themes/jeasyui-black.exface.css"
-		],
-		"bootstrap": [
-			"bower-asset/jeasyui/themes/bootstrap/easyui.css",
-			"exface/JEasyUIFacade/Facades/js/themes/jeasyui.exface.css",
-			"exface/JEasyUIFacade/Facades/js/themes/jeasyui-bootstrap.exface.css"
-		],
-		"jeasyui-default": [
-			"bower-asset/jeasyui/themes/default/easyui.css",
-			"exface/JEasyUIFacade/Facades/js/themes/jeasyui.exface.css",
-			"exface/JEasyUIFacade/Facades/js/themes/jeasyui-default.exface.css"
-		],
-		"gray": [
-			"bower-asset/jeasyui/themes/gray/easyui.css",
-			"exface/JEasyUIFacade/Facades/js/themes/jeasyui.exface.css",
-			"exface/JEasyUIFacade/Facades/js/themes/jeasyui-gray.exface.css"
 		],
 		"material": [
 			"exface/JEasyUIFacade/Facades/js/themes/material/easyui.css",
@@ -51,12 +31,8 @@
 		"material-light": [
 			"exface/JEasyUIFacade/Facades/js/themes/material-light/easyui.css",
 			"exface/JEasyUIFacade/Facades/js/themes/jeasyui.exface.css",
+			"exface/JEasyUIFacade/Facades/js/themes/jeasyui-material.exface.css",
 			"exface/JEasyUIFacade/Facades/js/themes/jeasyui-material-light.exface.css"
-		],
-		"material-teal": [
-			"exface/JEasyUIFacade/Facades/js/themes/material-teal/easyui.css",
-			"exface/JEasyUIFacade/Facades/js/themes/jeasyui.exface.css",
-			"exface/JEasyUIFacade/Facades/js/themes/jeasyui-material-teal.exface.css"
 		]
 	},
 	
