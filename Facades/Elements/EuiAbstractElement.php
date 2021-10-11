@@ -207,10 +207,7 @@ JS;
     
     /**
      * Building the js script to change the height of an element to the maximum free value.
-     * 
-     * TODO there is a very weird issue that you can't put an Input Element into a WidgetGroup in a that has the "height:max" property in a Dialog.
-     * This will lead to the WidgetGroup shrinking indefinetely.
-     * 
+     *
      * @param iContainOtherWidgets $containerWidget
      * @param string $gridItemCssClass
      * @param string $onChangeHeightJs
