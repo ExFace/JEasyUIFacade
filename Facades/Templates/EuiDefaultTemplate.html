@@ -28,28 +28,28 @@
 		<script type="text/javascript" src="vendor/exface/JEasyUIFacade/Facades/js/jquery.sparkline.min.js"></script>
 		<style>
 		
-			.main-header-content {background-color: [#~config:exface.JEasyUIFacade:FACADE.THEME_HEADER_COLOR#];}
+			.main-header-content {background-color: [#~facade:theme_header_color#];}
 			
-			body > .layout-panel-west > .panel-header {background-color: [#~config:exface.JEasyUIFacade:FACADE.THEME_SIDEBAR_COLOR#];}
-			body > .layout-panel-west div.panel-body {background-color: [#~config:exface.JEasyUIFacade:FACADE.THEME_SIDEBAR_COLOR#];}
+			body > .layout-panel-west > .panel-header {background-color: [#~facade:theme_sidebar_color#];}
+			body > .layout-panel-west div.panel-body {background-color: [#~facade:theme_sidebar_color#];}
 			
-			.l-btn:not(.l-btn-plain) {background-color: [#~config:exface.JEasyUIFacade:FACADE.THEME_EMPHASIS_COLOR#]; border-color: [#~config:exface.JEasyUIFacade:FACADE.THEME_EMPHASIS_COLOR#];}
-			.textbox-focused {border-bottom-color: [#~config:exface.JEasyUIFacade:FACADE.THEME_EMPHASIS_COLOR#]}
+			.l-btn:not(.l-btn-plain) {background-color: [#~facade:theme_emphasis_color#]; border-color: [#~facade:theme_emphasis_color#];}
+			.textbox-focused {border-bottom-color: [#~facade:theme_emphasis_color#]}
 			.window .dialog-button .l-btn:not(.l-btn-plain),
 			.progressbar-value, .progressbar-value .progressbar-text,
-			ul.nav_menu a:hover {background-color: [#~config:exface.JEasyUIFacade:FACADE.THEME_EMPHASIS_COLOR#]}
-			.tabs li.tabs-selected .tabs-inner {color: [#~config:exface.JEasyUIFacade:FACADE.THEME_EMPHASIS_COLOR#]; border-bottom-color: [#~config:exface.JEasyUIFacade:FACADE.THEME_EMPHASIS_COLOR#]}
+			ul.nav_menu a:hover {background-color: [#~facade:theme_emphasis_color#]}
+			.tabs li.tabs-selected .tabs-inner {color: [#~facade:theme_emphasis_color#]; border-bottom-color: [#~facade:theme_emphasis_color#]}
 			
 			
 			.l-btn-plain,
 			.window .dialog-button .l-btn,
-			body a {color: [#~config:exface.JEasyUIFacade:FACADE.THEME_LINK_COLOR#];}
-			ul.nav_menu li.active a.current {color: [#~config:exface.JEasyUIFacade:FACADE.THEME_LINK_COLOR#];}
+			body a {color: [#~facade:theme_link_color#];}
+			ul.nav_menu li.active a.current {color: [#~facade:theme_link_color#];}
 			
 		</style>
 		
 	</head>
-	<body class="easyui-layout theme-[#~facade:theme#]" >
+	<body class="easyui-layout theme-[#~facade:theme_class#]">
 	    <!-- Spinner to hide unrendered markup -->
         <div style="height: 100vh; line-height: 100vh;" class="spinner-bg">
             <i class="panel-loading"></i>
@@ -81,7 +81,7 @@
 		<div data-options="
 				region:'west',
 				split:true,
-				collapsed:[#~config:exface.JEasyUIFacade:FACADE.THEME_SIDEBAR_COLLAPSED#],
+				collapsed:[#~facade:sidebar_collapsed#],
 				collapsedSize:1,
 				onExpand:function(){$('body > .layout-panel-west').removeClass('exf-hidden');},
 				onBeforeCollapse:function(){$('body > .layout-panel-west').addClass('exf-hidden');},
