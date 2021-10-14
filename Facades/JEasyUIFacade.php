@@ -20,10 +20,23 @@ use exface\Core\Factories\UiPageFactory;
 use exface\Core\Factories\WidgetFactory;
 use exface\Core\CommonLogic\UxonObject;
 use exface\Core\Exceptions\RuntimeException;
+use exface\Core\Exceptions\InvalidArgumentException;
 
 class JEasyUIFacade extends AbstractAjaxFacade
 {
-    private $theme = null;
+    private $theme_css = null;
+    
+    private $theme_class = null;
+    
+    private $theme_header_color = null;
+    
+    private $theme_sidebar_color = null;
+    
+    private $theme_sidebar_collapsed = null;
+    
+    private $theme_emphasis_color = null;
+    
+    private $theme_link_color = null;
     
     public function init()
     {
@@ -108,13 +121,8 @@ $.ajaxPrefilter(function( options ) {
      */
     protected function buildHtmlHeadThemeIncludes() : array
     {
-        $themes = $this->getConfig()->getOption('FACADE.THEMES');
-        $includes = $themes->getProperty($this->getTheme());
-        if ($includes === null) {
-            throw new OutOfBoundsException('Theme "' . $this->getTheme() . '" not found in the jEasyUI facade!');
-        }
         $arr = [];
-        foreach ($includes->toArray() as $path) {
+        foreach ($this->getThemeCss() as $path) {
             $arr[] = '<link rel="stylesheet" type="text/css" href="' . $this->buildUrlToVendorFile($path) . '">';
         }
         return $arr;
@@ -241,27 +249,186 @@ HTML;
     }
     
     /**
-     * 
+     *
      * @return string
      */
-    public function getTheme() : string
+    public function getThemeClass() : string
     {
-        return $this->theme ?? $this->getConfig()->getOption('FACADE.THEME_DEFAULT');
+        return $this->theme_class ?? 'default';
     }
     
     /**
-     * The color theme to use
+     * The class of the color theme (used as additional CSS class on <body> element).
      * 
-     * @uxon-property theme
-     * @uxon-type [metro-blue,metro,material,material-teal,material-blue,bootstrap,jeasyui-default,gray,black]
-     * @uxon-default metro-blue
-     * 
+     * E.g. if the theme class is `material`, the `<body>` element will get the CSS class 
+     * `theme-material` instead of `theme-default`.
+     *
+     * @uxon-property theme_class
+     * @uxon-type string
+     * @uxon-default default
+     *
      * @param string $name
      * @return JEasyUIFacade
      */
-    protected function setTheme(string $name) : JEasyUIFacade
+    protected function setThemeClass(string $name) : JEasyUIFacade
     {
-        $this->theme = mb_strtolower($name);
+        $this->theme_class = mb_strtolower($name);
+        return $this;
+    }
+
+    /**
+     * The color of the page header
+     * 
+     * @uxon-property theme_header_color
+     * @uxon-type color
+     * 
+     * @return string
+     */
+    public function getThemeHeaderColor() : string
+    {
+        return $this->theme_header_color ?? $this->getConfig()->getOption('THEME.HEADER_COLOR') ?? '';
+    }
+    
+    /**
+     * 
+     * @param string $value
+     * @return JEasyUIFacade
+     */
+    protected function setThemeHeaderColor(string $value) : JEasyUIFacade
+    {
+        $this->theme_header_color = $value;
+        return $this;
+    }
+    
+    /**
+     * The color of the sidebar
+     *
+     * @uxon-property sidebar_color
+     * @uxon-type color
+     *
+     * @return string
+     */
+    public function getThemeSidebarColor() : string
+    {
+        return $this->theme_sidebar_color ?? $this->getConfig()->getOption('THEME.SIDEBAR_COLOR') ?? '';
+    }
+    
+    /**
+     *
+     * @param string $value
+     * @return JEasyUIFacade
+     */
+    protected function setThemeSidebarColor(string $value) : JEasyUIFacade
+    {
+        $this->theme_sidebar_color = $value;
+        return $this;
+    }
+    
+    /**
+     * The color of emphasised controls (e.g. promoted buttons)
+     *
+     * @uxon-property emphasis_color
+     * @uxon-type color
+     *
+     * @return string
+     */
+    public function getThemeEmphasisColor() : string
+    {
+        return $this->theme_emphasis_color ?? $this->getConfig()->getOption('THEME.EMPHASIS_COLOR') ?? '';
+    }
+    
+    /**
+     *
+     * @param string $value
+     * @return JEasyUIFacade
+     */
+    protected function setThemeEmphasisColor(string $value) : JEasyUIFacade
+    {
+        $this->theme_emphasis_color = $value;
+        return $this;
+    }
+    
+    /**
+     * The color of links and buttons
+     *
+     * @uxon-property link_color
+     * @uxon-type color
+     *
+     * @return string
+     */
+    public function getThemeLinkColor() : string
+    {
+        return $this->theme_link_color ?? $this->getConfig()->getOption('THEME.LINK_COLOR') ?? '';
+    }
+    
+    /**
+     *
+     * @param string $value
+     * @return JEasyUIFacade
+     */
+    protected function setThemeLinkColor(string $value) : JEasyUIFacade
+    {
+        $this->theme_link_color = $value;
+        return $this;
+    }
+    
+    /**
+     * The color of links and buttons
+     *
+     * @uxon-property sidebar_collapsed
+     * @uxon-type boolean
+     * @uxon-default false
+     *
+     * @return string
+     */
+    public function getSidebarCollapsed() : int
+    {
+        return ($this->theme_sidebar_collapsed ?? $this->getConfig()->getOption('THEME.SIDEBAR_COLLAPSED') ?? false) ? 1 : 0;
+    }
+    
+    /**
+     *
+     * @param string $value
+     * @return JEasyUIFacade
+     */
+    protected function setSidebarCollapsed(bool $value) : JEasyUIFacade
+    {
+        $this->theme_sidebar_collapsed = $value;
+        return $this;
+    }
+    
+    /**
+     * 
+     * @return string[]
+     */
+    public function getThemeCss() : array
+    {
+        return $this->theme_css ?? $this->getConfig()->getOption('THEME.CSS')->toArray();
+    }
+    
+    /**
+     * Array of CSS files to include on the page
+     * 
+     * @uxon-property theme_css
+     * @uxon-type array
+     * @uxon-template ["exface/JEasyUIFacade/Facades/js/themes/jeasyui.exface.css",""]
+     * 
+     * @param UxonObject|array $value
+     * @throws InvalidArgumentException
+     * @return JEasyUIFacade
+     */
+    protected function setThemeCss($arrayOrUxon) : JEasyUIFacade
+    {
+        switch (true) {
+            case $arrayOrUxon instanceof UxonObject:
+                $this->theme_css = $arrayOrUxon->toArray();
+                break;
+            case is_array($arrayOrUxon):
+                $this->theme_css = $arrayOrUxon;
+                break;
+            default: 
+                throw new InvalidArgumentException('Invalid value for `include_css` property of JEasyUI facade: expecting UXON or PHP array');
+        }
         return $this;
     }
 }

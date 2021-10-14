@@ -11,30 +11,16 @@
 	
 	"FACADE.JAVASCRIPT_DEBUG_LEVEL": 0,
 	
-	"FACADE.THEME_DEFAULT": "material",
-	"FACADE.THEME_HEADER_COLOR": "",
-	"FACADE.THEME_EMPHASIS_COLOR": "",
-	"FACADE.THEME_LINK_COLOR": "",
-	"FACADE.THEME_SIDEBAR_COLOR": "",
-	"FACADE.THEME_SIDEBAR_COLLAPSED": 0,
-	"FACADE.THEMES": {
-		"metro-blue": [
-			"exface/JEasyUIFacade/Facades/js/themes/metro-blue/easyui.css",
-			"exface/JEasyUIFacade/Facades/js/themes/jeasyui.exface.css",
-			"exface/JEasyUIFacade/Facades/js/themes/jeasyui-metro-blue.exface.css"
-		],
-		"material": [
-			"exface/JEasyUIFacade/Facades/js/themes/material/easyui.css",
-			"exface/JEasyUIFacade/Facades/js/themes/jeasyui.exface.css",
-			"exface/JEasyUIFacade/Facades/js/themes/jeasyui-material.exface.css"
-		],
-		"material-light": [
-			"exface/JEasyUIFacade/Facades/js/themes/material-light/easyui.css",
-			"exface/JEasyUIFacade/Facades/js/themes/jeasyui.exface.css",
-			"exface/JEasyUIFacade/Facades/js/themes/jeasyui-material.exface.css",
-			"exface/JEasyUIFacade/Facades/js/themes/jeasyui-material-light.exface.css"
-		]
-	},
+	"THEME.HEADER_COLOR": null,
+	"THEME.SIDEBAR_COLOR": null,
+	"THEME.SIDEBAR_COLLAPSED": null,
+	"THEME.EMPHASIS_COLOR": null,
+	"THEME.LINK_COLOR": null,
+	"THEME.CSS": [
+		"exface/JEasyUIFacade/Facades/js/themes/material/easyui.css",
+		"exface/JEasyUIFacade/Facades/js/themes/jeasyui.exface.css",
+		"exface/JEasyUIFacade/Facades/js/themes/jeasyui-material.exface.css"
+	],
 	
 	"ICON_CLASSES.DEFAULT_CLASS_PREFIX": "fa fa-",
     "ICON_CLASSES.INSTALL": "fa fa-hdd-o",
