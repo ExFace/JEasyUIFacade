@@ -247,7 +247,9 @@ JS;
                     elem = parElem;
                 }
                 // Skip elements that are not above or below the max'ed element
-                if ((elem.offset().left + elem.outerWidth(true)) < surElem.offset().left || elem.offset().left > (surElem.offset().left + surElem.outerWidth(true))) {
+                // usage of Math.round() because it can occur that masonry grid somehow overlaps the elements within 1px (happened with a Markdown editor next to a widget group)
+                // this would lead to the new element height not be calculated correctly for at least the first round of calculation
+                if (Math.round(elem.offset().left + elem.outerWidth(true)) <= Math.round(surElem.offset().left) || Math.round(elem.offset().left) >= Math.round(surElem.offset().left + surElem.outerWidth(true))) {
                     return;
                 }
                 yElemCord = elem.offset().top + elem.outerHeight(true);            
@@ -304,11 +306,15 @@ JS;
       
         setTimeout(function(){
             var oldHeight = surElem.outerHeight(true);
-            if (oldHeight === newHeight) {
+            var heightDiff = Math.abs(oldHeight - newHeight);
+            // only change the height when the difference between old and new height is atleast 10px
+            // thats necessary because of the fix regarding the container scroll
+            // if height gets changed every time its not the old height that could lead to an idefitine number of height changes
+            if (heightDiff <= 5) {
                 return;
             }                       
             surElem.outerHeight(newHeight,true);
-            {$onChangeHeightJs}                    
+            {$onChangeHeightJs}                 
             $('#{$this->getId()}').resize();  
         },0);
 JS;
@@ -329,7 +335,9 @@ JS;
 
             setTimeout(function(){
                 var diff = contElem[0].scrollHeight - contHeight;
-                if (diff > 0) {
+                // check if diff is bigger than 0 but smaller than 5 because that means the container scroll most likely
+                // was cause by this element and not my others in the same container
+                if (diff > 0 && diff < 5) {
                     surElem.outerHeight(newHeight - diff, true);
                     {$onChangeHeightJs}
                 }
