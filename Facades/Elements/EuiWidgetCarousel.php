@@ -37,4 +37,9 @@ class EuiWidgetCarousel extends EuiTabs
     {
         return 'exf-widget-carousel exf-element';
     }
+    
+    protected function getBorderOption() : bool
+    {
+        return true;
+    }
 }
