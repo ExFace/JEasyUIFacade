@@ -20,7 +20,7 @@ class EuiMenu extends EuiAbstractElement
     public function buildHtml()
     {        
         return <<<HTML
-<div class="easyui-panel" data-options="fit:true, title:'{$this->getCaption()}'">
+<div class="easyui-panel exf-menu-wrapper" data-options="fit:true, title:'{$this->getCaption()}'">
     <div class="easyui-menu" data-options="inline:true, fit:true, lines:true" style="position:relative; border:none">
         {$this->buildHtmlButtons()}
     </div>

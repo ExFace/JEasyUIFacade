@@ -29,6 +29,7 @@ ul.nav_menu a:hover {background-color: #6200ee; color: white}
 .toolbar-element .fa {color: white}
 .toolbar-element .l-btn-text {color: white}
 .tooltip > .tooltip-content > .panel > .panel-body > .panel > .panel-body {border: 0}
+.tooltip > .tooltip-content > .panel > .panel-body > .panel > .panel-header {border: 0; background: none;}
 .tooltip > .tooltip-content > .panel > .panel-body > .panel > .panel-footer {border: 0; background: none;}
 .tooltip {-moz-box-shadow: 0 7px 8px -4px rgba(0,0,0,0.2), 0 13px 19px 2px rgba(0,0,0,0.14), 0 5px 24px 4px rgba(0,0,0,0.12); -webkit-box-shadow: 0 7px 8px -4px rgb(0 0 0 / 20%), 0 13px 19px 2px rgb(0 0 0 / 14%), 0 5px 24px 4px rgb(0 0 0 / 12%); box-shadow: 0 7px 8px -4px rgb(0 0 0 / 20%), 0 13px 19px 2px rgb(0 0 0 / 14%), 0 5px 24px 4px rgb(0 0 0 / 12%);}
 
@@ -49,7 +50,11 @@ fieldset.exface_inputgroup legend {color: #404040;}
 .datagrid-toolbar {border-width: 0;}
 .datagrid-header {border-top-width: 1px}
 .exf-container-filler > .datagrid > .datagrid-wrap {border-top: 0}
-.exf-data-widget > .panel > .panel-body-noheader {border-top-width: 0}
+/*.exf-data-widget > .panel > .panel-body-noheader {border-top-width: 0}*/
+.tabs-panels > .panel >.panel-body > .exf-data-widget:first-of-type > .panel > .panel-body-noheader,
+.tabs-panels > .panel >.panel-body > .exf-data-widget:first-of-type > .panel > .panel-header,
+.easyui-dialog > .exf-data-widget:first-of-type > .panel > .panel-body-noheader,
+.easyui-dialog > .exf-data-widget:first-of-type > .panel > .panel-header {border-top-width: 0}
 .exf-data-widget.exf-data-hide-header > .panel > .panel-header {border-bottom-width: 1px;}
 .exf-data-widget.exf-data-hide-header > .panel > .panel-body-noheader {border-top-width: 1px;}
 
@@ -112,3 +117,7 @@ div.panel-header-noborder + .panel-filled {margin-top: -4px;}
 /* JsonEditor */
 .exf-element .jsoneditor {border-color: #dfdfdf; border-bottom-color: #c2c2c2;}
 .exf-element .jsoneditor-menu {background-color: #ccc; border-bottom-color: transparent;}
+
+/* Menu */
+.exf-menu-wrapper {border: none !important;}
+.panel-body > .easyui-menu {border-top: 1px solid #dfdfdf !important;}

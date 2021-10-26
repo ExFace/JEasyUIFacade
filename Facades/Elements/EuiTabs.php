@@ -56,8 +56,9 @@ HTML;
         $plain = ($tabPosition == 'left' || $tabPosition == 'right' ? ', plain: true' : '');
         $headerWidth = $this->buildJsDataOptionHeaderWidth();
         $selected = $this->buildJsDataOptionSelected();
+        $border = $this->getBorderOption() ? 'true' : 'false';
         
-        return "border:false, tabPosition: '$tabPosition'" . $plain . $fit . $styleAsPills . $headerWidth . $selected;
+        return "tabPosition: '$tabPosition', border: " . $border . $plain . $fit . $styleAsPills . $headerWidth . $selected;
     }
     
     protected function buildJsDataOptionSelected() : string
@@ -116,15 +117,20 @@ HTML;
     {
         return $this->fit_option;
     }
+    
+    protected function getBorderOption() : bool
+    {
+        return false;
+    }
 
     public function getStyleAsPills()
     {
         return $this->style_as_pills;
     }
 
-    public function setStyleAsPills($style_as_pills)
+    public function setStyleAsPills(bool $style_as_pills)
     {
-        $this->style_as_pills = BooleanDataType::cast($style_as_pills);
+        $this->style_as_pills = $style_as_pills;
         return $this;
     }
 
