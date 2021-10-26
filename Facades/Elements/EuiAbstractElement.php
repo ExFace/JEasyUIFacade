@@ -303,16 +303,16 @@ JS;
         if (newHeight == elemHeight) {
             return;
         }
+
+        var heightDiff = newHeight - elemHeight;
+        // only change the new height is at least 10px higher than the old height
+        // thats necessary because of the fix regarding the container scroll
+        // if height gets changed every time its not the same as old height that could lead to an idefinite number of height changes
+        if (heightDiff > 0 && heightDiff < 10) {
+            return;
+        }
       
-        setTimeout(function(){
-            var oldHeight = surElem.outerHeight(true);
-            var heightDiff = Math.abs(oldHeight - newHeight);
-            // only change the height when the difference between old and new height is atleast 10px
-            // thats necessary because of the fix regarding the container scroll
-            // if height gets changed every time its not the old height that could lead to an idefitine number of height changes
-            if (heightDiff <= 5) {
-                return;
-            }                       
+        setTimeout(function(){                       
             surElem.outerHeight(newHeight,true);
             {$onChangeHeightJs}                 
             $('#{$this->getId()}').resize();  
@@ -336,7 +336,7 @@ JS;
             setTimeout(function(){
                 var diff = contElem[0].scrollHeight - contHeight;
                 // check if diff is bigger than 0 but smaller than 5 because that means the container scroll most likely
-                // was cause by this element and not my others in the same container
+                // was cause by this element and not by others in the same container
                 if (diff > 0 && diff < 5) {
                     surElem.outerHeight(newHeight - diff, true);
                     {$onChangeHeightJs}
