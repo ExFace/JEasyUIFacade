@@ -27,6 +27,8 @@ ul.nav_menu li.active a.current {color: white; background: #6caef5}
 	body > .layout-split-west {display: none;}
 }
 
+.exf-hidden {display: none;}
+
 /* Font awsome */
 .fa {padding: 1px;}
 .l-btn-plain .fa {padding: 2px;}
