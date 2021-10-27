@@ -436,6 +436,10 @@ JS;
             $gridClasses = '';
         }
         
+        if ($widget->isHidden()) {
+            $gridClasses .= ' exf-hidden';
+        }
+        
         $style = '';
         
         // Padding

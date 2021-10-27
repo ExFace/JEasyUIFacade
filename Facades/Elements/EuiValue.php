@@ -111,9 +111,19 @@ HTML;
                 $labelStyle .= " max-width: calc(40% - 11px);";
                 $innerStyle .= " width: 60%;";
             }
-            $html = '
-						<label style="' . $labelStyle . '">' . $caption . '</label>
-						<div class="exf-labeled-item" style="' . $innerStyle . '">' . $html . '</div>';
+            if ($this->getWidget()->isHidden()) {
+                $labelClasses = 'exf-hidden';
+                $innerClasses = 'exf-hidden';
+            } else {
+                $labelClasses = '';
+                $innerClasses = '';
+            }
+            $html = <<<HTML
+
+						<label style="{$labelStyle}" class="{$labelClasses}">{$caption}</label>
+						<div class="exf-labeled-item {$innerClasses}" style="{$innerStyle}">{$html}</div>
+
+HTML;
         }
         
         if ($make_grid_item) {
