@@ -50,13 +50,14 @@ fieldset.exface_inputgroup legend {color: #404040;}
 .datagrid-toolbar {border-width: 0;}
 .datagrid-header {border-top-width: 1px}
 .exf-container-filler > .datagrid > .datagrid-wrap {border-top: 0}
-/*.exf-data-widget > .panel > .panel-body-noheader {border-top-width: 0}*/
-.tabs-panels > .panel >.panel-body > .exf-data-widget:first-of-type > .panel > .panel-body-noheader,
-.tabs-panels > .panel >.panel-body > .exf-data-widget:first-of-type > .panel > .panel-header,
-.easyui-dialog > .exf-data-widget:first-of-type > .panel > .panel-body-noheader,
-.easyui-dialog > .exf-data-widget:first-of-type > .panel > .panel-header {border-top-width: 0}
 .exf-data-widget.exf-data-hide-header > .panel > .panel-header {border-bottom-width: 1px;}
 .exf-data-widget.exf-data-hide-header > .panel > .panel-body-noheader {border-top-width: 1px;}
+/*.exf-data-widget > .panel > .panel-body-noheader {border-top-width: 0}*/
+/* Tables inside containers */
+.tabs-panels > .panel > .panel-body > .exf-data-widget:first-of-type > .panel > .panel-body-noheader,
+.tabs-panels > .panel > .panel-body > .exf-data-widget:first-of-type > .panel > .panel-header,
+.easyui-dialog > .exf-data-widget:first-of-type > .panel > .panel-body-noheader,
+.easyui-dialog > .exf-data-widget:first-of-type > .panel > .panel-header {border-top-width: 0}
 
 /* jEasyUI customizing */
 div.panel-body {background-color:#fff;}
@@ -64,6 +65,14 @@ div.panel-body-noheader > .exf-container-filler > .panel > .panel-body-noheader 
 div.panel-header {background-color: #f5f5f5; border-bottom-width: 0;}
 div.panel-header-noborder {border-bottom-width: 1px;}
 div.panel-header-noborder + .panel-filled {margin-top: -4px;}
+ul.tabs.tabs-pill {padding-top: 2px;}
+
+/* Tabs and pills */
+.tabs-header .tabs-pill li .tabs-inner {border-radius: 16px;}
+.tabs-header .tabs-pill li .tabs-inner:hover {background: #ddd; border-color: #dfdfdf}
+/* Prevent double borders in layouts nested in tabs */
+.tabs-panels > .panel > .panel-body > .layout > .layout-panel:first-of-type > .panel-header,
+.tabs-panels > .panel > .panel-body > .layout > .layout-panel:first-of-type > .panel-body-noheader {border-top-width: 0}
 
 .textbox .m-btn.l-btn .m-btn-downarrow, 
 .m-btn.l-btn-plain .m-btn-downarrow {background-image: none; font: normal normal normal 14px/1 FontAwesome}
@@ -74,17 +83,18 @@ div.panel-header-noborder + .panel-filled {margin-top: -4px;}
 /*.textbox:not(.textbox-focused):not(.textbox-disabled) > input {background-color: #f9f9f9;}*/
 
 /* Dialog */
-.exf-dialog-header {background-color: #ebebeb !important;}
+.exf-dialog-with-header .exf-dialog-header {background-color: #ebebeb !important;}
+.exf-dialog-with-header .exf-dialog-header.panel-body {border-top-width: 0; border-left-width: 0; border-right-width: 0;}
+.exf-dialog-with-header.exf-dialog-with-tabs .exf-dialog-header.panel-body {border-bottom-width: 0px;}
+/*.exf-dialog-with-header > .layout > .layout-panel-center > .panel-body > .exf-container-filler {margin-top: 1px}*/
 .window .window-header .panel-with-icon {padding-left: 30px !important;}
 .window .window-header > .panel-icon.fa {font-size: 15px;}
 .window.panel {padding: 0; border: 0}
 .window > .window-body {border-width: 0}
 .window > .window-header {background-color: #ebebeb; border-bottom-color: transparent;}
-.window > .easyui-dialog.panel-header-separated:not(.exf-dialog-with-header) {border-top: 1px solid #dfdfdf !important}
+.window > .easyui-dialog:not(.exf-dialog-with-tabs):not(.exf-dialog-with-header) {border-top: 1px solid #dfdfdf !important}
 .window > .easyui-dialogexf-dialog-header.exf-dialog-with-header .exf-dialog-header {border-bottom: 1px solid #dfdfdf !important}
 .exf-dialog-footer {background-color: #f5f5f5}
-.exf-dialog-header.panel-body {border-top-width: 0; border-left-width: 0; border-right-width: 0;}
-.easyui-dialog .exf-dialog-header.panel-body {border-bottom-width: 0;}
 .window .dialog-button .l-btn:not(.l-btn-plain) {background-color: #6200ee; color: white}
 
 /* TextDiff widget */
@@ -117,6 +127,9 @@ div.panel-header-noborder + .panel-filled {margin-top: -4px;}
 /* JsonEditor */
 .exf-element .jsoneditor {border-color: #dfdfdf; border-bottom-color: #c2c2c2;}
 .exf-element .jsoneditor-menu {background-color: #ccc; border-bottom-color: transparent;}
+
+/* WidgetCarousel */
+.exf-widget-carousel > .tabs-panels {border-width: 0}
 
 /* Menu */
 .exf-menu-wrapper {border: none !important;}
