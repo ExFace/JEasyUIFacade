@@ -89,8 +89,8 @@ HTML;
         if ($widget->hasHeader()) {
             $dialogClass .= ' exf-dialog-with-header';
         }
-        if (! ($widget->isFilledBySingleWidget() && $widget->getFillerWidget() instanceof Tabs)) {
-            $dialogClass .= ' panel-header-separated';
+        if ($widget->isFilledBySingleWidget() && $widget->getFillerWidget() instanceof Tabs) {
+            $dialogClass .= ' exf-dialog-with-tabs';
         }
         
         if (! $this->getWidget()->getHideHelpButton()) {
