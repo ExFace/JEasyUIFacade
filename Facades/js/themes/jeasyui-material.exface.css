@@ -52,7 +52,6 @@ fieldset.exface_inputgroup legend {color: #404040;}
 .exf-container-filler > .datagrid > .datagrid-wrap {border-top: 0}
 .exf-data-widget.exf-data-hide-header > .panel > .panel-header {border-bottom-width: 1px;}
 .exf-data-widget.exf-data-hide-header > .panel > .panel-body-noheader {border-top-width: 1px;}
-/*.exf-data-widget > .panel > .panel-body-noheader {border-top-width: 0}*/
 /* Tables inside containers */
 .tabs-panels > .panel > .panel-body > .exf-data-widget:first-of-type > .panel > .panel-body-noheader,
 .tabs-panels > .panel > .panel-body > .exf-data-widget:first-of-type > .panel > .panel-header,
@@ -70,9 +69,8 @@ ul.tabs.tabs-pill {padding-top: 2px;}
 /* Tabs and pills */
 .tabs-header .tabs-pill li .tabs-inner {border-radius: 16px;}
 .tabs-header .tabs-pill li .tabs-inner:hover {background: #ddd; border-color: #dfdfdf}
-/* Prevent double borders in layouts nested in tabs */
-.tabs-panels > .panel > .panel-body > .layout > .layout-panel:first-of-type > .panel-header,
-.tabs-panels > .panel > .panel-body > .layout > .layout-panel:first-of-type > .panel-body-noheader {border-top-width: 0}
+/* Prevent double top-borders in layouts nested in tabs */
+.tabs-panels > .panel > .panel-body > .layout {margin-top: -1px;}
 
 .textbox .m-btn.l-btn .m-btn-downarrow, 
 .m-btn.l-btn-plain .m-btn-downarrow {background-image: none; font: normal normal normal 14px/1 FontAwesome}
