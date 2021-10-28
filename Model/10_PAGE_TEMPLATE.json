@@ -45,44 +45,125 @@
     "rows": [
         {
             "CREATED_ON": "1970-01-01 01:00:00",
-            "MODIFIED_ON": "2021-08-02 15:25:38",
+            "MODIFIED_ON": "2021-10-14 10:24:25",
             "CREATED_BY_USER": "0x31000000000000000000000000000000",
-            "MODIFIED_BY_USER": "0x31000000000000000000000000000000",
+            "MODIFIED_BY_USER": "0x11e8fe1c902c8ebea23ee4b318306b9a",
             "UID": "0x11ea2033058cb236aa030205857feb80",
             "APP": "0x11e6c930ff1f486693cce4b318306b9a",
             "NAME": "Desktop jEasyUI metro blue",
-            "DESCRIPTION": "Desktop theme based on metro UI with blue colors",
+            "DESCRIPTION": "Desktop template in metro UI style with blue colors",
             "FACADE": "exface\/JEasyUIFacade\/Facades\/JEasyUIFacade.php",
             "FACADE_UXON": {
-                "theme": "metro-blue"
+                "theme_class": "metro",
+                "theme_css": [
+                    "exface\/JEasyUIFacade\/Facades\/js\/themes\/metro-blue\/easyui.css",
+                    "exface\/JEasyUIFacade\/Facades\/js\/themes\/jeasyui.exface.css",
+                    "exface\/JEasyUIFacade\/Facades\/js\/themes\/jeasyui-metro-blue.exface.css"
+                ]
             }
         },
         {
             "CREATED_ON": "2020-05-25 08:26:30",
-            "MODIFIED_ON": "2021-08-02 14:14:41",
+            "MODIFIED_ON": "2021-10-14 10:31:07",
             "CREATED_BY_USER": "0x31000000000000000000000000000000",
-            "MODIFIED_BY_USER": "0x31000000000000000000000000000000",
+            "MODIFIED_BY_USER": "0x11e8fe1c902c8ebea23ee4b318306b9a",
             "UID": "0x11ea9e6167c40095bba0e4b318306b9a",
             "APP": "0x11e6c930ff1f486693cce4b318306b9a",
             "NAME": "Desktop jEasyUI material",
-            "DESCRIPTION": "Desktop facade in material UI style with gray colors",
+            "DESCRIPTION": "Desktop template in material UI style with default (blue) colors",
             "FACADE": "exface\/JEasyUIFacade\/Facades\/JEasyUIFacade.php",
             "FACADE_UXON": {
-                "theme": "material"
+                "theme_class": "material",
+                "theme_css": [
+                    "exface\/JEasyUIFacade\/Facades\/js\/themes\/material\/easyui.css",
+                    "exface\/JEasyUIFacade\/Facades\/js\/themes\/jeasyui.exface.css",
+                    "exface\/JEasyUIFacade\/Facades\/js\/themes\/jeasyui-material.exface.css"
+                ]
             }
         },
         {
             "CREATED_ON": "2020-05-25 08:35:15",
-            "MODIFIED_ON": "2021-08-02 14:11:56",
+            "MODIFIED_ON": "2021-10-14 10:24:13",
             "CREATED_BY_USER": "0x31000000000000000000000000000000",
-            "MODIFIED_BY_USER": "0x31000000000000000000000000000000",
+            "MODIFIED_BY_USER": "0x11e8fe1c902c8ebea23ee4b318306b9a",
             "UID": "0x11ea9e62a01a118cbba0e4b318306b9a",
             "APP": "0x11e6c930ff1f486693cce4b318306b9a",
             "NAME": "Desktop jEasyUI material light",
-            "DESCRIPTION": "Desktop facade in material UI style with light colors",
+            "DESCRIPTION": "Desktop template in material UI style with lighter colors",
             "FACADE": "exface\/JEasyUIFacade\/Facades\/JEasyUIFacade.php",
             "FACADE_UXON": {
-                "theme": "material-light"
+                "theme_class": "material-light",
+                "theme_css": [
+                    "exface\/JEasyUIFacade\/Facades\/js\/themes\/material-light\/easyui.css",
+                    "exface\/JEasyUIFacade\/Facades\/js\/themes\/jeasyui.exface.css",
+                    "exface\/JEasyUIFacade\/Facades\/js\/themes\/jeasyui-material.exface.css",
+                    "exface\/JEasyUIFacade\/Facades\/js\/themes\/jeasyui-material-light.exface.css"
+                ]
+            }
+        },
+        {
+            "CREATED_ON": "2021-10-14 10:23:09",
+            "MODIFIED_ON": "2021-10-14 10:31:44",
+            "CREATED_BY_USER": "0x11e8fe1c902c8ebea23ee4b318306b9a",
+            "MODIFIED_BY_USER": "0x11e8fe1c902c8ebea23ee4b318306b9a",
+            "UID": "0x11ec9402f76f7ee29402025041000001",
+            "APP": "0x11e6c930ff1f486693cce4b318306b9a",
+            "NAME": "Desktop jEasyUI material grey",
+            "DESCRIPTION": "Desktop template in material UI style with gray colors",
+            "FACADE": "exface\/JEasyUIFacade\/Facades\/JEasyUIFacade.php",
+            "FACADE_UXON": {
+                "theme_class": "material",
+                "theme_header_color": "#546E7A",
+                "theme_emphasis_color": "#546E7A",
+                "theme_css": [
+                    "exface\/JEasyUIFacade\/Facades\/js\/themes\/material\/easyui.css",
+                    "exface\/JEasyUIFacade\/Facades\/js\/themes\/jeasyui.exface.css",
+                    "exface\/JEasyUIFacade\/Facades\/js\/themes\/jeasyui-material.exface.css"
+                ]
+            }
+        },
+        {
+            "CREATED_ON": "2021-10-14 10:26:57",
+            "MODIFIED_ON": "2021-10-14 10:26:57",
+            "CREATED_BY_USER": "0x11e8fe1c902c8ebea23ee4b318306b9a",
+            "MODIFIED_BY_USER": "0x11e8fe1c902c8ebea23ee4b318306b9a",
+            "UID": "0x11ec94797ef66fa69479025041000001",
+            "APP": "0x11e6c930ff1f486693cce4b318306b9a",
+            "NAME": "Desktop jEasyUI material purple",
+            "DESCRIPTION": "Desktop template in material UI style with purple colors",
+            "FACADE": "exface\/JEasyUIFacade\/Facades\/JEasyUIFacade.php",
+            "FACADE_UXON": {
+                "theme_class": "material",
+                "theme_header_color": "#6A1B9A",
+                "theme_emphasis_color": "#6A1B9A",
+                "theme_link_color": "#4A148C",
+                "theme_css": [
+                    "exface\/JEasyUIFacade\/Facades\/js\/themes\/material\/easyui.css",
+                    "exface\/JEasyUIFacade\/Facades\/js\/themes\/jeasyui.exface.css",
+                    "exface\/JEasyUIFacade\/Facades\/js\/themes\/jeasyui-material.exface.css"
+                ]
+            }
+        },
+        {
+            "CREATED_ON": "2021-10-14 10:28:09",
+            "MODIFIED_ON": "2021-10-14 10:28:09",
+            "CREATED_BY_USER": "0x11e8fe1c902c8ebea23ee4b318306b9a",
+            "MODIFIED_BY_USER": "0x11e8fe1c902c8ebea23ee4b318306b9a",
+            "UID": "0x11ecb71ba9d7e93eb71b025041000001",
+            "APP": "0x11e6c930ff1f486693cce4b318306b9a",
+            "NAME": "Desktop jEasyUI material red",
+            "DESCRIPTION": "Desktop template in material UI style with red colors",
+            "FACADE": "exface\/JEasyUIFacade\/Facades\/JEasyUIFacade.php",
+            "FACADE_UXON": {
+                "theme_class": "material",
+                "theme_header_color": "#BF360C",
+                "theme_emphasis_color": "#BF360C",
+                "theme_link_color": "#3E2723",
+                "theme_css": [
+                    "exface\/JEasyUIFacade\/Facades\/js\/themes\/material\/easyui.css",
+                    "exface\/JEasyUIFacade\/Facades\/js\/themes\/jeasyui.exface.css",
+                    "exface\/JEasyUIFacade\/Facades\/js\/themes\/jeasyui-material.exface.css"
+                ]
             }
         }
     ],
