@@ -41,6 +41,7 @@ ul.nav_menu a:hover {background-color: #6200ee; color: white}
 
 /* Inputs */
 .exf-input textarea {border-color: #dfdfdf; border-bottom-color: #c2c2c2; height: 100%; width: 100%;}
+.exf-input textarea:focus-visible {outline: none; border-bottom-color: #6200ee}
 fieldset.exface_inputgroup {border-color: #95B8E7;}
 fieldset.exface_inputgroup legend {color: #404040;}
 
