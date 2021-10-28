@@ -54,8 +54,8 @@
         "app": {
             "app_uid": "0x11e6c930ff1f486693cce4b318306b9a",
             "app_alias": "exface.JEasyUIFacade",
-            "model_md5": "c4b4fca1a694bf98963e092dbd234345",
-            "model_timestamp": "2021-08-02 15:25:38"
+            "model_md5": "7d90c980a1117a4db5af353372431043",
+            "model_timestamp": "2021-10-14 10:31:44"
         }
     },
     "autoload": {
