@@ -219,6 +219,7 @@ JS;
         $js = <<<JS
         //console.log('Calculated Height: {$this->getId()}');
         var yCoords = new Array();
+        var yCoordsNext = new Array();
         var parElem;
         var contElem = $('#{$this->getFacade()->getElement($containerWidget)->getId()}');
         var surElem = $('#{$this->getId()}').parent().closest('.{$gridItemCssClass}').first();
@@ -249,11 +250,12 @@ JS;
                 // Skip elements that are not above or below the max'ed element
                 // usage of Math.round() because it can occur that masonry grid somehow overlaps the elements within 1px (happened with a Markdown editor next to a widget group)
                 // this would lead to the new element height not be calculated correctly for at least the first round of calculation
+                yElemCord = elem.offset().top + elem.outerHeight(true);
                 if (Math.round(elem.offset().left + elem.outerWidth(true)) <= Math.round(surElem.offset().left) || Math.round(elem.offset().left) >= Math.round(surElem.offset().left + surElem.outerWidth(true))) {
+                    yCoordsNext.push(yElemCord);
                     return;
                 }
-                yElemCord = elem.offset().top + elem.outerHeight(true);            
-                yCoords.push(yElemCord);
+                yCoords.push(yElemCord);;
             }
         })();
 
@@ -263,11 +265,18 @@ JS;
         $js .= <<<JS
         // get max y-Coord of all visible elements
         yCoords.sort((a,b)=>(b-a));
+        yCoordsNext.sort((a,b)=>(b-a));
         var yMax = yCoords[0];
         
         // get height and top y-Coord of cointainer Widget
-        var contHeight = contElem.height();
+        var contHeight = contElem.height();        
         var yContTop = contElem.offset().top;
+        
+        // if next to the variable height element are elments that cause the container to be scrolled,
+        // calculated the height element by using the difference between container offset and y-cord of the furthest down parallel element
+        if (yCoordsNext[0] != undefined && yCoordsNext[0] - yContTop > contHeight) {
+            contHeight = yCoordsNext[0] - yContTop - 5
+        }
         
         // get current and default height of element with height 'max'
         var elemHeight = surElem.outerHeight(true);
@@ -308,7 +317,7 @@ JS;
         // only change the new height is at least 10px higher than the old height
         // thats necessary because of the fix regarding the container scroll
         // if height gets changed every time its not the same as old height that could lead to an idefinite number of height changes
-        if (heightDiff > 0 && heightDiff < 10) {
+        if (heightDiff > 0 && heightDiff <= 5) {
             return;
         }
       
@@ -337,7 +346,7 @@ JS;
                 var diff = contElem[0].scrollHeight - contHeight;
                 // check if diff is bigger than 0 but smaller than 5 because that means the container scroll most likely
                 // was cause by this element and not by others in the same container
-                if (diff > 0 && diff < 5) {
+                if (diff > 0 && diff <= 5) {
                     surElem.outerHeight(newHeight - diff, true);
                     {$onChangeHeightJs}
                 }
