@@ -8,7 +8,7 @@
 	"FACADE.HEADERS.CONTENT_SECURITY_POLICY.SCRIPT_SRC_ELEM": "'self' 'unsafe-inline' blob:",
 	"FACADE.HEADERS.CONTENT_SECURITY_POLICY.IMG_SRC": "* 'self' 'unsafe-inline' blob: data: filesystem:",
 	"FACADE.HEADERS.CONTENT_SECURITY_POLICY.MEDIA_SRC": "* 'self' 'unsafe-inline' blob: data: filesystem: mediastream:",
-	"FACADE.HEADERS.CONTENT_SECURITY_POLICY.FLAGS": "upgrade-insecure-requests; block-all-mixed-content",
+	"FACADE.HEADERS.CONTENT_SECURITY_POLICY.FLAGS": "block-all-mixed-content",
 	"FACADE.HEADERS.COMMON": {
 		"Access-Control-Allow-Origin": "",
 		"Access-Control-Allow-Credentials": "false",
