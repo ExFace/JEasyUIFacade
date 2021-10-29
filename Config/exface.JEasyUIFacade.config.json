@@ -1,12 +1,34 @@
 {
 	"FACADE.AJAX.BASE_URL": "/api/jeasyui",
 	"FACADE.AJAX.CACHE_SCRIPTS": true,
-	"FACADE.AJAX.ACCESS_CONTROL_HEADERS" : {
+	
+	"FACADE.HEADERS.CONTENT_SECURITY_POLICY.DEFAULT_SRC": "'self' 'unsafe-eval' 'unsafe-inline'",
+	"FACADE.HEADERS.CONTENT_SECURITY_POLICY.CONNECT_SRC": "'self'",
+	"FACADE.HEADERS.CONTENT_SECURITY_POLICY.SCRIPT_SRC": "'self' 'unsafe-eval' 'unsafe-inline'",
+	"FACADE.HEADERS.CONTENT_SECURITY_POLICY.SCRIPT_SRC_ELEM": "'self' 'unsafe-inline' blob:",
+	"FACADE.HEADERS.CONTENT_SECURITY_POLICY.IMG_SRC": "* 'self' 'unsafe-inline' blob: data: filesystem:",
+	"FACADE.HEADERS.CONTENT_SECURITY_POLICY.MEDIA_SRC": "* 'self' 'unsafe-inline' blob: data: filesystem: mediastream:",
+	"FACADE.HEADERS.CONTENT_SECURITY_POLICY.FLAGS": "upgrade-insecure-requests; block-all-mixed-content",
+	"FACADE.HEADERS.COMMON": {
+		"Access-Control-Allow-Origin": "",
+		"Access-Control-Allow-Credentials": "false",
+		"Access-Control-Allow-Methods": "GET",
+		"Access-Control-Allow-Headers": "",
+		"Access-Control-Expose-Headers": "",
+		"X-Frame-Options": "SAMEORIGIN"
+	},
+	"FACADE.HEADERS.HTML": {
+		"Cache-Control": "private, max-age=3600, must-revalidate"
+	},
+	"FACADE.HEADERS.AJAX": {
 		"Access-Control-Allow-Origin": "",
 		"Access-Control-Allow-Credentials": "true",
-		"Access-Control-Allow-Methods": "GET, POST, PUT, PATCH, DELETE",
+		"Access-Control-Allow-Methods": "GET, POST",
 		"Access-Control-Allow-Headers": "",
-		"Access-Control-Expose-Headers": ""
+		"Access-Control-Expose-Headers": "",
+		"Cache-Control": "no-cache, no-store, must-revalidate",
+        "Pragma": "no-cache",
+        "Expires": 0
 	},
 	
 	"FACADE.JAVASCRIPT_DEBUG_LEVEL": 0,
