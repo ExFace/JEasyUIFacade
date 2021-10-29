@@ -153,7 +153,8 @@ div.messager-body{overflow-y: auto;}
 .datagrid-empty {top: 50% !important;}
 
 /* spinner */
-.spinner-bg {position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%);}
+body > .spinner-bg {height: 100vh; width: 100vw;}
+body > .spinner-bg > .panel-loading {position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); height: 34px}
 
 /* Symfony Debugger */
 #sf-resetcontent {padding: 20px 10px 0 10px; width: auto !important; max-width: 970px;} 
