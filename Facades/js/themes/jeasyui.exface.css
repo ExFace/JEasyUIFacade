@@ -7,8 +7,8 @@ body {font-family: Helvetica,Arial,sans-serif;}
 .main-header-content > .logo.hamburger {font-size: 17px; padding-left: 12px;}
 .main-header-content > .logo a {color: inherit; text-decoration: inherit; color: #999;}
 .main-header-content .top-toolbar {float:right; padding: 10px;}
-.main-content {padding: 0 5px 5px 0}
-.main-content.layout-body {border-top: 5px solid transparent; border-top-width: 5px !important; background-color: transparent;}
+.main-content {padding: 0 5px 5px 0;}
+.main-content.layout-body {border-top: 5px solid transparent; border-top-width: 5px !important; background-color: white;}
 body > .layout-panel-west.exf-hidden + .layout-panel-center > .main-content {padding-left: 5px}
 
 ul.nav_menu {list-style: none; font-size: 12px; list-style-position: inside; margin:0; padding: 0; overflow-x: hidden;}
@@ -152,9 +152,8 @@ div.messager-body{overflow-y: auto;}
 .datagrid td .datagrid-cell {text-overflow: inherit;} /* makes the use of text-overflow in cell styler possible */
 .datagrid-empty {top: 50% !important;}
 
-/* spinnter */
-.spinner-bg {height: 100%; text-align: center;}
-.spinner-bg .panel-loading {position: absolute; top: 50%; min-height: 16px;}
+/* spinner */
+.spinner-bg {position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%);}
 
 /* Symfony Debugger */
 #sf-resetcontent {padding: 20px 10px 0 10px; width: auto !important; max-width: 970px;} 
