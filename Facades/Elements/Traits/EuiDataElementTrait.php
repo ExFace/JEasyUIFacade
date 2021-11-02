@@ -27,8 +27,7 @@ trait EuiDataElementTrait
         
         if ($widget->getHideHeader()){
             $this->addOnResizeScript("
-                 var newHeight = $('#{$this->getId()}_wrapper > .panel').height();
-                 $('#{$this->getId()}').height($('#{$this->getId()}').parent().height() - newHeight);
+                 {$this->buildJsResizeInnerWidget()}
             ");
         }
     }
@@ -60,7 +59,7 @@ trait EuiDataElementTrait
         $output = <<<HTML
 
 <div class="exf-grid-item exf-data-widget {$gridItemClass} {$this->getMasonryItemClass()}" style="width:{$this->getWidth()};min-width:{$this->getMinWidth()};height:{$this->getHeight()};padding:{$this->getPadding()};box-sizing:border-box;">
-    <div class="easyui-panel" style="height: auto;" id="{$this->getId()}_wrapper" data-options="fit: true {$panel_options}, onResize: function(){ {$this->getOnResizeScript()} }">
+    <div class="easyui-panel" style="height: auto; overflow-y: hidden;" id="{$this->getId()}_wrapper" data-options="fit: true {$panel_options}, onResize: function(){ {$this->getOnResizeScript()} }">
     	{$header_html}
     	{$contentHtml}
     </div>
@@ -87,12 +86,22 @@ HTML;
                     {$configurator_element->buildJs()}
                     {$this->buildJsButtons()}
 
-                    $('#{$configurator_element->getId()}').find('.grid').on('layoutComplete', function( event, items ) {
+                    $('#{$configurator_element->getIdOfHeaderPanel()}').find('.grid').on('layoutComplete', function( event, items ) {
                         setTimeout(function(){
-                            var newHeight = $('#{$this->getId()}_wrapper > .panel').height();
-                            $('#{$this->getId()}').height($('#{$this->getId()}').parent().height()-newHeight);
+                            {$this->buildJsResizeInnerWidget()}
                         }, 0);               
                     });
+JS;
+    }
+    
+    protected function buildJsResizeInnerWidget(string $elementId = null) : string
+    {
+        $elementId = $elementId ?? $this->getId(); 
+        return <<<JS
+
+                    var newHeight = $('#{$this->getId()}_wrapper').innerHeight();
+                    $('#{$this->getId()}').height(newHeight - $('#{$this->getFacade()->getElement($this->getWidget()->getConfiguratorWidget())->getIdOfHeaderPanel()}').outerHeight());
+
 JS;
     }
                     
