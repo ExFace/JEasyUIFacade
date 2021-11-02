@@ -35,6 +35,7 @@
 			
 			.l-btn:not(.l-btn-plain) {background-color: [#~facade:theme_emphasis_color#]; border-color: [#~facade:theme_emphasis_color#];}
 			.textbox-focused {border-bottom-color: [#~facade:theme_emphasis_color#]}
+			.exf-input textarea:focus-visible {border-bottom-color: [#~facade:theme_emphasis_color#]}
 			.window .dialog-button .l-btn:not(.l-btn-plain),
 			.progressbar-value, .progressbar-value .progressbar-text,
 			ul.nav_menu a:hover {background-color: [#~facade:theme_emphasis_color#]}
@@ -44,14 +45,17 @@
 			.l-btn-plain,
 			.window .dialog-button .l-btn,
 			body a {color: [#~facade:theme_link_color#];}
+			.l-btn-plain:hover,
+			body a:hover {color: [#~facade:theme_emphasis_color#];}
 			ul.nav_menu li.active a.current {color: [#~facade:theme_link_color#];}
+			
 			
 		</style>
 		
 	</head>
 	<body class="easyui-layout theme-[#~facade:theme_class#]">
 	    <!-- Spinner to hide unrendered markup -->
-        <div style="height: 100vh; line-height: 100vh;" class="spinner-bg">
+        <div class="spinner-bg">
             <i class="panel-loading"></i>
             <span class="sr-only">Loading...</span>
         </div>
