@@ -79,4 +79,13 @@ JS;
     {
         return parent::buildCssElementClass() . ' exf-spreadsheet';
     }
+    
+    /**
+     *
+     * @return string
+     */
+    protected function buildJsResize() : string
+    {
+        return $this->buildJsResizeInnerWidget();
+    }
 }
