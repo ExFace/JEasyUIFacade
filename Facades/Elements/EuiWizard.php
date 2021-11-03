@@ -203,7 +203,8 @@ JS;
      */
     public function buildJsDataOptions()
     {
-        return parent::buildJsDataOptions() . ", onSelect: function(title,index){ {$this->buildJsFunctionPrefix()}switchStep(index); }";
+        $this->addOnTabSelectScript("{$this->buildJsFunctionPrefix()}switchStep(index);");
+        return parent::buildJsDataOptions();
     }
     
     /**

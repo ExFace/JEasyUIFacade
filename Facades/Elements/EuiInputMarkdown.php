@@ -63,7 +63,7 @@ HTML;
             $onInitJs = '';
         } else {
             $viewerOptions = '';
-            $onInitJs = "setTimeout(function(){console.log('refreshing');ed.getCodeMirror().refresh();},1000)";
+            $onInitJs = "setTimeout(function(){ed.getCodeMirror().refresh();},1000)";
         }
         
         return <<<JS

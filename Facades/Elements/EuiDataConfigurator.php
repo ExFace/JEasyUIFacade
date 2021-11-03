@@ -119,6 +119,17 @@ HTML;
 JS;
     }
     
+    /**
+     * 
+     * {@inheritDoc}
+     * @see \exface\JEasyUIFacade\Facades\Elements\EuiTabs::buildJsTabsInit()
+     */
+    protected function buildJsTabsInit() : string
+    {
+        // TODO initialize tabs here (or remove the method) once there really is a rendered configurator control
+        return '';
+    }
+    
     public function addButtonToCollapseExpand(ButtonGroup $buttonGroup, int $position = 0, string $onFinishedJs = '')
     {
         $tableEl = $this->getFacade()->getElement($this->getWidget()->getWidgetConfigured());
