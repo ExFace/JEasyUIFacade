@@ -65,7 +65,6 @@ HTML;
             action: 'exface.Core.CreateData'
         }
     }).on('fileuploadsend', function(oEvent, oData) {
-        console.log(oData, oEvent);
         return false;
     }).on('fileuploadadd', function (e, data) {
         data.context = $('<div class="fileupload-wrapper"/>').appendTo('#{$this->getId()}_files');

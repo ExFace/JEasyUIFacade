@@ -16,6 +16,7 @@ use exface\Core\Exceptions\Facades\FacadeOutputError;
 use exface\Core\Exceptions\Facades\FacadeRuntimeError;
 use exface\Core\Exceptions\Widgets\WidgetLogicError;
 use exface\Core\Interfaces\Widgets\iContainOtherWidgets;
+use exface\Core\Widgets\Tab;
 
 /**
  *
@@ -61,6 +62,17 @@ class EuiDataTable extends EuiData
         // If GroupView is used, make the group-by-column hidden. Otherwise the column layout gets broken!
         if ($widget->hasRowGroups() === true) {
             $widget->getRowGrouper()->getGroupByColumn()->setHidden(true);
+        }
+        
+        // WORKAROUND for tables with a header panel getting too high inside a tab when that tab is 
+        // selected for the first time. This can be fixed by resizing the table whenever the tab is
+        // selected. However, the regular buildJsResize() slows down switching tabs as it seems to
+        // get performed synchronously - that is why we wrap it in a setTimeout() here.
+        if ($widget->getConfiguratorWidget()->hasFilters() && $widget->getConfiguratorWidget()->getFilterTab()->countWidgetsVisible() > 0 && ($containerTab = $widget->getParentByClass(Tab::class)) && $containerTab->isFilledBySingleWidget()) {
+            $tabsEl = $this->getFacade()->getElement($containerTab->getParent());
+            if ($tabsEl instanceof EuiTabs) {
+                $tabsEl->addOnTabSelectScript("setTimeout(function(){ $('#{$this->getId()}').datagrid('resize') }, 0);", $containerTab->getTabIndex());
+            }
         }
     }
     
@@ -798,5 +810,18 @@ JS;
     {
         $onChangeHeightJs .= "$('#{$this->getId()}').{$this->getElementType()}('resize');";
         return parent::buildJsEuiSetHeigthMax($containerWidget, $onChangeHeightJs);
+    }
+    
+    /**
+     *
+     * @return string
+     */
+    protected function buildJsResize() : string
+    {
+        // WORKAROUND for tables with filters in header being to high inside a tab (e.g. attributes in meta
+        // object editor) and every time when the header is expanded. For some reason the first resize will 
+        // produce a wrong height while a second async resize will correct it. A single async resize does not 
+        // work either...
+        return "$('#{$this->getId()}').datagrid('resize'); setTimeout(function(){ $('#{$this->getId()}').datagrid('resize'); }, 0);";
     }
 }

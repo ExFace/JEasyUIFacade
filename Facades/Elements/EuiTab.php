@@ -1,18 +1,20 @@
 <?php
 namespace exface\JEasyUIFacade\Facades\Elements;
 
-use exface\Core\Widgets\Tab;
-
 /**
  *
  * @author Andrej Kabachnik
  *        
- * @method Tab getWidget()
+ * @method exface\Core\Widgets\Tab getWidget()
  */
 class EuiTab extends EuiPanel
 {
-
-    function buildHtml()
+    /**
+     * 
+     * {@inheritDoc}
+     * @see \exface\JEasyUIFacade\Facades\Elements\EuiWidgetGrid::buildHtml()
+     */
+    public function buildHtml()
     {
         $widget = $this->getWidget();
         
@@ -46,7 +48,12 @@ HTML;
         return $output;
     }
 
-    function buildJsDataOptions()
+    /**
+     * 
+     * {@inheritDoc}
+     * @see \exface\JEasyUIFacade\Facades\Elements\EuiPanel::buildJsDataOptions()
+     */
+    public function buildJsDataOptions()
     {
         $widget = $this->getWidget();
         
@@ -102,4 +109,3 @@ JS;
         return parent::getNumberOfColumnsByDefault();
     }
 }
-?>
