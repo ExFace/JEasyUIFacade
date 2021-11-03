@@ -33,8 +33,7 @@ class EuiChart extends EuiData
         
         if ($widget->getHideHeader()){
             $this->addOnResizeScript("
-                 var newHeight = $('#{$this->getId()}_wrapper > .panel').height();
-                 $('#{$this->getId()}').height($('#{$this->getId()}').parent().height() - newHeight);
+                 {$this->buildJsResizeInnerWidget()}
             ");
         }
     }
@@ -206,5 +205,15 @@ JS;
     public function buildCssElementClass()
     {
         return 'exf-chart-wrapper exf-element';
+    }
+    
+    /**
+     * 
+     * {@inheritDoc}
+     * @see \exface\JEasyUIFacade\Facades\Elements\EuiData::buildJsResize()
+     */
+    protected function buildJsResize() : string
+    {
+        return $this->buildJsResizeInnerWidget() . $this->buildJsEChartsResize();
     }
 }

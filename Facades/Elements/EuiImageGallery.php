@@ -234,4 +234,14 @@ JS;
     {
         return $this->getWidget()->getUploader();
     }
+    
+    /**
+     * 
+     * {@inheritDoc}
+     * @see \exface\JEasyUIFacade\Facades\Elements\EuiData::buildJsResize()
+     */
+    protected function buildJsResize() : string
+    {
+        return $this->buildJsResizeInnerWidget();
+    }
 }

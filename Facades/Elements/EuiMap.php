@@ -82,8 +82,7 @@ JS;
         return <<<JS
 
                         setTimeout(function() {
-                             var newHeight = $('#{$this->getId()}_wrapper > .panel').height();
-                             $('#{$this->getId()}').height($('#{$this->getId()}').parent().height() - newHeight);
+                             {$this->buildJsResizeInnerWidget()}
                              {$this->buildJsLeafletResize()}
                         },100);
 JS;
