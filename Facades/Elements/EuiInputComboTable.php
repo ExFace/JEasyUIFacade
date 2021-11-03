@@ -1144,7 +1144,7 @@ JS;
     public function buildJsDataGetter(ActionInterface $action = null)
     {
         $widget = $this->getWidget();
-        $dataObj = $widget->hasParent() ? $widget->getParent()->getMetaObject() : $action->getMetaObject();
+        $dataObj = $this->getMetaObjectForDataGetter($action);
         
         // If the object of the action is the same as that of the widget, treat
         // it as a regular input.
@@ -1168,7 +1168,16 @@ JS;
         }
         
         if ($widget->getMultiSelect() === false) {
-            $rows = "[{ {$widget->getDataColumnName()}: {$this->buildJsValueGetter()} }]";
+            $rows = <<<JS
+                            function(){
+                                var mVal = {$this->buildJsValueGetter()};
+                                if (mVal !== undefined && mVal !== null && mVal !== '') {
+                                    return [{ {$widget->getDataColumnName()}: mVal }];
+                                }
+                                return [];
+                            }()
+
+JS;
         } else {
             $delim = str_replace("'", "\\'", $this->getWidget()->getMultiSelectTextDelimiter());
             $rows = <<<JS
