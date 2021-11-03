@@ -630,7 +630,7 @@ JS;
         // This is a strange fix for jEasyUI rendering wrong height in non-ajax
         // data widgets...
         if (! $this->getWidget()->getHideHeader()){
-            $this->addOnLoadSuccess("setTimeout(function(){ $('#" . $this->getId() . "').datagrid('resize'); }, 0);");
+            $this->addOnLoadSuccess("setTimeout(function(){ {$this->buildJsResize()} }, 0);");
         }
         
         return $js;
@@ -759,7 +759,7 @@ HTML;
      */
     protected function buildJsResize() : string
     {
-        return "$('#{$this->getId()}').datagrid('resize')";
+        return "$('#{$this->getId()}').trigger('resize');";
     }
     
     /**

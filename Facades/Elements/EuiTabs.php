@@ -2,7 +2,6 @@
 namespace exface\JEasyUIFacade\Facades\Elements;
 
 use exface\Core\Widgets\Tabs;
-use exface\Core\DataTypes\BooleanDataType;
 use exface\Core\Exceptions\Facades\FacadeRuntimeError;
 
 /**
@@ -18,13 +17,25 @@ class EuiTabs extends EuiContainer
     private $fit_option = true;
 
     private $style_as_pills = false;
+    
+    private $onTabSelectScripts = [];
 
+    /**
+     * 
+     * {@inheritDoc}
+     * @see \exface\Core\Facades\AbstractAjaxFacade\Elements\AbstractJqueryElement::init()
+     */
     protected function init()
     {
         parent::init();
         $this->setElementType('tabs');
     }
 
+    /**
+     * 
+     * {@inheritDoc}
+     * @see \exface\JEasyUIFacade\Facades\Elements\EuiContainer::buildHtml()
+     */
     public function buildHtml()
     {
         $widget = $this->getWidget();
@@ -36,11 +47,36 @@ class EuiTabs extends EuiContainer
                 $style = '';
         }
         $output = <<<HTML
-    <div id="{$this->getId()}" style="{$style}" class="easyui-{$this->getElementType()} {$this->buildCssElementClass()}" data-options="{$this->buildJsDataOptions()}">
+    <div id="{$this->getId()}" style="{$style}" class="{$this->buildCssElementClass()}">
     	{$this->buildHtmlForWidgets()}
     </div>
 HTML;
         return $output;
+    }
+    
+    /**
+     * 
+     * {@inheritDoc}
+     * @see \exface\JEasyUIFacade\Facades\Elements\EuiContainer::buildJs()
+     */
+    public function buildJs()
+    {
+         return $this->buildJsTabsInit() . parent::buildJs();
+    }
+    
+    /**
+     * 
+     * @return string
+     */
+    protected function buildJsTabsInit() : string
+    {
+        return <<<JS
+        
+        $('#{$this->getId()}').{$this->getElementType()}({
+            {$this->buildJsDataOptions()}
+        });
+        
+JS;
     }
 
     /**
@@ -50,15 +86,24 @@ HTML;
     public function buildJsDataOptions()
     {
         $tabPosition = $this->getTabPosition();
-        $fit = ($this->getFitOption() ? ", fit: true" : "");
-        $styleAsPills = ($this->getStyleAsPills() ? ", pill: true" : "");
+        $fit = ($this->getFitOption() ? "fit: true," : "");
+        $styleAsPills = ($this->getStyleAsPills() ? "pill: true," : "");
         $tabPosition = $this->getTabPosition();
-        $plain = ($tabPosition == 'left' || $tabPosition == 'right' ? ', plain: true' : '');
-        $headerWidth = $this->buildJsDataOptionHeaderWidth();
-        $selected = $this->buildJsDataOptionSelected();
+        $plain = ($tabPosition == 'left' || $tabPosition == 'right' ? 'plain: true,' : '');
         $border = $this->getBorderOption() ? 'true' : 'false';
         
-        return "tabPosition: '$tabPosition', border: " . $border . $plain . $fit . $styleAsPills . $headerWidth . $selected;
+        
+        return <<<JS
+            tabPosition: '$tabPosition', 
+            border: $border,
+            $plain
+            $fit
+            $styleAsPills
+            {$this->buildJsDataOptionHeaderWidth()}
+            {$this->buildJsDataOptionSelected()}
+            {$this->buildJsDataOptionOnSelect()}
+
+JS;
     }
     
     protected function buildJsDataOptionSelected() : string
@@ -71,7 +116,7 @@ HTML;
         }
         
         if ($idx > 0) {
-            return ", selected: $idx";
+            return "selected: $idx,";
         }
         return '';
     }
@@ -104,30 +149,52 @@ HTML;
      */
     protected function buildJsDataOptionHeaderWidth() : string
     {
-        return ($this->getWidget()->getHideNavCaptions() ? ', headerWidth: 38' : '');
+        return ($this->getWidget()->getHideNavCaptions() ? 'headerWidth: 38,' : '');
     }
 
+    /**
+     * 
+     * @param bool $value
+     * @return \exface\JEasyUIFacade\Facades\Elements\EuiTabs
+     */
     public function setFitOption(bool $value)
     {
         $this->fit_option = $value;
         return $this;
     }
 
+    /**
+     * 
+     * @return bool
+     */
     protected function getFitOption() : bool
     {
         return $this->fit_option;
     }
     
+    /**
+     * 
+     * @return bool
+     */
     protected function getBorderOption() : bool
     {
         return false;
     }
 
+    /**
+     * 
+     * @return boolean|\exface\JEasyUIFacade\Facades\Elements\bool
+     */
     public function getStyleAsPills()
     {
         return $this->style_as_pills;
     }
 
+    /**
+     * 
+     * @param bool $style_as_pills
+     * @return \exface\JEasyUIFacade\Facades\Elements\EuiTabs
+     */
     public function setStyleAsPills(bool $style_as_pills)
     {
         $this->style_as_pills = $style_as_pills;
@@ -144,6 +211,11 @@ HTML;
         return $this->getFacade()->getConfig()->getOption("WIDGET.TABS.COLUMNS_BY_DEFAULT");
     }
 
+    /**
+     * 
+     * {@inheritDoc}
+     * @see \exface\Core\Facades\AbstractAjaxFacade\Elements\AbstractJqueryElement::addOnResizeScript($js)
+     */
     public function addOnResizeScript($js)
     {
         foreach ($this->getWidget()->getTabs() as $tab) {
@@ -151,5 +223,57 @@ HTML;
         }
         return $this;
     }
+    
+    /**
+     * 
+     * @return string
+     */
+    protected function buildJsDataOptionOnSelect() : string
+    {
+        $js = $this->getOnTabSelectScript();
+        for ($i = 0; $i < $this->getWidget()->countTabs(); $i++) {
+            $script = $this->getOnTabSelectScript($i);
+            if ($script) {
+                $js .= <<<JS
+                if (index === $i) {
+                    $script
+                }
+JS;
+            }
+        }
+        if ($js !== '') {
+            $js = <<<JS
+            onSelect: function(title, index) {
+                $js
+            },
+JS;
+        }
+        return $js;
+    }
+    
+    /**
+     * 
+     * @param int $tabIndex
+     * @return string
+     */
+    protected function getOnTabSelectScript(int $tabIndex = null) : string
+    {
+        $scripts = $this->onTabSelectScripts[($tabIndex ?? -1)];
+        if ($scripts === null) {
+            return '';
+        }
+        return implode("\n\n", array_unique($scripts));
+    }
+    
+    /**
+     * 
+     * @param string $js
+     * @param int $tabIndex
+     * @return EuiTabs
+     */
+    public function addOnTabSelectScript(string $js, int $tabIndex = null) : EuiTabs
+    {
+        $this->onTabSelectScripts[($tabIndex ?? -1)][] = $js;
+        return $this;
+    }
 }
-?>

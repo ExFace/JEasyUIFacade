@@ -44,6 +44,11 @@ ul.nav_menu a:hover {background-color: #6200ee; color: white}
 .exf-input textarea:focus-visible {outline: none; border-bottom-color: #6200ee}
 fieldset.exface_inputgroup {border-color: #95B8E7;}
 fieldset.exface_inputgroup legend {color: #404040;}
+/* Inputs required */
+.textbox-invalid:not(.textbox-focused) {border-bottom-color: #B000209c !important;}
+.textbox-invalid:not(.textbox-focused)::before,
+.exf-input textarea:required::before {content: "*"; color: #B000209c;}
+.exf-input textarea:required {border-bottom-color: #B000209c;}
 
 /* Tables & data widgets */
 .datagrid-wrap.panel-body:not(.panel-body-noheader) {border-top-width: 0}
