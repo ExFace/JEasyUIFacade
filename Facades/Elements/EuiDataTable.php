@@ -238,7 +238,7 @@ JS;
     public function buildJsDataGetter(ActionInterface $action = null)
     {
         $widget = $this->getWidget();
-        $dataObj = $widget->hasParent() ? $widget->getParent()->getMetaObject() : $action->getMetaObject();
+        $dataObj = $this->getMetaObjectForDataGetter($action);
         $rows = '';
         $filters = '';
         

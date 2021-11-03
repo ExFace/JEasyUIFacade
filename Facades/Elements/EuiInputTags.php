@@ -158,7 +158,7 @@ JS;
     public function buildJsDataGetter(ActionInterface $action = null)
     {
         $widget = $this->getWidget();
-        $dataObj = $widget->hasParent() ? $widget->getParent()->getMetaObject() : $action->getMetaObject();
+        $dataObj = $this->getMetaObjectForDataGetter($action);
         // If the object of the action is the same as that of the widget, treat
         // it as a regular input.
         if ($action === null || $this->getMetaObject()->is($dataObj) || $action->getInputMapper($this->getMetaObject()) !== null) {
