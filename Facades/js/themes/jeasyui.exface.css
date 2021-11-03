@@ -198,9 +198,11 @@ pre.sf-dump .sf-dump-private, pre.sf-dump .sf-dump-public, pre.sf-dump .sf-dump-
 /* jExcel */
 .jexcel {border-top: 0 !important; border-left: 0 !important; width: 100% !important; table-layout: auto !important;}
 .jexcel_container {padding-right: 0 !important; overflow-x: auto; width: 100%; height: 100%}
-.jexcel_content {width: 100%}
+.jexcel_content {width: 100%; padding: 0 !important;}
 .jexcel_row, .jexcel_selectall {padding-left: 5px !important; padding-right: 5px !important; max-width: 4em}
 .jexcel>thead.footer>tr>td {background-color: white; font-weight: bold; border-top: 1px solid #666;}
+.jexcel>thead>tr {height: 25px;}
+.jexcel>thead>tr>td {text-align: left !important; padding: 0 4px !important;}
 .jexcel td {overflow: hidden; text-overflow: ellipsis;}
 .jexcel td.highlight-selected > * {min-width: 3em; width: auto;}
 .jexcel td.editor > input {width: 100% !important; text-align: inherit !important;}
