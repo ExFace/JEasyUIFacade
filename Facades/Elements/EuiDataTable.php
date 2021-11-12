@@ -226,11 +226,25 @@ JS;
         
         // TODO need to list values if multi_select is on instead of just returning the value
         // of the first row (becuase getSelection returns the first row in jEasyUI datagrid)
+        
+        // NOTE: there are cases, when the datagrid is only partially initialized, so `.datagrid`
+        // is not undefined, but the row getters still result in errors. This is why the specific
+        // error thrown in this situation is caught and turned into an empty response below.
+        // This happenes for example in tables that are referenced by filters of other tables.
         return <<<JS
 (function(){
     var jqSelf = $('#{$this->getId()}');
+    var aRows = [];
     if (jqSelf.{$this->getElementType()} === undefined) {
         return '';
+    }
+    try {
+        aRows = jqSelf.{$getSelectedRowsDataJs};
+    } catch (e) {
+        if (e.message === "Cannot read properties of undefined (reading 'options')") {
+            return '';
+        }
+        throw e;
     }
     return (jqSelf.{$getSelectedRowsDataJs} || {})['{$column}'] || '';
 })()
