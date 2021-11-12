@@ -21,6 +21,9 @@ use exface\Core\Factories\WidgetFactory;
 use exface\Core\CommonLogic\UxonObject;
 use exface\Core\Exceptions\RuntimeException;
 use exface\Core\Exceptions\InvalidArgumentException;
+use exface\Core\DataTypes\LocaleDataType;
+use exface\Core\DataTypes\FilePathDataType;
+use exface\Core\Exceptions\Facades\FacadeRuntimeError;
 
 class JEasyUIFacade extends AbstractAjaxFacade
 {
@@ -37,6 +40,8 @@ class JEasyUIFacade extends AbstractAjaxFacade
     private $theme_emphasis_color = null;
     
     private $theme_link_color = null;
+    
+    private $supported_languages = ['af','am','ar','bg','ca','cs','cz','da','de','el','en','es','fa','fr','it','jp','ko','nl','pl','pt_BR','ru','sv_SE','tr','ua','zh_CN','zh_TW'];
     
     public function init()
     {
@@ -82,10 +87,30 @@ class JEasyUIFacade extends AbstractAjaxFacade
     public function buildHtmlHeadCommonIncludes() : array
     {
         $includes = $this->buildHtmlHeadThemeIncludes();
+        $translator = $this->getWorkbench()->getCoreApp()->getTranslator();
+        $locale = $translator->getLocale();
+        if (! in_array($locale, $this->supported_languages)) {
+            $locale = LocaleDataType::findLanguage($locale);
+        }
+       
+        $fallbackLocales = $translator->getFallbackLocales();
+        $count = count($fallbackLocales);
+        $i = 0;
+        while (! in_array($locale, $this->supported_languages) && $i <= $count) {
+            $locale = $fallbackLocales[$i];
+            if (! in_array($locale, $this->supported_languages)) {
+                $locale = LocaleDataType::findLanguage($locale);
+            }
+            $i++;
+        }
+        if (! in_array($locale, $this->supported_languages)) {
+            throw new FacadeRuntimeError('Currently choosen user language is not suported by this facade!');
+        }
+        $path = FilePathDataType::findFolderPath($this->buildUrlToSource('LIBS.JEASYUI.LANG_DEFAULT')) . DIRECTORY_SEPARATOR .  'easyui-lang-' . $locale . '.js';
         
         $includes[] = '<script type="text/javascript" src="' . $this->buildUrlToSource('LIBS.JQUERY') . '"></script>';
         $includes[] = '<script type="text/javascript" src="' . $this->buildUrlToSource('LIBS.JEASYUI.CORE') . '"></script>';
-        $includes[] = '<script type="text/javascript" src="' . $this->buildUrlToSource('LIBS.JEASYUI.LANG_DEFAULT') . '"></script>';
+        $includes[] = '<script type="text/javascript" src="' . $path . '"></script>';
         $includes[] = '<script type="text/javascript" src="' . $this->buildUrlToSource('LIBS.JEASYUI.FACADE_ADDONS.JS') . '"></script>';
         $includes[] = '<link href="' . $this->buildUrlToSource('LIBS.FONT_AWESOME') . '" rel="stylesheet" type="text/css" />';
         

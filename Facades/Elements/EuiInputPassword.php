@@ -149,9 +149,9 @@ JS;
     {
         if ($this->getWidget()->getShowSecondInputForConfirmation() === true) {
             $confirmInputElement = $this->getFacade()->getElement($this->getConfirmationInput());
-            return "({$this->buildJsValueGetter()} === {$confirmInputElement->buildJsValueGetter()})";
+            return "({$this->buildJsValueGetter()} === {$confirmInputElement->buildJsValueGetter()} && " . parent::buildJsValidator() . ")";
         }
-        return 'true';
+        return parent::buildJsValidator();
     }
     
 }

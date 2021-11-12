@@ -273,7 +273,7 @@ JS;
         var yContTop = contElem.offset().top;
         
         // if next to the variable height element are elments that cause the container to be scrolled,
-        // calculated the height element by using the difference between container offset and y-cord of the furthest down parallel element
+        // calculated the height of the variable element by using the difference between container offset and y-cord of the furthest down parallel element
         if (yCoordsNext[0] != undefined && yCoordsNext[0] - yContTop > contHeight) {
             contHeight = yCoordsNext[0] - yContTop - 5
         }
