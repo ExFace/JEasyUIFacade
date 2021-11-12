@@ -8,7 +8,7 @@
 	
 	"MESSAGE.ERROR_TITLE": "Error",
 	"MESSAGE.SUCCESS_TITLE": "Success",
-	"MESSAGE.FILL_REQUIRED_ATTRIBUTES": "Please fill in the required fields: ",
+	"MESSAGE.FILL_VALIDATED_ATTRIBUTES": "Please fill in the fields correctly: ",
 	
 	"WIDGET.INPUTPASSWORD.CONFIRM": "Confirm password",
 	

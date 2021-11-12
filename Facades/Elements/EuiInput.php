@@ -60,7 +60,8 @@ class EuiInput extends EuiValue
 						value="' . $this->escapeString($widget->getValueWithDefaults(), false, true) . '" 
 						id="' . $this->getId() . '"  
 						' . ($widget->isRequired() ? 'required="true" ' : '') . '
-						' . ($widget->isDisabled() ? 'disabled="disabled" ' : '') . '
+						' . ($widget->isDisabled() ? 'disabled="disabled" ' : '') . '                        
+                        ' . ($this->isValidationRequired() ? 'validType=" ' . $this->getId() . '"' : '') . '
 						/>
 					';
         return $this->buildHtmlLabelWrapper($output);
@@ -99,8 +100,8 @@ class EuiInput extends EuiValue
             $requiredIfInit = '';
         }
         
-        
-        return <<<JS
+        $js = $this->buildsJsAddValidationType();
+        return $js . <<<JS
 
     // Event scripts for {$this->getId()}
     try {
@@ -116,6 +117,25 @@ class EuiInput extends EuiValue
     });
 
 JS;
+    }
+    
+    protected function buildsJsAddValidationType() : string
+    {
+        $js = '';
+        if ($this->isValidationRequired()) {
+            $js = <<<JS
+    $.extend($.fn.validatebox.defaults.rules, {
+        {$this->getId()}: {
+            validator: function(currentValue) {
+                return {$this->buildJsValidatorViaTrait('currentValue')}
+            },
+            message: {$this->escapeString($this->getValidationErrorText())}
+        }
+    });
+
+JS;
+        }
+        return $js;
     }
     
     protected function buildJsRequiredSetter(bool $required) : string

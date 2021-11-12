@@ -66,24 +66,10 @@ HTML;
     }
 
     function buildJs()
-    {
-        // Validator-Regel fuer InputDates hinzufuegen. Jetzt fuer jedes Widget einmal.
-        // Einmal wuerde eigentlich reichen, geht aber in facade.js nicht, weil die
-        // message uebersetzt werden muss.
+    {        
         $output = <<<JS
 
-$(function() {
-
-    // Validator-Regel fuer InputDates hinzufuegen.
-    $.extend($.fn.validatebox.defaults.rules, {
-        date: {
-            validator: function(value, param) {
-                return $(param[0]).data("_isValid");
-            },
-            message: "{$this->translate("MESSAGE.INVALID.INPUTDATE")}"
-        }
-    });
-    
+$(function() {    
     $("#{$this->getId()}")
     .data("_internalValue", "{$this->getWidget()->getValueWithDefaults()}")
     .{$this->getElementType()}({
@@ -97,6 +83,28 @@ $(function() {
 JS;
         
         return $output;
+    }
+    
+    /**
+     * 
+     * {@inheritDoc}
+     * @see \exface\JEasyUIFacade\Facades\Elements\EuiInput::buildsJsAddValidationType()
+     */
+    protected function buildsJsAddValidationType() : string
+    {
+        // Validator-Regel fuer InputDates hinzufuegen. Jetzt fuer jedes Widget einmal.
+        // Einmal wuerde eigentlich reichen, geht aber in facade.js nicht, weil die
+        // message uebersetzt werden muss.
+        return <<<JS
+        $.extend($.fn.validatebox.defaults.rules, {
+            date: {
+                validator: function(value, param) {
+                    return $(param[0]).data("_isValid");
+                },
+                message: "{$this->translate("MESSAGE.INVALID.INPUTDATE")}"
+            }
+        });
+JS;
     }
 
     protected function buildJsDataOptions()
