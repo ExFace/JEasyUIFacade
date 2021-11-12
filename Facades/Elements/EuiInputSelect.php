@@ -164,5 +164,31 @@ JS;
         }
         return '';
     }
+    
+    /**
+     *
+     * {@inheritDoc}
+     * @see \exface\JEasyUIFacade\Facades\Elements\EuiInput::buildJsValidator()
+     */
+    public function buildJsValidator()
+    {
+        // The regular validator (calling `.combobox('isValid')`) throws an exception if called
+        // too early - e.g. when checking required filters in a pages root data widget. It seems
+        // the combogrid is not yet fully initialized although .combogrid is not undefined already.
+        // The solution is to catch the particular error and to fall back to the generic JS validation
+        // in this case.
+        $regularValidatorJs = parent::buildJsValidator();
+        return <<<JS
+function(){
+                        try {
+                            return {$regularValidatorJs}
+                        } catch (e) {
+                            if (e.message === "Cannot read properties of undefined (reading 'textbox')") {
+                                return {$this->buildJsValidatorViaTrait()};
+                            }
+                            throw e;
+                        }
+                    }()
+JS;
+    }
 }
-?>
