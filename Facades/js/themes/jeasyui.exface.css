@@ -66,7 +66,8 @@ ul.nav_menu li.active a.current {color: white; background: #6caef5}
 .numberbox input {text-align: right;}
 fieldset.exface_inputgroup {border-color: #95B8E7; border-width: 1px 0 0 0; padding: 10px 0; margin: 15px 0 0 0;}
 fieldset.exface_inputgroup legend {color: #404040; font-weight: bold; padding: 0 6px; margin: 0 10px;}
-.exf-inputPassword>div {padding: 0 0 4px 0}
+.exf-inputPassword > div {text-align: right;}
+.exf-inputPassword > div + div {padding: 8px 0 0 0; }
 .exf-control.promoted label {font-weight: bold;}
 
 /* Widget groups */

@@ -3,6 +3,7 @@ namespace exface\JEasyUIFacade\Facades\Elements;
 
 use exface\Core\Widgets\Tabs;
 use exface\Core\Exceptions\Facades\FacadeRuntimeError;
+use exface\Core\Widgets\Tab;
 
 /**
  *
@@ -231,11 +232,11 @@ JS;
     protected function buildJsDataOptionOnSelect() : string
     {
         $js = $this->getOnTabSelectScript();
-        for ($i = 0; $i < $this->getWidget()->countTabs(); $i++) {
-            $script = $this->getOnTabSelectScript($i);
+        foreach ($this->getWidget()->getTabs() as $i => $tab) {
+            $script = $this->getOnTabSelectScript($tab);
             if ($script) {
                 $js .= <<<JS
-                if (index === $i) {
+                if (index === {$i}) {
                     $script
                 }
 JS;
@@ -256,9 +257,9 @@ JS;
      * @param int $tabIndex
      * @return string
      */
-    protected function getOnTabSelectScript(int $tabIndex = null) : string
+    protected function getOnTabSelectScript(Tab $tab = null) : string
     {
-        $scripts = $this->onTabSelectScripts[($tabIndex ?? -1)];
+        $scripts = $this->onTabSelectScripts[($tab ? $tab->getId() : -1)];
         if ($scripts === null) {
             return '';
         }
@@ -271,9 +272,9 @@ JS;
      * @param int $tabIndex
      * @return EuiTabs
      */
-    public function addOnTabSelectScript(string $js, int $tabIndex = null) : EuiTabs
+    public function addOnTabSelectScript(string $js, Tab $tab = null) : EuiTabs
     {
-        $this->onTabSelectScripts[($tabIndex ?? -1)][] = $js;
+        $this->onTabSelectScripts[($tab ? $tab->getId() : -1)][] = $js;
         return $this;
     }
 }
