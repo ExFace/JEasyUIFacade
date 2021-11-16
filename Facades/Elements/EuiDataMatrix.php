@@ -83,15 +83,7 @@ var formatters = $formattersJs;
 // data_column_name => styler_callback returning CSS styles
 var stylers = $stylersJs;
 
-// substitute empty values that will be column labels with '(null)' because EasyUI does not support
-// empty values as column labels
-for (var i=0; i < rows.length; i++) {
-    Object.keys(labelCols).forEach(function(key,index) {
-        if (rows[i][key] == undefined || rows[i][key] == '' || rows[i][key] == null) {
-            rows[i][key] = '(null)';
-        }
-    });
-}
+
 if (! cols) {
     cols = $(this).datagrid('options').columns;
     if (freezeCols > 0) {
