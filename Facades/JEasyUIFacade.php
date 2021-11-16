@@ -188,9 +188,10 @@ $.ajaxPrefilter(function( options ) {
                 $headTags = implode("\n", $this->buildHtmlHeadCommonIncludes());
                 $action = '';
                 if ($exception instanceof ExceptionInterface) {
-                    $title = $exception->getMessageType($this->getWorkbench()) . ' ' . $exception->getAlias();
-                    $message = $exception->getMessageTitle($this->getWorkbench());
-                    $details = $exception->getMessage();
+                    $msg = $exception->getMessageModel($this->getWorkbench());
+                    $title = ucfirst(strtolower($msg->getType())) . ' ' . $exception->getAlias();
+                    $message = $msg->getTitle();
+                    $details = $exception->getMessage();                    
                     if ($exception instanceof AccessDeniedError) {
                         $page = $page ?? UiPageFactory::createEmpty($this->getWorkbench());
                         $logoutBtn = WidgetFactory::createFromUxon($page, new UxonObject([
