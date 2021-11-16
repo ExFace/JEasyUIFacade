@@ -71,7 +71,7 @@ class EuiDataTable extends EuiData
         if ($widget->getConfiguratorWidget()->hasFilters() && $widget->getConfiguratorWidget()->getFilterTab()->countWidgetsVisible() > 0 && ($containerTab = $widget->getParentByClass(Tab::class)) && $containerTab->isFilledBySingleWidget()) {
             $tabsEl = $this->getFacade()->getElement($containerTab->getParent());
             if ($tabsEl instanceof EuiTabs) {
-                $tabsEl->addOnTabSelectScript("setTimeout(function(){ $('#{$this->getId()}').datagrid('resize') }, 0);", $containerTab->getTabIndex());
+                $tabsEl->addOnTabSelectScript("setTimeout(function(){ $('#{$this->getId()}').datagrid('resize') }, 0);", $containerTab);
             }
         }
     }
