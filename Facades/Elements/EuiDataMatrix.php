@@ -2,11 +2,10 @@
 namespace exface\JEasyUIFacade\Facades\Elements;
 
 use exface\Core\Widgets\DataColumnTransposed;
-use exface\Core\Widgets\DataMatrix;
 
 /**
  *
- * @method DataMatrix getWidget()
+ * @method exface\Core\Widgets\DataMatrix getWidget()
  *        
  * @author aka
  *        
@@ -20,11 +19,21 @@ class EuiDataMatrix extends EuiDataTable
     {
         parent::init();
         $this->setElementType('datagrid');
-        $this->buildJsTransposer();
         $this->addOnLoadSuccess($this->buildJsCellMerger());
+        // Transpose every time data is loaded (using the loadFilter of the datagrid)
+        // WORKAROUND for the pager being reinitialized every time for some reason - 
+        // just adding the pager buttons back here again
+        $this->addLoadFilterScript(
+            $this->buildJsTransposeColumns(
+                $this->buildJsPagerButtons()
+            )
+        );
     }
 
-    protected function buildJsTransposer()
+    /**
+     * @return string
+     */
+    protected function buildJsTransposeColumns(string $onTransposedJs = '') : string
     {
         $visible_cols = array();
         $data_cols = array();
@@ -263,13 +272,15 @@ if (data.transposed === 0){
 	data.rows = newRows;
 	data.transposed = 1;
 	$(this).datagrid({frozenColumns: colsNewFrozen, columns: colsNew});
+
+    {$onTransposedJs}
 }
 
 
 return data;
 
 JS;
-        $this->addLoadFilterScript($transpose_js);
+        return $transpose_js;
     }
 
     protected function buildJsCellMerger()

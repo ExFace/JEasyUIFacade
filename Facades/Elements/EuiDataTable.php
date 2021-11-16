@@ -746,21 +746,23 @@ JS;
         if (! $widget->getHideHelpButton()) {
             $output .= $this->getFacade()->buildJs($widget->getHelpButton());
             $bottom_buttons[] = '{
-						iconCls:  "fa fa-question-circle-o",
-						title: "' . $this->translate('HELP') . '",
-						handler: ' . $this->getFacade()->getElement($widget->getHelpButton())->buildJsClickFunctionName() . '
-					}';
+    						iconCls:  "fa fa-question-circle-o",
+    						title: "' . $this->translate('HELP') . '",
+    						handler: ' . $this->getFacade()->getElement($widget->getHelpButton())->buildJsClickFunctionName() . '
+    					}';
         }
         
         if (! empty($bottom_buttons)) {
             $output .= '
-                
-							var pager = $("#' . $this->getId() . '").' . $this->getElementType() . '("getPager");
-	            			pager.pagination({
-								buttons: [' . implode(', ', $bottom_buttons) . ']
-							});
-								    
-					';
+
+		var pager = $("#' . $this->getId() . '").' . $this->getElementType() . '("getPager");console.log(pager);
+		pager.pagination({
+			buttons: [
+                ' . implode(', ', $bottom_buttons) . '
+            ]
+		});
+	    
+';
         }
         
         return $output;
