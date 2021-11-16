@@ -65,7 +65,7 @@ class EuiDataMatrix extends EuiDataTable
         $stylersJs = '{' . $stylersJs . '}';
         
         $transpose_js = <<<JS
-
+        
 $("#{$this->getId()}").data("_skipNextLoad", true);
 
 var dataCols = [ {$data_cols} ];
@@ -82,6 +82,7 @@ var colsTranspCount = 0;
 var formatters = $formattersJs;
 // data_column_name => styler_callback returning CSS styles
 var stylers = $stylersJs;
+
 
 if (! cols) {
     cols = $(this).datagrid('options').columns;
@@ -115,7 +116,7 @@ for (var i=0; i<cols.length; i++){
     				hidden: true
                 }
 				newColRow.push(newCol);
-
+				
 				var newCol = $.extend(true, {}, cols[i][j], {
                     field: fld+'_subtitle',
     				title: '',
@@ -134,8 +135,13 @@ for (var i=0; i<cols.length; i++){
 				}
 			}
 			for (var l=0; l<labels.length; l++){
+				let label = labels[l];
+					if (typeof label !== 'string') {
+						label = String(label);
+					}
+					label = label.replaceAll('-', '_').replaceAll(':', '_');
 				var newCol = $.extend(true, {}, cols[i][j], {
-                    field: labels[l].replaceAll('-', '_').replaceAll(':', '_'),
+                    field: label,
     				title: '<span title="'+$(cols[i][j].title).text()+' '+labels[l]+'">'+(formatters[fld] ? formatters[fld](labels[l]) : labels[l])+'</title>',
     				_transposedFields: labelCols[fld],
     				// No header sorting (not clear, what to sort!)
@@ -176,7 +182,7 @@ for (var i=0; i<cols.length; i++){
 			}
 		}
 	}
-    
+	
     if (freezeCols > 0) {
         colsNewFrozen.push([]);
         for (var i = 0; i < newColRow.length; i++) {
@@ -201,18 +207,22 @@ if (data.transposed === 0){
 		for (var fld in rows[i]){
 			var val = rows[i][fld];
 			if (labelCols[fld] != undefined){
-				newColId = val.replaceAll('-', '_').replaceAll(':', '_');
+				if (typeof val !== 'string') {
+					val = String(val);
+				}
+				val = val.replaceAll('-', '_').replaceAll(':', '_');
+				newColId = val;
 				newColGroup = fld;
 			} else if (dataCols.indexOf(fld) > -1){
-				newColVals[fld] = val; 
+				newColVals[fld] = val;
 			} else if (visibleCols.indexOf(fld) > -1) {
 				newRowId += val;
 				newRow[fld] = val;
 			}
-
-			// TODO save UID and other system attributes to some invisible data structure 
+			
+			// TODO save UID and other system attributes to some invisible data structure
 		}
-
+		
 		var subRowCounter = 0;
 		for (var fld in newColVals){
 			if (newRowsObj[newRowId+fld] == undefined){
@@ -230,16 +240,16 @@ if (data.transposed === 0){
 				oldVal = oldVal ? oldVal : 0;
 				switch (dataColsTotals[fld]){
 					case 'SUM':
-						newRowsObj[newRowId+fld][newColGroup+'_'+dataColsTotals[fld]] = oldVal + newVal; 
+						newRowsObj[newRowId+fld][newColGroup+'_'+dataColsTotals[fld]] = oldVal + newVal;
 						break;
 					case 'MAX':
-						newRowsObj[newRowId+fld][newColGroup+'_'+dataColsTotals[fld]] = oldVal < newVal ? newVal : oldVal; 
+						newRowsObj[newRowId+fld][newColGroup+'_'+dataColsTotals[fld]] = oldVal < newVal ? newVal : oldVal;
 						break;
 					case 'MIN':
-						newRowsObj[newRowId+fld][newColGroup+'_'+dataColsTotals[fld]] = oldVal > newVal ? newVal : oldVal; 
+						newRowsObj[newRowId+fld][newColGroup+'_'+dataColsTotals[fld]] = oldVal > newVal ? newVal : oldVal;
 						break;
 					case 'COUNT':
-						newRowsObj[newRowId+fld][newColGroup+'_'+dataColsTotals[fld]] = oldVal + 1; 
+						newRowsObj[newRowId+fld][newColGroup+'_'+dataColsTotals[fld]] = oldVal + 1;
 						break;
 					// TODO add more totals
 				}
@@ -249,15 +259,15 @@ if (data.transposed === 0){
 	for (var i in newRowsObj){
 		newRows.push(newRowsObj[i]);
 	}
-
+	
 	data.rows = newRows;
 	data.transposed = 1;
 	$(this).datagrid({frozenColumns: colsNewFrozen, columns: colsNew});
 }
-	
+
 
 return data;
-				
+
 JS;
         $this->addLoadFilterScript($transpose_js);
     }
