@@ -32,10 +32,11 @@ class EuiInputSelect extends EuiInput
     {
         $widget = $this->getWidget();
         $options = '';
-        $selected_cnt = count($this->getWidget()->getValues());
+        $selected_vals = $this->getWidget()->getValues();
+        $selected_cnt = count($selected_vals);
         foreach ($widget->getSelectableOptions() as $value => $text) {
             if ($this->getWidget()->getMultiSelect() && $selected_cnt > 1 && $value !== '' && ! is_null($value)) {
-                $selected = in_array($value, $this->getWidget()->getValues());
+                $selected = in_array($value, $selected_vals);
             } else {
                 $selected = strcasecmp($this->getWidget()->getValueWithDefaults(), $value) == 0 ? true : false;
             }
@@ -159,8 +160,9 @@ JS;
      */
     protected function buildJsOptionValue() : string
     {
-        if ($this->getWidget()->getMultiSelect() && count($this->getWidget()->getValues()) > 1) {
-            return ", value:['" . implode("'" . $this->getWidget()->getMultiSelectValueDelimiter() . "'", $this->getWidget()->getValues()) . "']";
+        $vals = $this->getWidget()->getValues();
+        if ($this->getWidget()->getMultiSelect() && count($vals) > 1) {
+            return ", value:['" . implode("'" . $this->getWidget()->getMultiSelectValueDelimiter() . "'", $vals) . "']";
         }
         return '';
     }
