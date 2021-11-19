@@ -60,8 +60,7 @@ class EuiInput extends EuiValue
 						value="' . $this->escapeString($widget->getValueWithDefaults(), false, true) . '" 
 						id="' . $this->getId() . '"  
 						' . ($widget->isRequired() ? 'required="true" ' : '') . '
-						' . ($widget->isDisabled() ? 'disabled="disabled" ' : '') . '                        
-                        ' . ($this->isValidationRequired() ? 'validType=" ' . $this->getId() . '"' : '') . '
+						' . ($widget->isDisabled() ? 'disabled="disabled" ' : '') . ' 
 						/>
 					';
         return $this->buildHtmlLabelWrapper($output);
@@ -125,9 +124,9 @@ JS;
         if ($this->isValidationRequired()) {
             $js = <<<JS
     $.extend($.fn.validatebox.defaults.rules, {
-        {$this->getId()}: {
+        {$this->getValidationRuleName()}: {
             validator: function(currentValue) {
-                return {$this->buildJsValidatorViaTrait('currentValue')}
+                return {$this->buildJsValidatorViaTrait('currentValue')};
             },
             message: {$this->escapeString($this->getValidationErrorText())}
         }
@@ -163,6 +162,10 @@ JS;
         
         if ($this->getOnChangeScript()) {
             $options .= "\n" . 'onChange: function(newValue, oldValue) {$(this).trigger("change");}';
+        }
+        
+        if ($this->isValidationRequired()) {
+            $options .= ($options ? ',' : '') . "\n validType: '{$this->getValidationRuleName()}'";
         }
         
         return $options;
@@ -262,5 +265,19 @@ JS;
     {
         return parent::buildCssElementClass() . ' exf-input';
     }
+    
+    /**
+     * 
+     * @return string
+     */
+    protected function getValidationRuleName() : string
+    {
+        // For some reason validation rule names cannot contain numbers. This leads to very strange
+        // side-effects. So we just replace numbers with letters here.
+        return str_replace(
+            ['0', '1', '2', '3', '4', '5', '6', '7', '8', '9'], 
+            ['A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'J'], 
+            $this->getId()
+        );
+    }
 }
-?>
