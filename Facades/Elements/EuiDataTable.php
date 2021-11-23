@@ -755,7 +755,7 @@ JS;
         if (! empty($bottom_buttons)) {
             $output .= '
 
-		var pager = $("#' . $this->getId() . '").' . $this->getElementType() . '("getPager");console.log(pager);
+		var pager = $("#' . $this->getId() . '").' . $this->getElementType() . '("getPager");
 		pager.pagination({
 			buttons: [
                 ' . implode(', ', $bottom_buttons) . '
