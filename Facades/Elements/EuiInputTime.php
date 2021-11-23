@@ -76,7 +76,7 @@ JS;
     {
         $widget = $this->getWidget();
         $output = parent::buildJsDataOptions();
-        $output = ($output ? ',' : '') . $output;
+        $output = $output . ($output ? ',' : '');
              
         $output .= "showSeconds: " . ($widget->getShowSeconds() ? 'true' : 'false')
                 . ", increment: " . ($widget->getStepMinutes() < 60 ? $widget->getStepMinutes() : $widget->getStepMinutes() / 60)
