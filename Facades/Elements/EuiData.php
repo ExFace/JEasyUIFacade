@@ -7,15 +7,12 @@ use exface\Core\Exceptions\Configuration\ConfigOptionNotFoundError;
 use exface\Core\Facades\AbstractAjaxFacade\Elements\JqueryToolbarsTrait;
 use exface\Core\Widgets\MenuButton;
 use exface\Core\Widgets\Button;
-use exface\Core\Widgets\Tabs;
 use exface\Core\Interfaces\Widgets\iHaveContextMenu;
 use exface\Core\Facades\AbstractAjaxFacade\Elements\JqueryAlignmentTrait;
 use exface\Core\Widgets\ButtonGroup;
 use exface\Core\DataTypes\SortingDirectionsDataType;
 use exface\Core\Interfaces\DataSheets\DataSheetInterface;
-use exface\Core\Factories\DataColumnFactory;
 use exface\Core\Widgets\DataColumn;
-use exface\Core\Interfaces\DataTypes\EnumDataTypeInterface;
 use exface\Core\DataTypes\NumberDataType;
 use exface\Core\DataTypes\TextStylesDataType;
 use exface\Core\DataTypes\DateDataType;
@@ -27,7 +24,6 @@ use exface\Core\Interfaces\Widgets\iSupportMultiSelect;
 use exface\Core\Widgets\DataToolbar;
 use exface\Core\Widgets\DataTable;
 use exface\Core\Widgets\InputComboTable;
-use exface\Core\Exceptions\Facades\FacadeRuntimeError;
 
 /**
  * Implementation of a basic grid.
@@ -322,8 +318,9 @@ JS;
      */
     protected function buildJsRowCompare(string $leftRowJs, string $rightRowJs, bool $trustUid = true) : string
     {
-        if ($trustUid === true && $this->getWidget()->hasUidColumn()) {
-            $uid = $this->getWidget()->getUidColumn()->getDataColumnName();
+        $widget = $this->getWidget();
+        if ($trustUid === true && $widget->hasUidColumn() && ! $widget->hasAggregations() && ! $widget->hasAggregateAll()) {
+            $uid = $widget->getUidColumn()->getDataColumnName();
             return "{$leftRowJs}['{$uid}'] == {$rightRowJs}['{$uid}']";
         } else {
             return "(JSON.stringify({$leftRowJs}) == JSON.stringify({$rightRowJs}))";

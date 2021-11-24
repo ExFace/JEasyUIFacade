@@ -22,14 +22,19 @@ class EuiDataMatrix extends EuiDataTable
         parent::init();
         $this->setElementType('datagrid');
         $this->addOnLoadSuccess($this->buildJsCellMerger());
+    }
+    
+    /**
+     * 
+     * {@inheritDoc}
+     * @see \exface\JEasyUIFacade\Facades\Elements\EuiData::getLoadFilterScript()
+     */
+    protected function getLoadFilterScript(string $dataJs) : ?string
+    {
         // Transpose every time data is loaded (using the loadFilter of the datagrid)
-        // WORKAROUND for the pager being reinitialized every time for some reason - 
+        // WORKAROUND for the pager being reinitialized every time for some reason -
         // just adding the pager buttons back here again
-        $this->addLoadFilterScript(
-            $this->buildJsTransposeColumns(
-                $this->buildJsInitPager()
-            )
-        );
+        return parent::getLoadFilterScript($dataJs) . $this->buildJsTransposeColumns($this->buildJsInitPager());
     }
 
     /**

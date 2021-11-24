@@ -1,19 +1,13 @@
 <?php
 namespace exface\JEasyUIFacade\Facades\Elements;
 
-use exface\Core\Widgets\DataTable;
 use exface\Core\Interfaces\Actions\ActionInterface;
 use exface\Core\Facades\AbstractAjaxFacade\Elements\JqueryDataTableTrait;
 use exface\Core\Interfaces\Actions\iReadData;
 use exface\Core\Widgets\DataColumn;
 use exface\Core\Widgets\MenuButton;
-use exface\Core\Factories\WidgetFactory;
-use exface\Core\CommonLogic\Constants\Icons;
-use exface\Core\CommonLogic\UxonObject;
-use exface\Core\Exceptions\Facades\FacadeLogicError;
 use exface\Core\Widgets\DataButton;
 use exface\Core\Exceptions\Facades\FacadeOutputError;
-use exface\Core\Exceptions\Facades\FacadeRuntimeError;
 use exface\Core\Exceptions\Widgets\WidgetLogicError;
 use exface\Core\Interfaces\Widgets\iContainOtherWidgets;
 use exface\Core\Widgets\Tab;
@@ -22,7 +16,7 @@ use exface\Core\Widgets\Tab;
  *
  * @author Andrej Kabachnik
  *        
- * @method DataTable getWidget()
+ * @method exface\Core\Widgets\DataTable getWidget()
  *        
  */
 class EuiDataTable extends EuiData
