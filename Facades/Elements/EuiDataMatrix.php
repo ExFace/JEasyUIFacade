@@ -2,6 +2,8 @@
 namespace exface\JEasyUIFacade\Facades\Elements;
 
 use exface\Core\Widgets\DataColumnTransposed;
+use exface\Core\DataTypes\AggregatorFunctionsDataType;
+use exface\Core\Factories\DataTypeFactory;
 
 /**
  *
@@ -37,7 +39,7 @@ class EuiDataMatrix extends EuiDataTable
     {
         $visible_cols = array();
         $data_cols = array();
-        $data_cols_totlas = array();
+        $data_cols_totals = array();
         $label_cols = array();
         $formatters = [];
         $stylers = [];
@@ -47,7 +49,7 @@ class EuiDataMatrix extends EuiDataTable
                 $data_cols[] = $col->getDataColumnName();
                 $label_cols[$col->getLabelAttributeAlias()][] = $col->getDataColumnName();
                 if ($col->hasFooter() === true && $col->getFooter()->hasAggregator() === true) {
-                    $data_cols_totlas[$col->getDataColumnName()] = $col->getFooter()->getAggregator()->exportString();
+                    $data_cols_totals[$col->getDataColumnName()] = $col->getFooter()->getAggregator()->exportString();
                 }
                 $cellElem = $this->getFacade()->getElement($col->getCellWidget());
                 $formatters[$col->getDataColumnName()] = 'function(value){return ' . $cellElem->buildJsValueDecorator('value') . '}'; 
@@ -61,7 +63,9 @@ class EuiDataMatrix extends EuiDataTable
         $visible_cols = "'" . implode("','", $visible_cols) . "'";
         $data_cols = "'" . implode("','", $data_cols) . "'";
         $label_cols = json_encode($label_cols);
-        $data_cols_totlas = json_encode($data_cols_totlas);
+        $data_cols_totals = json_encode($data_cols_totals);
+        $aggr_function_type = DataTypeFactory::createFromPrototype($this->getWorkbench(), AggregatorFunctionsDataType::class);
+        $aggr_names = json_encode($aggr_function_type->getLabels());
         
         foreach ($formatters as $fld => $fmt) {
             $formattersJs .= '"' . $fld . '": ' . $fmt . ',';
@@ -78,7 +82,8 @@ class EuiDataMatrix extends EuiDataTable
 $("#{$this->getId()}").data("_skipNextLoad", true);
 
 var dataCols = [ {$data_cols} ];
-var dataColsTotals = {$data_cols_totlas};
+var dataColsTotals = {$data_cols_totals};
+var totalsLabels = $aggr_names;
 var labelCols = {$label_cols};
 var freezeCols = {$widget->getFreezeColumns()};
 var rows = data.rows;
@@ -161,20 +166,20 @@ for (var i=0; i<cols.length; i++){
 				newColRow.push(newCol);
 			}
 			// Create a totals column if there are totals
+            // The footer of the totals column will contain the overall total provided by the server
 			if (dataColsTotals !== {}){
 				var totals = [];
-				for (var t in dataColsTotals){
-					var tfunc = dataColsTotals[t];
+				for (var tfld in dataColsTotals){
+					var tfunc = dataColsTotals[tfld];
 					if (totals.indexOf(tfunc) == -1){
 						var newCol = $.extend(true, {}, cols[i][j]);
 						newCol.field = fld+'_'+tfunc;
-						newCol.title = tfunc;
+						newCol.title = totalsLabels[tfunc];
 						newCol.align = 'right';
-						if (dataCols.length > 1){
-							newCol.sortable = false;
-						}
+						newCol.sortable = false;
 						newColRow.push(newCol);
 						totals.push(tfunc);
+                        data.footer[0][newCol.field] = data.footer[0][tfld];
 					}
 				}
 			}
@@ -208,6 +213,7 @@ if (data.transposed === 0){
 	var newRows = [];
 	var newRowsObj = {};
 	var visibleCols = [ {$visible_cols} ];
+    var oFooterRows = {};
 	for (var i=0; i<rows.length; i++){
 		var newRowId = '';
 		var newRow = {};
@@ -246,19 +252,32 @@ if (data.transposed === 0){
 			if (dataColsTotals[fld] != undefined){
 				var newVal = parseFloat(newColVals[fld]);
 				var oldVal = newRowsObj[newRowId+fld][newColGroup+'_'+dataColsTotals[fld]];
+                var oldTotal = (data.footer[0][newColId] || 0);
 				oldVal = oldVal ? oldVal : 0;
 				switch (dataColsTotals[fld]){
 					case 'SUM':
 						newRowsObj[newRowId+fld][newColGroup+'_'+dataColsTotals[fld]] = oldVal + newVal;
+                        if (dataCols.length === 1){
+                            data.footer[0][newColId] = oldTotal + newVal;
+                        }
 						break;
 					case 'MAX':
 						newRowsObj[newRowId+fld][newColGroup+'_'+dataColsTotals[fld]] = oldVal < newVal ? newVal : oldVal;
+                        if (dataCols.length === 1){
+                            data.footer[0][newColId] = oldTotal < newVal ? newVal : oldTotal;
+                        }
 						break;
 					case 'MIN':
 						newRowsObj[newRowId+fld][newColGroup+'_'+dataColsTotals[fld]] = oldVal > newVal ? newVal : oldVal;
+                        if (dataCols.length === 1){
+                            data.footer[0][newColId] = oldTotal > newVal ? newVal : oldTotal;
+                        }
 						break;
 					case 'COUNT':
 						newRowsObj[newRowId+fld][newColGroup+'_'+dataColsTotals[fld]] = oldVal + 1;
+                        if (dataCols.length === 1){
+                            data.footer[0][newColId] = oldTotal + 1;
+                        }
 						break;
 					// TODO add more totals
 				}
