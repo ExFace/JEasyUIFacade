@@ -27,7 +27,7 @@ class EuiDataMatrix extends EuiDataTable
         // just adding the pager buttons back here again
         $this->addLoadFilterScript(
             $this->buildJsTransposeColumns(
-                $this->buildJsPagerButtons()
+                $this->buildJsInitPager()
             )
         );
     }

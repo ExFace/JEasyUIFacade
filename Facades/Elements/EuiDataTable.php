@@ -169,7 +169,7 @@ $(setTimeout(function(){
     // Init the table
     $("#{$this->getId()}").{$this->getElementType()}({ {$grid_head} });
 
-    {$this->buildJsPagerButtons()}
+    {$this->buildJsInitPager()}
 
     {$this->buildJsContextMenu()}
 
@@ -699,7 +699,7 @@ JS;
         return $grid_head;
     }
     
-    protected function buildJsPagerButtons()
+    protected function buildJsInitPager()
     {
         $widget = $this->getWidget();
         $output = '';
@@ -752,17 +752,30 @@ JS;
     					}';
         }
         
-        if (! empty($bottom_buttons)) {
-            $output .= '
+        if ($this->hasPager()) {
+            $buttons = '';
+            $layout = '';
+            
+            if (! empty($bottom_buttons)) {
+                $buttons = '
+                buttons: [
+                    ' . implode(', ', $bottom_buttons) . '
+                ],';
+            }
+            
+            if (! $widget->isPaged()) {
+                $layout = 'layout: ["info"],';
+            }
+            
+            $output .= <<<JS
 
-		var pager = $("#' . $this->getId() . '").' . $this->getElementType() . '("getPager");
+		var pager = $("#{$this->getId()}").{$this->getElementType()}("getPager");
 		pager.pagination({
-			buttons: [
-                ' . implode(', ', $bottom_buttons) . '
-            ]
+			{$buttons}
+            {$layout}
 		});
 	    
-';
+JS;
         }
         
         return $output;

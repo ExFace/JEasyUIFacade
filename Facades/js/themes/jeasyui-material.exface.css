@@ -55,6 +55,7 @@ fieldset.exface_inputgroup legend {color: #404040;}
 .panel.datagrid > .panel-header {border-bottom-width: 0;}
 .datagrid-toolbar {border-width: 0;}
 .datagrid-header {border-top-width: 1px}
+.datagrid-footer td {border-bottom-width: 0}
 .exf-container-filler > .datagrid > .datagrid-wrap {border-top: 0}
 .exf-data-widget.exf-data-hide-header > .panel > .panel-header {border-bottom-width: 1px;}
 .exf-data-widget.exf-data-hide-header > .panel > .panel-body-noheader {border-top-width: 1px;}
