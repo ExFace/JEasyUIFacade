@@ -150,18 +150,22 @@ class EuiData extends EuiAbstractElement
             $sortOrder = ", sortOrder: '" . implode(',', $direction) . "'";
         }
         
-        if (! $default_page_size = $widget->getPaginator()->getPageSize()) {
-            try {
-                $default_page_size = $this->getFacade()->getConfig()->getOption('WIDGET.' . $widget->getWidgetType() . '.PAGE_SIZE');
-            } catch (ConfigOptionNotFoundError $e) {
-                $default_page_size = $this->getFacade()->getConfig()->getOption('WIDGET.DATATABLE.PAGE_SIZE');
+        if ($widget->isPaged()) {
+            if (! $default_page_size = $widget->getPaginator()->getPageSize()) {
+                try {
+                    $default_page_size = $this->getFacade()->getConfig()->getOption('WIDGET.' . $widget->getWidgetType() . '.PAGE_SIZE');
+                } catch (ConfigOptionNotFoundError $e) {
+                    $default_page_size = $this->getFacade()->getConfig()->getOption('WIDGET.DATATABLE.PAGE_SIZE');
+                }
             }
-        }
-        
-        $page_sizes = $this->getFacade()->getApp()->getConfig()->getOption('WIDGET.DATATABLE.PAGE_SIZES_SELECTABLE')->toArray();
-        if (!in_array($default_page_size, $page_sizes)){
-            $page_sizes[] = $default_page_size;
-            sort($page_sizes);
+            $page_sizes = $this->getFacade()->getApp()->getConfig()->getOption('WIDGET.DATATABLE.PAGE_SIZES_SELECTABLE')->toArray();
+            if (!in_array($default_page_size, $page_sizes)){
+                $page_sizes[] = $default_page_size;
+                sort($page_sizes);
+            }
+        } else {
+            $default_page_size = 100000000;
+            $page_sizes = [$default_page_size];
         }
         
         // Make sure, all selections are cleared, when the data is loaded from the backend. This ensures, the selected rows are always visible to the user!
@@ -185,8 +189,8 @@ class EuiData extends EuiAbstractElement
 				' . ($widget->getUidColumnId() ? ', idField: "' . $widget->getUidColumn()->getDataColumnName() . '"' : '') . '
 				, singleSelect: ' . ($widget->getMultiSelect() ? 'false' : 'true') . '
 				' . ($this->getWidth() ? ', width: "' . $this->getWidth() . '"' : '') . '
-				, pagination: ' . ($widget->isPaged() ? 'true' : 'false') . '
-				' . ($widget->isPaged() ? ', pageList: ' . json_encode($page_sizes) : '') . '
+				, pagination: ' . ($this->hasPager() ? 'true' : 'false') . '
+				' . ($this->hasPager() ? ', pageList: ' . json_encode($page_sizes) : '') . '
 				, showFooter: ' . ($widget->hasColumnFooters() ? 'true' : 'false') . '
                 , pageSize: ' . $default_page_size . '
 				, striped: ' . ($widget->getStriped() ? 'true' : 'false') . '
@@ -202,6 +206,15 @@ class EuiData extends EuiAbstractElement
 				,' . $this->buildJsInitOptionsColumns();
         
         return $output;
+    }
+    
+    /**
+     * 
+     * @return bool
+     */
+    protected function hasPager() : bool
+    {
+        return $this->getWidget()->isPaged() || $this->getWidget()->getHideFooter() === false;
     }
     
     protected function buildJsOnLoadSuccessOption() : string
@@ -872,6 +885,11 @@ JS;
         return $fallbackJs;
     }
     
+    /**
+     * 
+     * @param string $js_var_param
+     * @return string
+     */
     protected function buildJsOnBeforeLoadScript($js_var_param = 'param')
     {
         // Abort loading if _skipNextLoad is set - don't forget to trigger
@@ -892,9 +910,22 @@ JS;
 JS;
     }
     
+    /**
+     * 
+     * @return string
+     */
     protected function buildJsOnBeforeLoadFunction()
-    {
-        if (! $script = $this->buildJsOnBeforeLoadScript('param')) {
+    {  
+        $script = $this->buildJsOnBeforeLoadScript('param');
+        
+        // If we need the pager (footer below the table), but don't need pagination itself,
+        // we must remove pagination parameters to ensure no pagination is done (it may
+        // otherwise affect performance or have other unwanted side-effects!)
+        if ($this->hasPager() && $this->getWidget()->isPaged() === false) {
+            $script .= 'delete param.rows; delete param.page';
+        }
+        
+        if (! $script) {
             return '';
         }
         
@@ -906,7 +937,11 @@ JS;
 
 JS;
     }
-    				
+    		
+    /**
+     * 
+     * @return string
+     */
     protected function buildJsValueResetter() : string
     {
         return <<<JS
