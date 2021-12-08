@@ -108,9 +108,9 @@ JS;
     /**
      * 
      * {@inheritDoc}
-     * @see \exface\Core\Facades\AbstractAjaxFacade\Elements\AbstractJqueryElement::getElementType()
+     * @see \exface\JEasyUIFacade\Facades\Elements\EuiInput::getElementType()
      */
-    public function getElementType()
+    public function getElementType() : ?string
     {
         return 'combogrid';
     }

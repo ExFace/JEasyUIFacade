@@ -7,6 +7,7 @@ use exface\Core\Interfaces\Widgets\iLayoutWidgets;
 use exface\Core\Widgets\WidgetGroup;
 use exface\Core\Interfaces\Widgets\iContainOtherWidgets;
 use exface\Core\DataTypes\WidgetVisibilityDataType;
+use exface\Core\Facades\AbstractAjaxFacade\Elements\JqueryLiveReferenceTrait;
 
 /**
  * Generates a <div> element for a Value widget and wraps it in a masonry grid item if needed.
@@ -18,6 +19,8 @@ use exface\Core\DataTypes\WidgetVisibilityDataType;
  */
 class EuiValue extends EuiAbstractElement
 {
+    use JqueryLiveReferenceTrait;
+
     /**
      * 
      * {@inheritDoc}
@@ -26,8 +29,25 @@ class EuiValue extends EuiAbstractElement
     protected function init()
     {
         parent::init();
-        $this->setElementType($this->getCaption() ? 'span' : 'p');
+        
+        // If the input's value is bound to another element via an expression, we need to make sure, that other element will
+        // change the input's value every time it changes itself. This needs to be done on init() to make sure, the other element
+        // has not generated it's JS code yet!
+        if (! $this->getWidget()->isInTable()) {
+            $this->registerLiveReferenceAtLinkedElement();
+        }
+        
         return;
+    }
+    
+    /**
+     *
+     * {@inheritDoc}
+     * @see \exface\JEasyUIFacade\Facades\Elements\EuiAbstractElement::getElementType()
+     */
+    public function getElementType() : ?string
+    {
+        return $this->getCaption() ? 'span' : 'p';
     }
     
     /**
@@ -37,7 +57,13 @@ class EuiValue extends EuiAbstractElement
      */
     public function buildHtml()
     {
-        $value = nl2br($this->getWidget()->getValue());
+        $widget = $this->getWidget();
+        $expr = $widget->getValueExpression();
+        $value = '';
+        if (! $expr->isEmpty() && ! $expr->isReference()) {
+            $value = $widget->getValueWithDefaults();
+            $value = $this->escapeString(nl2br($widget->getValueWithDefaults()), false, true);
+        }
         
         $output = <<<HTML
 

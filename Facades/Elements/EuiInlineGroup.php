@@ -23,12 +23,22 @@ class EuiInlineGroup extends EuiValue
      */
     protected function init()
     {
-        parent::init();
-        $this->setElementType('div');
+        // Don't do the parent::init() as it would register stuff like live refs, that is not required here!
+        // parent::init();
         if ($this->getWidget()->isStretched()) {
             $this->optimizeChildrenWidths();
         }
         return;
+    }
+    
+    /**
+     *
+     * {@inheritDoc}
+     * @see \exface\JEasyUIFacade\Facades\Elements\EuiValue::getElementType()
+     */
+    public function getElementType() : ?string
+    {
+        return 'div';
     }
     
     /**

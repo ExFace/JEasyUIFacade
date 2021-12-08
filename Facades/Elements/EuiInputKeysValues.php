@@ -12,16 +12,15 @@ use exface\Core\Interfaces\Actions\ActionInterface;
 class EuiInputKeysValues extends EuiInputText
 {
     use JExcelTrait;
-
+    
     /**
-     * 
+     *
      * {@inheritDoc}
-     * @see \exface\JEasyUIFacade\Facades\Elements\EuiInputText::init()
+     * @see \exface\JEasyUIFacade\Facades\Elements\EuiInput::getElementType()
      */
-    protected function init()
+    public function getElementType() : ?string
     {
-        parent::init();
-        $this->setElementType('div');
+        return 'div';
     }
     
     /**

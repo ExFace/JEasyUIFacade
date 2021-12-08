@@ -6,16 +6,15 @@ use exface\Core\Facades\AbstractAjaxFacade\Elements\JsonEditorTrait;
 class EuiInputJson extends EuiInputText
 {
     use JsonEditorTrait;
-
+    
     /**
-     * 
+     *
      * {@inheritDoc}
-     * @see \exface\JEasyUIFacade\Facades\Elements\EuiInputText::init()
+     * @see \exface\JEasyUIFacade\Facades\Elements\EuiInput::getElementType()
      */
-    protected function init()
+    public function getElementType() : ?string
     {
-        parent::init();
-        $this->setElementType('div');
+        return 'div';
     }
     
     /**

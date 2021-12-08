@@ -13,10 +13,19 @@ use exface\Core\Widgets\Tabs;
  */
 class EuiWidgetCarousel extends EuiTabs
 {
+    /**
+     * 
+     * {@inheritDoc}
+     * @see \exface\JEasyUIFacade\Facades\Elements\EuiTabs::getElementType()
+     */
+    public function getElementType() : ?string
+    {
+        return 'tabs';
+    }
+    
     protected function init()
     {
         parent::init();
-        $this->setElementType('tabs');
         $this->setStyleAsPills(true);
         
         foreach ($this->getWidget()->getTabs() as $nr => $tab) {

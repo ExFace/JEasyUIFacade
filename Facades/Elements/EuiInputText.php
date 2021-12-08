@@ -3,16 +3,14 @@ namespace exface\JEasyUIFacade\Facades\Elements;
 
 class EuiInputText extends EuiInput
 {
-
     /**
      * 
      * {@inheritDoc}
-     * @see \exface\JEasyUIFacade\Facades\Elements\EuiInput::init()
+     * @see \exface\JEasyUIFacade\Facades\Elements\EuiInput::getElementType()
      */
-    protected function init()
+    public function getElementType() : ?string
     {
-        parent::init();
-        $this->setElementType('textbox');
+        return 'textbox';
     }
     
     /**

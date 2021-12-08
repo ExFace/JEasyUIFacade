@@ -16,7 +16,6 @@ class EuiDataList extends EuiDataTable
     protected function init()
     {
         parent::init();
-        $this->setElementType('datalist');
         
         $widget = $this->getWidget();
         if($widget->getConfiguratorWidget()->isEmpty() && is_null($widget->getToolbarMain()->setIncludeSearchActions(false))){
@@ -24,10 +23,18 @@ class EuiDataList extends EuiDataTable
         }
     }
     
+    /**
+     * 
+     * {@inheritDoc}
+     * @see \exface\JEasyUIFacade\Facades\Elements\EuiDataTable::getElementType()
+     */
+    public function getElementType() : ?string
+    {
+        return 'datalist';
+    }
+    
     protected function getBaseHtmlElement()
     {
         return 'ul';
-    }
-    
+    }   
 }
-?>

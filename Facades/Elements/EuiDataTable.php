@@ -33,7 +33,6 @@ class EuiDataTable extends EuiData
     protected function init()
     {
         parent::init();
-        $this->setElementType('datagrid');
         $widget = $this->getWidget();
         
         // Take care of refresh links
@@ -68,6 +67,16 @@ class EuiDataTable extends EuiData
                 $tabsEl->addOnTabSelectScript("setTimeout(function(){ $('#{$this->getId()}').datagrid('resize') }, 0);", $containerTab);
             }
         }
+    }
+    
+    /**
+     * 
+     * {@inheritDoc}
+     * @see \exface\JEasyUIFacade\Facades\Elements\EuiAbstractElement::getElementType()
+     */
+    public function getElementType() : ?string
+    {
+        return 'datagrid';
     }
     
     /**

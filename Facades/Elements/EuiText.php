@@ -13,13 +13,16 @@ use exface\Core\DataTypes\TextStylesDataType;
  */
 class EuiText extends EuiDisplay
 {
-    use JqueryAlignmentTrait;
+    use JqueryAlignmentTrait;    
     
-    protected function init()
+    /**
+     * 
+     * {@inheritDoc}
+     * @see \exface\JEasyUIFacade\Facades\Elements\EuiDisplay::getElementType()
+     */
+    public function getElementType() : ?string
     {
-        parent::init();
-        $this->setElementType($this->getCaption() ? 'span' : 'p');
-        return;
+        return $this->getCaption() ? 'span' : 'p';
     }
     
     public function buildHtml()
@@ -54,4 +57,3 @@ HTML;
         return $this->buildHtmlLabelWrapper($output);
     }
 }
-?>

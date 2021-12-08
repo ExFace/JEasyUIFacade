@@ -3,8 +3,6 @@ namespace exface\JEasyUIFacade\Facades\Elements;
 
 use exface\Core\Interfaces\Actions\ActionInterface;
 use exface\Core\Widgets\Input;
-use exface\Core\Facades\AbstractAjaxFacade\Elements\JqueryLiveReferenceTrait;
-use exface\Core\Factories\WidgetLinkFactory;
 use exface\Core\Facades\AbstractAjaxFacade\Elements\JqueryDisableConditionTrait;
 use exface\Core\Facades\AbstractAjaxFacade\Elements\JqueryInputValidationTrait;
 
@@ -17,7 +15,6 @@ use exface\Core\Facades\AbstractAjaxFacade\Elements\JqueryInputValidationTrait;
  */
 class EuiInput extends EuiValue
 {
-    use JqueryLiveReferenceTrait;
     use JqueryDisableConditionTrait;
     use JqueryInputValidationTrait {
         buildJsValidator as buildJsValidatorViaTrait;
@@ -31,11 +28,6 @@ class EuiInput extends EuiValue
     protected function init()
     {
         parent::init();
-        $this->setElementType('textbox');
-        // If the input's value is bound to another element via an expression, we need to make sure, that other element will
-        // change the input's value every time it changes itself. This needs to be done on init() to make sure, the other element
-        // has not generated it's JS code yet!
-        $this->registerLiveReferenceAtLinkedElement();
         
         // Register an onChange-Script on the element linked by a disable condition.
         $this->registerDisableConditionAtLinkedElement();
@@ -43,6 +35,16 @@ class EuiInput extends EuiValue
         if ($requiredIf = $this->getWidget()->getRequiredIf()) {
             $this->registerConditionalPropertyUpdaterOnLinkedElements($requiredIf, $this->buildJsRequiredSetter(true), $this->buildJsRequiredSetter(false));
         }
+    }
+    
+    /**
+     * 
+     * {@inheritDoc}
+     * @see \exface\JEasyUIFacade\Facades\Elements\EuiValue::getElementType()
+     */
+    public function getElementType() : ?string
+    {
+        return 'textbox';
     }
 
     /**
