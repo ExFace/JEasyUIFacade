@@ -17,24 +17,17 @@ class EuiDisplay extends EuiValue implements JsValueDecoratingInterface
     /**
      * 
      * {@inheritDoc}
-     * @see \exface\JEasyUIFacade\Facades\Elements\EuiValue::init()
-     */
-    protected function init()
-    {
-        parent::init();
-        $this->setElementType('div');
-        return;
-    }
-    
-    /**
-     * 
-     * {@inheritDoc}
      * @see \exface\JEasyUIFacade\Facades\Elements\EuiValue::buildHtml()
      */
     public function buildHtml()
     {
         $widget = $this->getWidget();
-        $value = nl2br($widget->getValue());
+        $expr = $widget->getValueExpression();
+        $value = '';
+        if (! $expr->isEmpty() && ! $expr->isReference()) {
+            $value = $widget->getValueWithDefaults();
+            $value = $this->escapeString(nl2br($widget->getValueWithDefaults()), false, true);
+        }
         
         $element = <<<HTML
 
@@ -48,5 +41,14 @@ HTML;
     {
         return parent::buildCssElementClass() . ' exf-display';
     }
+    
+    /**
+     * 
+     * {@inheritDoc}
+     * @see \exface\JEasyUIFacade\Facades\Elements\EuiValue::getElementType()
+     */
+    public function getElementType() : ?string
+    {
+        return 'div';
+    }
 }
-?>

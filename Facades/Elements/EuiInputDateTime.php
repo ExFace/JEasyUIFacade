@@ -14,7 +14,7 @@ class EuiInputDateTime extends EuiInputDate
      * {@inheritDoc}
      * @see \exface\JEasyUIFacade\Facades\Elements\EuiInputDate::getElementType()
      */
-    public function getElementType()
+    public function getElementType() : ?string
     {
         return 'datetimebox';
     }

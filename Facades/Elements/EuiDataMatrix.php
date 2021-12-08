@@ -20,8 +20,17 @@ class EuiDataMatrix extends EuiDataTable
     protected function init()
     {
         parent::init();
-        $this->setElementType('datagrid');
         $this->addOnLoadSuccess($this->buildJsCellMerger());
+    }
+    
+    /**
+     * 
+     * {@inheritDoc}
+     * @see \exface\JEasyUIFacade\Facades\Elements\EuiDataTable::getElementType()
+     */
+    public function getElementType() : ?string
+    {
+        return 'datagrid';
     }
     
     /**

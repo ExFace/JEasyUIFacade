@@ -5,8 +5,12 @@ use exface\Core\DataTypes\BooleanDataType;
 
 class EuiInputCheckBox extends EuiInput
 {
-
-    public function getElementType()
+    /**
+     * 
+     * {@inheritDoc}
+     * @see \exface\JEasyUIFacade\Facades\Elements\EuiInput::getElementType()
+     */
+    public function getElementType() : ?string
     {
         return 'checkbox';
     }

@@ -5,12 +5,16 @@ use exface\Core\Facades\AbstractAjaxFacade\Elements\JqueryInputTrait;
 
 class EuiInputHidden extends EuiInput
 {
-    use JqueryInputTrait;
+    use JqueryInputTrait;    
     
-    protected function init()
+    /**
+     *
+     * {@inheritDoc}
+     * @see \exface\JEasyUIFacade\Facades\Elements\EuiInput::getElementType()
+     */
+    public function getElementType() : ?string
     {
-        parent::init();
-        $this->setElementType('hidden');
+        return 'hidden';
     }
     
     /**

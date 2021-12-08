@@ -24,10 +24,14 @@ class EuiWidgetGrid extends EuiContainer
     
     private $fit_option = true;
     
-    protected function init()
+    /**
+     * 
+     * {@inheritDoc}
+     * @see \exface\JEasyUIFacade\Facades\Elements\EuiAbstractElement::getElementType()
+     */
+    public function getElementType() : ?string
     {
-        parent::init();
-        $this->setElementType('panel');
+        return 'panel';
     }
     
     public function buildHtml()

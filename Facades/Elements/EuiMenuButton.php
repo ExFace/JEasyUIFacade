@@ -15,19 +15,16 @@ use exface\Core\Widgets\MenuButton;
  */
 class EuiMenuButton extends EuiButton
 {
-    
     use JqueryButtonTrait;
-
+    
     /**
-     *
-     * {@inheritdoc}
-     *
-     * @see \exface\Core\Facades\AbstractAjaxFacade\Elements\AbstractJqueryElement::init()
+     * 
+     * {@inheritDoc}
+     * @see \exface\JEasyUIFacade\Facades\Elements\EuiButton::getElementType()
      */
-    protected function init()
+    public function getElementType() : ?string
     {
-        parent::init();
-        $this->setElementType('menubutton');
+        return 'menubutton';
     }
 
     /**

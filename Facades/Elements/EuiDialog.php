@@ -19,7 +19,16 @@ class EuiDialog extends EuiForm
     {
         parent::init();
         $this->buttons_div_id = $this->getId() . '-buttons';
-        $this->setElementType('dialog');
+    }
+    
+    /**
+     * 
+     * {@inheritDoc}
+     * @see \exface\JEasyUIFacade\Facades\Elements\EuiWidgetGrid::getElementType()
+     */
+    public function getElementType() : ?string
+    {
+        return 'dialog';
     }
     
     /**

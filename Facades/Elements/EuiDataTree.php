@@ -24,7 +24,6 @@ class EuiDataTree extends EuiDataTable
     protected function init()
     {
         parent::init();
-        $this->setElementType('treegrid');
         
         if ($this->getWidget()->getTreeLeafIdColumnId() !== null) {
             $leafIdCol = $this->getWidget()->getColumn($this->getWidget()->getTreeLeafIdColumnId());
@@ -32,6 +31,16 @@ class EuiDataTree extends EuiDataTable
                 $leafIdCol->setDataColumnName('_leafId');
             }
         }
+    }
+    
+    /**
+     * 
+     * {@inheritDoc}
+     * @see \exface\JEasyUIFacade\Facades\Elements\EuiDataTable::getElementType()
+     */
+    public function getElementType() : ?string
+    {
+        return 'treegrid';
     }
     
     public function buildHtmlHeadTags()

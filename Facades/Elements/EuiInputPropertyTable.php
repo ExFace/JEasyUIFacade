@@ -3,11 +3,15 @@ namespace exface\JEasyUIFacade\Facades\Elements;
 
 class EuiInputPropertyTable extends EuiInput
 {
-
-    protected function init()
+    
+    /**
+     *
+     * {@inheritDoc}
+     * @see \exface\JEasyUIFacade\Facades\Elements\EuiInput::getElementType()
+     */
+    public function getElementType() : ?string
     {
-        parent::init();
-        $this->setElementType('propertygrid');
+        return 'propertygrid';
     }
 
     function buildHtml()

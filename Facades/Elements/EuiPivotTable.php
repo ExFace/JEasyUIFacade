@@ -13,8 +13,17 @@ class EuiPivotTable extends EuiDataTable
     protected function init()
     {
         parent::init();
-        $this->setElementType('pivotgrid');
         $this->addOnBeforeLoad('if (!$("#' . $this->getId() . '").data("layouted")) {$("#' . $this->getId() . '").data("layouted", 1)}');
+    }
+    
+    /**
+     * 
+     * {@inheritDoc}
+     * @see \exface\JEasyUIFacade\Facades\Elements\EuiDataTable::getElementType()
+     */
+    public function getElementType() : ?string
+    {
+        return 'pivotgrid';
     }
 
     function buildJs()

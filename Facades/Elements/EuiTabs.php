@@ -20,16 +20,15 @@ class EuiTabs extends EuiContainer
     private $style_as_pills = false;
     
     private $onTabSelectScripts = [];
-
+    
     /**
      * 
      * {@inheritDoc}
-     * @see \exface\Core\Facades\AbstractAjaxFacade\Elements\AbstractJqueryElement::init()
+     * @see \exface\JEasyUIFacade\Facades\Elements\EuiAbstractElement::getElementType()
      */
-    protected function init()
+    public function getElementType() : ?string
     {
-        parent::init();
-        $this->setElementType('tabs');
+        return 'tabs';
     }
 
     /**

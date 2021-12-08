@@ -5,11 +5,14 @@ use exface\Core\Exceptions\Facades\FacadeUnsupportedWidgetPropertyWarning;
 
 class EuiSplitVertical extends EuiContainer
 {
-
-    protected function init()
+    /**
+     * 
+     * {@inheritDoc}
+     * @see \exface\JEasyUIFacade\Facades\Elements\EuiAbstractElement::getElementType()
+     */
+    public function getElementType() : ?string
     {
-        parent::init();
-        $this->setElementType('layout');
+        return 'layout';
     }
 
     function buildHtml()

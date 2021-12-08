@@ -23,6 +23,19 @@ abstract class EuiAbstractElement extends AbstractJqueryElement
     {
         return '';
     }
+    
+    /**
+     * Returns the type attribute of the resulting jEasyUI or HTML element.
+     * 
+     * In pure HTML this is only usefull for elements like input fields (the type would be "text", 
+     * "hidden", etc.), but many UI-frameworks use this kind of attribute to identify types of widgets. 
+     * 
+     * Returns NULL by default.
+     */
+    public function getElementType() : ?string
+    {
+        return null;
+    }
 
     /**
      *
@@ -500,4 +513,3 @@ HTML;
         return "($('{$this->getId()}').data('{$this->getElementType()}') !== undefined)";
     }
 }
-?>

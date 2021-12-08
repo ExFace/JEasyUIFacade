@@ -5,18 +5,6 @@ use exface\Core\Interfaces\Actions\ActionInterface;
 
 class EuiInputCustom extends EuiInput
 {
-
-    /**
-     * 
-     * {@inheritDoc}
-     * @see \exface\JEasyUIFacade\Facades\Elements\EuiInput::init()
-     */
-    protected function init()
-    {
-        parent::init();
-        $this->setElementType('div');
-    }
-
     /**
      * 
      * {@inheritDoc}
@@ -164,5 +152,15 @@ JS;
     protected function buildJsOnChangeHandler()
     {
         $this->getWidget()->getScriptToAttachOnChange($this->getOnChangeScript()) ?? '';
+    }
+    
+    /**
+     * 
+     * {@inheritDoc}
+     * @see \exface\JEasyUIFacade\Facades\Elements\EuiInput::getElementType()
+     */
+    public function getElementType() : ?string
+    {
+        return 'div';
     }
 }

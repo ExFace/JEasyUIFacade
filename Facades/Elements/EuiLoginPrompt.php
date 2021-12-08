@@ -19,11 +19,15 @@ class EuiLoginPrompt extends EuiContainer
     private $fit_option = false;
 
     private $style_as_pills = false;
-
-    protected function init()
+    
+    /**
+     * 
+     * {@inheritDoc}
+     * @see \exface\JEasyUIFacade\Facades\Elements\EuiAbstractElement::getElementType()
+     */
+    public function getElementType() : ?string
     {
-        parent::init();
-        $this->setElementType('tabs');
+        return 'tabs';
     }
 
     public function buildHtml()

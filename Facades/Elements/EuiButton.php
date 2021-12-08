@@ -27,10 +27,19 @@ class EuiButton extends EuiAbstractElement
     protected function init()
     {
         parent::init();
-        $this->setElementType('linkbutton');
         
         // Register an onChange-Script on the element linked by a disable condition.
         $this->registerDisableConditionAtLinkedElement();
+    }
+    
+    /**
+     * 
+     * {@inheritDoc}
+     * @see \exface\JEasyUIFacade\Facades\Elements\EuiAbstractElement::getElementType()
+     */
+    public function getElementType() : ?string
+    {
+        return 'linkbutton';
     }
 
     public function buildJs()
