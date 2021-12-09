@@ -154,7 +154,7 @@ class EuiData extends EuiAbstractElement
                     $default_page_size = $this->getFacade()->getConfig()->getOption('WIDGET.DATATABLE.PAGE_SIZE');
                 }
             }
-            $page_sizes = $this->getFacade()->getApp()->getConfig()->getOption('WIDGET.DATATABLE.PAGE_SIZES_SELECTABLE')->toArray();
+            $page_sizes = $widget->getPaginator()->getPageSizes() ?? $this->getFacade()->getApp()->getConfig()->getOption('WIDGET.DATATABLE.PAGE_SIZES_SELECTABLE')->toArray();
             if (!in_array($default_page_size, $page_sizes)){
                 $page_sizes[] = $default_page_size;
                 sort($page_sizes);
