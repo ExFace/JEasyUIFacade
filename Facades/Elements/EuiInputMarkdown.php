@@ -104,11 +104,7 @@ JS;
      */
     public function buildJs()
     {
-        if ($this->getWidget()->isDisabled()) {
-            
-        } else {
-            $editorInit = $this->buildJsMarkdownInitEditor();
-        }
+        $editorInit = $this->buildJsMarkdownInitEditor($this->getWidget()->isDisabled());
         return <<<JS
 
         var {$this->buildJsMarkdownVar()} = {$editorInit}
