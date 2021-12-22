@@ -295,6 +295,27 @@ JS;
         $disabledScript = $widget->isDisabled() ? ', disabled:true' : '';
         $multiSelectScript = $widget->getMultiSelect() ? ', multiple: true' : '';
         
+        // Setting the value in buildHtml() only works for single-select. To set a value
+        // for a multi-select combogrid we need to use the `value` property with an array
+        // of values.
+        $value = $widget->getValueWithDefaults();
+        $valueJs = null;
+        if ($value !== nul && $value !== '') {
+            if (! $widget->getMultiSelect()) {
+                $valueJs = $this->escapeString($value);
+            } else {
+                $values = explode($widget->getMultiSelectValueDelimiter(), $value);
+                $valuesJs = [];
+                foreach ($values as $val) {
+                    $valuesJs[] = $this->escapeString(trim($val));
+                }
+                $valueJs = '[' . implode(',', $valuesJs) . ']';
+            }
+        }
+        if ($valueJs) {
+            $valueJs = ', value: ' . $valueJs;
+        }
+        
         // Das entspricht dem urspruenglichen Verhalten. Filter-Referenzen werden beim Loeschen eines
         // Elements nicht geleert, sondern nur aktualisiert.
         $filterSetterUpdateScript = $widget->getLazyLoadingGroupId() ? '
@@ -318,6 +339,7 @@ JS;
                         , method: "post"
                         , delay: 600
                         , panelWidth:600
+                        {$valueJs}
                         {$requiredScript}
                         {$disabledScript}
                         {$multiSelectScript}
