@@ -73,7 +73,18 @@ function(){
                 language: 'en',
                 $viewerOptions
             });
+
             {$onInitJs}
+
+            ed.getUI().getToolbar().addItem({
+                type: "button",
+                options: {
+                    name: 'Full screen',
+                    tooltip: 'Full screen',
+                    el: $('<button type="button" style="float:right;" onclick="$(\'#{$this->getId()} > .tui-editor-defaultUI\').toggleClass(\'fullscreen\'); $(this).find(\'i\').removeClass(\'fa-expand\').removeClass(\'fa-compress\').addClass($(\'#{$this->getId()} > .tui-editor-defaultUI\').hasClass(\'fullscreen\') ? \'fa-compress\' : \'fa-expand\');"><i class="fa fa-expand"></i></button>')[0]
+                }
+            }, 1);
+
             return ed;
 }();
 JS;
