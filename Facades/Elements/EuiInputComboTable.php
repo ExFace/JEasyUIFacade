@@ -300,7 +300,7 @@ JS;
         // of values.
         $value = $widget->getValueWithDefaults();
         $valueJs = null;
-        if ($value !== nul && $value !== '') {
+        if ($value !== null && $value !== '') {
             if (! $widget->getMultiSelect()) {
                 $valueJs = $this->escapeString($value);
             } else {
