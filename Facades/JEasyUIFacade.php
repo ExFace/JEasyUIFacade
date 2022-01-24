@@ -10,10 +10,8 @@ use Psr\Http\Message\ServerRequestInterface;
 use exface\Core\Interfaces\Model\UiPageInterface;
 use GuzzleHttp\Psr7\Response;
 use exface\Core\Interfaces\Exceptions\ExceptionInterface;
-use exface\JEasyUIFacade\Facades\Templates\EuiFacadePageTemplateRenderer;
 use exface\Core\Exceptions\Security\AuthenticationFailedError;
 use exface\Core\Interfaces\Exceptions\AuthorizationExceptionInterface;
-use exface\Core\Exceptions\Contexts\ContextOutOfBoundsError;
 use exface\Core\Exceptions\OutOfBoundsException;
 use exface\Core\Exceptions\Security\AccessDeniedError;
 use exface\Core\Factories\UiPageFactory;
@@ -24,7 +22,31 @@ use exface\Core\Exceptions\InvalidArgumentException;
 use exface\Core\DataTypes\LocaleDataType;
 use exface\Core\DataTypes\FilePathDataType;
 use exface\Core\Exceptions\Facades\FacadeRuntimeError;
+use exface\JEasyUIFacade\Facades\Templates\EuiCustomPlaceholders;
+use exface\Core\Facades\AbstractAjaxFacade\Templates\FacadePageTemplateRenderer;
 
+/**
+ * Renders pages using the jEasyUI JavaScript framework based on jQuery.
+ * 
+ * This facade uses *.html files as templates (to be placed in `page_template_file_path`). Along with
+ * regula HTML and JavaScript these templates can contain the following placeholders
+ * 
+ * - `[#~head#]` - replaced by the output of `Facade::buildHtmlHead($widget, true)`
+ * - `[#~body#]` - replaced by the output of `Facade::buildHtmlBody($widget)`
+ * - `[#~widget:<widget_type>#] - renders a widget, e.g. `[#~widget:NavCrumbs#]`
+ * - `[#~url:<page_selector>#]` - replaced by the URL to the page identified by the 
+ * `<page_selector>` (i.e. UID or alias with namespace) or to the server adress
+ * - `[#~page:<attribute_alias|url>#]` - replaced by the value of a current page's attribute or URL
+ * - `[#~config:<app_alias>:<config_key>#]` - replaced by the value of the configuration option
+ * - `[#~translate:<app_alias>:<message>#]` - replaced by the message's translation to current locale
+ * - `[#~session:<option>#]` - replaced by session option values
+ * - `[#~facade:<property>]` - replaced by the value of a current facade's properties
+ * - `[#breadcrumbs#]` - replaced by breadcrumbs links intended to be used in panel headers
+ * - any of the facade properties values - e.g. [#theme_link_color#]
+ * 
+ * @author andrej.kabachnik
+ *
+ */
 class JEasyUIFacade extends AbstractAjaxFacade
 {
     private $theme_css = null;
@@ -243,15 +265,14 @@ HTML;
     }
     
     /**
-     * 
-     * {@inheritDoc}
-     * @see \exface\Core\Facades\AbstractAjaxFacade\AbstractAjaxFacade::buildHtmlPage($widget)
+     * {@inheritdoc}
+     * @see AbstractAjaxFacade::getTemplateRenderer()
      */
-    protected function buildHtmlPage(WidgetInterface $widget, string $pagetTemplateFilePath = null) : string
+    protected function getTemplateRenderer(WidgetInterface $widget) : FacadePageTemplateRenderer
     {
-        $pagetTemplateFilePath = $pagetTemplateFilePath ?? $this->getPageTemplateFilePath();
-        $renderer = new EuiFacadePageTemplateRenderer($this, $pagetTemplateFilePath, $widget);
-        return $renderer->render();
+        $renderer = parent::getTemplateRenderer($widget);
+        $renderer->addPlaceholder(new EuiCustomPlaceholders($this, $widget->getPage()));
+        return $renderer;
     }
     
     /**
