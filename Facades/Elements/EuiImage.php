@@ -29,7 +29,7 @@ class EuiImage extends EuiText
      * {@inheritDoc}
      * @see \exface\Core\Facades\AbstractAjaxFacade\Elements\AbstractJqueryElement::buildJsValueSetter($value)
      */
-    public function buildJsValueSetter($value)
+    public function buildJsValueSetter($value, $disable_formatting = false)
     {
         return $this->buildJsImgSrcSetter($value);
     }
