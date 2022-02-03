@@ -206,7 +206,7 @@ pre.sf-dump .sf-dump-private, pre.sf-dump .sf-dump-public, pre.sf-dump .sf-dump-
 .jexcel>thead>tr>td {text-align: left !important; padding: 0 4px !important;}
 .jexcel td {overflow: hidden; text-overflow: ellipsis;}
 .jexcel td.highlight-selected > * {min-width: 3em; width: auto;}
-.jexcel td.editor > input {width: 100% !important; text-align: inherit !important;}
+.jexcel td.editor > input {width: 100% !important; text-align: inherit !important; font-family: inherit; font-size: inherit;}
 .jexcel>tbody>tr {height: 25px;}
 .exf-spreadsheet {overflow: visible;}
 .panel:has(.exf-spreadsheet) {overflow: visible;}
