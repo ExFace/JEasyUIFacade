@@ -178,7 +178,7 @@ JS;
      *
      * @see \exface\Core\Facades\AbstractAjaxFacade\Elements\AbstractJqueryElement::buildJsValidator()
      */
-    function buildJsValidator()
+    function buildJsValidator(string $valJs = null)
     {
         return 'true';
     }
