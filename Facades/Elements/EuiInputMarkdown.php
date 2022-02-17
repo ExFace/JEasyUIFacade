@@ -150,9 +150,9 @@ JS;
      * {@inheritDoc}
      * @see \exface\JEasyUIFacade\Facades\Elements\EuiInput::buildJsValidator()
      */
-    public function buildJsValidator()
+    public function buildJsValidator(string $valJs = null)
     {
-        return $this->buildJsValidatorViaTrait();
+        return $this->buildJsValidatorViaTrait($valJs);
     }
     
     /**

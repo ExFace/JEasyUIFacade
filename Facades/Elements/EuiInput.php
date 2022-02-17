@@ -217,13 +217,13 @@ JS;
      * @see \exface\Core\Facades\AbstractAjaxFacade\Elements\AbstractJqueryElement::buildJsValidator()
      * @see \exface\Core\Facades\AbstractAjaxFacade\Elements\JqueryInputValidationTrait::buildJsValidator()
      */
-    public function buildJsValidator()
+    public function buildJsValidator(string $valJs = null)
     {
-        if ($this->isValidationRequired() === true) {
+        if ($valJs === null && $this->isValidationRequired() === true) {
             return "$('#{$this->getId()}').{$this->getElementType()}('isValid')";
         }
         
-        return $this->buildJsValidatorViaTrait();
+        return $this->buildJsValidatorViaTrait($valJs);
     }
 
     /**

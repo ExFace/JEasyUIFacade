@@ -145,8 +145,9 @@ JS;
      * {@inheritDoc}
      * @see \exface\JEasyUIFacade\Facades\Elements\EuiInput::buildJsValidator()
      */
-    public function buildJsValidator()
+    public function buildJsValidator(string $valJs = null)
     {
+        // TODO what if $valJs is not null???
         if ($this->getWidget()->getShowSecondInputForConfirmation() === true) {
             $confirmInputElement = $this->getFacade()->getElement($this->getConfirmationInput());
             return "({$this->buildJsValueGetter()} === {$confirmInputElement->buildJsValueGetter()} && " . parent::buildJsValidator() . ")";
