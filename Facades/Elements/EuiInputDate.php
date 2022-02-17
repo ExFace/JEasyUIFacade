@@ -2,9 +2,7 @@
 namespace exface\JEasyUIFacade\Facades\Elements;
 
 use exface\Core\Facades\AbstractAjaxFacade\Elements\JqueryInputDateTrait;
-use exface\Core\Widgets\InputDate;
 use exface\Core\DataTypes\DateDataType;
-use exface\Core\Facades\AbstractAjaxFacade\Formatters\JsDateFormatter;
 
 // Es waere wuenschenswert die Formatierung des Datums abhaengig vom Locale zu machen.
 // Das Problem dabei ist folgendes: Wird im DateFormatter das Datum von DateJs ent-
@@ -24,7 +22,7 @@ use exface\Core\Facades\AbstractAjaxFacade\Formatters\JsDateFormatter;
 /**
  * Renders a jEasyUI datebox for an InputDate widget.
  * 
- * @method InputDate getWidget()
+ * @method \exface\Core\Widgets\InputDate getWidget()
  * 
  * @author Andrej Kabachnik
  *
