@@ -111,10 +111,17 @@ class EuiData extends EuiAbstractElement
 				url: "' . $this->getAjaxUrl() . '"
 				, queryParams: {' . implode("\n\t\t\t\t\t, ", $params) . '}';
         } else {
-            // Data embedded in the code of the DataGrid
-            $data = $widget->prepareDataSheetToRead($widget->getValuesDataSheet());
-            if (! $data->isFresh()) {
-                $data->dataRead();
+            // Load data embedded in the config of the DataGrid
+            $data = $widget->getValuesDataSheet();
+            // If there is no embedded data, read fresh data from the data sources
+            // Don't read any fresh data if ther is data inside the widget as it may override saved (and
+            // obviously required) data or even produce an inconsistant state of data!
+            if ($data === null || $data->isEmpty()) {
+                $data = $widget->prepareDataSheetToRead($data);
+                if (! $data->isFresh()) {
+                    // Read fresh data only if 
+                    $data->dataRead();
+                }
             }
             $result = '
 				remoteSort: false
