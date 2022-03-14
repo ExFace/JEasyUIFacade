@@ -6,6 +6,8 @@ use exface\JEasyUIFacade\Facades\Elements\Traits\EuiDataElementTrait;
 use exface\Core\Interfaces\Widgets\iShowData;
 use exface\Core\Interfaces\Widgets\iUseData;
 use exface\Core\Widgets\Parts\Maps\DataSelectionMarkerLayer;
+use exface\Core\Factories\WidgetFactory;
+use exface\Core\CommonLogic\UxonObject;
 
 /**
  * 
@@ -49,7 +51,7 @@ class EuiMap extends EuiData
         if ($layer) {
             return $layer->getDataWidget();
         }
-        return null;
+        return WidgetFactory::create($this->getWidget()->getPage(), 'Data', $this->getWidget());
     }
 
     /**
