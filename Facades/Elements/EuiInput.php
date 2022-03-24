@@ -2,13 +2,12 @@
 namespace exface\JEasyUIFacade\Facades\Elements;
 
 use exface\Core\Interfaces\Actions\ActionInterface;
-use exface\Core\Widgets\Input;
 use exface\Core\Facades\AbstractAjaxFacade\Elements\JqueryDisableConditionTrait;
 use exface\Core\Facades\AbstractAjaxFacade\Elements\JqueryInputValidationTrait;
 
 /**
  *
- * @method Input getWidget()
+ * @method exface\Core\Widgets\Input getWidget()
  *        
  * @author Andrej Kabachnik
  *        
