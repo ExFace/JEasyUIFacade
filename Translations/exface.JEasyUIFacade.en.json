@@ -10,6 +10,12 @@
 	"MESSAGE.SUCCESS_TITLE": "Success",
 	"MESSAGE.FILL_REQUIRED_ATTRIBUTES": "Please fill in these fields correctly:",
 	
+	"WIDGET.IMAGEGALLERY.BUTTON_ZOOM": "Zoom",
+	"WIDGET.IMAGEGALLERY.BUTTON_REMOVE": "Remove",
+	"WIDGET.IMAGEGALLERY.BUTTON_BROWSE": "Browse",
+	"WIDGET.IMAGEGALLERY.HINT_UPLOAD": "Drag files here or press \"Browse\" button.",
+	"WIDGET.IMAGEGALLERY.HINT_EMPTY": "No files found",
+	
 	"WIDGET.INPUTPASSWORD.CONFIRM": "Confirm password",
 	
 	"WIDGET.DATATABLE.CONFIGURATOR_EXPAND_COLLAPSE": "Collapse/expand quick filters",
