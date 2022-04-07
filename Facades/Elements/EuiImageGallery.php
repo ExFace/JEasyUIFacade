@@ -128,8 +128,6 @@ JS;
                 {$this->buildJsLoadFilterHandleWidgetLinks('json.rows')}
                     
                 {$this->buildJsSlickSlidesFromData('carousel', 'json')}
-
-                {$this->buildJsUploaderInit('carousel', 'l-btn-plain')}
                 
 		        {$this->buildJsBusyIconHide()}
 		        $('#{$this->getIdOfSlick()}').data('_loading', 0);
