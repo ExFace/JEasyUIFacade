@@ -108,7 +108,7 @@ class JEasyUIFacade extends AbstractAjaxFacade
      */
     public function buildHtmlHeadCommonIncludes() : array
     {
-        $includes = $this->buildHtmlHeadThemeIncludes();
+        $includes = array_merge(parent::buildHtmlHeadCommonIncludes(), $this->buildHtmlHeadThemeIncludes());
         $translator = $this->getWorkbench()->getCoreApp()->getTranslator();
         $locale = $translator->getLocale();
         if (! in_array($locale, $this->supported_languages)) {
