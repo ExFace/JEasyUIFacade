@@ -9,6 +9,7 @@ use exface\Core\Facades\AbstractAjaxFacade\Elements\AbstractJqueryElement;
 use exface\Core\Widgets\Dialog;
 use exface\Core\Widgets\Button;
 use exface\Core\Widgets\ButtonGroup;
+use exface\Core\Interfaces\Actions\iShowDialog;
 
 /**
  * Generates jEasyUI linkbutton controls for Button widgets
@@ -70,6 +71,16 @@ class EuiButton extends EuiAbstractElement
         // Initialize the disabled state of the widget if a disabled condition is set.
         $output .= $this->buildJsDisableConditionInitializer();
         
+        if ((null !== $action = $this->getAction()) && $action instanceof iShowDialog && $action->isDialogLazyLoading(true) === false) {
+            $output .= <<<JS
+
+            function {$this->buildJsFunctionPrefix()}_nonLazyInit() {
+                {$this->getFacade()->getElement($action->getDialogWidget())->buildJs()}
+            }
+
+JS;
+        }
+        
         return $output;
     }
 
@@ -82,9 +93,23 @@ class EuiButton extends EuiAbstractElement
         // Create a linkbutton
         $output .= $this->buildHtmlButton();
         
+        if ((null !== $action = $this->getAction()) && $action instanceof iShowDialog && $action->isDialogLazyLoading(true) === false) {
+            $output .= <<<HTML
+
+            <div style="display:none" id="{$this->getId()}_DialogWrapper">
+                {$this->getFacade()->getElement($action->getDialogWidget())->buildHtml()};
+            </div>
+
+HTML;
+        }
+        
         return $output;
     }
 
+    /**
+     * 
+     * @return string
+     */
     public function buildHtmlButton()
     {
         $widget = $this->getWidget();
@@ -144,10 +169,26 @@ class EuiButton extends EuiAbstractElement
         
         $headers = ! empty($this->getAjaxHeaders()) ? 'headers: ' . json_encode($this->getAjaxHeaders()) . ',' : '';
         
-        // NOTE: trigger action effects AFTER removing the closed dialog - otherwise
-        // this might cause refreshes on the dialog tables that are totally useless!
         $output = $this->buildJsRequestDataCollector($action, $input_element);
-        $output .= <<<JS
+        if ($action instanceof iShowDialog && $action->isDialogLazyLoading(true) === false) {
+            $output .= <<<JS
+            
+                        {$this->buildJsCloseDialog($widget, $input_element)}
+                        
+                        {$this->buildJsFunctionPrefix()}_nonLazyInit();
+                        $('#{$this->getFacade()->getElement($action->getDialogWidget())->getId()}').dialog('open');
+                        
+                        var onCloseFunc = $('#{$this->getFacade()->getElement($action->getDialogWidget())->getId()}').panel('options').onClose;
+						$('#{$this->getFacade()->getElement($action->getDialogWidget())->getId()}').panel('options').onClose = function(){
+							onCloseFunc();
+                            {$this->buildJsTriggerActionEffects($action)}
+						};
+								
+JS;
+        } else {
+            // NOTE: trigger action effects AFTER removing the closed dialog - otherwise
+            // this might cause refreshes on the dialog tables that are totally useless!
+            $output .= <<<JS
 						{$this->buildJsBusyIconShow()}
 						$.ajax({
 							type: 'POST',
@@ -199,6 +240,7 @@ class EuiButton extends EuiAbstractElement
 						});
 						{$this->buildJsCloseDialog($widget, $input_element)} 
 JS;
+        }
         return $output;
     }
 
@@ -235,7 +277,11 @@ JS;
         // Since this facade renders action-widgets by asking the server when the button is pressed
         // (see buildJsClickShowWidget() and buildJsClickShowDialog()) it is enough, to get the head
         // tags for the custom-script actions only.
-        return $this->buildHtmlHeadTagsForCustomScriptIncludes();
+        $includes = $this->buildHtmlHeadTagsForCustomScriptIncludes();
+        if ((null !== $action = $this->getAction()) && $action instanceof iShowDialog && $action->isDialogLazyLoading(true) === false) {
+            $includes = array_merge($includes, $this->getFacade()->getElement($action->getDialogWidget())->buildHtmlHeadTags());
+        }
+        return $includes;
     }
     
     /**
