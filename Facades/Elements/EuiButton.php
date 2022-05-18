@@ -74,9 +74,7 @@ class EuiButton extends EuiAbstractElement
         if ((null !== $action = $this->getAction()) && $action instanceof iShowDialog && $action->isDialogLazyLoading(true) === false) {
             $output .= <<<JS
 
-            function {$this->buildJsFunctionPrefix()}_nonLazyInit() {
-                {$this->getFacade()->getElement($action->getDialogWidget())->buildJs()}
-            }
+            {$this->getFacade()->getElement($action->getDialogWidget())->buildJs()}
 
 JS;
         }
@@ -171,18 +169,33 @@ HTML;
         
         $output = $this->buildJsRequestDataCollector($action, $input_element);
         if ($action instanceof iShowDialog && $action->isDialogLazyLoading(true) === false) {
+            if ($widget instanceof DialogButton) {                
+                $output .= <<<JS
+                
+                        (function(){
+                            var onCloseFunc = $('#{$this->getInputElement()->getId()}').panel('options').onClose;
+    						$('#{$this->getInputElement()->getId()}').panel('options').onClose = function(){
+    							//$('#{$this->getFacade()->getElement($action->getDialogWidget())->getId()}').dialog('destroy');
+                                $('#{$this->getFacade()->getElement($action->getDialogWidget())->getId()}').remove();
+                                onCloseFunc();
+    						};
+                        })();
+                        
+JS;
+            }
             $output .= <<<JS
             
                         {$this->buildJsCloseDialog($widget, $input_element)}
                         
-                        {$this->buildJsFunctionPrefix()}_nonLazyInit();
                         $('#{$this->getFacade()->getElement($action->getDialogWidget())->getId()}').dialog('open');
                         
-                        var onCloseFunc = $('#{$this->getFacade()->getElement($action->getDialogWidget())->getId()}').panel('options').onClose;
-						$('#{$this->getFacade()->getElement($action->getDialogWidget())->getId()}').panel('options').onClose = function(){
-							onCloseFunc();
-                            {$this->buildJsTriggerActionEffects($action)}
-						};
+                        (function(){
+                            var onCloseFunc = $('#{$this->getFacade()->getElement($action->getDialogWidget())->getId()}').panel('options').onClose;
+    						$('#{$this->getFacade()->getElement($action->getDialogWidget())->getId()}').panel('options').onClose = function(){
+    							onCloseFunc();
+                                {$this->buildJsTriggerActionEffects($action)}
+    						};
+                        })();
 								
 JS;
         } else {
