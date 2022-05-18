@@ -4,6 +4,7 @@ namespace exface\JEasyUIFacade\Facades\Elements;
 use exface\Core\Widgets\Tabs;
 use exface\Core\Exceptions\Facades\FacadeRuntimeError;
 use exface\Core\Widgets\Tab;
+use exface\Core\Interfaces\WidgetInterface;
 
 /**
  *
@@ -218,7 +219,7 @@ JS;
      */
     public function addOnResizeScript($js)
     {
-        foreach ($this->getWidget()->getTabs() as $tab) {
+        foreach ($this->getWidget()->getWidgets() as $tab) {
             $this->getFacade()->getElement($tab)->addOnResizeScript($js);
         }
         return $this;
@@ -231,7 +232,7 @@ JS;
     protected function buildJsDataOptionOnSelect() : string
     {
         $js = $this->getOnTabSelectScript();
-        foreach ($this->getWidget()->getTabs() as $i => $tab) {
+        foreach ($this->getWidget()->getWidgets() as $i => $tab) {
             $script = $this->getOnTabSelectScript($tab);
             if ($script) {
                 $js .= <<<JS
@@ -256,7 +257,7 @@ JS;
      * @param int $tabIndex
      * @return string
      */
-    protected function getOnTabSelectScript(Tab $tab = null) : string
+    protected function getOnTabSelectScript(WidgetInterface $tab = null) : string
     {
         $scripts = $this->onTabSelectScripts[($tab ? $tab->getId() : -1)];
         if ($scripts === null) {
