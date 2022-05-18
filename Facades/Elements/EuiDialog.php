@@ -35,9 +35,9 @@ class EuiDialog extends EuiForm
      *
      * @return boolean
      */
-    protected function isLazyLoading()
+    public function isLazyLoading()
     {
-        return $this->getWidget()->getLazyLoading(false);
+        return $this->getWidget()->getLazyLoading(true);
     }
 
     /**
@@ -51,47 +51,45 @@ class EuiDialog extends EuiForm
         $widget = $this->getWidget();
         
         $children_html = '';
-        if (! $this->isLazyLoading()) {
-            if (($filler = $widget->getFillerWidget()) && ($alternative = $filler->getAlternativeContainerForOrphanedSiblings())) {
-                $alternative->addWidget($widget->getMessageList(), 0);
-                $messageListHtml = '';
-            } else {
-                $messageListHtml = $this->getFacade()->getElement($widget->getMessageList())->buildHtml();
-            }
-            
-            $children_html = <<<HTML
+        if (($filler = $widget->getFillerWidget()) && ($alternative = $filler->getAlternativeContainerForOrphanedSiblings())) {
+            $alternative->addWidget($widget->getMessageList(), 0);
+            $messageListHtml = '';
+        } else {
+            $messageListHtml = $this->getFacade()->getElement($widget->getMessageList())->buildHtml();
+        }
+        
+        $children_html = <<<HTML
 
-            {$this->buildHtmlForWidgets()}
-            <div id="{$this->getId()}_sizer" style="width:calc(100%/{$this->getNumberOfColumns()});min-width:{$this->getMinWidth()};"></div>
+                {$this->buildHtmlForWidgets()}
+                <div id="{$this->getId()}_sizer" style="width:calc(100%/{$this->getNumberOfColumns()});min-width:{$this->getMinWidth()};"></div>
 HTML;
             
-            if ($widget->countWidgetsVisible() > 1) {
-                // masonry_grid-wrapper wird benoetigt, da sonst die Groesse des Dialogs selbst
-                // veraendert wird -> kein Scrollbalken.
-                $children_html = <<<HTML
-                
-                        <div class="grid exf-dialog" id="{$this->getId()}_masonry_grid" style="width:100%;height:100%;">
-                            {$messageListHtml}
-                            {$children_html}
-                        </div>
-                HTML;
-            }
+        if ($widget->countWidgetsVisible() > 1) {
+            // masonry_grid-wrapper wird benoetigt, da sonst die Groesse des Dialogs selbst
+            // veraendert wird -> kein Scrollbalken.
+            $children_html = <<<HTML
             
-            if ($widget->hasHeader() === true) {
-                $headerElem = $this->getFacade()->getElement($widget->getHeader());
-                $children_html = <<<HTML
-                
-                    <div class="easyui-layout" data-options="fit:true">
-                        <div data-options="region:'north'" class="exf-dialog-header" style="height: {$headerElem->getHeight()}">
-                            {$headerElem->buildHtml()}
-                        </div>
-                        <div data-options="region:'center'">
-                            {$children_html}
-                        </div>
+                <div class="grid exf-dialog" id="{$this->getId()}_masonry_grid" style="width:100%;height:100%;">
+                    {$messageListHtml}
+                    {$children_html}
+                </div>
+HTML;
+        }
+        
+        if ($widget->hasHeader() === true) {
+            $headerElem = $this->getFacade()->getElement($widget->getHeader());
+            $children_html = <<<HTML
+            
+                <div class="easyui-layout" data-options="fit:true">
+                    <div data-options="region:'north'" class="exf-dialog-header" style="height: {$headerElem->getHeight()}">
+                        {$headerElem->buildHtml()}
                     </div>
-                
-                HTML;
-            }
+                    <div data-options="region:'center'">
+                        {$children_html}
+                    </div>
+                </div>
+            
+HTML;
         }
         
         $dialogClass = '';
@@ -117,7 +115,7 @@ HTML;
         	</div>
         	<div id="{$this->getId()}_window_tools">
         		{$window_tools}
-        	</div>
+        	</div><!-- /dialog -->
 HTML;
         return $output;
     }
@@ -150,11 +148,10 @@ HTML;
     {
         $output = '';
         $widget = $this->getWidget();
-        if (! $this->isLazyLoading()) {
-            $output .= $this->buildJsForWidgets();
-            if ($widget->hasHeader() === true) {
-                $output .= $this->getFacade()->getElement($widget->getHeader())->buildJs();
-            }
+        
+        $output .= $this->buildJsForWidgets();
+        if ($widget->hasHeader() === true) {
+            $output .= $this->getFacade()->getElement($widget->getHeader())->buildJs();
         }
         $output .= $this->buildJsButtons();
         
@@ -184,7 +181,7 @@ HTML;
         $output = parent::buildJsDataOptions() 
             . ($widget->isMaximizable() ? ', maximizable: true, maximized: ' . ($widget->isMaximized() ? 'true' : 'false') : '') 
             . ", cache: false" 
-            . ", closed: false" 
+            . ", closed: " . ($this->isLazyLoading() ? 'false' : 'true')
             . ($this->hasButtonsVisible() ? ", buttons: '#{$this->buttons_div_id}'" : '')
             . ", tools: '#{$this->getId()}_window_tools'" 
             . ", modal: true"
@@ -285,14 +282,22 @@ HTML;
         return false;
     }
     
+    /**
+     * 
+     * {@inheritDoc}
+     * @see \exface\JEasyUIFacade\Facades\Elements\EuiWidgetGrid::getFitOption()
+     */
     protected function getFitOption() : bool
     {
         return false;
     }
     
+    /**
+     * 
+     * @return string
+     */
     protected function buildJsOnCloseScript() : string
     {
         return $this->buildJsDestroy();
     }
 }
-?>
