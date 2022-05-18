@@ -1,6 +1,8 @@
 <?php
 namespace exface\JEasyUIFacade\Facades\Elements;
 
+use exface\Core\Widgets\Markdown;
+
 class EuiMarkdown extends EuiHtml
 {    
     /**
@@ -12,6 +14,9 @@ class EuiMarkdown extends EuiHtml
     {
         $includes = parent::buildHtmlHeadTags();   
         $includes[] = '<link href="' . $this->getFacade()->buildUrlToSource('LIBS.MARKDOWN.CSS') . '" rel="stylesheet">';
+        if (($widget = $this->getWidget()) instanceof Markdown && $widget->hasRenderMermaidDiagrams()) {
+            $includes[] = '<script src="vendor/bower-asset/mermaid/dist/mermaid.js"></script>';
+        }
         return $includes;
     }
     
@@ -24,5 +29,30 @@ class EuiMarkdown extends EuiHtml
     {
         return parent::buildCssElementClass() . ' markdown-body';
     }
+    
+    /**
+     * 
+     * {@inheritDoc}
+     * @see \exface\JEasyUIFacade\Facades\Elements\EuiValue::buildJs()
+     */
+    public function buildJs()
+    {
+        $js = parent::buildJs();
+        
+        if ($this->getWidget()->hasRenderMermaidDiagrams()) {
+            $js .= <<<JS
+
+setTimeout(function(){ console.log('init mermaid')
+    mermaid.initialize({
+        startOnLoad:true,
+        theme: 'default'
+    });
+    mermaid.init(undefined, '.language-mermaid');
+}, 0);
+
+JS;
+        }
+        
+        return $js;
+    }
 }
-?>
