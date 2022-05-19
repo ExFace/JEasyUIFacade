@@ -129,6 +129,7 @@ HTML;
         
         return  <<<JS
 
+{$this->buildJsDisableConditionInitializer()}
 {$button_js}
 
 JS;
