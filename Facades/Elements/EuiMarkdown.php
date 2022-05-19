@@ -42,7 +42,7 @@ class EuiMarkdown extends EuiHtml
         if ($this->getWidget()->hasRenderMermaidDiagrams()) {
             $js .= <<<JS
 
-setTimeout(function(){ console.log('init mermaid')
+setTimeout(function(){
     mermaid.initialize({
         startOnLoad:true,
         theme: 'default'
