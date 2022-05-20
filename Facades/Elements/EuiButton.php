@@ -71,14 +71,6 @@ class EuiButton extends EuiAbstractElement
         // Initialize the disabled state of the widget if a disabled condition is set.
         $output .= $this->buildJsDisableConditionInitializer();
         
-        if ((null !== $action = $this->getAction()) && $action instanceof iShowDialog && $action->isDialogLazyLoading(true) === false) {
-            $output .= <<<JS
-
-            {$this->getFacade()->getElement($action->getDialogWidget())->buildJs()}
-
-JS;
-        }
-        
         return $output;
     }
 
@@ -89,18 +81,7 @@ JS;
     function buildHtml()
     {
         // Create a linkbutton
-        $output .= $this->buildHtmlButton();
-        
-        if ((null !== $action = $this->getAction()) && $action instanceof iShowDialog && $action->isDialogLazyLoading(true) === false) {
-            $output .= <<<HTML
-
-            <div style="display:none" id="{$this->getId()}_DialogWrapper">
-                {$this->getFacade()->getElement($action->getDialogWidget())->buildHtml()};
-            </div>
-
-HTML;
-        }
-        
+        $output .= $this->buildHtmlButton();        
         return $output;
     }
 
@@ -168,39 +149,51 @@ HTML;
         $headers = ! empty($this->getAjaxHeaders()) ? 'headers: ' . json_encode($this->getAjaxHeaders()) . ',' : '';
         
         $output = $this->buildJsRequestDataCollector($action, $input_element);
-        if ($action instanceof iShowDialog && $action->isDialogLazyLoading(true) === false) {
-            if ($widget instanceof DialogButton) {                
-                $output .= <<<JS
-                
-                        (function(){
-                            var onCloseFunc = $('#{$this->getInputElement()->getId()}').panel('options').onClose;
-    						$('#{$this->getInputElement()->getId()}').panel('options').onClose = function(){
-    							//$('#{$this->getFacade()->getElement($action->getDialogWidget())->getId()}').dialog('destroy');
-                                $('#{$this->getFacade()->getElement($action->getDialogWidget())->getId()}').remove();
-                                onCloseFunc();
-    						};
-                        })();
-                        
-JS;
-            }
+        // NOTE: trigger action effects AFTER removing the closed dialog - otherwise
+        // this might cause refreshes on the dialog tables that are totally useless!
+        if (($action instanceof iShowDialog) && $action->isDialogLazyLoading(true) === false) {
+            // For a non-lazy dialog store its content in a JSON and let the JS code append it to
+            // the HTML once the dialog is opened and remove it again once it is closed. This way
+            // non-lazy dialogs behave pretty much the same as normal lazy ones, so minimum side
+            // effects are to be expected when turning off lazy_loading.
+            $dialogData = [
+                'html' => "{$this->getFacade()->getElement($action->getDialogWidget())->buildHtml()}",
+                'js' => "<script>\n" . $this->getFacade()->getElement($action->getDialogWidget())->buildJs() . "\n</script>",
+                'head' => $this->getFacade()->getElement($action->getDialogWidget())->buildHtmlHeadTags()
+            ];
+            $dialogDataJs = json_encode($dialogData);
             $output .= <<<JS
             
                         {$this->buildJsCloseDialog($widget, $input_element)}
                         
-                        $('#{$this->getFacade()->getElement($action->getDialogWidget())->getId()}').dialog('open');
-                        
                         (function(){
-                            var onCloseFunc = $('#{$this->getFacade()->getElement($action->getDialogWidget())->getId()}').panel('options').onClose;
+                            var onCloseFunc;
+                            var oDialogData = $dialogDataJs;
+                            var jqDialogWrapper = $('<div style="display:none" id="{$this->getId()}_DialogWrapper"></div>');
+                            
+                            oDialogData.head.forEach(function(sTag){
+                                $(jqDialogWrapper).append(sTag);
+                            });
+                            jqDialogWrapper
+                            .append(oDialogData.html)
+                            .append(oDialogData.js);
+
+                            jqDialogWrapper.appendTo('body');
+                            $.parser.parse(jqDialogWrapper);
+
+                            $('#{$this->getFacade()->getElement($action->getDialogWidget())->getId()}').dialog('open');
+                        
+                            onCloseFunc = $('#{$this->getFacade()->getElement($action->getDialogWidget())->getId()}').panel('options').onClose;
     						$('#{$this->getFacade()->getElement($action->getDialogWidget())->getId()}').panel('options').onClose = function(){
     							onCloseFunc();
+                                $(this).dialog('destroy').remove();
+                                jqDialogWrapper.remove();
                                 {$this->buildJsTriggerActionEffects($action)}
     						};
                         })();
 								
 JS;
         } else {
-            // NOTE: trigger action effects AFTER removing the closed dialog - otherwise
-            // this might cause refreshes on the dialog tables that are totally useless!
             $output .= <<<JS
 						{$this->buildJsBusyIconShow()}
 						$.ajax({
@@ -290,11 +283,7 @@ JS;
         // Since this facade renders action-widgets by asking the server when the button is pressed
         // (see buildJsClickShowWidget() and buildJsClickShowDialog()) it is enough, to get the head
         // tags for the custom-script actions only.
-        $includes = $this->buildHtmlHeadTagsForCustomScriptIncludes();
-        if ((null !== $action = $this->getAction()) && $action instanceof iShowDialog && $action->isDialogLazyLoading(true) === false) {
-            $includes = array_merge($includes, $this->getFacade()->getElement($action->getDialogWidget())->buildHtmlHeadTags());
-        }
-        return $includes;
+        return $this->buildHtmlHeadTagsForCustomScriptIncludes();
     }
     
     /**
