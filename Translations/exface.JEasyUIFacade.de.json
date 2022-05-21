@@ -19,5 +19,7 @@
 	"MESSAGE.INVALID.INPUTDATE": "Bitte ein gültiges Datum eintragen.",
 	
 	"TEMPLATE.MENU": "Menü",
-	"TEMPLATE.NAVIGATION": "Navigation"
+	"TEMPLATE.NAVIGATION": "Navigation",
+	
+	"WIDGET.IMAGEGALLERY.CANNOT_DOWNLOAD_WITHOUT_URL": "Datei kann nicht herutergeladen werden: sie ist entweder noch nicht komplett hochgeladen worden or hat keine Download-URL"
 }
