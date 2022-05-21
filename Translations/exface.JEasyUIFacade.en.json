@@ -19,5 +19,7 @@
 	"MESSAGE.INVALID.INPUTDATE": "Please enter a valid date.",
 	
 	"TEMPLATE.MENU": "Menu",
-	"TEMPLATE.NAVIGATION": "Navigation"
+	"TEMPLATE.NAVIGATION": "Navigation",
+	
+	"WIDGET.IMAGEGALLERY.CANNOT_DOWNLOAD_WITHOUT_URL": "Cannot download file: it is either not uploaded correctly or has is no download URL"
 }

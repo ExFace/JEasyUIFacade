@@ -9,6 +9,7 @@ use exface\Core\Facades\AbstractAjaxFacade\Elements\AbstractJqueryElement;
 use exface\Core\Widgets\Dialog;
 use exface\Core\Widgets\Button;
 use exface\Core\Widgets\ButtonGroup;
+use exface\Core\Interfaces\Actions\iShowDialog;
 
 /**
  * Generates jEasyUI linkbutton controls for Button widgets
@@ -80,11 +81,14 @@ class EuiButton extends EuiAbstractElement
     function buildHtml()
     {
         // Create a linkbutton
-        $output .= $this->buildHtmlButton();
-        
+        $output .= $this->buildHtmlButton();        
         return $output;
     }
 
+    /**
+     * 
+     * @return string
+     */
     public function buildHtmlButton()
     {
         $widget = $this->getWidget();
@@ -144,10 +148,53 @@ class EuiButton extends EuiAbstractElement
         
         $headers = ! empty($this->getAjaxHeaders()) ? 'headers: ' . json_encode($this->getAjaxHeaders()) . ',' : '';
         
+        $output = $this->buildJsRequestDataCollector($action, $input_element);
         // NOTE: trigger action effects AFTER removing the closed dialog - otherwise
         // this might cause refreshes on the dialog tables that are totally useless!
-        $output = $this->buildJsRequestDataCollector($action, $input_element);
-        $output .= <<<JS
+        if (($action instanceof iShowDialog) && $action->isDialogLazyLoading(true) === false) {
+            // For a non-lazy dialog store its content in a JSON and let the JS code append it to
+            // the HTML once the dialog is opened and remove it again once it is closed. This way
+            // non-lazy dialogs behave pretty much the same as normal lazy ones, so minimum side
+            // effects are to be expected when turning off lazy_loading.
+            $dialogData = [
+                'html' => "{$this->getFacade()->getElement($action->getDialogWidget())->buildHtml()}",
+                'js' => "<script>\n" . $this->getFacade()->getElement($action->getDialogWidget())->buildJs() . "\n</script>",
+                'head' => $this->getFacade()->getElement($action->getDialogWidget())->buildHtmlHeadTags()
+            ];
+            $dialogDataJs = json_encode($dialogData);
+            $output .= <<<JS
+            
+                        {$this->buildJsCloseDialog($widget, $input_element)}
+                        
+                        (function(){
+                            var onCloseFunc;
+                            var oDialogData = $dialogDataJs;
+                            var jqDialogWrapper = $('<div style="display:none" id="{$this->getId()}_DialogWrapper"></div>');
+                            
+                            oDialogData.head.forEach(function(sTag){
+                                $(jqDialogWrapper).append(sTag);
+                            });
+                            jqDialogWrapper
+                            .append(oDialogData.html)
+                            .append(oDialogData.js);
+
+                            jqDialogWrapper.appendTo('body');
+                            $.parser.parse(jqDialogWrapper);
+
+                            $('#{$this->getFacade()->getElement($action->getDialogWidget())->getId()}').dialog('open');
+                        
+                            onCloseFunc = $('#{$this->getFacade()->getElement($action->getDialogWidget())->getId()}').panel('options').onClose;
+    						$('#{$this->getFacade()->getElement($action->getDialogWidget())->getId()}').panel('options').onClose = function(){
+    							onCloseFunc();
+                                $(this).dialog('destroy').remove();
+                                jqDialogWrapper.remove();
+                                {$this->buildJsTriggerActionEffects($action)}
+    						};
+                        })();
+								
+JS;
+        } else {
+            $output .= <<<JS
 						{$this->buildJsBusyIconShow()}
 						$.ajax({
 							type: 'POST',
@@ -199,6 +246,7 @@ class EuiButton extends EuiAbstractElement
 						});
 						{$this->buildJsCloseDialog($widget, $input_element)} 
 JS;
+        }
         return $output;
     }
 
