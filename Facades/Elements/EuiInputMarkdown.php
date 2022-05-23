@@ -80,7 +80,7 @@ function(){
                 }, {
                     name: 'Full screen',
                     tooltip: 'Full screen',
-                    el: $('<button type="button" style="margin: -7px -5px; background: transparent;" onclick="console.log(\'click\'); $(\'#{$this->getId()}\').toggleClass(\'fullscreen\'); $(this).find(\'i\').removeClass(\'fa-expand\').removeClass(\'fa-compress\').addClass($(\'#{$this->getId()}\').hasClass(\'fullscreen\') ? \'fa-compress\' : \'fa-expand\');"><i class="fa fa-expand" style="padding: 4px;border: 1px solid black;margin-top: 1px"></i></button>')[0]
+                    el: $('<button type="button" style="margin: -7px -5px; background: transparent;" onclick="$(\'#{$this->getId()}\').toggleClass(\'fullscreen\'); $(this).find(\'i\').removeClass(\'fa-expand\').removeClass(\'fa-compress\').addClass($(\'#{$this->getId()}\').hasClass(\'fullscreen\') ? \'fa-compress\' : \'fa-expand\');"><i class="fa fa-expand" style="padding: 4px;border: 1px solid black;margin-top: 1px"></i></button>')[0]
                 }
             );
 
