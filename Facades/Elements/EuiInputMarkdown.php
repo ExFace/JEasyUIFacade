@@ -58,32 +58,31 @@ HTML;
         
         if ($viewer) {
             $viewerOptions ='viewer: true,';
-            $onInitJs = '';
         } else {
             $viewerOptions = '';
-            $onInitJs = "setTimeout(function(){ed.getCodeMirror().refresh();},1000)";
         }
         
         return <<<JS
 function(){
-            var ed = window.toastui.Editor.factory({
+            
+            var ed = new toastui.Editor({
                 el: document.querySelector('#{$this->getId()}'),
                 height: 'calc(100% - 6px)',
-                initialValue: $contentJs,
+                initialValue: ($contentJs || ''),
                 language: 'en',
                 $viewerOptions
             });
 
-            {$onInitJs}
-
-            ed.getUI().getToolbar().addItem({
-                type: "button",
-                options: {
+            ed.insertToolbarItem(
+                { 
+                    groupIndex: 0, 
+                    itemIndex: 0 
+                }, {
                     name: 'Full screen',
                     tooltip: 'Full screen',
-                    el: $('<button type="button" style="float:right;" onclick="$(\'#{$this->getId()} > .tui-editor-defaultUI\').toggleClass(\'fullscreen\'); $(this).find(\'i\').removeClass(\'fa-expand\').removeClass(\'fa-compress\').addClass($(\'#{$this->getId()} > .tui-editor-defaultUI\').hasClass(\'fullscreen\') ? \'fa-compress\' : \'fa-expand\');"><i class="fa fa-expand"></i></button>')[0]
+                    el: $('<button type="button" style="margin: -7px -5px; background: transparent;" onclick="console.log(\'click\'); $(\'#{$this->getId()}\').toggleClass(\'fullscreen\'); $(this).find(\'i\').removeClass(\'fa-expand\').removeClass(\'fa-compress\').addClass($(\'#{$this->getId()}\').hasClass(\'fullscreen\') ? \'fa-compress\' : \'fa-expand\');"><i class="fa fa-expand" style="padding: 4px;border: 1px solid black;margin-top: 1px"></i></button>')[0]
                 }
-            }, 1);
+            );
 
             return ed;
 }();
@@ -186,11 +185,9 @@ JS;
     {
         $f = $this->getFacade();
         $includes = parent::buildHtmlHeadTags();
-        $includes[] = '<link rel="stylesheet" href="' . $f->buildUrlToSource('LIBS.CODEMIRROR.CSS') . '"/>';
         $includes[] = '<link rel="stylesheet" href="' . $f->buildUrlToSource('LIBS.TOASTUI.EDITOR_CSS') . '" />';
-        $includes[] = '<script type="text/javascript" src="' . $f->buildUrlToSource("LIBS.CODEMIRROR.JS") . '"></script>';
         $includes[] = '<script type="text/javascript" src="' . $f->buildUrlToSource("LIBS.TOASTUI.EDITOR_JS") . '"></script>';
-        $includes[] = '<script type="text/javascript" src="' . $f->buildUrlToSource("LIBS.TOASTUI.EDITOR_JS") . '"></script>';
+        //$includes[] = '<script src="https://uicdn.toast.com/editor/latest/toastui-editor-all.min.js"></script>';
         return $includes;
     }
     

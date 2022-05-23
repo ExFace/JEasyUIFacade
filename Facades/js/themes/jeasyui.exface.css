@@ -272,8 +272,8 @@ pre.sf-dump .sf-dump-private, pre.sf-dump .sf-dump-public, pre.sf-dump .sf-dump-
 
 /* TOAST UI Editor */
 .tui-tooltip {z-index: 999999 !important;}
-.tui-editor-defaultUI.fullscreen {position: fixed; top: 0; left: 0; z-index: 10050; width: 100%!important;}
-.tui-editor-defaultUI-toolbar > button > i {color:black}
+.markdown-editor.fullscreen {position: fixed; top: 0; left: 0; z-index: 10050; width: 100%!important;}
+.toastui-editor-defaultUI {background-color: white;}
 
 /* InputTags */
 .exf-tag {margin: 4px 0px;}
