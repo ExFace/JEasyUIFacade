@@ -64,6 +64,7 @@ HTML;
 
     function {$this->buildJsFunctionPrefix()}_init(){
         {$this->buildJsSlickInit()}
+        {$this->buildJsUploaderInit("$('#{$this->getIdOfSlick()}')")};
     }
     
     {$this->buildJsDataLoadFunction()}
