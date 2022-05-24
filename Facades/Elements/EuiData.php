@@ -827,7 +827,7 @@ JS;
         
         // Styler option        
         if ($styler = $this->buildJsInitOptionsColumnStyler($col, $js_var_value, $js_var_row, $js_var_index)) {
-            $options = ($options ?  $options . ', :' : '') . 'styler: ' . $styler;
+            $options = ($options ?  $options . ', ' : '') . 'styler: ' . $styler;
         }
         
         return $options;
