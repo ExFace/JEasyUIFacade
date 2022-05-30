@@ -29,6 +29,9 @@ class EuiMap extends EuiData
         // Disable global buttons because jEasyUI charts do not have data getters yet
         $widget->getToolbarMain()->setIncludeGlobalActions(false);
         
+        $this->registerLiveReferenceAtLinkedElements();
+        $this->getFacade()->getElement($widget->getConfiguratorWidget())->registerFiltersWithApplyOnChange($this);
+        
         $this->initLeaflet();
         
         $this->addOnResizeScript($this->buildJsResize());
@@ -146,7 +149,7 @@ JS;
                     if ($layer instanceof DataSelectionMarkerLayer) {
                         $linked_element->addOnChangeScript($this->buildJsLeafletRefresh());
                     } else {
-                        $linked_element->addOnRefreshScript($this->buildJsLeafletRefresh());
+                        $linked_element->addOnLoadSuccess($this->buildJsLeafletRefresh());
                     }
                 }
             }
