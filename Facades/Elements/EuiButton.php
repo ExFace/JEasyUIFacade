@@ -134,7 +134,7 @@ class EuiButton extends EuiAbstractElement
         return $data_options;
     }
 
-    protected function buildJsClickShowDialog(ActionInterface $action, AbstractJqueryElement $input_element)
+    protected function buildJsClickShowDialog(ActionInterface $action, string $jsRequestData) : string
     {
         $widget = $this->getWidget();
         
@@ -148,7 +148,6 @@ class EuiButton extends EuiAbstractElement
         
         $headers = ! empty($this->getAjaxHeaders()) ? 'headers: ' . json_encode($this->getAjaxHeaders()) . ',' : '';
         
-        $output = $this->buildJsRequestDataCollector($action, $input_element);
         // NOTE: trigger action effects AFTER removing the closed dialog - otherwise
         // this might cause refreshes on the dialog tables that are totally useless!
         if (($action instanceof iShowDialog) && $action->isDialogLazyLoading(true) === false) {
@@ -162,9 +161,9 @@ class EuiButton extends EuiAbstractElement
                 'head' => $this->getFacade()->getElement($action->getDialogWidget())->buildHtmlHeadTags()
             ];
             $dialogDataJs = json_encode($dialogData);
-            $output .= <<<JS
+            $output = <<<JS
             
-                        {$this->buildJsCloseDialog($widget, $input_element)}
+                        {$this->buildJsCloseDialog()}
                         
                         (function(){
                             var onCloseFunc;
@@ -194,7 +193,7 @@ class EuiButton extends EuiAbstractElement
 								
 JS;
         } else {
-            $output .= <<<JS
+            $output = <<<JS
 						{$this->buildJsBusyIconShow()}
 						$.ajax({
 							type: 'POST',
@@ -204,12 +203,12 @@ JS;
                             cache: false,
 							data: {
 								{$this->buildJsRequestCommonParams($widget, $action)}
-								data: requestData
+								data: {$jsRequestData}
 								{$prefill}
 							},
 							success: function(data, textStatus, jqXHR) {
 								var dialogId;
-                                {$this->buildJsCloseDialog($widget, $input_element)}
+                                {$this->buildJsCloseDialog()}
 		                       	if ($('#ajax-dialogs').length < 1){
 		                       		$('body').append('<div id=\"ajax-dialogs\"></div>');
                        			}
@@ -244,7 +243,7 @@ JS;
 								{$this->buildJsBusyIconHide()}
 							}
 						});
-						{$this->buildJsCloseDialog($widget, $input_element)} 
+						{$this->buildJsCloseDialog()} 
 JS;
         }
         return $output;
@@ -255,11 +254,12 @@ JS;
      * {@inheritdoc}
      * @see JqueryButtonTrait::buildJsCloseDialog()
      */
-    protected function buildJsCloseDialog($widget, $input_element)
+    protected function buildJsCloseDialog() : string
     {
+        $widget = $this->getWidget();
         if ($widget instanceof DialogButton && $widget->getCloseDialogAfterActionSucceeds()){
             if ($widget->getInputWidget() instanceof Dialog){
-                return "$('#" . $input_element->getId() . "').dialog('close');";
+                return "$('#" . $this->getInputElement()->getId() . "').dialog('close');";
             } else {
                 $dialog = $widget->getParentByClass(Dialog::class);
                 if ($dialog) {
