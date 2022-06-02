@@ -3,6 +3,7 @@ namespace exface\JEasyUIFacade\Facades\Elements;
 
 use exface\Core\Widgets\WizardButton;
 use exface\Core\Interfaces\Actions\iResetWidgets;
+use exface\Core\Interfaces\Actions\ActionInterface;
 
 /**
  *
@@ -26,13 +27,14 @@ class EuiWizardButton extends EuiButton
      * {@inheritdoc}
      * @see EuiButton::buildJsClickFunction()
      */
-    public function buildJsClickFunction()
+    public function buildJsClickFunction(ActionInterface $action = null, string $jsRequestData = null) : string
     {
         $widget = $this->getWidget();
+        $action = $action ?? $this->getAction();
         $tabsElement = $this->getFacade()->getElement($widget->getWizardStep()->getParent());
         
-        if (empty($widget->getResetWidgetIds()) === false && ($widget->hasAction() === false || $widget->getAction() instanceof iResetWidgets)) {
-            return $this->buildJsResetWidgets($widget);
+        if (empty($widget->getResetWidgetIds()) === false && ($widget->hasAction() === false || $action instanceof iResetWidgets)) {
+            return $this->buildJsResetWidgets();
         }
         
         $goToStepJs = '';
@@ -61,7 +63,7 @@ JS;
         // If the button has an action, the step navigation should only happen once
         // the action is complete!
         $this->addOnSuccessScript($goToStepJs);
-        $actionJs = parent::buildJsClickFunction();
+        $actionJs = parent::buildJsClickFunction($action, $jsRequestData);
         if ($actionJs) {
             $goToStepJs = '';
         }
