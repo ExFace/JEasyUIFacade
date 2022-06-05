@@ -70,6 +70,7 @@ function(){
                 height: 'calc(100% - 6px)',
                 initialValue: ($contentJs || ''),
                 language: 'en',
+                autofocus: false,
                 $viewerOptions
             });
 
