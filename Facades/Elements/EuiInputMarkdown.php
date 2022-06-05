@@ -67,7 +67,7 @@ function(){
             
             var ed = new toastui.Editor({
                 el: document.querySelector('#{$this->getId()}'),
-                height: 'calc(100% - 6px)',
+                height: '100%',
                 initialValue: ($contentJs || ''),
                 language: 'en',
                 autofocus: false,
