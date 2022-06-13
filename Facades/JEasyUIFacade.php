@@ -24,6 +24,7 @@ use exface\Core\DataTypes\FilePathDataType;
 use exface\Core\Exceptions\Facades\FacadeRuntimeError;
 use exface\JEasyUIFacade\Facades\Templates\EuiCustomPlaceholders;
 use exface\Core\Facades\AbstractAjaxFacade\Templates\FacadePageTemplateRenderer;
+use exface\Core\Interfaces\Selectors\FacadeSelectorInterface;
 
 /**
  * Renders pages using the jEasyUI JavaScript framework based on jQuery.
@@ -65,9 +66,9 @@ class JEasyUIFacade extends AbstractAjaxFacade
     
     private $supported_languages = ['af','am','ar','bg','ca','cs','cz','da','de','el','en','es','fa','fr','it','jp','ko','nl','pl','pt_BR','ru','sv_SE','tr','ua','zh_CN','zh_TW'];
     
-    public function init()
+    public function __construct(FacadeSelectorInterface $selector)
     {
-        parent::init();
+        parent::__construct($selector);
         $this->setClassPrefix('Eui');
         $this->setClassNamespace(__NAMESPACE__);
         $folder = dirname(__FILE__) . DIRECTORY_SEPARATOR . 'js' . DIRECTORY_SEPARATOR . 'jeasyui';
