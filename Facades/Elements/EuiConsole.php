@@ -126,7 +126,7 @@ HTML;
     jqDialog.append(`
         <div class="exf-control exf-input" style="width: 100%;">
             <label>{$placeholder}</label>
-			<div class="exf-labeled-item">
+			<div class="exf-labeled-item" style="width: 60%;">
                 <input class="easyui-textbox" required="true" style="height: 100%; width: 100%;" name="{$placeholder}" />
             </div>
         </div>
@@ -158,7 +158,7 @@ js;
         onOpen: function() {
             var jqToolbar = $('#{$this->getPresetDialogId($presetId)}_buttons');
             // Add click handlers to preset dialogs
-            $(jqToolbar).find('.exf-console-preset-btn-ok').click(function(event){
+            var jqBtnOK = $(jqToolbar).find('.exf-console-preset-btn-ok').click(function(event){
                 var placeholders = {};
                 var commands = {$commands};
                 jqDialog.find('.textbox-value').each(function(){
@@ -171,6 +171,13 @@ js;
                 setTimeout(function(){ $('#{$this->getId()}').terminal().focus(); }, 0);
                 jqDialog.dialog('close');
             });
+            jqDialog.find('input').keyup(function (ev) {
+                var keycode = (ev.keyCode ? ev.keyCode : ev.which);
+                if (keycode == '13') {
+                    jqBtnOK.click();
+                }
+            })
+            jqDialog.find('.easyui-textbox').first().next().find('input').focus();
         },
         onClose: function() {
             jqDialog.dialog('destroy');
