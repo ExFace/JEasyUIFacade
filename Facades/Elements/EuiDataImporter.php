@@ -2,10 +2,16 @@
 namespace exface\JEasyUIFacade\Facades\Elements;
 
 use exface\Core\Facades\AbstractAjaxFacade\Elements\JExcelTrait;
-use exface\JEasyUIFacade\Facades\Elements\Traits\EuiPanelWrapperTrait;
 use exface\Core\Facades\AbstractAjaxFacade\Elements\JqueryToolbarsTrait;
 use exface\Core\Interfaces\Widgets\iContainOtherWidgets;
 
+/**
+ * 
+ * @method \exface\Core\Widgets\DataImporter getWidet()
+ * 
+ * @author Andrej Kabachnik
+ *
+ */
 class EuiDataImporter extends EuiAbstractElement
 {
     use JExcelTrait;
@@ -72,7 +78,7 @@ JS;
         $includes = array_merge(
             parent::buildHtmlHeadTags(),
             $this->buildHtmlHeadTagsForJExcel()
-            );
+        );
         
         array_unshift($includes, '<script type="text/javascript">' . $this->buildJsFixJqueryImportUseStrict() . '</script>');
         
