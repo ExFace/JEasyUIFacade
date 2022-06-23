@@ -479,4 +479,22 @@ HTML;
         }
         return $this;
     }
+    
+    /**
+     * 
+     * {@inheritdoc}
+     * @see AbstractAjaxFacade::getSemanticColors()
+     */
+    public function getSemanticColors() : array
+    {
+        $colors = parent::getSemanticColors();
+        if (empty($colors)) {
+            $colors = [
+                '~OK' => 'lightgreen',
+                '~WARNING' => 'yellow',
+                '~ERROR' => 'orangered'
+            ];
+        }
+        return $colors;
+    }
 }
