@@ -413,19 +413,31 @@ JS;
         $this->registerPaginationFixer();
         
         // Add single-result action to onLoadSuccess
-        if ($singleResultButton = $widget->getButtons(function($btn) {return ($btn instanceof DataButton) && $btn->isBoundToSingleResult() === true;})[0]) {
-            $singleResultJs = <<<JS
-
-                        if (data.rows.length === 1) {
-                            var curRow = jqSelf.{$this->getElementType()}("getRows")[0];
-                            var lastRow = jqSelf.data("_singleResultActionPerformedFor");
-                            if (lastRow === undefined || {$this->buildJsRowCompare('curRow', 'lastRow')} === false){
-                                jqSelf.{$this->getElementType()}("selectRow", 0);
+        if (($singleResultButton = $this->getWidget()->getButtons(function($btn) {return ($btn instanceof DataButton) && $btn->isBoundToSingleResult() === true;})[0]) || $this->getWidget()->getSelectSingleResult()) {
+            $buttonClickJs = '';
+            if ($singleResultButton) {
+                $buttonClickJs = <<<JS
+                
+                            if (lastRow === undefined || {$this->buildJsRowCompare('curRow', 'lastRow')} === false){                                
                                 jqSelf.data("_singleResultActionPerformedFor", curRow);
                                 {$this->getFacade()->getElement($singleResultButton)->buildJsClickFunction()};
                             }
+JS;
+            }
+            $singleResultJs = <<<JS
+            
+                        if (data.rows.length === 1) {
+                            var curRow = jqSelf.{$this->getElementType()}("getRows")[0];
+                            jqSelf.{$this->getElementType()}("selectRow", 0);
+                            var lastRow = jqSelf.data("_singleResultActionPerformedFor");
+                            if (lastRow === undefined || {$this->buildJsRowCompare('curRow', 'lastRow')} === false){                                
+                                (function(curRow) {{$this->buildJsOnChangeScript('curRow', '0')}})(curRow);
+                            }
+                            {$buttonClickJs}                            
+                        } else {
+                            jqSelf.data("_singleResultActionPerformedFor", {});
                         }
-
+                        
 JS;
             $this->addOnLoadSuccess($singleResultJs);
         }
