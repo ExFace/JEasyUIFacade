@@ -37,6 +37,26 @@ class EuiImage extends EuiText
     /**
      * 
      * {@inheritDoc}
+     * @see \exface\Core\Facades\AbstractAjaxFacade\Elements\AbstractJqueryElement::buildJsValueGetter()
+     */
+    public function buildJsValueGetter()
+    {
+        return $this->buildJsImgSrcGetter();
+    }
+    
+    /**
+     * 
+     * {@inheritDoc}
+     * @see \exface\Core\Facades\AbstractAjaxFacade\Elements\AbstractJqueryElement::buildJsValueGetterMethod()
+     */
+    public function buildJsValueGetterMethod()
+    {
+        return ".attr('src')";
+    }
+    
+    /**
+     * 
+     * {@inheritDoc}
      * @see \exface\JEasyUIFacade\Facades\Elements\EuiText::getElementType()
      */
     public function getElementType() : ?string
