@@ -142,6 +142,16 @@ JS;
     {
         return "$('#{$this->getId()}').{$this->getElementType()}('require'," . ($required ? 'true' : 'false') . ");";
     }
+    
+    /**
+     * javascript to get if an input is required or not, must not end with a semicolon!
+     * 
+     * @return string
+     */
+    protected function buildJsRequiredGetter() : string
+    {
+        return "($('#{$this->getId()}').{$this->getElementType()}('options')['required'] || false)";
+    }
 
     /**
      * 
