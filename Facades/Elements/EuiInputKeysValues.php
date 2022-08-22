@@ -228,4 +228,24 @@ JS;
     {
         return "$('#{$this->getId()}')";
     }
+    
+    /**
+     * 
+     * {@inheritDoc}
+     * @see \exface\JEasyUIFacade\Facades\Elements\EuiInput::buildJsRequiredSetter()
+     */
+    protected function buildJsRequiredSetter(bool $required) : string
+    {
+        return "";
+    }
+    
+    /**
+     * 
+     * {@inheritDoc}
+     * @see \exface\JEasyUIFacade\Facades\Elements\EuiInput::buildJsRequiredGetter()
+     */
+    protected function buildJsRequiredGetter() : string
+    {
+        return $this->getWidget()->isRequired() ? "true" : "false";
+    }
 }
