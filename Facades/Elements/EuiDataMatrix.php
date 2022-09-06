@@ -95,222 +95,236 @@ class EuiDataMatrix extends EuiDataTable
         
 $("#{$this->getId()}").data("_skipNextLoad", true);
 
-var dataCols = [ {$data_cols} ];
-var dataColsTotals = {$data_cols_totals};
-var totalsLabels = $aggr_names;
-var labelCols = {$label_cols};
-var freezeCols = {$widget->getFreezeColumns()};
-var rows = data.rows;
-var cols = $(this).data('_columnsBkp');
-var colsNew = [];
-var colsNewFrozen = [];
-var colsTransposed = {};
-var colsTranspCount = 0;
-// data_column_name => formatter_callback
-var formatters = $formattersJs;
-// data_column_name => styler_callback returning CSS styles
-var stylers = $stylersJs;
+var jqSelf = $(this);
 
-
-if (! cols) {
-    cols = $(this).datagrid('options').columns;
-    if (freezeCols > 0) {
-        for (var fi = $(this).datagrid('options').frozenColumns[0].length-1; fi >= 0; fi--) {
-            cols[0].unshift($(this).datagrid('options').frozenColumns[0][fi]);
-        }
-    }
-    $(this).data('_columnsBkp', cols);
-}
-
-for (var i=0; i<cols.length; i++){
-	var newColRow = [];
-	for (var j=0; j<cols[i].length; j++){
-		var fld = cols[i][j].field;
-		if (dataCols.indexOf(fld) > -1){
-			data.transposed = 0;
-			colsTransposed[fld] = {
-				column: cols[i][j],
-				subRowIndex: colsTranspCount++,
-				colIndex: j
-			};
-		} else if (labelCols[fld] != undefined) {
-			// Add a subtitle column to show a caption for each subrow if there are multiple
-			if (dataCols.length > 1){
-				var newCol = {
-    				field: '_subRowIndex',
-    				title: '',
-    				align: 'right',
-    				sortable: false,
-    				hidden: true
-                }
-				newColRow.push(newCol);
-				
-				var newCol = $.extend(true, {}, cols[i][j], {
-                    field: fld+'_subtitle',
-    				title: '',
-    				align: 'right',
-    				sortable: false,
-                    formatter: false,
-                    styler: false
-                });
-				newColRow.push(newCol);
-			}
-			// Create a column for each value if the label column
-			var labels = [];
-			for (var l=0; l<rows.length; l++){
-				if (labels.indexOf(rows[l][fld]) == -1){
-					labels.push(rows[l][fld]);
-				}
-			}
-			for (var l=0; l<labels.length; l++){
-				let label = labels[l];
-					if (typeof label !== 'string') {
-						label = String(label);
-					}
-					label = label.replaceAll('-', '_').replaceAll(':', '_');
-				var newCol = $.extend(true, {}, cols[i][j], {
-                    field: label,
-    				title: '<span title="'+$(cols[i][j].title).text()+' '+labels[l]+'">'+(formatters[fld] ? formatters[fld](labels[l]) : labels[l])+'</title>',
-    				_transposedFields: labelCols[fld],
-    				// No header sorting (not clear, what to sort!)
-    				sortable: false,
-                    formatter: false,
-                    styler: false
-                });
-				newColRow.push(newCol);
-			}
-			// Create a totals column if there are totals
-            // The footer of the totals column will contain the overall total provided by the server
-			if (dataColsTotals !== {}){
-				var totals = [];
-				for (var tfld in dataColsTotals){
-					var tfunc = dataColsTotals[tfld];
-					if (totals.indexOf(tfunc) == -1){
-						var newCol = $.extend(true, {}, cols[i][j]);
-						newCol.field = fld+'_'+tfunc;
-						newCol.title = totalsLabels[tfunc];
-						newCol.align = 'right';
-						newCol.sortable = false;
-						newColRow.push(newCol);
-						totals.push(tfunc);
-                        data.footer[0][newCol.field] = data.footer[0][tfld];
-					}
-				}
-			}
-		} else {
-			newColRow.push(cols[i][j]);
-		}
-	}
-	for (var i in colsTransposed){
-		if (colsTransposed[i].column.editor != undefined){
-			for (var j=0; j<newColRow.length; j++){
-				if (newColRow[j]._transposedFields != undefined && newColRow[j]._transposedFields.indexOf(i) > -1){
-					newColRow[j].editor = colsTransposed[i].column.editor;
-				}
-			}
-		}
-	}
-	
-    if (freezeCols > 0) {
-        colsNewFrozen.push([]);
-        for (var i = 0; i < newColRow.length; i++) {
-            if (newColRow[i].hidden !== true && i < freezeCols) {
-                colsNewFrozen[0].push(newColRow[i]);
-                newColRow.splice(i, 1);
-            }
-        }
-    }
-	colsNew.push(newColRow);
-}
-
-if (data.transposed === 0){
-	var newRows = [];
-	var newRowsObj = {};
-	var visibleCols = [ {$visible_cols} ];
+var oTransposed = (function(oData) {
+    var oResult = {
+        bTransposed: false,
+        oDataOriginal: oData
+    };
+    var aDataCols = [ {$data_cols} ]; // [transpColName1, transpColName2, ...]
+    var aVisibleCols = [ {$visible_cols} ];
+    var oDataColsTotals = {$data_cols_totals}; // {transpColName2: SUM, ...}
+    var oAggrLabels = $aggr_names; // {SUM: 'Sum', ...}
+    var oLabelCols = {$label_cols}; // {labelAttrAlias1: [transpColName1, transpColName2], labelAttrAlias2: [...], ...}
+    var iFrozenColCnt = {$widget->getFreezeColumns()};
+    var aRows = oData.rows;
+    var aColsOrig = jqSelf.data('_columnsBkp'); // [col1, col2, ...]
+    var aColsNew = []; // [col1, col2, ...]
+    var aColsNewFrozen = []; // [col1, col2, ...]
+    var oColsTransposed = {};
+    var iColsTransposedCnt = 0;
+    var oFormatters = $formattersJs; // [data_column_name: function_formatting_values]
+    var oStylers = $stylersJs; // [data_column_name => function_returning_CSS_styles]
+    
+	var aRowsNew = [];
+	var oRowKeys = {};
     var oFooterRows = {};
-	for (var i=0; i<rows.length; i++){
-		var newRowId = '';
-		var newRow = {};
-		var newColVals = {};
-		var newColId = '';
-		for (var fld in rows[i]){
-			var val = rows[i][fld];
-			if (labelCols[fld] != undefined){
-				if (typeof val !== 'string') {
-					val = String(val);
-				}
-				val = val.replaceAll('-', '_').replaceAll(':', '_');
-				newColId = val;
-				newColGroup = fld;
-			} else if (dataCols.indexOf(fld) > -1){
-				newColVals[fld] = val;
-			} else if (visibleCols.indexOf(fld) > -1) {
-				newRowId += val;
-				newRow[fld] = val;
-			}
-			
-			// TODO save UID and other system attributes to some invisible data structure
-		}
-		
-		var subRowCounter = 0;
-		for (var fld in newColVals){
-			if (newRowsObj[newRowId+fld] == undefined){
-				newRowsObj[newRowId+fld] = $.extend(true, {}, newRow);
-				newRowsObj[newRowId+fld]['_subRowIndex'] = subRowCounter++;
-			}
-			newRowsObj[newRowId+fld][newColId] = formatters[fld] ? formatters[fld](newColVals[fld]) : newColVals[fld];
-            if (stylers[fld]) {
-                newRowsObj[newRowId+fld][newColId] = '<span style="' + stylers[fld](newColVals[fld]) + '">' + newRowsObj[newRowId+fld][newColId] + '</span>';
+    
+    if (! aColsOrig) {
+        aColsOrig = jqSelf.datagrid('options').columns;
+        if (iFrozenColCnt > 0) {
+            for (var fi = jqSelf.datagrid('options').frozenColumns[0].length-1; fi >= 0; fi--) {
+                aColsOrig[0].unshift(jqSelf.datagrid('options').frozenColumns[0][fi]);
             }
-			newRowsObj[newRowId+fld][newColGroup+'_subtitle'] = '<i style="' + (stylers[fld] ? stylers[fld]() : '') + '">'+colsTransposed[fld].column.title+'</i>';
-			if (dataColsTotals[fld] != undefined){
-				var newVal = parseFloat(newColVals[fld]);
-				var oldVal = newRowsObj[newRowId+fld][newColGroup+'_'+dataColsTotals[fld]];
-                var oldTotal = (data.footer[0][newColId] || 0);
-				oldVal = oldVal ? oldVal : 0;
-				switch (dataColsTotals[fld]){
-					case 'SUM':
-						newRowsObj[newRowId+fld][newColGroup+'_'+dataColsTotals[fld]] = oldVal + newVal;
-                        if (dataCols.length === 1){
-                            data.footer[0][newColId] = oldTotal + newVal;
-                        }
-						break;
-					case 'MAX':
-						newRowsObj[newRowId+fld][newColGroup+'_'+dataColsTotals[fld]] = oldVal < newVal ? newVal : oldVal;
-                        if (dataCols.length === 1){
-                            data.footer[0][newColId] = oldTotal < newVal ? newVal : oldTotal;
-                        }
-						break;
-					case 'MIN':
-						newRowsObj[newRowId+fld][newColGroup+'_'+dataColsTotals[fld]] = oldVal > newVal ? newVal : oldVal;
-                        if (dataCols.length === 1){
-                            data.footer[0][newColId] = oldTotal > newVal ? newVal : oldTotal;
-                        }
-						break;
-					case 'COUNT':
-						newRowsObj[newRowId+fld][newColGroup+'_'+dataColsTotals[fld]] = oldVal + 1;
-                        if (dataCols.length === 1){
-                            data.footer[0][newColId] = oldTotal + 1;
-                        }
-						break;
-					// TODO add more totals
-				}
-			}
-		}
-	}
-	for (var i in newRowsObj){
-		newRows.push(newRowsObj[i]);
-	}
-	
-	data.rows = newRows;
-	data.transposed = 1;
-	$(this).datagrid({frozenColumns: colsNewFrozen, columns: colsNew});
+        }
+        jqSelf.data('_columnsBkp', aColsOrig);
+    }
+    
+    for (var i=0; i<aColsOrig.length; i++){
+    	var newColRow = [];
+    	for (var j=0; j<aColsOrig[i].length; j++){
+    		var fld = aColsOrig[i][j].field;
+    		if (aDataCols.indexOf(fld) > -1){
+    			oData.transposed = 0;
+    			oColsTransposed[fld] = {
+    				column: aColsOrig[i][j]
+                    /* TODO add/remove properties if needed?!
+                    ,
+    				subRowIndex: iColsTransposedCnt++,
+    				colIndex: j*/
+    			};
+    		} else if (oLabelCols[fld] != undefined) {
+    			// Add a subtitle column to show a caption for each subrow if there are multiple
+    			if (aDataCols.length > 1){
+    				var newCol = {
+        				field: '_subRowIndex',
+        				title: '',
+        				align: 'right',
+        				sortable: false,
+        				hidden: true
+                    }
+    				newColRow.push(newCol);
+    				
+    				var newCol = $.extend(true, {}, aColsOrig[i][j], {
+                        field: fld+'_subtitle',
+        				title: '',
+        				align: 'right',
+        				sortable: false,
+                        formatter: false,
+                        styler: false
+                    });
+    				newColRow.push(newCol);
+    			}
+    			// Create a column for each value if the label column
+    			var labels = [];
+    			for (var l=0; l<aRows.length; l++){
+    				if (labels.indexOf(aRows[l][fld]) == -1){
+    					labels.push(aRows[l][fld]);
+    				}
+    			}
+    			for (var l=0; l<labels.length; l++){
+    				let label = labels[l];
+    					if (typeof label !== 'string') {
+    						label = String(label);
+    					}
+    					label = label.replaceAll('-', '_').replaceAll(':', '_');
+    				var newCol = $.extend(true, {}, aColsOrig[i][j], {
+                        field: label,
+        				title: '<span title="'+$(aColsOrig[i][j].title).text()+' '+labels[l]+'">'+(oFormatters[fld] ? oFormatters[fld](labels[l]) : labels[l])+'</title>',
+        				_transposedFields: oLabelCols[fld],
+        				sortable: false, // No header sorting (not clear, what to sort!)
+                        formatter: false,
+                        styler: false
+                    });
+    				newColRow.push(newCol);
+    			}
+    			// Create a totals column if there are totals
+                // The footer of the totals column will contain the overall total provided by the server
+    			if (oDataColsTotals !== {}){
+    				var totals = [];
+    				for (var tfld in oDataColsTotals){
+    					var tfunc = oDataColsTotals[tfld];
+    					if (totals.indexOf(tfunc) == -1){
+    						var newCol = $.extend(true, {}, aColsOrig[i][j]);
+    						newCol.field = fld+'_'+tfunc;
+    						newCol.title = oAggrLabels[tfunc];
+    						newCol.align = 'right';
+    						newCol.sortable = false;
+    						newColRow.push(newCol);
+    						totals.push(tfunc);
+                            oData.footer[0][newCol.field] = oData.footer[0][tfld];
+    					}
+    				}
+    			}
+    		} else {
+    			newColRow.push(aColsOrig[i][j]);
+    		}
+    	}
+    	for (var i in oColsTransposed){
+    		if (oColsTransposed[i].column.editor != undefined){
+    			for (var j=0; j<newColRow.length; j++){
+    				if (newColRow[j]._transposedFields != undefined && newColRow[j]._transposedFields.indexOf(i) > -1){
+    					newColRow[j].editor = oColsTransposed[i].column.editor;
+    				}
+    			}
+    		}
+    	}
+    	
+        if (iFrozenColCnt > 0) {
+            aColsNewFrozen.push([]);
+            for (var i = 0; i < newColRow.length; i++) {
+                if (newColRow[i].hidden !== true && i < iFrozenColCnt) {
+                    aColsNewFrozen[0].push(newColRow[i]);
+                    newColRow.splice(i, 1);
+                }
+            }
+        }
+    	aColsNew.push(newColRow);
+    }
+    
+    if (oData.transposed === 0){
+    	for (var i=0; i<aRows.length; i++){
+    		var newRowId = '';
+    		var newRow = {};
+    		var newColVals = {};
+    		var newColId = '';
+    		for (var fld in aRows[i]){
+    			var val = aRows[i][fld];
+    			if (oLabelCols[fld] != undefined){
+    				if (typeof val !== 'string') {
+    					val = String(val);
+    				}
+    				val = val.replaceAll('-', '_').replaceAll(':', '_');
+    				newColId = val;
+    				newColGroup = fld;
+    			} else if (aDataCols.indexOf(fld) > -1){
+    				newColVals[fld] = val;
+    			} else if (aVisibleCols.indexOf(fld) > -1) {
+    				newRowId += val;
+    				newRow[fld] = val;
+    			}
+    			
+    			// TODO save UID and other system attributes to some invisible data structure
+    		}
+    		
+    		var subRowCounter = 0;
+    		for (var fld in newColVals){
+    			if (oRowKeys[newRowId+fld] == undefined){
+    				oRowKeys[newRowId+fld] = $.extend(true, {}, newRow);
+    				oRowKeys[newRowId+fld]['_subRowIndex'] = subRowCounter++;
+    			}
+    			oRowKeys[newRowId+fld][newColId] = oFormatters[fld] ? oFormatters[fld](newColVals[fld]) : newColVals[fld];
+                if (oStylers[fld]) {
+                    oRowKeys[newRowId+fld][newColId] = '<span style="' + oStylers[fld](newColVals[fld]) + '">' + oRowKeys[newRowId+fld][newColId] + '</span>';
+                }
+    			oRowKeys[newRowId+fld][newColGroup+'_subtitle'] = '<i style="' + (oStylers[fld] ? oStylers[fld]() : '') + '">'+oColsTransposed[fld].column.title+'</i>';
+    			if (oDataColsTotals[fld] != undefined){
+    				var newVal = parseFloat(newColVals[fld]);
+    				var oldVal = oRowKeys[newRowId+fld][newColGroup+'_'+oDataColsTotals[fld]];
+                    var oldTotal = (oData.footer[0][newColId] || 0);
+    				oldVal = oldVal ? oldVal : 0;
+    				switch (oDataColsTotals[fld]){
+    					case 'SUM':
+    						oRowKeys[newRowId+fld][newColGroup+'_'+oDataColsTotals[fld]] = oldVal + newVal;
+                            if (aDataCols.length === 1){
+                                oData.footer[0][newColId] = oldTotal + newVal;
+                            }
+    						break;
+    					case 'MAX':
+    						oRowKeys[newRowId+fld][newColGroup+'_'+oDataColsTotals[fld]] = oldVal < newVal ? newVal : oldVal;
+                            if (aDataCols.length === 1){
+                                oData.footer[0][newColId] = oldTotal < newVal ? newVal : oldTotal;
+                            }
+    						break;
+    					case 'MIN':
+    						oRowKeys[newRowId+fld][newColGroup+'_'+oDataColsTotals[fld]] = oldVal > newVal ? newVal : oldVal;
+                            if (aDataCols.length === 1){
+                                oData.footer[0][newColId] = oldTotal > newVal ? newVal : oldTotal;
+                            }
+    						break;
+    					case 'COUNT':
+    						oRowKeys[newRowId+fld][newColGroup+'_'+oDataColsTotals[fld]] = oldVal + 1;
+                            if (aDataCols.length === 1){
+                                oData.footer[0][newColId] = oldTotal + 1;
+                            }
+    						break;
+    					// TODO add more totals
+    				}
+    			}
+    		}
+    	}
+    	for (var i in oRowKeys){
+    		aRowsNew.push(oRowKeys[i]);
+    	}
+    	
+    	oData.rows = aRowsNew;
+    	oData.transposed = 1;
+        oResult.bTransposed = 1;
+    
+    	jqSelf.datagrid({frozenColumns: aColsNewFrozen, columns: aColsNew});
 
-    {$onTransposedJs}
-}
+    }
+    
+    oResult.oDataTransposed = oData;
 
+    return oResult;
 
-return data;
+})(data);    
+        
+{$onTransposedJs}
+
+return oTransposed.oDataTransposed;
 
 JS;
         return $transpose_js;
