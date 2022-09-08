@@ -24,6 +24,7 @@ use exface\Core\Interfaces\Widgets\iSupportMultiSelect;
 use exface\Core\Widgets\DataToolbar;
 use exface\Core\Widgets\DataTable;
 use exface\Core\Widgets\InputComboTable;
+use exface\Core\DataTypes\StringDataType;
 
 /**
  * Implementation of a basic grid.
@@ -849,7 +850,7 @@ JS;
     protected function buildJsInitOptionsColumnStyler(DataColumn $col, string $js_var_value, string $js_var_row, string $js_var_index, string $fallbackJs = '') : string
     {
         $cellWidget = $col->getCellWidget();
-        $stylerJs = $col->getCellStylerScript();
+        $stylerJs = StringDataType::replacePlaceholders(($col->getCellStylerScript() ?? ''), ['table_id' => $this->getId()]);
         if (! $stylerJs) {
             $stylerCss = '';
             if ($cellWidget instanceof iShowText){
