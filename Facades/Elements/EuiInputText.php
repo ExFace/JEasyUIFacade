@@ -94,4 +94,28 @@ class EuiInputText extends EuiInput
     {
         return parent::buildCssElementClass() . ' exf-inputtext';
     }
+    
+    /**
+     * javascript to get if an input is required or not, must not end with a semicolon!
+     *
+     * @return string
+     */
+    protected function buildJsRequiredGetter() : string
+    {
+        return "($('#{$this->getId()}').prop('required') != undefined)";
+    }
+    
+    /**
+     *
+     * @param bool $required
+     * @return string
+     */
+    protected function buildJsRequiredSetter(bool $required) : string
+    {
+        if ($required === true) {
+            return "$('#{$this->getId()}').prop('required', 'required');";
+        } else {
+            return "$('#{$this->getId()}').removeProp('required');";
+        }
+    }
 }
