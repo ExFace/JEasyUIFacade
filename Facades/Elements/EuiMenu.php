@@ -46,18 +46,31 @@ HTML;
     {
         $buttons_html = '';
         $last_parent = null;
+        $hasGroups = (count($this->getWidget()->getButtonGroups()) > 1);
         foreach ($this->getWidget()->getButtons() as $b) {
+            $icon = $b->getIcon() && $b->getShowIcon(true) ? ' iconCls="' . $this->buildCssIconClass($b->getIcon()) . '"' : '';
+            
             // Insert separators between button groups (neighbouring buttons with
             // different parents.
-            if (!is_null($last_parent) && $last_parent !== $b->getParent()){
-                $buttons_html .= '<div class="menu-sep"></div>';
+            if (($last_parent === null && $hasGroups && $b->getParent()->getCaption()) || ($last_parent !== null && $last_parent !== $b->getParent())){
+                if (null !== $grpCaption = $b->getParent()->getCaption()) {
+                    $buttons_html .= <<<HTML
+
+                <div {$icon} disabled=true title="{$b->getParent()->getHint()}" class="exf-menu-group-title">
+    				{$grpCaption}
+    			</div>
+                <div class="menu-sep" style="margin-top: 0; maring-bottom: 0;"></div>
+HTML;
+                } else {
+                    $buttons_html .= '<div class="menu-sep"></div>';
+                }
             }
             $last_parent = $b->getParent();
             
             // Create a menu entry
-            $icon = $b->getIcon() && $b->getShowIcon(true) ? ' iconCls="' . $this->buildCssIconClass($b->getIcon()) . '"' : '';
             $disabled = $b->isDisabled() ? ' disabled=true' : '';
             $buttons_html .= <<<HTML
+
                 <div {$icon} {$disabled} title="{$b->getHint()}" id="{$this->getFacade()->getElement($b)->getId()}" onclick="{$this->getFacade()->getElement($b)->buildJsClickFunctionName()}()">
     				{$b->getCaption()}
     			</div>

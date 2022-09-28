@@ -96,6 +96,7 @@ fieldset.exface_inputgroup legend {color: #404040; font-weight: bold; padding: 0
 
 /* Context menus */
 .easyui-menu .menu-item {float: none !important;}
+.exf-menu-group-title {font-weight: bold;}
 
 /* jEasyUI customizing */
 div.panel-body{background-color:#fff;}
@@ -312,3 +313,4 @@ table.debug-profiler td {font-size: 80%; padding: 3px; border: 1px solid lightgr
 table.debug-profiler tr.action > td > .waterfall-bar {background-color: lightcoral !important;}
 table.debug-profiler tr.query > td > .waterfall-bar {background-color: lightblue !important;}
 table.debug-profiler tr.event > td > .waterfall-bar {background-color: gray !important; font-weight: bold;}
+
