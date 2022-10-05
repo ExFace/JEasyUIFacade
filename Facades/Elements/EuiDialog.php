@@ -78,7 +78,23 @@ HTML;
         
         if ($widget->hasHeader() === true) {
             $headerElem = $this->getFacade()->getElement($widget->getHeader());
-            $children_html = <<<HTML
+            
+            // If the dialog does not have a fixed height, we cannot use jEasyUI split as it will have
+            // a height of 0. Instead, use a simple <div>.
+            // TODO height:max of inner widgets probably won't work here - only in the split.
+            if ($widget->getHeight()->isUndefined() || $widget->getHeight()->getValue() === 'auto') {
+                $children_html = <<<HTML
+                
+                <div style="height: 100%">
+                    <div class="exf-dialog-header">
+                        {$headerElem->buildHtml()}
+                    </div>
+                    {$children_html}
+                </div>
+                
+HTML;
+            } else {
+                $children_html = <<<HTML
             
                 <div class="easyui-layout" data-options="fit:true">
                     <div data-options="region:'north'" class="exf-dialog-header" style="height: {$headerElem->getHeight()}">
@@ -90,6 +106,7 @@ HTML;
                 </div>
             
 HTML;
+            }
         }
         
         $dialogClass = '';
