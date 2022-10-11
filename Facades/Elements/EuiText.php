@@ -51,7 +51,7 @@ class EuiText extends EuiDisplay
         
         $output = <<<HTML
 
-        <{$this->getElementType()} id="{$this->getId()}" class="exf-text {$this->buildCssElementClass()}" style="{$style}">{$text}</{$this->getElementType()}>
+        <{$this->getElementType()} id="{$this->getId()}" class="exf-text" style="{$style}">{$text}</{$this->getElementType()}>
 
 HTML;
         return $this->buildHtmlLabelWrapper($output);

@@ -57,12 +57,15 @@ ul.nav_menu li.active a.current {color: white; background: #6caef5}
 
 /* Inputs */
 .exf-labeled-item {display: inline-block; height: 100%; vertical-align: middle;}
-.exf-input, .exf-display {box-sizing: border-box; padding:4px; text-align:right;}
+.exf-input, .exf-display, .exf-inline-group {box-sizing: border-box; padding:4px; text-align:right;}
 .exf-input > *, .exf-display > * {text-align:initial;}
-.exf-input label {margin: 0 3px; display: inline-block; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; vertical-align: middle;}
+.exf-input label,
+.exf-inline-group:not(.exf-inline-display) > label {margin: 0 3px; display: inline-block; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; vertical-align: middle;}
 .exf-input textarea {vertical-align:middle;border: 1px solid #c3d9e0; tab-size: 4}
-.exf-display .exf-labeled-item {text-align: left; font-weight: bold; padding-left: 3px;}
-.exf-display * {text-align: initial;}
+.exf-display .exf-labeled-item,
+.exf-inline-display .exf-labeled-item {text-align: left; font-weight: bold; padding-left: 3px;}
+.exf-display *, .exf-inline-group * {text-align: initial;}
+.exf-display > label, .exf-display > .exf-labeled-item {vertical-align: top}
 .numberbox input {text-align: right;}
 fieldset.exface_inputgroup {border-color: #95B8E7; border-width: 1px 0 0 0; padding: 10px 0; margin: 15px 0 0 0;}
 fieldset.exface_inputgroup legend {color: #404040; font-weight: bold; padding: 0 6px; margin: 0 10px;}
@@ -75,9 +78,10 @@ fieldset.exface_inputgroup legend {color: #404040; font-weight: bold; padding: 0
 .exf-panel-flat > .panel > .panel-header {background: none; padding-top: 6px; margin-bottom: 4px;}
 
 /* Inline groups */
-.exf-inline-group .exf-control {padding-left: 0px !important; display: inline-block !important; min-width: 0px !important;}
+.exf-inline-group .exf-control {padding-left: 0px !important; display: inline-block !important; min-width: 0px !important; }
 .exf-inline-group .exf-control:last-of-type {padding-right: 0px !important;}
-.exf-inline-group {padding-top: 0px !important; padding-bottom: 0px !important; padding-right: 2px !important;}
+.exf-inline-group:not(.exf-inline-display) {padding-top: 0px !important; padding-bottom: 0px !important;}
+.exf-inline-group.exf-inline-display .exf-control {padding-top: 0px !important; padding-bottom: 0px !important;}
 .exf-inline-group p {display: inline-block !important; padding: 0; margin: 0;}
 .exf-inline-group label {display: inline-block; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; vertical-align: middle;}
 .exf-inline-group 
@@ -93,6 +97,7 @@ fieldset.exface_inputgroup legend {color: #404040; font-weight: bold; padding: 0
 .panel-body h1, .panel-body h2, .panel-body h3, .panel-body h4, .panel-body h5, .panel-body p, .panel-body pre {padding: 0 10px;}
 .panel-body h1 {margin: 10px 0 5px 0}
 .exf-text {display: block; width: 100%}
+p.exf-text {padding: 0}
 
 /* Context menus */
 .easyui-menu .menu-item {float: none !important;}
