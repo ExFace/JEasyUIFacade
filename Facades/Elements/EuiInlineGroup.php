@@ -120,7 +120,7 @@ class EuiInlineGroup extends EuiValue
      */
     public function buildCssElementClass()
     {
-        return parent::buildCssElementClass() . ' exf-inline-group exf-display';
+        return parent::buildCssElementClass() . ' exf-inline-group ' . (count($this->getWidget()->getInputWidgets()) === 0 ? 'exf-inline-display' : '');
     }
     
     /**
@@ -131,5 +131,14 @@ class EuiInlineGroup extends EuiValue
     public function buildJs()
     {
         return $this->buildJsForWidgets();
+    }
+   
+    protected function getCaption() : string
+    {
+        $caption = parent::getCaption();
+        if ($caption !== '' && count($this->getWidget()->getInputWidgets()) === 0) {
+            $caption .= ':';
+        }
+        return $caption;
     }
 }
