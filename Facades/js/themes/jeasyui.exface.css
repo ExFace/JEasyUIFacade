@@ -320,7 +320,11 @@ table.debug-profiler tr.query > td > .waterfall-bar {background-color: lightblue
 table.debug-profiler tr.event > td > .waterfall-bar {background-color: gray !important; font-weight: bold;}
 
 /* Console */
-/* FIX Output remains black until window is resized - remove if fixed in Terminal lib */
+/* FIX Output remains black or loses padding until window is resized - remove if fixed in Terminal lib */
+.cmd-editable, .terminal .terminal-fill, .terminal-scroller {
+    padding: calc(10px/max(var(--pixel-density, 1), 0.1));
+}
+.exf-console.terminal {padding: 10px}
 @supports (--css: variables) {
 	.exf-console.terminal,
 	.exf-console .terminal-output > :not(.raw) span,
