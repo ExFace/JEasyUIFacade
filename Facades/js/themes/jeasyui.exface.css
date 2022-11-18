@@ -320,6 +320,7 @@ table.debug-profiler tr.query > td > .waterfall-bar {background-color: lightblue
 table.debug-profiler tr.event > td > .waterfall-bar {background-color: gray !important; font-weight: bold;}
 
 /* Console */
+/* FIX Output remains black until window is resized - remove if fixed in Terminal lib */
 @supports (--css: variables) {
 	.exf-console.terminal,
 	.exf-console .terminal-output > :not(.raw) span,
