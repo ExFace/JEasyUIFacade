@@ -319,3 +319,15 @@ table.debug-profiler tr.action > td > .waterfall-bar {background-color: lightcor
 table.debug-profiler tr.query > td > .waterfall-bar {background-color: lightblue !important;}
 table.debug-profiler tr.event > td > .waterfall-bar {background-color: gray !important; font-weight: bold;}
 
+/* Console */
+@supports (--css: variables) {
+	.exf-console.terminal,
+	.exf-console .terminal-output > :not(.raw) span,
+	.exf-console .terminal-output > :not(.raw) a,
+	.exf-console .terminal-output > :not(.raw) div,
+	.exf-console .cmd,
+	.exf-console .cmd span,
+	.exf-console .cmd div {
+	    font-size: calc(var(--size, 1)*12px);
+	}
+}
