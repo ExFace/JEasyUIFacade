@@ -90,7 +90,7 @@ HTML;
     {
         return <<<HTML
         
-    <div id="{$this->getId()}" style="min-height: 100%; margin: 0;"></div>
+    <div id="{$this->getId()}" style="min-height: 100%; margin: 0;" class="{$this->buildCssElementClass()}"></div>
     
 HTML;
     }
@@ -374,5 +374,10 @@ JS;
     {
         $message_id = trim($message_id);
         return $this->getWorkbench()->getApp('exface.Core')->getTranslator()->translate($message_id, $placeholders, $number_for_plurification);
+    }
+    
+    public function buildCssElementClass()
+    {
+        return 'exf-console';
     }
 }
