@@ -324,7 +324,6 @@ table.debug-profiler tr.event > td > .waterfall-bar {background-color: gray !imp
 .cmd-editable, .terminal .terminal-fill, .terminal-scroller {
     padding: calc(10px/max(var(--pixel-density, 1), 0.1));
 }
-.exf-console.terminal {padding: 10px}
 @supports (--css: variables) {
 	.exf-console.terminal,
 	.exf-console .terminal-output > :not(.raw) span,
