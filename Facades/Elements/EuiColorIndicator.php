@@ -23,7 +23,7 @@ class EuiColorIndicator extends EuiDisplay
     public function buildHtml()
     {
         $widget = $this->getWidget();
-        $val = $widget->getValueWithDefaults();
+        $val = $this->escapeString($widget->getValueWithDefaults(), false, true);
         $indicator = $this->buildHtmlIndicator($val, $val, $widget->getColorForValue($val));
         return $this->buildHtmlLabelWrapper($indicator);
     }    
@@ -36,6 +36,6 @@ class EuiColorIndicator extends EuiDisplay
     public function buildJs()
     {
         return parent::buildJs() 
-                . $this->buildJsValueSetter($this->escapeString($this->getWidget()->getValueWithDefaults()));
+                . $this->buildJsValueSetter($this->escapeString($this->escapeString($this->getWidget()->getValueWithDefaults())));
     }
 }

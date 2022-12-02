@@ -512,4 +512,14 @@ HTML;
     {
         return "($('{$this->getId()}').data('{$this->getElementType()}') !== undefined)";
     }
+    
+    /**
+     * 
+     * {@inheritDoc}
+     * @see \exface\Core\Facades\AbstractAjaxFacade\Elements\AbstractJqueryElement::escapeString()
+     */
+    public function escapeString($string, bool $encloseInQuotes = true, bool $forUseInHtml = true) : ?string
+    {
+        return parent::escapeString($string, $encloseInQuotes, $forUseInHtml);
+    }
 }
