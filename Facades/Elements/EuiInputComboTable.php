@@ -161,7 +161,7 @@ JS;
                 <input style="height:100%;width:100%;"
                     id="{$this->getId()}" 
                     name="{$nameScript}" 
-                    value="{$this->escapeString($value, false, true)}"
+                    value={$this->escapeString($value, true, true)}
                     {$requiredScript}
                     {$disabledScript} />
 HTML;
@@ -302,12 +302,12 @@ JS;
         $valueJs = null;
         if ($value !== null && $value !== '') {
             if (! $widget->getMultiSelect()) {
-                $valueJs = $this->escapeString($value);
+                $valueJs = $this->escapeString($value, true, true);
             } else {
                 $values = explode($widget->getMultiSelectValueDelimiter(), $value);
                 $valuesJs = [];
                 foreach ($values as $val) {
-                    $valuesJs[] = $this->escapeString(trim($val));
+                    $valuesJs[] = $this->escapeString(trim($val), true, true);
                 }
                 $valueJs = '[' . implode(',', $valuesJs) . ']';
             }
@@ -716,24 +716,24 @@ JS;
         // onShowPanel in case the grid is empty (see above).
         $value = $widget->getValueWithDefaults();
         if (! is_null($value) && $value !== '') {
-            $valueJs = $this->escapeString($value, false);
+            $valueJs = $this->escapeString($value, true, true);
             if (! $allColumnsRequired && trim($widget->getValueText())) {
                 // If the text is already known, set it and prevent initial backend request
                 $widget_value_text = str_replace('"', '\"', trim($widget->getValueText()));
                 $first_load_script = <<<JS
 
                         {$this->getId()}_jquery.combogrid("setText", "{$widget_value_text}");
-                        {$this->getId()}_jquery.data("_lastValidValue", "{$valueJs}");
+                        {$this->getId()}_jquery.data("_lastValidValue", {$valueJs});
                         {$this->getId()}_jquery.data("_currentText", "");
                         return false;
 JS;
             } else {
                 $first_load_script = <<<JS
 
-                        {$this->getId()}_jquery.data("_lastValidValue", "{$valueJs}");
+                        {$this->getId()}_jquery.data("_lastValidValue", {$valueJs});
                         {$this->getId()}_jquery.data("_currentText", "");
                         {$this->getId()}_jquery.data("_valueSetterUpdate", true);
-                        currentFilterSet["{$valueFilterParam}"] = "{$valueJs}";
+                        currentFilterSet["{$valueFilterParam}"] = {$valueJs};
 JS;
             }
         } else {

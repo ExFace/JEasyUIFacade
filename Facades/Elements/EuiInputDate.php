@@ -46,7 +46,7 @@ class EuiInputDate extends EuiInput
         /* @var $widget \exface\Core\Widgets\Input */
         $widget = $this->getWidget();
         
-        $value = $this->escapeString($widget->getValueWithDefaults(), false);
+        $value = $this->escapeString($widget->getValueWithDefaults(), false, true);
         $requiredScript = $widget->isRequired() ? 'required="true" ' : '';
         $disabledScript = $widget->isDisabled() ? 'disabled="disabled" ' : '';
         
@@ -69,7 +69,7 @@ HTML;
 
 $(function() {    
     $("#{$this->getId()}")
-    .data("_internalValue", "{$this->getWidget()->getValueWithDefaults()}")
+    .data("_internalValue", {$this->escapeString($this->getWidget()->getValueWithDefaults(), true, true)})
     .{$this->getElementType()}({
         {$this->buildJsDataOptions()}
     });
@@ -185,7 +185,7 @@ JS;
                 $initialValue = $linkedEl->buildJsValueGetter($link->getTargetColumnId());
             }
         } else {
-            $initialValue = '"' . $this->escapeString($this->getWidget()->getValueWithDefaults(), false) . '"';
+            $initialValue = $this->escapeString($this->getWidget()->getValueWithDefaults(), true, true);
         }
         
         return <<<JS

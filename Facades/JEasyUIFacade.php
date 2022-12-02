@@ -25,6 +25,8 @@ use exface\Core\Exceptions\Facades\FacadeRuntimeError;
 use exface\JEasyUIFacade\Facades\Templates\EuiCustomPlaceholders;
 use exface\Core\Facades\AbstractAjaxFacade\Templates\FacadePageTemplateRenderer;
 use exface\Core\Interfaces\Selectors\FacadeSelectorInterface;
+use exface\Core\DataTypes\StringDataType;
+use exface\Core\DataTypes\HtmlDataType;
 
 /**
  * Renders pages using the jEasyUI JavaScript framework based on jQuery.
@@ -193,10 +195,11 @@ $.ajaxPrefilter(function( options ) {
             if (method_exists($widgetClass, 'buildResponseData') === true) {
                 return $widgetClass::buildResponseData($this, $data_sheet, $widget);
             }
-        }        
+        }       
         
+        $rows = $this->buildResponseDataRowsSanitized($data_sheet);
         $data = array();
-        $data['rows'] = $data_sheet->getRowsDecrypted();
+        $data['rows'] = $rows;
         $data['offset'] = $data_sheet->getRowsOffset();
         $data['total'] = $data_sheet->countRowsInDataSource();
         $data['footer'] = $data_sheet->getTotalsRows();

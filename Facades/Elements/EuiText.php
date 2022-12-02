@@ -30,7 +30,7 @@ class EuiText extends EuiDisplay
         $widget = $this->getWidget();
         
         $style = 'text-align: ' . $this->buildCssTextAlignValue($widget->getAlign(), EXF_ALIGN_LEFT);
-        $text = nl2br($this->getWidget()->getText());
+        $text = $this->escapeString(nl2br($this->getWidget()->getText()), false, true);
         
         if ($widget->getAttribute()) {
             switch ($widget->getStyle()) {
