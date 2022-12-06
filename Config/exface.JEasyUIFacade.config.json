@@ -16,7 +16,10 @@
 		"Access-Control-Allow-Methods": "GET",
 		"Access-Control-Allow-Headers": "",
 		"Access-Control-Expose-Headers": "",
-		"X-Frame-Options": "SAMEORIGIN"
+		"X-Frame-Options": "SAMEORIGIN",
+		"Strict-Transport-Security": "max-age=31536000; includeSubDomains; preload",
+		"X-Content-Type-Options": "nosniff",
+		"X-XSS-Protection": "1; mode=block"
 	},
 	"FACADE.HEADERS.HTML": {
 		"Cache-Control": "no-cache, no-store, must-revalidate",
