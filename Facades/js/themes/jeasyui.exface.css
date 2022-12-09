@@ -283,6 +283,7 @@ pre.sf-dump .sf-dump-private, pre.sf-dump .sf-dump-public, pre.sf-dump .sf-dump-
 .tui-tooltip {z-index: 999999 !important;}
 .markdown-editor.fullscreen {position: fixed; top: 0; left: 0; z-index: 10050; width: 100%!important;}
 .toastui-editor-defaultUI {background-color: white; overflow: hidden;}
+.exf-input-markdown .ProseMirror {height: 100%}
 
 /* InputTags */
 .exf-tag {margin: 4px 0px;}
