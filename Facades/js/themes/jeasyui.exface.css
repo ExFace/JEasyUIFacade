@@ -224,6 +224,7 @@ pre.sf-dump .sf-dump-private, pre.sf-dump .sf-dump-public, pre.sf-dump .sf-dump-
 .exf-spreadsheet-change::before {content: "◤"; color: #89919a; font-size: 12px; position: absolute; left: 0; top: 0; margin-left: -2px; margin-top: -3px}
 .exf-spreadsheet-invalid {background-color: #ffebeb;}
 .exf-spreadsheet-invalid::before {color: #b00;}
+.jdropdown-searchbar > .jdropdown-container-header {height: 42px !important; max-height: 42px !important}
 
 /* DataImporter */
 .exf-dataimporter > .jexcel_container {height: calc(100% - 42px)}
