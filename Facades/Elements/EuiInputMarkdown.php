@@ -54,7 +54,7 @@ HTML;
      */
     protected function buildJsMarkdownInitEditor(bool $viewer = false) : string
     {
-        $contentJs = $this->escapeString($this->getWidget()->getValueWithDefaults(), true, true);
+        $contentJs = $this->escapeString($this->getWidget()->getValueWithDefaults(), true, false);
         
         if ($viewer) {
             $viewerOptions ='viewer: true,';
