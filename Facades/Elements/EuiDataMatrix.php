@@ -165,10 +165,11 @@ aColsOrig.forEach(function(aEuiColRow, iEuiColRowIdx){
 
 if (iFrozenColCnt > 0) {
     aColsNewFrozen.push([]);
+    var newColRow = aColsNew[0];
     for (var i = 0; i < newColRow.length; i++) {
         if (newColRow[i].hidden !== true && i < iFrozenColCnt) {
             aColsNewFrozen[0].push(newColRow[i]);
-            newColRow.splice(i, 1);
+            aColsNew[0].splice(i, 1);
         }
     }
 }
@@ -194,13 +195,13 @@ JS;
         
         $output = <<<JS
 
-        (function(){
+        (function(jqSelf){
 			var fields = {$fields_to_merge};
-            var iRowCnt = $(this).datagrid('getRows').length;
+            var iRowCnt = jqSelf.datagrid('getRows').length;
             if (! iRowCnt) return;
 			for (var i=0; i<fields.length; i++){
 	            for(var j=0; j< iRowCnt; j++){
-	                $(this).datagrid('mergeCells',{
+	                jqSelf.datagrid('mergeCells',{
 	                    index: j,
 	                    field: fields[i],
 	                    rowspan: {$rowspan}
@@ -208,7 +209,7 @@ JS;
 					j = j+{$rowspan}-1;
 	            }
 			}
-        })();
+        })($(this));
 JS;
         return $output;
     }
