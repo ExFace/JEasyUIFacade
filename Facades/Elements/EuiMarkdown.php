@@ -15,7 +15,7 @@ class EuiMarkdown extends EuiHtml
         $includes = parent::buildHtmlHeadTags();   
         $includes[] = '<link href="' . $this->getFacade()->buildUrlToSource('LIBS.MARKDOWN.CSS') . '" rel="stylesheet">';
         if (($widget = $this->getWidget()) instanceof Markdown && $widget->hasRenderMermaidDiagrams()) {
-            $includes[] = '<script src="vendor/bower-asset/mermaid/dist/mermaid.js"></script>';
+            $includes[] = '<script src="vendor/npm-asset/mermaid/dist/mermaid.min.js"></script>';
         }
         return $includes;
     }
