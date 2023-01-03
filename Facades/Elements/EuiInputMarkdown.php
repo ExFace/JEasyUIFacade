@@ -201,4 +201,14 @@ JS;
     {
         return parent::buildCssElementClass() . ' exf-input-markdown';
     }
+    
+    /**
+     *
+     * {@inheritDoc}
+     * @see \exface\JEasyUIFacade\Facades\Elements\EuiInput::buildJsRequiredGetter()
+     */
+    protected function buildJsRequiredGetter() : string
+    {
+        return $this->getWidget()->isRequired() ? "true" : "false";
+    }
 }
