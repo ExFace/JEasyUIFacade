@@ -106,6 +106,8 @@ function contextBarRefresh(data){
         content: function(){return $('<div id="'+$(this).closest('.toolbar-element').attr('id')+'_tooltip"></div>')},
         showEvent: 'click',
         onUpdate: function(content){
+			var jqTooltip = $(this);
+			setTimeout(function(){
         	content.panel({
                 width: 200,
                 height: 300,
@@ -116,7 +118,7 @@ function contextBarRefresh(data){
                 queryParams: {
                     action: 'exface.Core.ShowContextPopup',
                     resource: getPageId(),
-                    element: $(this).parent().data('widget')
+                    element: jqTooltip.parent().data('widget')
                 },
                 onLoad: function() {
                 	var $p = $(this);
@@ -126,12 +128,13 @@ function contextBarRefresh(data){
                 		} catch (e) {
                 			// do nothing
                 		}
-                	}, 200);
+                	}, 0);
                 },
                 onLoadError: function(response) {
                 	jeasyui_create_dialog($("body"), $(this).attr('id')+"_error", {title: response.status + " " + response.statusText, width: 800, height: "80%"}, response.responseText, true);
                 }
             });
+            }, 100);
         },
         onShow: function(){
             var t = $(this);
@@ -176,7 +179,7 @@ function contextShowMenu(containerSelector){
 			$(containerSelector).find('.dropdown-menu').empty().append('<li></li>').children('li:first-of-type').append($data);
 		},
 		error: function(jqXHR, textStatus, errorThrown){
-			jeasyui_show_error($("body"), "error", jqXHR.responseText, jqXHR.status + " " + jqXHR.statusText);
+			jeasyui_show_error(jqXHR.status + " " + jqXHR.statusText, jqXHR.responseText, $(containerSelector).data('widget'));
 		}
 	});
 }
