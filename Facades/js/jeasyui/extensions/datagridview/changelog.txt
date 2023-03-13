@@ -1,0 +1,6 @@
+Version 1.0.x
+-------------
+
+* Bug
+ * bufferview: The 'deleteRow' method doesn't work properly. fixed.
+ * detailview: The 'getChanges' method returns empty row when inserting a row on the empty datagrid. fixed.
