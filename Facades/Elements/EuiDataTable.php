@@ -528,16 +528,17 @@ JS;
                     
                     (function(jqSelf, oData){
                         var aPrevExpanded = jqSelf.data('_prevExpanded');
+						var aNewExpanded = [];
                         (oData.rows || []).forEach(function(oRow, i) {
                             for (var p = 0; p < aPrevExpanded.length; p++) {
                                 if ({$this->buildJsRowCompare('oRow', 'aPrevExpanded[p]')}) {
                                     jqSelf.datagrid('expandRow', i);
-                                } else {
-                                    aPrevExpanded.splice(i, 1);
-                                }
+									aNewExpanded.push(oRow);
+									return;
+                                } 
                             }
                         });
-                        jqSelf.data('_prevExpanded', aPrevExpanded);
+                        jqSelf.data('_prevExpanded', aNewExpanded);
                     })(jqSelf, data);
 JS);
         
