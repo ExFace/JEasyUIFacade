@@ -170,6 +170,7 @@ $(setTimeout(function(){
     {$autoloadInit}
     
     // Init the table
+    $('#{$this->getId()}').data('_prevExpanded', []);
     $("#{$this->getId()}").{$this->getElementType()}({ {$grid_head} });
 
     {$this->buildJsInitPager()}
@@ -523,12 +524,33 @@ JS;
         $widget = $this->getWidget();
         $grid_head = '';
         
+        $this->addOnLoadSuccess(<<<JS
+                    
+                    (function(jqSelf, oData){
+                        var aPrevExpanded = jqSelf.data('_prevExpanded');
+                        (oData.rows || []).forEach(function(oRow, i) {
+                            for (var p = 0; p < aPrevExpanded.length; p++) {
+                                if ({$this->buildJsRowCompare('oRow', 'aPrevExpanded[p]')}) {
+                                    jqSelf.datagrid('expandRow', i);
+                                } else {
+                                    aPrevExpanded.splice(i, 1);
+                                }
+                            }
+                        });
+                        jqSelf.data('_prevExpanded', aPrevExpanded);
+                    })(jqSelf, data);
+JS);
+        
         // Create a detail container
         /* @var $details \exface\Core\Widgets\container */
         $details = $widget->getRowDetailsContainer();
         $details_element = $this->getFacade()->getElement($widget->getRowDetailsContainer());
         $details_height = (! $details->getHeight()->isUndefined() ? ", height: '" . $details_element->getHeight() . "'" : "");
-
+        if ($widget->hasUidColumn()) {
+            $rowUid = "'{$widget->getUidColumn()->getDataColumnName()}': row['{$widget->getUidColumn()->getDataColumnName()}']";
+        } else {
+            $rowUid = '';
+        }
         // Add the needed options to our datagrid
         $grid_head .= <<<JS
     				, view: detailview
@@ -536,6 +558,7 @@ JS;
     					return '<div id="{$details_element->getId()}_'+row.{$widget->getMetaObject()->getUidAttributeAlias()}+'"></div>';
     				}
                     , onExpandRow: function(index,row){
+                        $('#{$this->getId()}').data('_prevExpanded').push(row);
     					$('#{$details_element->getId()}_'+row.{$widget->getMetaObject()->getUidAttributeAlias()}).panel({
     		            	border: false,
                             href: "{$this->getAjaxUrl()}",
@@ -548,7 +571,7 @@ JS;
     							prefill: {
     								oId: "{$widget->getMetaObject()->getId()}",
     								rows:[
-    									{ {$widget->getMetaObject()->getUidAttributeAlias()} : row.{$widget->getMetaObject()->getUidAttributeAlias()} }
+    									{ {$rowUid} }
     								],
     								filters: {$this->buildJsDataFilters()}
     							}
@@ -562,14 +585,28 @@ JS;
     		       			onResize: function(){
     		                	$('#{$this->getId()}').{$this->getElementType()}('fixDetailRowHeight',index);
                     		}
-    		         	{$details_height}
+    		         	    {$details_height}
     					});
     				}
+                    , onCollapseRow: function(index,row){
+                        var i = $('#{$this->getId()}').data('_prevExpanded').indexOf(row);
+                        if (i > -1) {
+                            $('#{$this->getId()}').data('_prevExpanded').splice(i, 1);
+                        }
+                    }
 JS;
         
 	    return $grid_head; 
     }
     
+    /**
+     * TODO keep groups expanded/collapsed after refresh - similarly to buildJsInitOptionsRowDetails()
+     * The trouble here is that the groupview does not provide any row refs with the
+     * onExpandGroup/onCollapseGroup events. However, the rows should be accessible via
+     * `$(this).datagrid('options').view.groups[groupIndex].rows`
+     * 
+     * @return string
+     */
     protected function buildJsInitOptionsRowGroups()
     {
         $grid_head = '';
@@ -583,7 +620,14 @@ JS;
         if (! $grouper->getHideCaption()) {
             $value = "'\"' + $value + '\"'";
         }
-        $grid_head .= ', view: groupview' . ",groupField: '{$grouper->getGroupByColumn()->getDataColumnName()}', groupFormatter:function(value,rows){ return {$prefix}{$value}{$counter};}";
+        $grid_head .= <<<JS
+
+                    , view: groupview
+                    , groupField: '{$grouper->getGroupByColumn()->getDataColumnName()}'
+                    , groupFormatter: function(value,rows){ 
+                        return {$prefix}{$value}{$counter};
+                    }
+JS;
         
         if (! $grouper->getExpandAllGroups()) {
             $this->addOnLoadSuccess("$('#" . $this->getId() . "')." . $this->getElementType() . "('collapseGroup');");
