@@ -3,7 +3,6 @@ namespace exface\JEasyUIFacade\Facades\Elements;
 
 use exface\Core\Facades\AbstractAjaxFacade\Elements\JqueryLayoutTrait;
 use exface\Core\Facades\AbstractAjaxFacade\Elements\JqueryMasonryGridTrait;
-use exface\Core\Widgets\WidgetGrid;
 use exface\Core\DataTypes\WidgetVisibilityDataType;
 
 /**
@@ -11,7 +10,7 @@ use exface\Core\DataTypes\WidgetVisibilityDataType;
  *
  * @author Andrej Kabachnik
  *        
- * @method WidgetGrid getWidget()
+ * @method \exface\Core\Widgets\WidgetGrid getWidget()
  */
 class EuiWidgetGrid extends EuiContainer
 {

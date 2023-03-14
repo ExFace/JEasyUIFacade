@@ -1051,9 +1051,7 @@ JS;
         } else {
             return "$('#{$this->getId()}').siblings('.datagrid-empty').remove()";
         }
-    }
-    
-    
+    }    
     
     /**
      * Returns a JS snippet, that empties the table (removes all rows).
@@ -1063,5 +1061,14 @@ JS;
     protected function buildJsDataResetter() : string
     {
         return "";
+    }
+    
+    /**
+     * 
+     * @return bool
+     */
+    protected function getFitOption() : bool
+    {
+        return $this->getWidget()->getHeight()->isAuto() ? false : true;
     }
 }
