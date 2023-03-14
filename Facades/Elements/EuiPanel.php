@@ -1,17 +1,12 @@
 <?php
 namespace exface\JEasyUIFacade\Facades\Elements;
 
-use exface\Core\Widgets\Panel;
-use exface\Core\DataTypes\BooleanDataType;
-use exface\Core\Widgets\Tiles;
-use exface\Core\Widgets\NavTiles;
-
 /**
  * The Panel widget is mapped to a panel in jEasyUI
  *
  * @author Andrej Kabachnik
  *        
- * @method Panel getWidget()
+ * @method \exface\Core\Widgets\Panel getWidget()
  */
 class EuiPanel extends EuiWidgetGrid
 {

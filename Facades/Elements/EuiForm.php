@@ -2,7 +2,6 @@
 namespace exface\JEasyUIFacade\Facades\Elements;
 
 use exface\Core\Facades\AbstractAjaxFacade\Elements\JqueryToolbarsTrait;
-use exface\Core\DataTypes\WidgetVisibilityDataType;
 
 /**
  * The Form widget is just another panel in jEasyUI.

@@ -552,11 +552,16 @@ JS);
         } else {
             $rowUid = '';
         }
+        
+        
         // Add the needed options to our datagrid
+        
+        // TODO call `fixDetailRowHeight` when the details panel is resized instead of onLoad. For some reason, onLoad
+        // happens AFTER onResize and no event could be found so far, that is fired after everything is rendered.
         $grid_head .= <<<JS
     				, view: detailview
     				, detailFormatter: function(index,row){
-    					return '<div id="{$details_element->getId()}_'+row.{$widget->getMetaObject()->getUidAttributeAlias()}+'"></div>';
+    					return '<div id="{$details_element->getId()}_' + row['{$widget->getUidColumn()->getDataColumnName()}'] + '"></div>';
     				}
                     , onExpandRow: function(index,row){
                         $('#{$this->getId()}').data('_prevExpanded').push(row);
@@ -568,7 +573,7 @@ JS);
     							action: '{$widget->getRowDetailsAction()}',
     							resource: '{$widget->getPage()->getAliasWithNamespace()}',
     							element: '{$details->getId()}',
-                                exfrid: row.{$widget->getMetaObject()->getUidAttributeAlias()},
+                                exfrid: row['{$widget->getUidColumn()->getDataColumnName()}'],
     							prefill: {
     								oId: "{$widget->getMetaObject()->getId()}",
     								rows:[
@@ -578,14 +583,22 @@ JS);
     							}
     						},
     						onLoad: function(){
-    		                   	$('#{$this->getId()}').{$this->getElementType()}('fixDetailRowHeight',index);
+                                var jqPanel = $(this);
+    		                	var index = jqPanel.parents('tr').prev().attr('datagrid-row-index');
+                                setTimeout(function(){
+                                    $('#{$this->getId()}').{$this->getElementType()}('fixDetailRowHeight', index);
+                                }, 1000);
     		            	},
     		                onLoadError: function(response){
     		                	{$this->buildJsShowErrorAjax('response')}
-    						},
-    		       			onResize: function(){
-    		                	$('#{$this->getId()}').{$this->getElementType()}('fixDetailRowHeight',index);
-                    		}
+    						}, 
+                            onResize: function(){
+                                var jqPanel = $(this);
+                               	var index = jqPanel.parents('tr').prev().attr('datagrid-row-index');
+                                setTimeout(function(){
+                                   $('#{$this->getId()}').{$this->getElementType()}('fixDetailRowHeight', index);
+                                }, 0);
+                         	}
     		         	    {$details_height}
     					});
     				}
@@ -752,9 +765,11 @@ JS;
         // onLoadError u.U. mit setTimeout()). Durch diese Aenderung wird das Layout leider etwas
         // traeger.
         $resize_function = $this->getOnResizeScript();
-        $resize_function .= '
-					$("#' . $this->getId() . '").' . $this->getElementType() . '("autoSizeColumn");';
-        $grid_head .= ', fit: true
+        $resize_function .= <<<JS
+
+					$("#{$this->getId()}").{$this->getElementType()}("autoSizeColumn");
+JS;
+        $grid_head .= ', fit: ' . ($this->getFitOption() ? 'true' : 'false') . '
 				, onResize: function(){' . $resize_function . '}';
         return $grid_head;
     }
