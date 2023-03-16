@@ -89,6 +89,9 @@ function contextBarLoad(delay){
 function contextBarRefresh(data){
 	$('#contextBar').children().not('.login-logout').not('.user-info').remove();
 	for (var id in data){
+		if (data[id].visibility === 'hide_allways') {
+			continue;
+		}
 		var color = data[id].color ? 'color:'+data[id].color+';' : '';
 		var weight = data[id].visibility === 'emphasized' ? 'font-weight: bold;' : '';
 		var btn = $(' \
