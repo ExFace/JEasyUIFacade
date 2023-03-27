@@ -56,4 +56,14 @@ class EuiText extends EuiDisplay
 HTML;
         return $this->buildHtmlLabelWrapper($output);
     }
+    
+    /**
+     * 
+     * {@inheritDoc}
+     * @see \exface\Core\Facades\AbstractAjaxFacade\Interfaces\JsValueDecoratingInterface::buildJsValueDecorator()
+     */
+    public function buildJsValueDecorator($value_js)
+    {
+        return 'exfTools.string.nl2br(' . parent::buildJsValueDecorator($value_js) . ')';
+    }
 }
