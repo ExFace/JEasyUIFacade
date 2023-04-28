@@ -92,6 +92,9 @@ class EuiDatagridUrlParamsReader implements MiddlewareInterface
             $dataSheet = $dataSheet ? $dataSheet : $this->getDataSheet($task, $this->getterMethodName);
             $sort_attrs = explode(',', $sort_attrs);
             $order = explode(',', $order);
+            if (! empty($sort_attrs)) {
+                $dataSheet->getSorters()->removeAll();
+            }
             foreach ($sort_attrs as $nr => $sort) {
                 $dataSheet->getSorters()->addFromString($sort, $order[$nr]);
             }
