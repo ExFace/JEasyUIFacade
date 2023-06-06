@@ -206,7 +206,12 @@ $.ajaxPrefilter(function( options ) {
         return $data;
     }
     
-    protected function buildHtmlFromError(ServerRequestInterface $request, \Throwable $exception, UiPageInterface $page = null) : string
+    /**
+     * 
+     * {@inheritDoc}
+     * @see \exface\Core\Facades\AbstractAjaxFacade\AbstractAjaxFacade::buildHtmlFromError()
+     */
+    protected function buildHtmlFromError(\Throwable $exception, ServerRequestInterface $request = null, UiPageInterface $page = null) : string
     {
         if ($this->isShowingErrorDetails() === false && ! ($exception instanceof AuthenticationFailedError) && ! ($exception instanceof AuthorizationExceptionInterface && $this->getWorkbench()->getSecurity()->getAuthenticatedToken()->isAnonymous())) {
             $body = '';
@@ -265,7 +270,7 @@ HTML;
             
             return $body;
         }
-        return parent::buildHtmlFromError($request, $exception, $page);
+        return parent::buildHtmlFromError($exception, $request, $page);
     }
     
     /**
