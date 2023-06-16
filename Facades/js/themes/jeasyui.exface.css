@@ -206,7 +206,7 @@ pre.sf-dump .sf-dump-private, pre.sf-dump .sf-dump-public, pre.sf-dump .sf-dump-
 .imagecarousel-loading > .datagrid-mask-msg {z-index: 1; background-position-x: 9px; margin-left: 8px !important}
 
 /* jExcel */
-.jexcel {border-top: 0 !important; border-left: 0 !important; width: 100% !important; table-layout: auto !important;}
+.jexcel {border-top: 0 !important; border-left: 0 !important; width: 100% !important;}
 .jexcel_container {padding-right: 0 !important; overflow-x: auto; width: 100%; height: 100%}
 .jexcel_content {width: 100%; padding: 0 !important;}
 .jexcel_row, .jexcel_selectall {padding-left: 5px !important; padding-right: 5px !important; max-width: 4em}
@@ -214,8 +214,6 @@ pre.sf-dump .sf-dump-private, pre.sf-dump .sf-dump-public, pre.sf-dump .sf-dump-
 .jexcel>thead>tr {height: 23px;}
 .jexcel>thead>tr>td {text-align: left !important; padding: 0 4px !important;}
 .jexcel td {overflow: hidden; text-overflow: ellipsis;}
-.jexcel td.highlight-selected > * {min-width: 3em; width: auto;}
-.jexcel td.editor > input {width: 100% !important; text-align: inherit !important; font-family: inherit; font-size: inherit; padding: 0;}
 .jexcel>tbody>tr {height: 25px;}
 .exf-spreadsheet {overflow: visible;}
 .panel:has(.exf-spreadsheet) {overflow: visible;}
@@ -225,6 +223,11 @@ pre.sf-dump .sf-dump-private, pre.sf-dump .sf-dump-public, pre.sf-dump .sf-dump-
 .exf-spreadsheet-invalid {background-color: #ffebeb;}
 .exf-spreadsheet-invalid::before {color: #b00;}
 .jdropdown-searchbar > .jdropdown-container-header {height: 42px !important; max-height: 42px !important}
+/* Fix for flickering widht on double-click cell */
+.jexcel td.highlight-selected > * {min-width: 3em; width: auto;}
+.jexcel td.editor > input, 
+.jexcel td.editor > textarea {padding: 4px 0 0 4px; text-align: inherit !important; font-family: inherit; font-size: inherit;}
+
 
 /* DataImporter */
 .exf-dataimporter > .jexcel_container {height: calc(100% - 42px)}
