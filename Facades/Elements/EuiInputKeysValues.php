@@ -1,7 +1,6 @@
 <?php
 namespace exface\JEasyUIFacade\Facades\Elements;
 
-use exface\Core\Facades\AbstractAjaxFacade\Elements\JExcelTrait;
 use exface\Core\Interfaces\Actions\ActionInterface;
 
 /**
@@ -50,12 +49,38 @@ class EuiInputKeysValues extends EuiInputText
         allowDeleteRow: false,
         wordWrap: true,
         {$this->buildJsJExcelColumns()}
-        minSpareRows: 0
+        minSpareRows: 0,
+        onevent: function(event) {
+            ({$this->buildJsJqueryElement()}[0].jssPlugins || []).forEach(function(oPlugin) {
+                oPlugin.onevent(event);
+            });
+        }
     });
-    
-    {$this->buildJsFixAutoColumnWidth()}
+
+    {$this->buildJsInitPlugins()}    
     {$this->buildJsFixContextMenuPosition()}
     
+JS;
+    }
+    
+    /**
+     *
+     * @return string
+     */
+    protected function buildJsInitPlugins() : string
+    {
+        $pluginsJs = '';
+        $cfg = $this->getFacade()->getConfig();
+        if ($cfg->hasOption('LIBS.JEXCEL.PLUGINS')) {
+            foreach ($cfg->getOption('LIBS.JEXCEL.PLUGINS') as $var => $path) {
+                $pluginsJs = "{$var}({$this->buildJsJqueryElement()}[0].jexcel)";
+            }
+        }
+        return <<<JS
+        
+        {$this->buildJsJqueryElement()}[0].jssPlugins = [
+            $pluginsJs
+        ];
 JS;
     }
     
@@ -80,6 +105,10 @@ JS;
         return json_encode($data);
     }
     
+    /**
+     * 
+     * @return string
+     */
     protected function buildJsJExcelColumns() : string
     {
         $widget = $this->getWidget();
@@ -88,12 +117,14 @@ JS;
                 'title' => $widget->getCaptionForKeys(),
                 'type' => 'text',
                 'readOnly' => true,
-                'align' => 'left'
+                'align' => 'left',
+                'width' => 'auto'
             ],
             [
                 'title' => $widget->getCaptionForValues() ?? $widget->getAttribute()->getName(),
                 'type' => 'text',
-                'align' => 'left'
+                'align' => 'left',
+                'width' => 'auto'
             ]
         ];
         foreach (array_keys($this->getWidget()->getReferenceValues()) as $title) {
@@ -101,7 +132,8 @@ JS;
                 'title' => $title,
                 'type' => 'text',
                 'readOnly' => true,
-                'align' => 'left'
+                'align' => 'left',
+                'width' => 'auto'
             ];
         }
         
@@ -132,13 +164,18 @@ JS;
     protected function buildHtmlHeadTagsForJExcel() : array
     {
         $facade = $this->getFacade();
-        return [
+        $includes = [
             '<script type="text/javascript" src="' . $facade->buildUrlToSource('LIBS.JEXCEL.JS') . '"></script>',
             '<script type="text/javascript" src="' . $facade->buildUrlToSource('LIBS.JEXCEL.JS_JSUITES') . '"></script>',
             '<link href="' . $facade->buildUrlToSource('LIBS.JEXCEL.CSS') . '" rel="stylesheet" media="screen">',
             '<link href="' . $facade->buildUrlToSource('LIBS.JEXCEL.CSS_JSUITES') . '" rel="stylesheet" media="screen">'
         ];
-        
+        if ($facade->getConfig()->hasOption('LIBS.JEXCEL.PLUGINS')) {
+            foreach ($facade->getConfig()->getOption('LIBS.JEXCEL.PLUGINS') as $path) {
+                $includes[] = '<script type="text/javascript" src="' . $facade->buildUrlToVendorFile($path) . '"></script>';
+            }
+        }
+        return $includes;
     }
     
     public function buildJsValueGetter()
@@ -173,15 +210,6 @@ JS;
     public function buildJsDataSetter(string $jsData) : string
     {
         return parent::buildJsDataSetter($jsData);
-    }
-    
-    /**
-     *
-     * @return string
-     */
-    protected function buildJsFixAutoColumnWidth() : string
-    {
-        return "{$this->buildJsJqueryElement()}.find('colgroup col').attr('width','');";
     }
     
     /**

@@ -100,6 +100,9 @@
    	"LIBS.JEXCEL.JS_JSUITES": "npm-asset/jsuites/dist/jsuites.js",
    	"LIBS.JEXCEL.CSS": "npm-asset/jspreadsheet-ce/dist/jspreadsheet.css",
  	"LIBS.JEXCEL.CSS_JSUITES": "npm-asset/jsuites/dist/jsuites.css",
+ 	"LIBS.JEXCEL.PLUGINS": {
+ 		"jss_autoWidth": "npm-asset/jspreadsheet--autowidth/plugins/dist/autoWidth.min.js"
+	},
 	
 	"LIBS.JSONEDITOR.JS": "npm-asset/jsoneditor/dist/jsoneditor.min.js",
 	"LIBS.JSONEDITOR.CSS": "npm-asset/jsoneditor/dist/jsoneditor.min.css",
