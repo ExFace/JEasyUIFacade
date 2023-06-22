@@ -5,7 +5,6 @@ use exface\Core\Widgets\DialogButton;
 use exface\Core\Interfaces\Actions\ActionInterface;
 use exface\Core\Facades\AbstractAjaxFacade\Elements\JqueryButtonTrait;
 use exface\Core\Facades\AbstractAjaxFacade\Elements\JqueryAlignmentTrait;
-use exface\Core\Facades\AbstractAjaxFacade\Elements\AbstractJqueryElement;
 use exface\Core\Widgets\Dialog;
 use exface\Core\Widgets\Button;
 use exface\Core\Widgets\ButtonGroup;
