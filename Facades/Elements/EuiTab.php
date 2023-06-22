@@ -1,6 +1,8 @@
 <?php
 namespace exface\JEasyUIFacade\Facades\Elements;
 
+use exface\Core\Facades\AbstractAjaxFacade\Elements\JqueryDisableConditionTrait;
+
 /**
  *
  * @author Andrej Kabachnik
@@ -9,6 +11,25 @@ namespace exface\JEasyUIFacade\Facades\Elements;
  */
 class EuiTab extends EuiPanel
 {
+    use JqueryDisableConditionTrait;
+    
+    /**
+     *
+     * {@inheritDoc}
+     * @see \exface\JEasyUIFacade\Facades\Elements\EuiText::init()
+     */
+    protected function init()
+    {
+        parent::init();
+        
+        // Register an onChange-Script on the element linked by a disable condition.
+        $this->registerDisableConditionAtLinkedElement();
+        
+        if ($activeIf = $this->getWidget()->getActiveIf()) {
+            $this->registerConditionalPropertyUpdaterOnLinkedElements($activeIf, $this->buildJsActiveSetter(true), $this->buildJsActiveSetter(false));
+        }
+    }
+    
     /**
      * 
      * {@inheritDoc}
@@ -47,6 +68,38 @@ HTML;
 HTML;
         return $output;
     }
+    
+    public function buildJs()
+    {
+        return parent::buildJs() . <<<JS
+        
+        {$this->buildJsEventScripts()}
+JS;
+    }
+    
+    /**
+     * Returns JS scripts for event handling like live references, onChange-handlers,
+     * disable conditions, etc.
+     *
+     * @return string
+     */
+    protected function buildJsEventScripts()
+    {
+        if ($activeIf = $this->getWidget()->getActiveIf()) {
+            $activeIfInit = $this->buildJsConditionalPropertyInitializer($activeIf, $this->buildJsActiveSetter(true), $this->buildJsActiveSetter(false));
+        } else {
+            $activeIfInit = '';
+        }
+        
+        return <<<JS
+
+    $(function() {
+        {$this->buildJsDisableConditionInitializer()}
+        {$activeIfInit}
+    });
+JS;
+    }
+    
 
     /**
      * 
@@ -107,5 +160,39 @@ JS;
             return $parent_element->getNumberOfColumnsByDefault();
         }
         return parent::getNumberOfColumnsByDefault();
+    }
+    
+    /**
+     * 
+     * {@inheritDoc}
+     * @see \exface\Core\Facades\AbstractAjaxFacade\Elements\AbstractJqueryElement::buildJsEnabler()
+     */
+    public function buildJsEnabler()
+    {
+        $widget = $this->getWidget();
+        return "$('#{$this->getFacade()->getElement($widget->getParent())->getId()}').tabs('enableTab', {$widget->getTabIndex()})";
+    }
+    
+    /**
+     * 
+     * {@inheritDoc}
+     * @see \exface\Core\Facades\AbstractAjaxFacade\Elements\AbstractJqueryElement::buildJsDisabler()
+     */
+    public function buildJsDisabler()
+    {
+        $widget = $this->getWidget();
+        return "$('#{$this->getFacade()->getElement($widget->getParent())->getId()}').tabs('disableTab', {$widget->getTabIndex()})";
+    }
+    
+    /**
+     * 
+     * @param bool $trueOrFalse
+     * @return string
+     */
+    public function buildJsActiveSetter(bool $trueOrFalse) : string
+    {
+        $widget = $this->getWidget();
+        $op = $trueOrFalse === true ? 'select' : 'unselect';
+        return "$('#{$this->getFacade()->getElement($widget->getParent())->getId()}').tabs('{$op}', {$widget->getTabIndex()})";
     }
 }
