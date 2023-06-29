@@ -42,7 +42,8 @@ class EuiDataTable extends EuiData
             }
         }
         
-        // Initialize editors
+        // Initialize editors and cell mergers
+        $colsToMerge = [];
         /* @var $col \exface\Core\Widgets\DataColumn */
         foreach ($widget->getColumns() as $col) {
             if ($col->isEditable()) {
@@ -50,6 +51,12 @@ class EuiDataTable extends EuiData
                 $this->setEditable(true);
                 $this->editors[$col->getId()] = $editor;
             }
+            if ($col->getMergeCellsWithSameValues() === true) {
+                $colsToMerge[] = $col;
+            }
+        }
+        if (! empty($colsToMerge)) {
+            $this->addOnLoadSuccess($this->buildJsCellMerger($colsToMerge));
         }
         
         // If GroupView is used, make the group-by-column hidden. Otherwise the column layout gets broken!
@@ -927,5 +934,54 @@ JS;
         // produce a wrong height while a second async resize will correct it. A single async resize does not 
         // work either...
         return "$('#{$this->getId()}').datagrid('resize'); setTimeout(function(){ $('#{$this->getId()}').datagrid('resize'); }, 0);";
+    }
+    
+    /**
+     * 
+     * @param DataColumn[] $cols
+     * @return string
+     */
+    protected function buildJsCellMerger(array $cols) : string
+    {
+        if (empty($cols)) {
+            return '';
+        }
+        $fieldsToMerge = [];
+        foreach ($cols as $col) {
+            $fieldsToMerge[] = $col->getDataColumnName();
+        }
+        $fieldsToMerge = json_encode($fieldsToMerge);
+        
+        $output = <<<JS
+        
+        (function(jqSelf){
+			var fields = {$fieldsToMerge};
+			var aRows = jqSelf.datagrid('getRows');
+            var iRowCnt = aRows.length;
+			var oRow, iSpan, sField;
+            if (! iRowCnt) return;
+			for (var iF = 0; iF < fields.length; iF++){
+				sField = fields[iF];
+	            for(var iR = 0; iR < iRowCnt; iR++){
+					oRow = aRows[iR];
+					iSpan = 1;
+					while(iR + iSpan < iRowCnt && aRows[iR+iSpan][sField] === oRow[sField]) {
+						iSpan++;
+					}
+					if (iSpan === 1) {
+						continue;
+					}
+					console.log('merge', iR, sField, iSpan);
+	                jqSelf.datagrid('mergeCells',{
+	                    index: iR,
+	                    field: sField,
+	                    rowspan: iSpan
+	                });
+					iR = iR + iSpan - 1;
+	            }
+			}
+        })($(this));
+JS;
+        return $output;
     }
 }
