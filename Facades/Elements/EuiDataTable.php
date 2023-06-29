@@ -971,7 +971,6 @@ JS;
 					if (iSpan === 1) {
 						continue;
 					}
-					console.log('merge', iR, sField, iSpan);
 	                jqSelf.datagrid('mergeCells',{
 	                    index: iR,
 	                    field: sField,
