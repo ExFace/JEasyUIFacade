@@ -16,12 +16,6 @@ class EuiDataMatrix extends EuiDataTable
 {
     use JqueryDataTransposerTrait;
 
-    protected function init()
-    {
-        parent::init();
-        $this->addOnLoadSuccess($this->buildJsCellMerger());
-    }
-    
     /**
      * 
      * {@inheritDoc}
@@ -182,36 +176,6 @@ return oTransposed.oDataTransposed;
 
 JS;
         return $transpose_js;
-    }
-
-    protected function buildJsCellMerger()
-    {
-        $fields_to_merge = array();
-        foreach ($this->getWidget()->getColumnsRegular() as $col) {
-            $fields_to_merge[] = $col->getDataColumnName();
-        }
-        $fields_to_merge = json_encode($fields_to_merge);
-        $rowspan = count($this->getWidget()->getColumnsTransposed());
-        
-        $output = <<<JS
-
-        (function(jqSelf){
-			var fields = {$fields_to_merge};
-            var iRowCnt = jqSelf.datagrid('getRows').length;
-            if (! iRowCnt) return;
-			for (var i=0; i<fields.length; i++){
-	            for(var j=0; j< iRowCnt; j++){
-	                jqSelf.datagrid('mergeCells',{
-	                    index: j,
-	                    field: fields[i],
-	                    rowspan: {$rowspan}
-	                });
-					j = j+{$rowspan}-1;
-	            }
-			}
-        })($(this));
-JS;
-        return $output;
     }
 
     public function buildJsInitOptionsHead()
