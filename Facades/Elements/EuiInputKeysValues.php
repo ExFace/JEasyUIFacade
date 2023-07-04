@@ -260,10 +260,11 @@ JS;
     /**
      * 
      * {@inheritDoc}
-     * @see \exface\JEasyUIFacade\Facades\Elements\EuiInput::buildJsRequiredSetter()
+     * @see \exface\JEasyUIFacade\Facades\Elements\EuiInput::buildJsSetRequired()
      */
-    protected function buildJsRequiredSetter(bool $required) : string
+    protected function buildJsSetRequired(bool $required) : string
     {
+        // TODO add implementation of required_if
         return "";
     }
     

@@ -107,7 +107,7 @@ class EuiInputPassword extends EuiInput
             
                 setTimeout(function(){
                     if ({$this->buildJsValueGetter()} === '') {
-                        {$confirmInputElement->buildJsDisabler()}
+                        {$confirmInputElement->buildJsSetDisabled(true)}
                         {$confirmInputElement->buildJsValueSetter('')}
                     }
                 }, 0);
@@ -117,10 +117,10 @@ JS;
             $onChangeScript = <<<JS
             
                         if ({$this->buildJsValueGetter()} === '') {
-                            {$confirmInputElement->buildJsDisabler()}
+                            {$confirmInputElement->buildJsSetDisabled(true)}
                             {$confirmInputElement->buildJsValueSetter('')}
                         } else {
-                            {$confirmInputElement->buildJsEnabler()}
+                            {$confirmInputElement->buildJsSetDisabled(false)}
                         }
 JS;
             $this->addOnChangeScript($onChangeScript);

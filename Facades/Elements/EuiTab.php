@@ -1,8 +1,6 @@
 <?php
 namespace exface\JEasyUIFacade\Facades\Elements;
 
-use exface\Core\Facades\AbstractAjaxFacade\Elements\JqueryDisableConditionTrait;
-
 /**
  *
  * @author Andrej Kabachnik
@@ -10,9 +8,7 @@ use exface\Core\Facades\AbstractAjaxFacade\Elements\JqueryDisableConditionTrait;
  * @method exface\Core\Widgets\Tab getWidget()
  */
 class EuiTab extends EuiPanel
-{
-    use JqueryDisableConditionTrait;
-    
+{    
     /**
      *
      * {@inheritDoc}
@@ -22,12 +18,8 @@ class EuiTab extends EuiPanel
     {
         parent::init();
         
-        // Register an onChange-Script on the element linked by a disable condition.
-        $this->registerDisableConditionAtLinkedElement();
-        
-        if ($activeIf = $this->getWidget()->getActiveIf()) {
-            $this->registerConditionalPropertyUpdaterOnLinkedElements($activeIf, $this->buildJsActiveSetter(true), $this->buildJsActiveSetter(false));
-        }
+        // Register an onChange-Script on the element linked by a disable condition and similar things.
+        $this->registerConditionalPropertiesLiveRefs();
     }
     
     /**
@@ -86,7 +78,7 @@ JS;
     protected function buildJsEventScripts()
     {
         if ($activeIf = $this->getWidget()->getActiveIf()) {
-            $activeIfInit = $this->buildJsConditionalPropertyInitializer($activeIf, $this->buildJsActiveSetter(true), $this->buildJsActiveSetter(false));
+            $activeIfInit = $this->buildJsConditionalProperty($activeIf, $this->buildJsSetActive(true), $this->buildJsSetActive(false), true);
         } else {
             $activeIfInit = '';
         }
@@ -94,7 +86,7 @@ JS;
         return <<<JS
 
     $(function() {
-        {$this->buildJsDisableConditionInitializer()}
+        {$this->buildjsConditionalProperties(true)}
         {$activeIfInit}
     });
 JS;
@@ -163,25 +155,18 @@ JS;
     }
     
     /**
-     * 
-     * {@inheritDoc}
-     * @see \exface\Core\Facades\AbstractAjaxFacade\Elements\AbstractJqueryElement::buildJsEnabler()
+     *
+     * {@inheritdoc}
+     * @see \exface\Core\Facades\AbstractAjaxFacade\Elements\AbstractJqueryElement::buildJsSetDisabled()
      */
-    public function buildJsEnabler()
+    public function buildJsSetDisabled(bool $trueOrFalse) : string
     {
         $widget = $this->getWidget();
-        return "$('#{$this->getFacade()->getElement($widget->getParent())->getId()}').tabs('enableTab', {$widget->getTabIndex()})";
-    }
-    
-    /**
-     * 
-     * {@inheritDoc}
-     * @see \exface\Core\Facades\AbstractAjaxFacade\Elements\AbstractJqueryElement::buildJsDisabler()
-     */
-    public function buildJsDisabler()
-    {
-        $widget = $this->getWidget();
-        return "$('#{$this->getFacade()->getElement($widget->getParent())->getId()}').tabs('disableTab', {$widget->getTabIndex()})";
+        if ($trueOrFalse === true) {
+            return "$('#{$this->getFacade()->getElement($widget->getParent())->getId()}').tabs('disableTab', {$widget->getTabIndex()})";
+        } else {
+            return "$('#{$this->getFacade()->getElement($widget->getParent())->getId()}').tabs('enableTab', {$widget->getTabIndex()})";
+        }
     }
     
     /**
@@ -189,10 +174,26 @@ JS;
      * @param bool $trueOrFalse
      * @return string
      */
-    public function buildJsActiveSetter(bool $trueOrFalse) : string
+    public function buildJsSetActive(bool $trueOrFalse) : string
     {
         $widget = $this->getWidget();
         $op = $trueOrFalse === true ? 'select' : 'unselect';
         return "$('#{$this->getFacade()->getElement($widget->getParent())->getId()}').tabs('{$op}', {$widget->getTabIndex()})";
+    }
+    
+    /**
+     * 
+     * {@inheritDoc}
+     * @see \exface\JEasyUIFacade\Facades\Elements\EuiAbstractElement::registerConditionalPropertiesLiveRefs()
+     */
+    protected function registerConditionalPropertiesLiveRefs()
+    {
+        parent::registerConditionalPropertiesLiveRefs();
+        
+        if ($activeIf = $this->getWidget()->getActiveIf()) {
+            $this->registerConditionalPropertyUpdaterOnLinkedElements($activeIf, $this->buildJsSetActive(true), $this->buildJsSetActive(false));
+        }
+        
+        return;
     }
 }

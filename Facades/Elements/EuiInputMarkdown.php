@@ -158,23 +158,16 @@ JS;
     /**
      * 
      * {@inheritDoc}
-     * @see \exface\JEasyUIFacade\Facades\Elements\EuiInput::buildJsEnabler()
+     * @see \exface\JEasyUIFacade\Facades\Elements\EuiInput::buildJsSetDisabled()
      */
-    public function buildJsEnabler()
+    public function buildJsSetDisabled(bool $trueOrFalse) : string
     {
         // TODO
-        return '$("#' . $this->getId() . '").removeAttr("disabled")';
-    }
-    
-    /**
-     * 
-     * {@inheritDoc}
-     * @see \exface\JEasyUIFacade\Facades\Elements\EuiInput::buildJsDisabler()
-     */
-    public function buildJsDisabler()
-    {
-        // TODO
-        return '$("#' . $this->getId() . '").attr("disabled", "disabled")';
+        if ($trueOrFalse === true) {
+            return '$("#' . $this->getId() . '").attr("disabled", "disabled")';
+        } else {
+            return '$("#' . $this->getId() . '").removeAttr("disabled")';
+        }
     }
     
     /**

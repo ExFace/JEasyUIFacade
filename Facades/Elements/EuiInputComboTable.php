@@ -95,8 +95,8 @@ JS;
             }
         }
         
-        // Register an onChange-Script on the element linked by a disable condition.
-        $this->registerDisableConditionAtLinkedElement();
+        // Register an onChange-Script on the element linked by a disable condition and other things.
+        $this->registerConditionalPropertiesLiveRefs();
         
         // Make sure, the table in the combo has a smaller default page size than regular (big) tables
         // This makes combotables faster with large data sets.
@@ -197,8 +197,8 @@ HTML;
                     {$this->buildJsInitOptions()}
                 });
 
-                // Initialize the disabled state of the widget if a disabled condition is set.
-                {$this->buildJsDisableConditionInitializer()};
+                // Initialize the conditional properties of the widget if set.
+                {$this->buildjsConditionalProperties(true)};
 
                 {$hideInitiallyIfNeeded}
             });

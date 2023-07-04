@@ -2,7 +2,6 @@
 namespace exface\JEasyUIFacade\Facades\Elements;
 
 use exface\Core\Interfaces\Actions\ActionInterface;
-use exface\Core\Facades\AbstractAjaxFacade\Elements\JqueryDisableConditionTrait;
 use exface\Core\Facades\AbstractAjaxFacade\Elements\JqueryInputValidationTrait;
 
 /**
@@ -14,7 +13,6 @@ use exface\Core\Facades\AbstractAjaxFacade\Elements\JqueryInputValidationTrait;
  */
 class EuiInput extends EuiValue
 {
-    use JqueryDisableConditionTrait;
     use JqueryInputValidationTrait {
         buildJsValidator as buildJsValidatorViaTrait;
     }
@@ -28,12 +26,8 @@ class EuiInput extends EuiValue
     {
         parent::init();
         
-        // Register an onChange-Script on the element linked by a disable condition.
-        $this->registerDisableConditionAtLinkedElement();
-        
-        if ($requiredIf = $this->getWidget()->getRequiredIf()) {
-            $this->registerConditionalPropertyUpdaterOnLinkedElements($requiredIf, $this->buildJsRequiredSetter(true), $this->buildJsRequiredSetter(false));
-        }
+        // Register an onChange-Script on the element linked by a disable condition and similar thins.
+        $this->registerConditionalPropertiesLiveRefs();
     }
     
     /**
@@ -94,11 +88,7 @@ class EuiInput extends EuiValue
             $hideInitiallyIfNeeded = $this->buildJsHideWidget();
         }
         
-        if ($requiredIf = $this->getWidget()->getRequiredIf()) {
-            $requiredIfInit = $this->buildJsConditionalPropertyInitializer($requiredIf, $this->buildJsRequiredSetter(true), $this->buildJsRequiredSetter(false));
-        } else {
-            $requiredIfInit = '';
-        }
+        
         
         $js = $this->buildsJsAddValidationType();
         return $js . <<<JS
@@ -111,12 +101,28 @@ class EuiInput extends EuiValue
     }
     $(function() { 
         {$this->buildJsOnChangeHandler()}
-        {$this->buildJsDisableConditionInitializer()}
-        {$requiredIfInit}
+        {$this->buildjsConditionalProperties()}
         {$hideInitiallyIfNeeded}
     });
 
 JS;
+    }
+    
+    /**
+     * 
+     * {@inheritDoc}
+     * @see \exface\JEasyUIFacade\Facades\Elements\EuiAbstractElement::buildjsConditionalProperties()
+     */
+    protected function buildjsConditionalProperties(bool $async = false) : string
+    {
+        $js = parent::buildjsConditionalProperties($async);
+        
+        // required_if
+        if ($propertyIf = $this->getWidget()->getRequiredIf()) {
+            $js .= $this->buildJsConditionalProperty($propertyIf, $this->buildJsSetRequired(true), $this->buildJsSetRequired(false), $async);
+        }
+        
+        return $js;
     }
     
     protected function buildsJsAddValidationType() : string
@@ -138,7 +144,7 @@ JS;
         return $js;
     }
     
-    protected function buildJsRequiredSetter(bool $required) : string
+    protected function buildJsSetRequired(bool $required) : string
     {
         return "$('#{$this->getId()}').{$this->getElementType()}('require'," . ($required ? 'true' : 'false') . ");";
     }
@@ -234,27 +240,19 @@ JS;
         
         return $this->buildJsValidatorViaTrait($valJs);
     }
-
+    
     /**
      *
      * {@inheritdoc}
-     *
-     * @see \exface\Core\Facades\AbstractAjaxFacade\Elements\AbstractJqueryElement::buildJsEnabler()
+     * @see \exface\Core\Facades\AbstractAjaxFacade\Elements\AbstractJqueryElement::buildJsSetDisabled()
      */
-    public function buildJsEnabler()
+    public function buildJsSetDisabled(bool $trueOrFalse) : string
     {
-        return '$("#' . $this->getId() . '").' . $this->getElementType() . '("enable").' . $this->getElementType() . '("validate")';
-    }
-
-    /**
-     *
-     * {@inheritdoc}
-     *
-     * @see \exface\Core\Facades\AbstractAjaxFacade\Elements\AbstractJqueryElement::buildJsDisabler()
-     */
-    public function buildJsDisabler()
-    {
-        return '$("#' . $this->getId() . '").' . $this->getElementType() . '("disable")';
+        if ($trueOrFalse === true) {
+            return '$("#' . $this->getId() . '").' . $this->getElementType() . '("disable")';
+        } else {
+            return '$("#' . $this->getId() . '").' . $this->getElementType() . '("enable").' . $this->getElementType() . '("validate")';
+        }
     }
     
     /**
@@ -290,5 +288,21 @@ JS;
             ['A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'J'], 
             $this->getId()
         );
+    }
+    
+    /**
+     *
+     * {@inheritDoc}
+     * @see \exface\JEasyUIFacade\Facades\Elements\EuiAbstractElement::registerConditionalPropertiesLiveRefs()
+     */
+    protected function registerConditionalPropertiesLiveRefs()
+    {
+        parent::registerConditionalPropertiesLiveRefs();
+        
+        if ($requiredIf = $this->getWidget()->getRequiredIf()) {
+            $this->registerConditionalPropertyUpdaterOnLinkedElements($requiredIf, $this->buildJsSetRequired(true), $this->buildJsSetRequired(false));
+        }
+        
+        return;
     }
 }

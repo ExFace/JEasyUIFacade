@@ -73,20 +73,14 @@ class EuiInputCheckBox extends EuiInput
     /**
      * 
      * {@inheritDoc}
-     * @see \exface\JEasyUIFacade\Facades\Elements\EuiInput::buildJsDisabler()
+     * @see \exface\JEasyUIFacade\Facades\Elements\EuiInput::buildJsSetDisabled()
      */
-    public function buildJsDisabler()
+    public function buildJsSetDisabled(bool $trueOrFalse) : string
     {
-        return '$("#' . $this->getId() . '_checkbox").attr("disabled", true)';
-    }
-    
-    /**
-     * 
-     * {@inheritDoc}
-     * @see \exface\JEasyUIFacade\Facades\Elements\EuiInput::buildJsEnabler()
-     */
-    public function buildJsEnabler()
-    {
-        return '$("#' . $this->getId() . '_checkbox").attr("disabled", false)';
+        if ($trueOrFalse === true) {
+            return '$("#' . $this->getId() . '_checkbox").attr("disabled", true)';
+        } else {
+            return '$("#' . $this->getId() . '_checkbox").attr("disabled", false)';
+        }
     }
 }
