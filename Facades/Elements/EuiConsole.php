@@ -229,7 +229,7 @@ JS;
         }
             
         if($this->getWidget()->isDisabled()===true){
-            $pauseIfDisabled = "function(){ {$this->buildJsDisabler()} }";
+            $pauseIfDisabled = "function(){ {$this->buildJsSetDisabled(true)} }";
         }
             
         foreach ($this->getWidget()->getCommandPresets() as $nr => $preset) {
@@ -344,25 +344,19 @@ JS;
     {
         return "'[[;aqua;]' + " . $prompt . " + '> ]'";
     }
-        
-    /**
-     * 
-     * {@inheritDoc}
-     * @see \exface\Core\Facades\AbstractAjaxFacade\Elements\AbstractJqueryElement::buildJsDisabler()
-     */
-    public function buildJsDisabler() : string
-    {
-        return "$('#{$this->getId()}').terminal().pause();";
-    }
     
     /**
-     * 
-     * {@inheritDoc}
-     * @see \exface\Core\Facades\AbstractAjaxFacade\Elements\AbstractJqueryElement::buildJsEnabler()
+     *
+     * {@inheritdoc}
+     * @see \exface\Core\Facades\AbstractAjaxFacade\Elements\AbstractJqueryElement::buildJsSetDisabled()
      */
-    public function buildJsEnabler() : string
+    public function buildJsSetDisabled(bool $trueOrFalse) : string
     {
-        return "$('#{$this->getId()}').terminal().resume();";
+        if ($trueOrFalse === true) {
+            return "$('#{$this->getId()}').terminal().pause();";
+        } else {
+            return "$('#{$this->getId()}').terminal().resume();";
+        }
     }
     
     /**

@@ -6,9 +6,11 @@ use exface\JEasyUIFacade\Facades\JEasyUIFacade;
 use exface\Core\Interfaces\Widgets\iLayoutWidgets;
 use exface\Core\Interfaces\Widgets\iFillEntireContainer;
 use exface\Core\Interfaces\Widgets\iContainOtherWidgets;
+use exface\Core\Facades\AbstractAjaxFacade\Elements\JsConditionalPropertyTrait;
 
 abstract class EuiAbstractElement extends AbstractJqueryElement
 {
+    use JsConditionalPropertyTrait;
 
     private $spacing = null;
 
@@ -521,5 +523,56 @@ HTML;
     public function escapeString($string, bool $encloseInQuotes = true, bool $forUseInHtml = true) : ?string
     {
         return parent::escapeString($string, $encloseInQuotes, $forUseInHtml);
+    }
+    
+    /**
+     * 
+     * @param bool $async
+     * @return string
+     */
+    protected function buildjsConditionalProperties(bool $async = false) : string
+    {
+        $js = '';
+        
+        // hidden_if
+        if ($propertyIf = $this->getWidget()->getHiddenIf()) {
+            $js .= $this->buildJsConditionalProperty($propertyIf, $this->buildJsSetHidden(true), $this->buildJsSetHidden(false), $async);
+        }
+        
+        // disabled_if
+        if ($propertyIf = $this->getWidget()->getDisabledIf()) {
+            $js .= $this->buildJsConditionalProperty($propertyIf, $this->buildJsSetDisabled(true), $this->buildJsSetDisabled(false), $async);
+        } 
+        
+        return $js;
+    }
+    
+    /**
+     * 
+     * @return void
+     */
+    protected function registerConditionalPropertiesLiveRefs()
+    {
+        // hidden_if
+        if ($propertyIf = $this->getWidget()->getHiddenIf()) {
+            $this->registerConditionalPropertyUpdaterOnLinkedElements($propertyIf, $this->buildJsSetHidden(true), $this->buildJsSetHidden(false));
+        }
+        
+        // disabled_if
+        if ($propertyIf = $this->getWidget()->getDisabledIf()) {
+            $this->registerConditionalPropertyUpdaterOnLinkedElements($propertyIf, $this->buildJsSetDisabled(true), $this->buildJsSetDisabled(false));
+        }
+        
+        return;
+    }
+    
+    /**
+     * 
+     * @param bool $hidden
+     * @return string
+     */
+    protected function buildJsSetHidden(bool $hidden) : string
+    {
+        return "$('#{$this->getId()}')" . ($hidden ? ".addClass('exf-hidden')" : ".removeClass('exf-hidden')");
     }
 }

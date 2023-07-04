@@ -68,21 +68,15 @@ class EuiInputText extends EuiInput
     /**
      * 
      * {@inheritDoc}
-     * @see \exface\JEasyUIFacade\Facades\Elements\EuiInput::buildJsEnabler()
+     * @see \exface\JEasyUIFacade\Facades\Elements\EuiInput::buildJsSetDisabled()
      */
-    public function buildJsEnabler()
+    public function buildJsSetDisabled(bool $trueOrFalse) : string
     {
-        return '$("#' . $this->getId() . '").removeAttr("disabled")';
-    }
-    
-    /**
-     * 
-     * {@inheritDoc}
-     * @see \exface\JEasyUIFacade\Facades\Elements\EuiInput::buildJsDisabler()
-     */
-    public function buildJsDisabler()
-    {
-        return '$("#' . $this->getId() . '").attr("disabled", "disabled")';
+        if ($trueOrFalse === true) {
+            return '$("#' . $this->getId() . '").attr("disabled", "disabled")';
+        } else {
+            return '$("#' . $this->getId() . '").removeAttr("disabled")';
+        }
     }
     
     /**
@@ -110,7 +104,7 @@ class EuiInputText extends EuiInput
      * @param bool $required
      * @return string
      */
-    protected function buildJsRequiredSetter(bool $required) : string
+    protected function buildJsSetRequired(bool $required) : string
     {
         if ($required === true) {
             return "$('#{$this->getId()}').prop('required', 'required');";

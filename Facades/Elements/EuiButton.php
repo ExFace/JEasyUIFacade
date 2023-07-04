@@ -28,8 +28,8 @@ class EuiButton extends EuiAbstractElement
     {
         parent::init();
         
-        // Register an onChange-Script on the element linked by a disable condition.
-        $this->registerDisableConditionAtLinkedElement();
+        // Register an onChange-Script on the element linked by a disable condition and similar things.
+        $this->registerConditionalPropertiesLiveRefs();
     }
     
     /**
@@ -67,8 +67,8 @@ class EuiButton extends EuiAbstractElement
             }
         }
         
-        // Initialize the disabled state of the widget if a disabled condition is set.
-        $output .= $this->buildJsDisableConditionInitializer();
+        // Initialize the conditional peroperties of the widget if set.
+        $output .= $this->buildjsConditionalProperties(true);
         
         return $output;
     }
@@ -286,25 +286,18 @@ JS;
     }
     
     /**
-     * 
-     * {@inheritDoc}
-     * @see \exface\Core\Facades\AbstractAjaxFacade\Elements\AbstractJqueryElement::buildJsDisabler()
+     *
+     * {@inheritdoc}
+     * @see \exface\Core\Facades\AbstractAjaxFacade\Elements\AbstractJqueryElement::buildJsSetDisabled()
      */
-    public function buildJsDisabler()
+    public function buildJsSetDisabled(bool $trueOrFalse) : string
     {
         // setTimeout() required to make sure, the jEasyUI element was initialized (especially in lazy loading dialogs)
-        return "setTimeout(function(){ $('#{$this->getId()}').{$this->getElementType()}('disable') }, 0)";
-    }
-    
-    /**
-     * 
-     * {@inheritDoc}
-     * @see \exface\Core\Facades\AbstractAjaxFacade\Elements\AbstractJqueryElement::buildJsEnabler()
-     */
-    public function buildJsEnabler()
-    {
-        // setTimeout() required to make sure, the jEasyUI element was initialized (especially in lazy loading dialogs)
-        return  "setTimeout(function(){ $('#{$this->getId()}').{$this->getElementType()}('enable') }, 0)";
+        if ($trueOrFalse === true) {
+            return "setTimeout(function(){ $('#{$this->getId()}').{$this->getElementType()}('disable') }, 0)";
+        } else {
+            return "setTimeout(function(){ $('#{$this->getId()}').{$this->getElementType()}('enable') }, 0)";
+        }
     }
     
     public function buildCssElementClass()
