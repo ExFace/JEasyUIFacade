@@ -70,7 +70,7 @@ class EuiInputText extends EuiInput
      * {@inheritDoc}
      * @see \exface\JEasyUIFacade\Facades\Elements\EuiInput::buildJsSetDisabled()
      */
-    public function buildJsSetDisabled(bool $trueOrFalse) : string
+    public function buildJsSetDisabled(bool $trueOrFalse, bool $resetWidgetOnChange = false) : string
     {
         if ($trueOrFalse === true) {
             return '$("#' . $this->getId() . '").attr("disabled", "disabled")';

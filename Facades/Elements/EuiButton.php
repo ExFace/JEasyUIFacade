@@ -290,7 +290,7 @@ JS;
      * {@inheritdoc}
      * @see \exface\Core\Facades\AbstractAjaxFacade\Elements\AbstractJqueryElement::buildJsSetDisabled()
      */
-    public function buildJsSetDisabled(bool $trueOrFalse) : string
+    public function buildJsSetDisabled(bool $trueOrFalse, bool $resetWidgetOnChange = false) : string
     {
         // setTimeout() required to make sure, the jEasyUI element was initialized (especially in lazy loading dialogs)
         if ($trueOrFalse === true) {
