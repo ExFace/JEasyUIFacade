@@ -27,6 +27,7 @@ use exface\Core\Facades\AbstractAjaxFacade\Templates\FacadePageTemplateRenderer;
 use exface\Core\Interfaces\Selectors\FacadeSelectorInterface;
 use exface\Core\DataTypes\StringDataType;
 use exface\Core\DataTypes\HtmlDataType;
+use exface\Core\DataTypes\MessageTypeDataType;
 
 /**
  * Renders pages using the jEasyUI JavaScript framework based on jQuery.
@@ -220,7 +221,7 @@ $.ajaxPrefilter(function( options ) {
                 $action = '';
                 if ($exception instanceof ExceptionInterface) {
                     $msg = $exception->getMessageModel($this->getWorkbench());
-                    $title = ucfirst(strtolower($msg->getType())) . ' ' . $exception->getAlias();
+                    $title = ucfirst(strtolower($msg->getType(MessageTypeDataType::ERROR))) . ' ' . $exception->getAlias();
                     $message = $msg->getTitle();
                     $details = $exception->getMessage();                    
                     if ($exception instanceof AccessDeniedError) {
