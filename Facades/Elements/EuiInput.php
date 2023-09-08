@@ -156,7 +156,8 @@ JS;
      */
     protected function buildJsRequiredGetter() : string
     {
-        return "($('#{$this->getId()}').{$this->getElementType()}('options')['required'] || false)";
+        $modelValJs = $this->getWidget()->isRequired() ? 'true' : 'false';
+        return "(function(jqEl){return jqEl.data('{$this->getElementType()}') !== undefined ? jqEl.{$this->getElementType()}('options')['required'] || {$modelValJs} : {$modelValJs};}($('#{$this->getId()}')))";
     }
 
     /**
