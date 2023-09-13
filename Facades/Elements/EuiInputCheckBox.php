@@ -75,7 +75,7 @@ class EuiInputCheckBox extends EuiInput
      * {@inheritDoc}
      * @see \exface\JEasyUIFacade\Facades\Elements\EuiInput::buildJsSetDisabled()
      */
-    public function buildJsSetDisabled(bool $trueOrFalse, bool $resetWidgetOnChange = false) : string
+    public function buildJsSetDisabled(bool $trueOrFalse) : string
     {
         if ($trueOrFalse === true) {
             return '$("#' . $this->getId() . '_checkbox").attr("disabled", true)';
