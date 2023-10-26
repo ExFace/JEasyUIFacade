@@ -79,7 +79,7 @@ JS;
      * {@inheritDoc}
      * @see \exface\JEasyUIFacade\Facades\Elements\EuiInput::buildJsValidator()
      */
-    public function buildJsValidator(string $valJs = null)
+    public function buildJsValidator(?string $valJs = null) : string
     {
         return $this->getWidget()->getScriptToValidateInput() ?? $this->buildJsValidatorViaTrait($valJs);
     }
