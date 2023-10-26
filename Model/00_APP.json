@@ -37,13 +37,13 @@
     "rows": [
         {
             "CREATED_ON": "2016-12-23 16:58:23",
-            "MODIFIED_ON": "2019-04-14 06:12:48",
+            "MODIFIED_ON": "2023-10-26 09:42:33",
             "CREATED_BY_USER": "0x31000000000000000000000000000000",
             "MODIFIED_BY_USER": "0x31000000000000000000000000000000",
             "UID": "0x11e6c930ff1f486693cce4b318306b9a",
             "DEFAULT_LANGUAGE_CODE": "en",
             "ALIAS": "exface.JEasyUIFacade",
-            "NAME": "ExFace Template for jEasyUI"
+            "NAME": "Web UI facade with jEasyUI"
         }
     ],
     "totals_rows": [],
