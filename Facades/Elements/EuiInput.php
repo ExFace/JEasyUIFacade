@@ -233,7 +233,7 @@ JS;
      * @see \exface\Core\Facades\AbstractAjaxFacade\Elements\AbstractJqueryElement::buildJsValidator()
      * @see \exface\Core\Facades\AbstractAjaxFacade\Elements\JqueryInputValidationTrait::buildJsValidator()
      */
-    public function buildJsValidator(string $valJs = null)
+    public function buildJsValidator(?string $valJs = null) : string
     {
         if ($valJs === null && $this->isValidationRequired() === true) {
             return "$('#{$this->getId()}').{$this->getElementType()}('isValid')";

@@ -60,7 +60,7 @@ class EuiInputText extends EuiInput
      *
      * @see \exface\Core\Facades\AbstractAjaxFacade\Elements\AbstractJqueryElement::buildJsValidator()
      */
-    public function buildJsValidator(string $valJs = null)
+    public function buildJsValidator(?string $valJs = null) : string
     {
         return $this->buildJsValidatorViaTrait($valJs);
     }

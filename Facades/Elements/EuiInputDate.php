@@ -206,7 +206,7 @@ JS;
      * {@inheritDoc}
      * @see \exface\JEasyUIFacade\Facades\Elements\EuiInput::buildJsValidator()
      */
-    public function buildJsValidator(string $valJs = null)
+    public function buildJsValidator(?string $valJs = null) : string
     {
         // The regular validator (calling `.datebox('isValid')`) throws an exception if called
         // too early - e.g. when checking required filters in a pages root data widget. It seems
