@@ -11,6 +11,7 @@ use exface\Core\Exceptions\Facades\FacadeOutputError;
 use exface\Core\Exceptions\Widgets\WidgetLogicError;
 use exface\Core\Interfaces\Widgets\iContainOtherWidgets;
 use exface\Core\Widgets\Tab;
+use exface\Core\Widgets\Parts\DataRowGrouper;
 
 /**
  *
@@ -650,11 +651,13 @@ JS;
                     }
 JS;
         
-        if (! $grouper->getExpandAllGroups()) {
-            $this->addOnLoadSuccess("$('#" . $this->getId() . "')." . $this->getElementType() . "('collapseGroup');");
-        }
-        if ($grouper->getExpandFirstGroupOnly()) {
-            $this->addOnLoadSuccess("$('#" . $this->getId() . "')." . $this->getElementType() . "('expandGroup', 0);");
+        switch ($grouper->getExpandGroups()) {
+            case DataRowGrouper::EXPAND_NO_GROUPS:
+                $this->addOnLoadSuccess("$('#" . $this->getId() . "')." . $this->getElementType() . "('collapseGroup');");
+                break;
+            case DataRowGrouper::EXPAND_FIRST_GROUP:
+                $this->addOnLoadSuccess("$('#" . $this->getId() . "')." . $this->getElementType() . "('expandGroup', 0);");
+                break;
         }
         return $grid_head;
     }
