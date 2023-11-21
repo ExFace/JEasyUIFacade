@@ -663,7 +663,7 @@ JS;
     {
         $widget = $this->getWidget();
         $coreTltr = $this->getWorkbench()->getCoreApp()->getTranslator();
-        $context_menu_html = '<div title="' . $coreTltr->translate('WIDGET.UXONEDITOR.CONTEXT_MENU.CLIPBOARD.COPY_HINT') . '" class="exf-menu-clipboard-copy" data-options="plain: true, iconCls: \'fa fa-clipboard\'" style="" onclick="javascript:;">' . $coreTltr->translate('WIDGET.UXONEDITOR.CONTEXT_MENU.CLIPBOARD.COPY') . '</div><div class="menu-sep"></div>';
+        $context_menu_html = '<div title="' . $coreTltr->translate('WIDGET.UXONEDITOR.CONTEXT_MENU.CLIPBOARD.COPY_HINT') . '" class="exf-menu-clipboard-copy" data-options="plain: true, iconCls: \'fa fa-clipboard\'" style="" onclick="javascript:;">' . $coreTltr->translate('WIDGET.UXONEDITOR.CONTEXT_MENU.CLIPBOARD.COPY_VALUE') . '</div><div class="menu-sep"></div>';
         if ($widget->hasButtons()) {
             $main_toolbar = $widget->getToolbarMain();
             
