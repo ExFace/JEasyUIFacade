@@ -501,18 +501,32 @@ JS;
         } else {
             // Context menu
             if ($widget->getContextMenuEnabled()) {
-                return ', onRowContextMenu: function(e, index, row) {
+                return ", onRowContextMenu: function(e, index, row) {
+                        var jqCtxtMenu = $('#{$this->getIdOfContextMenu()}');
+                        var jqCtxtCopy = jqCtxtMenu.find('.exf-menu-clipboard-copy');
+                        var mCellValue = $(e.target).text();
     					e.preventDefault();
     					e.stopPropagation();
+
                         if (index >= 0){
-    					   $(this).' . $this->getElementType() . '("selectRow", index);
+    					   $(this).{$this->getElementType()}('selectRow', index);
                         }
-    	                $("#' . $this->getIdOfContextMenu() . '").menu("show", {
+
+                        jqCtxtCopy.off('click')
+                        if (navigator.clipboard && mCellValue !== undefined && mCellValue !== '' && mCellValue !== null) {
+                            jqCtxtMenu.menu('enableItem', jqCtxtCopy);
+                            jqCtxtCopy.on('click', function(){
+                                navigator.clipboard.writeText(mCellValue);
+                            });
+                        } else {
+                            jqCtxtMenu.menu('disableItem', jqCtxtCopy);
+                        }
+    	                jqCtxtMenu.menu('show', {
     	                    left: e.pageX,
     	                    top: e.pageY
     	                });
     	                return false;
-    				}';
+    				}";
             }
         }
         return '';
