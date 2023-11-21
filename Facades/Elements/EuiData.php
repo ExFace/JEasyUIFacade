@@ -662,7 +662,8 @@ JS;
     protected function buildHtmlContextMenu()
     {
         $widget = $this->getWidget();
-        $context_menu_html = '';
+        $coreTltr = $this->getWorkbench()->getCoreApp()->getTranslator();
+        $context_menu_html = '<div title="' . $coreTltr->translate('WIDGET.UXONEDITOR.CONTEXT_MENU.CLIPBOARD.COPY_HINT') . '" class="exf-menu-clipboard-copy" data-options="plain: true, iconCls: \'fa fa-clipboard\'" style="" onclick="javascript:;">' . $coreTltr->translate('WIDGET.UXONEDITOR.CONTEXT_MENU.CLIPBOARD.COPY') . '</div><div class="menu-sep"></div>';
         if ($widget->hasButtons()) {
             $main_toolbar = $widget->getToolbarMain();
             
@@ -714,7 +715,12 @@ JS;
     {
         // Prevent context menu on context menu. Otherwise the browser-menu keeps popping up
         // over the context menu from time to time.
-        return '$("#' . $this->getId() . '_cmenu").contextmenu(function(e){e.stopPropagation(); e.preventDefault(); return false;})';
+        return '$("#' . $this->getIdOfContextMenu() . '").contextmenu(function(e){e.stopPropagation(); e.preventDefault(); return false;})';
+    }
+    
+    protected function getIdOfContextMenu() : string
+    {
+        return $this->getId() . '_cmenu';
     }
     
     /**
@@ -764,11 +770,6 @@ JS;
         {$context_menu_html}
 
 HTML;
-    }
-    
-    protected function getIdOfContextMenu() : string
-    {
-        return $this->getId() . '_cmenu';
     }
     
     /**
