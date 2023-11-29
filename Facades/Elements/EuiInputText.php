@@ -29,7 +29,7 @@ class EuiInputText extends EuiInput
 							name="' . $this->getWidget()->getAttributeAlias() . '" 
 							id="' . $this->getId() . '"
 							' . ($this->getWidget()->isRequired() ? 'required="true" ' : '') . '
-							' . ($this->getWidget()->isDisabled() ? 'disabled="disabled" ' : '') . '>' . $this->getWidget()->getValue() . '</textarea>
+							' . ($this->getWidget()->isDisabled() ? 'disabled="disabled" ' : '') . '>' . $this->escapeString($this->getWidget()->getValueWithDefaults(), false, true) . '</textarea>
 					';
         return $this->buildHtmlLabelWrapper($output);
     }
