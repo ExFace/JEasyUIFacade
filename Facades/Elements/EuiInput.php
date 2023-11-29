@@ -52,7 +52,7 @@ class EuiInput extends EuiValue
         
         $output = '	<input style="height: 100%; width: 100%;"
 						name="' . $widget->getAttributeAlias() . '" 
-						value="' . $this->escapeString($widget->getValueWithDefaults(), false, true) . '" 
+						value="' . $this->escapeString($widget->getValueWithDefaults(), false, false) . '" 
 						id="' . $this->getId() . '"  
 						' . ($widget->isRequired() ? 'required="true" ' : '') . '
 						' . ($widget->isDisabled() ? 'disabled="disabled" ' : '') . ' 

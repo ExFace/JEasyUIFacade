@@ -161,7 +161,7 @@ JS;
                 <input style="height:100%;width:100%;"
                     id="{$this->getId()}" 
                     name="{$nameScript}" 
-                    value={$this->escapeString($value, true, true)}
+                    value="{$this->escapeString($value, false, false)}"
                     {$requiredScript}
                     {$disabledScript} />
 HTML;
@@ -719,7 +719,7 @@ JS;
             $valueJs = $this->escapeString($value, true, true);
             if (! $allColumnsRequired && trim($widget->getValueText())) {
                 // If the text is already known, set it and prevent initial backend request
-                $widget_value_text = str_replace('"', '\"', trim($widget->getValueText()));
+                $widget_value_text = $this->escapeString(trim($widget->getValueText()), false, false);
                 $first_load_script = <<<JS
 
                         {$this->getId()}_jquery.combogrid("setText", "{$widget_value_text}");
@@ -889,7 +889,7 @@ JS;
                         // anzuzeigen und das onChange-Skript wird ausgefuehrt.
                         var selectedRows = {$this->getId()}_datagrid.datagrid("getSelections");
                         if (selectedRows.length > 0) {
-                            {$this->getId()}_jquery.combogrid("setText", {$this->buildJsFunctionPrefix()}valueGetter("{$textColumnName}"));
+                            {$this->getId()}_jquery.combogrid("setText", exfTools.string.htmlUnescape({$this->buildJsFunctionPrefix()}valueGetter("{$textColumnName}")));
                         }
                         
                         {$this->buildJsFunctionPrefix()}onChange();
@@ -966,7 +966,7 @@ JS;
                                 {$this->getId()}_jquery.data("_suppressReloadOnSelect", true);
                                 // onSelect wird getriggert
                                 {$this->getId()}_datagrid.datagrid("selectRow", 0);
-                                {$this->getId()}_jquery.combogrid("setText", rows["rows"][0]["{$textColumnName}"]);
+                                {$this->getId()}_jquery.combogrid("setText", exfTools.string.htmlUnescape(rows["rows"][0]["{$textColumnName}"]));
                                 {$this->getId()}_jquery.combogrid("hidePanel");
                             }
                         }
