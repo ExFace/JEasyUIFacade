@@ -485,6 +485,8 @@ JS;
 
     /**
      * Creates a JavaScript function which returns the value of the element.
+     * 
+     * NOTE: since table data has HTML entities escaped, need to decode them when passing around.
      *
      * @return string
      */
@@ -504,7 +506,7 @@ JS;
                                     if (window.console) { console.warn("The non-existing column \"" + column + "\" was requested from element \"{$this->getId()}\""); }
                                     resultArray.push("");
                                 } else {
-                                    resultArray.push(selectedRows[i][column]);
+                                    resultArray.push(exfTools.string.htmlUnescape(selectedRows[i][column]));
                                 }
                             }
                             return resultArray.join();
@@ -518,7 +520,7 @@ JS;
                                 if (window.console) { console.warn("The non-existing column \"" + column + "\" was requested from element \"{$this->getId()}\""); }
                                 return "";
                             } else {
-                                return selectedRows[0][column];
+                                return exfTools.string.htmlUnescape(selectedRows[0][column]);
                             }
 JS;
         }
@@ -889,7 +891,7 @@ JS;
                         // anzuzeigen und das onChange-Skript wird ausgefuehrt.
                         var selectedRows = {$this->getId()}_datagrid.datagrid("getSelections");
                         if (selectedRows.length > 0) {
-                            {$this->getId()}_jquery.combogrid("setText", exfTools.string.htmlUnescape({$this->buildJsFunctionPrefix()}valueGetter("{$textColumnName}")));
+                            {$this->getId()}_jquery.combogrid("setText", {$this->buildJsFunctionPrefix()}valueGetter("{$textColumnName}"));
                         }
                         
                         {$this->buildJsFunctionPrefix()}onChange();

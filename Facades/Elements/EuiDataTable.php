@@ -239,6 +239,8 @@ JS;
         // TODO need to list values if multi_select is on instead of just returning the value
         // of the first row (becuase getSelection returns the first row in jEasyUI datagrid)
         
+        // NOTE: Table data has HTML characters escaped - see. JEasyUIFacade::buildResponseData()
+        
         // NOTE: there are cases, when the datagrid is only partially initialized, so `.datagrid`
         // is not undefined, but the row getters still result in errors. This is why the specific
         // error thrown in this situation is caught and turned into an empty response below.
@@ -247,6 +249,7 @@ JS;
 (function(){
     var jqSelf = $('#{$this->getId()}');
     var aRows = [];
+    var sVal;
     if (jqSelf.{$this->getElementType()} === undefined) {
         return '';
     }
@@ -258,7 +261,8 @@ JS;
         }
         throw e;
     }
-    return (jqSelf.{$getSelectedRowsDataJs} || {})['{$column}'] || '';
+    sVal = (jqSelf.{$getSelectedRowsDataJs} || {})['{$column}'] || '';
+    return sVal === '' ? sVal : exfTools.string.htmlUnescape(sVal);
 })()
 JS;
     }
