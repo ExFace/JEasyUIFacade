@@ -12,7 +12,7 @@ class EuiInputCustom extends EuiInput
      */
     public function buildHtml()
     {
-        return $this->buildHtmlLabelWrapper($this->getWidget()->getHtml() ?? '');
+        return $this->buildHtmlLabelWrapper($this->getWidget()->getHtml() ?? "<div id=\"{$this->getId()}\"></div>");
     }
 
     /**
@@ -53,6 +53,17 @@ setTimeout(function(){
 
 JS;
     }
+    
+    /**
+     * 
+     * @param string $widgetProperty
+     * @param string $returnValueJs
+     * @return string
+     */
+    protected function buildJsFallbackForEmptyScript(string $widgetProperty, string $returnValueJs = "''") : string
+    {
+        return "(function(){console.warn('Property {$widgetProperty} not set for widget InputCustom. Falling back to empty string'); return {$returnValueJs};})()";
+    }
 
     /**
      * 
@@ -61,7 +72,7 @@ JS;
      */
     public function buildJsValueSetter($value)
     {
-        return $this->getWidget()->getScriptToSetValue($value) ?? '';
+        return $this->getWidget()->getScriptToSetValue($value) ?? $this->buildJsFallbackForEmptyScript('script_to_set_value');
     }
     
     /**
@@ -71,7 +82,7 @@ JS;
      */
     public function buildJsValueGetter()
     {
-        return $this->getWidget()->getScriptToGetValue() ?? '';
+        return $this->getWidget()->getScriptToGetValue() ?? $this->buildJsFallbackForEmptyScript('script_to_get_value');
     }
     
     /**
@@ -145,7 +156,7 @@ JS;
      */
     protected function buildJsOnChangeHandler()
     {
-        $this->getWidget()->getScriptToAttachOnChange($this->getOnChangeScript()) ?? '';
+        $this->getWidget()->getScriptToAttachOnChange($this->getOnChangeScript()) ?? $this->buildJsFallbackForEmptyScript('script_to_attach_on_change');
     }
     
     /**
