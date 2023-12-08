@@ -1,6 +1,14 @@
 <?php
 namespace exface\JEasyUIFacade\Facades\Elements;
+
 use exface\Core\Facades\AbstractAjaxFacade\Elements\HtmlBrowserTrait;
+
+/**
+ * @method \exface\Core\Widgets\Browser getWidget()
+ * 
+ * @author andrej.kabachnik
+ *
+ */
 class EuiBrowser extends EuiAbstractElement
 {
     use HtmlBrowserTrait;
@@ -22,7 +30,7 @@ class EuiBrowser extends EuiAbstractElement
      */
     public function buildJs()
     {
-        return '';
+        return $this->buildJsIFrameInit();
     }
     
     /**
