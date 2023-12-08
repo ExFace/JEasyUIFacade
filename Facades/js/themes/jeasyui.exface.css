@@ -74,6 +74,8 @@ fieldset.exface_inputgroup legend {color: #404040; font-weight: bold; padding: 0
 .exf-control.promoted label {font-weight: bold;}
 /* Timespinner & NumberSpinner */
 .spinner-button-updown > .spinner-arrow {height: 50%; margin-left: auto; margin-right: auto; display: block;}
+/* Timespinner */
+.timespinner-f + .textbox > input {text-align: right}
 
 /* Widget groups */
 .exf-widget-group.exf-autoheight > .panel > .panel-body {height: auto !important}
