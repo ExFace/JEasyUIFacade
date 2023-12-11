@@ -69,7 +69,7 @@ HTML;
 
 $(function() {    
     $("#{$this->getId()}")
-    .data("_internalValue", {$this->escapeString($this->getWidget()->getValueWithDefaults(), true, true)})
+    .data("_internalValue", {$this->escapeString($this->getWidget()->getValueWithDefaults(), true, false)})
     .{$this->getElementType()}({
         {$this->buildJsDataOptions()}
     });
@@ -185,7 +185,7 @@ JS;
                 $initialValue = $linkedEl->buildJsValueGetter($link->getTargetColumnId());
             }
         } else {
-            $initialValue = $this->escapeString($this->getWidget()->getValueWithDefaults(), true, true);
+            $initialValue = $this->escapeString($this->getWidget()->getValueWithDefaults(), true, false);
         }
         
         return <<<JS

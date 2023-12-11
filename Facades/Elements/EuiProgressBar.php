@@ -22,6 +22,6 @@ class EuiProgressBar extends EuiDisplay
     public function buildJs()
     {
         return parent::buildJs()
-        . $this->buildJsValueSetter($this->escapeString($this->getWidget()->getValueWithDefaults(), true, true)) . ';';
+        . $this->buildJsValueSetter($this->escapeString($this->getWidget()->getValueWithDefaults(), true, false)) . ';';
     }
 }
