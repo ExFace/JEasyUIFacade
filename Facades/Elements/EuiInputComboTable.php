@@ -161,7 +161,7 @@ JS;
                 <input style="height:100%;width:100%;"
                     id="{$this->getId()}" 
                     name="{$nameScript}" 
-                    value="{$this->escapeString($value, false, false)}"
+                    value="{$this->escapeString($value, false, true)}"
                     {$requiredScript}
                     {$disabledScript} />
 HTML;
@@ -302,12 +302,12 @@ JS;
         $valueJs = null;
         if ($value !== null && $value !== '') {
             if (! $widget->getMultiSelect()) {
-                $valueJs = $this->escapeString($value, true, true);
+                $valueJs = $this->escapeString($value, true, false);
             } else {
                 $values = explode($widget->getMultiSelectValueDelimiter(), $value);
                 $valuesJs = [];
                 foreach ($values as $val) {
-                    $valuesJs[] = $this->escapeString(trim($val), true, true);
+                    $valuesJs[] = $this->escapeString(trim($val), true, false);
                 }
                 $valueJs = '[' . implode(',', $valuesJs) . ']';
             }
@@ -718,7 +718,7 @@ JS;
         // onShowPanel in case the grid is empty (see above).
         $value = $widget->getValueWithDefaults();
         if (! is_null($value) && $value !== '') {
-            $valueJs = $this->escapeString($value, true, true);
+            $valueJs = $this->escapeString($value, true, false);
             if (! $allColumnsRequired && trim($widget->getValueText())) {
                 // If the text is already known, set it and prevent initial backend request
                 $widget_value_text = $this->escapeString(trim($widget->getValueText()), false, false);

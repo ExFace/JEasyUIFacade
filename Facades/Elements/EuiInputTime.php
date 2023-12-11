@@ -32,7 +32,7 @@ class EuiInputTime extends EuiInput
         
 $(function() {
     $("#{$this->getId()}")
-    .data("_internalValue", {$this->escapeString($this->getWidget()->getValueWithDefaults(), true, true)})
+    .data("_internalValue", {$this->escapeString($this->getWidget()->getValueWithDefaults(), true, false)})
     .{$this->getElementType()}({
         {$this->buildJsDataOptions()}
     });
