@@ -132,7 +132,7 @@ class JEasyUIFacade extends AbstractAjaxFacade
         if (! in_array($locale, $this->supported_languages)) {
             throw new FacadeRuntimeError('Currently choosen user language is not suported by this facade!');
         }
-        $path = FilePathDataType::findFolderPath($this->buildUrlToSource('LIBS.JEASYUI.LANG_DEFAULT')) . DIRECTORY_SEPARATOR .  'easyui-lang-' . $locale . '.js';
+        $path = FilePathDataType::findFolderPath($this->buildUrlToSource('LIBS.JEASYUI.LANG_DEFAULT', false)) . DIRECTORY_SEPARATOR .  'easyui-lang-' . $locale . '.js';
         
         $includes[] = '<script type="text/javascript" src="' . $this->buildUrlToSource('LIBS.JQUERY') . '"></script>';
         $includes[] = '<script type="text/javascript" src="' . $this->buildUrlToSource('LIBS.JEASYUI.CORE') . '"></script>';
