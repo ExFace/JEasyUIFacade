@@ -1,6 +1,8 @@
 <?php
 namespace exface\JEasyUIFacade\Facades\Elements;
 
+use exface\Core\Widgets\InputMarkdown;
+
 class EuiInputMarkdown extends EuiInput
 {
     /**
@@ -54,13 +56,19 @@ HTML;
      */
     protected function buildJsMarkdownInitEditor(bool $viewer = false) : string
     {
-        $contentJs = $this->escapeString($this->getWidget()->getValueWithDefaults(), true, false);
+        $widget = $this->getWidget();
+        $contentJs = $this->escapeString($widget->getValueWithDefaults(), true, false);
         
-        if ($viewer) {
-            $viewerOptions ='viewer: true,';
-        } else {
-            $viewerOptions = '';
+        $viewerOptions = '';
+        if ($viewer === true) {
+            $viewerOptions .= 'viewer: true,';
         }
+        
+        $editorOptions = "
+                initialEditType: '" . ($widget->getEditorMode() === InputMarkdown::MODE_WYSIWYG ? 'wysiwyg' : 'markdown') . "',
+";
+        
+        
         
         return <<<JS
 function(){
@@ -71,6 +79,7 @@ function(){
                 initialValue: ($contentJs || ''),
                 language: 'en',
                 autofocus: false,
+                $editorOptions
                 $viewerOptions
             });
 
