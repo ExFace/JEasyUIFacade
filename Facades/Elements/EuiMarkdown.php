@@ -13,9 +13,10 @@ class EuiMarkdown extends EuiHtml
     public function buildHtmlHeadTags()
     {
         $includes = parent::buildHtmlHeadTags();   
-        $includes[] = '<link href="' . $this->getFacade()->buildUrlToSource('LIBS.MARKDOWN.CSS') . '" rel="stylesheet">';
+        $f = $this->getFacade();
+        $includes[] = '<link href="' . $f->buildUrlToSource('LIBS.MARKDOWN.CSS') . '" rel="stylesheet">';
         if (($widget = $this->getWidget()) instanceof Markdown && $widget->hasRenderMermaidDiagrams()) {
-            $includes[] = '<script src="vendor/npm-asset/mermaid/dist/mermaid.min.js"></script>';
+            $includes[] = '<script type="text/javascript" src="' . $f->buildUrlToSource("LIBS.MERMAID.JS") . '"></script>';
         }
         return $includes;
     }

@@ -121,6 +121,8 @@
 	"LIBS.LEAFLET.ESRI.JS": "npm-asset/esri-leaflet/dist/esri-leaflet.js",
 	
  	"LIBS.MARKDOWN.CSS": "npm-asset/github-markdown-css/github-markdown.css",
+ 	
+ 	"LIBS.MERMAID.JS": "npm-asset/mermaid/dist/mermaid.min.js",
 	
 	"LIBS.MASONRY": "bower-asset/masonry/dist/masonry.pkgd.min.js",
 	"LIBS.MOMENT.JS": "npm-asset/moment/min/moment.min.js",

@@ -53,6 +53,7 @@ class EuiInputComboTable extends EuiInput
     {
         parent::init();
         $this->setJsDebugLevel($this->getFacade()->getConfig()->getOption("FACADE.JAVASCRIPT_DEBUG_LEVEL"));
+        $this->addOnChangeScript("console.log('change {$this->getWidget()->getDataColumnName()}')");
         
         // Register onChange-Handler for Filters with Live-Reference-Values
         $widget = $this->getWidget();
@@ -649,32 +650,37 @@ JS;
         $output = <<<JS
 
                 function {$this->buildJsFunctionPrefix()}onChange(){
+                    var jqSelf = {$this->getId()}_jquery;
                     {$this->buildJsDebugMessage('onChange()')}
                     // Diese Werte koennen gesetzt werden damit, wenn der Wert der InputComboTable
                     // geaendert wird, nur ein Teil oder gar keine verlinkten Elemente aktualisiert
                     // werden.
-                    var suppressFilterSetterUpdate = false, clearFilterSetterUpdate = false, suppressAllUpdates = false, suppressLazyLoadingGroupUpdate = false;
-                    if ({$this->getId()}_jquery.data("_otherSuppressFilterSetterUpdate")){
+                    var suppressFilterSetterUpdate = false, 
+                        clearFilterSetterUpdate = false, 
+                        suppressAllUpdates = false, 
+                        suppressLazyLoadingGroupUpdate = false;
+
+                    if (jqSelf.data("_otherSuppressFilterSetterUpdate")){
                         // Es werden keine Filter-Links aktualisiert.
-                        {$this->getId()}_jquery.removeData("_otherSuppressFilterSetterUpdate");
+                        jqSelf.removeData("_otherSuppressFilterSetterUpdate");
                         suppressFilterSetterUpdate = true;
                     }
-                    if ({$this->getId()}_jquery.data("_otherClearFilterSetterUpdate")){
+                    if (jqSelf.data("_otherClearFilterSetterUpdate")){
                         // Filter-Links werden geleert.
-                        {$this->getId()}_jquery.removeData("_otherClearFilterSetterUpdate");
+                        jqSelf.removeData("_otherClearFilterSetterUpdate");
                         clearFilterSetterUpdate = true;
                     }
-                    if ({$this->getId()}_jquery.data("_otherSuppressAllUpdates")){
+                    if (jqSelf.data("_otherSuppressAllUpdates")){
                         // Weder Werte-Links noch Filter-Links werden aktualisiert.
-                        {$this->getId()}_jquery.removeData("_otherSuppressAllUpdates");
+                        jqSelf.removeData("_otherSuppressAllUpdates");
                         suppressAllUpdates = true;
                     }
-                    if ({$this->getId()}_jquery.data("_otherSuppressLazyLoadingGroupUpdate")){
+                    if (jqSelf.data("_otherSuppressLazyLoadingGroupUpdate")){
                         // Die LazyLoadingGroup wird nicht aktualisiert.
-                        {$this->getId()}_jquery.removeData("_otherSuppressLazyLoadingGroupUpdate");
+                        jqSelf.removeData("_otherSuppressLazyLoadingGroupUpdate");
                         suppressLazyLoadingGroupUpdate = true;
                     }
-                    
+                    console.log('onChange {$this->getWidget()->getDataColumnName()}');
                     if (!suppressAllUpdates) {
                         {$this->getOnChangeScript()}
                     }
@@ -768,6 +774,8 @@ JS;
         
         $output = <<<JS
 
+                    var jqSelf = {$this->getId()}_jquery;
+
                     // OnBeforeLoad ist das erste Event, das nach der Erzeugung des Objekts getriggert
                     // wird. Daher werden hier globale Variablen initialisiert (_datagrid kann vorher
                     // nicht initialisiert werden, da das combogrid-Objekt noch nicht existiert).
@@ -779,31 +787,31 @@ JS;
                     // Anfrage param.q noch gesetzt (param eigentlich nur Kopie???). Deshalb hier loeschen.
                     delete param.q;
                     
-                    if (!{$this->getId()}_jquery.data("_lastFilterSet")) { {$this->getId()}_jquery.data("_lastFilterSet", {}); }
+                    if (!jqSelf.data("_lastFilterSet")) { jqSelf.data("_lastFilterSet", {}); }
                     var currentFilterSet = {page: param.page, rows: param.rows, sort: param.sort, order: param.order};
                     
-                    if ({$this->getId()}_jquery.data("_firstLoad") == undefined){
-                        {$this->getId()}_jquery.data("_firstLoad", true);
-                    } else if ({$this->getId()}_jquery.data("_firstLoad")){
-                        {$this->getId()}_jquery.data("_firstLoad", false);
+                    if (jqSelf.data("_firstLoad") == undefined){
+                        jqSelf.data("_firstLoad", true);
+                    } else if (jqSelf.data("_firstLoad")){
+                        jqSelf.data("_firstLoad", false);
                     }
                     
-                    if ({$this->getId()}_jquery.data("_valueSetterUpdate")) {
+                    if (jqSelf.data("_valueSetterUpdate")) {
                         param._valueSetterUpdate = true;
                         {$valueFilterParam}
-                    } else if ({$this->getId()}_jquery.data("_clearFilterSetterUpdate")) {
+                    } else if (jqSelf.data("_clearFilterSetterUpdate")) {
                         param._clearFilterSetterUpdate = true;
                         {$clearFiltersParam}
-                    } else if ({$this->getId()}_jquery.data("_filterSetterUpdate")) {
+                    } else if (jqSelf.data("_filterSetterUpdate")) {
                         param._filterSetterUpdate = true;
                         {$dataParam}
                         {$valueFilterParam}
-                    } else if ({$this->getId()}_jquery.data("_firstLoad")) {
-                        param._firstLoad = true;
+                    } else if (jqSelf.data("_firstLoad")) {
+                        param._firstLoad = true;console.log('first_load{$this->getWidget()->getDataColumnName()}');
                         {$first_load_script}
                     } else {
-                         if ({$this->getId()}_jquery.data("_currentText") !== '') {
-                            currentFilterSet.q = {$this->getId()}_jquery.data("_currentText");
+                         if (jqSelf.data("_currentText") !== '') {
+                            currentFilterSet.q = jqSelf.data("_currentText");
                         } else if ({$this->buildJsValueGetter()} !== '') {
                             {$valueFilterParam}
                         }
@@ -813,17 +821,17 @@ JS;
                     // Die Filter der gegenwaertigen Anfrage werden mit den Filtern der letzten Anfrage
                     // verglichen. Sind sie identisch und wurden die zuletzt geladenen Daten nicht ver-
                     // aendert, wird die Anfrage unterbunden, denn das Resultat waere das gleiche.
-                    if ((JSON.stringify(currentFilterSet) === JSON.stringify({$this->getId()}_jquery.data("_lastFilterSet"))) &&
-                            !({$this->getId()}_jquery.data("_resultSetChanged"))) {
+                    if ((JSON.stringify(currentFilterSet) === JSON.stringify(jqSelf.data("_lastFilterSet"))) 
+                    && !(jqSelf.data("_resultSetChanged"))) {
                         // Suchart entfernen, sonst ist sie beim naechsten Mal noch gesetzt
-                        {$this->getId()}_jquery.removeData("_valueSetterUpdate");
-                        {$this->getId()}_jquery.removeData("_clearFilterSetterUpdate");
-                        {$this->getId()}_jquery.removeData("_filterSetterUpdate");
-                        {$this->getId()}_jquery.removeData("_clear");
+                        jqSelf.removeData("_valueSetterUpdate");
+                        jqSelf.removeData("_clearFilterSetterUpdate");
+                        jqSelf.removeData("_filterSetterUpdate");
+                        jqSelf.removeData("_clear");
                         
                         return false;
                     } else {
-                        {$this->getId()}_jquery.data("_lastFilterSet", currentFilterSet);
+                        jqSelf.data("_lastFilterSet", currentFilterSet);
                         $.extend(param, currentFilterSet);
                     }
 JS;
@@ -875,33 +883,38 @@ JS;
         
         $output = <<<JS
 
+                    var jqSelf = {$this->getId()}_jquery;
+
                     {$this->buildJsDebugMessage('onLoadSuccess')}
                     var suppressAutoSelectSingleSuggestion = false;
                     var suppressLazyLoadingGroupUpdate = false;
+console.log('load success {$widget->getDataColumnName()}');
                     
-                    if ({$this->getId()}_jquery.data("_valueSetterUpdate")) {
+                    if (jqSelf.data("_valueSetterUpdate")) {
                         // Update durch eine value-Referenz.
                         
-                        {$this->getId()}_jquery.removeData("_valueSetterUpdate");
-                        {$this->getId()}_jquery.removeData("_clearFilterSetterUpdate");
-                        {$this->getId()}_jquery.removeData("_filterSetterUpdate");
-                        {$this->getId()}_jquery.removeData("_clear");
+                        jqSelf.removeData("_valueSetterUpdate");
+                        jqSelf.removeData("_clearFilterSetterUpdate");
+                        jqSelf.removeData("_filterSetterUpdate");
+                        jqSelf.removeData("_clear");
                         
                         // Nach einem Value-Setter-Update wird der Text neu gesetzt um das Label ordentlich
                         // anzuzeigen und das onChange-Skript wird ausgefuehrt.
                         var selectedRows = {$this->getId()}_datagrid.datagrid("getSelections");
                         if (selectedRows.length > 0) {
-                            {$this->getId()}_jquery.combogrid("setText", {$this->buildJsFunctionPrefix()}valueGetter("{$textColumnName}"));
+                            jqSelf.combogrid("setText", {$this->buildJsFunctionPrefix()}valueGetter("{$textColumnName}"));
                         }
                         
                         {$this->buildJsFunctionPrefix()}onChange();
-                    } else if ({$this->getId()}_jquery.data("_clearFilterSetterUpdate")) {
-                        // Leeren durch eine filter-Referenz.
+                    } else 
+
+                    // Leeren durch eine filter-Referenz.
+                    if (jqSelf.data("_clearFilterSetterUpdate")) {
                         
-                        {$this->getId()}_jquery.removeData("_valueSetterUpdate");
-                        {$this->getId()}_jquery.removeData("_clearFilterSetterUpdate");
-                        {$this->getId()}_jquery.removeData("_filterSetterUpdate");
-                        {$this->getId()}_jquery.removeData("_clear");
+                        jqSelf.removeData("_valueSetterUpdate");
+                        jqSelf.removeData("_clearFilterSetterUpdate");
+                        jqSelf.removeData("_filterSetterUpdate");
+                        jqSelf.removeData("_clear");
                         
                         {$this->buildJsFunctionPrefix()}clear(false);
                         
@@ -911,8 +924,10 @@ JS;
                         // Wurde das Widget manuell geloescht, soll nicht wieder automatisch der einzige Suchvorschlag
                         // ausgewaehlt werden.
                         suppressAutoSelectSingleSuggestion = true;
-                    } else if ({$this->getId()}_jquery.data("_filterSetterUpdate")) {
-                        // Update durch eine filter-Referenz.
+                    } else 
+
+                    // Update durch eine filter-Referenz.
+                    if (jqSelf.data("_filterSetterUpdate")) {
                         
                         // Ergibt die Anfrage bei einem FilterSetterUpdate keine Ergebnisse waehrend ein Wert
                         // gesetzt ist, widerspricht der gesetzte Wert wahrscheinlich den gesetzten Filtern.
@@ -923,23 +938,25 @@ JS;
                             {$this->getId()}_datagrid.datagrid("reload");
                         }
                         
-                        {$this->getId()}_jquery.removeData("_valueSetterUpdate");
-                        {$this->getId()}_jquery.removeData("_clearFilterSetterUpdate");
-                        {$this->getId()}_jquery.removeData("_filterSetterUpdate");
-                        {$this->getId()}_jquery.removeData("_clear");
+                        jqSelf.removeData("_valueSetterUpdate");
+                        jqSelf.removeData("_clearFilterSetterUpdate");
+                        jqSelf.removeData("_filterSetterUpdate");
+                        jqSelf.removeData("_clear");
                         
                         // Wurde das Widget ueber eine Filter-Referenz befuellt (lazy-loading-group), werden
                         // keine Filter-Referenzen aktualisiert, denn alle Elemente der Gruppe werden vom
                         // Orginalobjekt bedient (wurde es hingegen manuell befuellt (autoselect) muessen
                         // die Filter-Referenzen bedient werden).
                         suppressLazyLoadingGroupUpdate = true;
-                    } else if ({$this->getId()}_jquery.data("_clear")) {
-                        // Loeschen des Wertes
+                    } else 
+
+                    // Loeschen des Wertes
+                    if (jqSelf.data("_clear")) {
                         
-                        {$this->getId()}_jquery.removeData("_valueSetterUpdate");
-                        {$this->getId()}_jquery.removeData("_clearFilterSetterUpdate");
-                        {$this->getId()}_jquery.removeData("_filterSetterUpdate");
-                        {$this->getId()}_jquery.removeData("_clear");
+                        jqSelf.removeData("_valueSetterUpdate");
+                        jqSelf.removeData("_clearFilterSetterUpdate");
+                        jqSelf.removeData("_filterSetterUpdate");
+                        jqSelf.removeData("_clear");
                         
                         // Wurde das Widget manuell geloescht, soll nicht wieder automatisch der einzige Suchvorschlag
                         // ausgewaehlt werden.
@@ -948,7 +965,7 @@ JS;
                     
                     // Das resultSet wurde neu geladen und ist daher unveraendert. Ein erneutes Laden mit
                     // identischem filterSet kann unterbunden werden (siehe onBeforeLoad).
-                    {$this->getId()}_jquery.data("_resultSetChanged", false);
+                    jqSelf.data("_resultSetChanged", false);
 JS;
         
         if ($widget->getAutoselectSingleSuggestion()) {
@@ -965,11 +982,11 @@ JS;
                                 {$suppressLazyLoadingGroupUpdateScript}
                                 // Beim Autoselect wurde ja zuvor schon geladen und es gibt nur noch einen Vorschlag
                                 // im Resultat (im Gegensatz zur manuellen Auswahl eines Ergebnisses aus einer Liste).
-                                {$this->getId()}_jquery.data("_suppressReloadOnSelect", true);
+                                jqSelf.data("_suppressReloadOnSelect", true);
                                 // onSelect wird getriggert
                                 {$this->getId()}_datagrid.datagrid("selectRow", 0);
-                                {$this->getId()}_jquery.combogrid("setText", exfTools.string.htmlUnescape(rows["rows"][0]["{$textColumnName}"]));
-                                {$this->getId()}_jquery.combogrid("hidePanel");
+                                jqSelf.combogrid("setText", exfTools.string.htmlUnescape(rows["rows"][0]["{$textColumnName}"]));
+                                jqSelf.combogrid("hidePanel");
                             }
                         }
                     }

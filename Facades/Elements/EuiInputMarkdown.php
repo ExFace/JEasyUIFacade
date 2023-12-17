@@ -81,6 +81,14 @@ function(){
                 autofocus: false,
                 $editorOptions
                 $viewerOptions
+                events: {
+                    beforePreviewRender: function(sHtml){
+                        setTimeout(function(){
+                            var oEditor = {$this->buildJsMarkdownVar()};
+                            oEditor.refreshMermaid();
+                        }, 0);
+                    }
+                }
             });
 
             ed.insertToolbarItem(
@@ -90,9 +98,36 @@ function(){
                 }, {
                     name: 'Full screen',
                     tooltip: 'Full screen',
-                    el: $('<button type="button" style="margin: -7px -5px; background: transparent;" onclick="$(\'#{$this->getId()}\').toggleClass(\'fullscreen\'); $(this).find(\'i\').removeClass(\'fa-expand\').removeClass(\'fa-compress\').addClass($(\'#{$this->getId()}\').hasClass(\'fullscreen\') ? \'fa-compress\' : \'fa-expand\');"><i class="fa fa-expand" style="padding: 4px;border: 1px solid black;margin-top: 1px"></i></button>')[0]
+                    el: $('<button type="button" style="margin: -7px -5px; background: transparent;" onclick="{$this->buildJsMarkdownVar()}.toggleFullScreen(this)"><i class="fa fa-expand" style="padding: 4px;border: 1px solid black;margin-top: 1px"></i></button>')[0]
                 }
             );
+
+            ed.toggleFullScreen = function(domBtn){
+                var jqWrapper = $('#{$this->getId()}');
+                var oEditor = {$this->buildJsMarkdownVar()};
+                var jqBtn = $(domBtn);
+                var bExpanding = ! jqWrapper.hasClass('fullscreen');
+
+                jqWrapper.toggleClass('fullscreen'); 
+                jqBtn.find('i')
+                    .removeClass('fa-expand')
+                    .removeClass('fa-compress')
+                    .addClass(bExpanding ? 'fa-compress' : 'fa-expand');
+                if (bExpanding && jqWrapper.innerWidth() > 800) {
+                    oEditor.changePreviewStyle('vertical');
+                    oEditor.refreshMermaid();
+                } else {
+                    oEditor.changePreviewStyle('tab');
+                }
+            }
+
+            mermaid.initialize({
+                startOnLoad:true,
+                theme: 'default'
+            });
+            ed.refreshMermaid = function() {
+                mermaid.init(undefined, '.toastui-editor-md-preview code[data-language="mermaid"]');
+            }
 
             return ed;
 }();
@@ -190,6 +225,7 @@ JS;
         $includes = parent::buildHtmlHeadTags();
         $includes[] = '<link rel="stylesheet" href="' . $f->buildUrlToSource('LIBS.TOASTUI.EDITOR_CSS') . '" />';
         $includes[] = '<script type="text/javascript" src="' . $f->buildUrlToSource("LIBS.TOASTUI.EDITOR_JS") . '"></script>';
+        $includes[] = '<script type="text/javascript" src="' . $f->buildUrlToSource("LIBS.MERMAID.JS") . '"></script>';
         //$includes[] = '<script src="https://uicdn.toast.com/editor/latest/toastui-editor-all.min.js"></script>';
         return $includes;
     }
