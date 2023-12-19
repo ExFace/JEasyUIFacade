@@ -85,10 +85,8 @@ class EuiInput extends EuiValue
     protected function buildJsEventScripts()
     {
         if ($this->getWidget()->isHidden() === true) {
-            $hideInitiallyIfNeeded = $this->buildJsHideWidget();
+            $hideInitiallyIfNeeded = $this->buildJsSetHidden(true);
         }
-        
-        
         
         $js = $this->buildsJsAddValidationType();
         return $js . <<<JS
