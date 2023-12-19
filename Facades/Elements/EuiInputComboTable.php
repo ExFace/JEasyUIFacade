@@ -180,7 +180,7 @@ HTML;
     {
         $debug_function = ($this->getJsDebugLevel() > 0) ? $this->buildJsDebugDataToStringFunction() : '';
         if ($this->getWidget()->isHidden() === true) {
-            $hideInitiallyIfNeeded = $this->buildJsHideWidget();
+            $hideInitiallyIfNeeded = $this->buildJsSetHidden(true);
         }
         
         // Es werden JavaScript Value-Getter-/Setter- und OnChange-Funktionen fuer die InputComboTable erzeugt,
