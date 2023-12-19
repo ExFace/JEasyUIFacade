@@ -50,6 +50,10 @@ fieldset.exface_inputgroup legend {color: #404040;}
 .exf-input textarea:required::before {content: "*"; color: #B000209c;}
 .exf-input textarea:required {border-bottom-color: #B000209c;}
 
+/* SpinnerFilter, RangeSpinnerFilter */
+.exf-spinner-filter a.easyui-linkbutton {background-color: #fff; border-bottom: 1px solid #c2c2c2; height: 24px;}
+.exf-spinner-range > .exf-labeled-item .l-btn-icon {margin-left: -2px;}
+
 /* Tables & data widgets */
 .datagrid-wrap.panel-body:not(.panel-body-noheader) {border-top-width: 0}
 .panel.datagrid > .panel-header {border-bottom-width: 0;}
