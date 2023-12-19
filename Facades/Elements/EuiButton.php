@@ -104,6 +104,12 @@ class EuiButton extends EuiAbstractElement
                     break;
             }
         }
+        if (! $widget->getWidth()->isUndefined()) {
+            $style .= ' width:' . $this->buildCssWidth();
+        }
+        if (! $widget->getHeight()->isUndefined()) {
+            $style .= ' height:' . $this->buildCssHeight();
+        }
         
         $output = '
 				<a id="' . $this->getId() . '" title="' . str_replace('"', '\"', $widget->getHint()) . '" href="#" class="easyui-' . $this->getElementType() . '" data-options="' . $this->buildJsDataOptions() . '" style="' . $style . '" onclick="' . $this->buildJsFunctionPrefix() . 'click();">
