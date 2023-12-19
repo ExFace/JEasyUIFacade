@@ -88,7 +88,7 @@ fieldset.exface_inputgroup legend {color: #404040; font-weight: bold; padding: 0
 .exf-inline-group.exf-inline-display .exf-control {padding-top: 0px !important; padding-bottom: 0px !important;}
 .exf-inline-group p {display: inline-block !important; padding: 0; margin: 0;}
 .exf-inline-group label {display: inline-block; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; vertical-align: middle;}
-.exf-inline-group 
+
 /* Carousel */
 .exf-widget-carousel ul.tabs {width: 100%; text-align: center}
 .exf-widget-carousel ul.tabs li {float: none;}
