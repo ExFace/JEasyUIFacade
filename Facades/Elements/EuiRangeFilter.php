@@ -35,6 +35,4 @@ class EuiRangeFilter extends EuiFilter
     {
         return $this->getFacade()->getElement($this->getWidgetInlineGroup())->buildJs();
     }
-    
-
 }
