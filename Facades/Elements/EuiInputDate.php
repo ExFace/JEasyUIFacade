@@ -245,4 +245,18 @@ JS;
         }
         return parent::buildJsCallFunction($functionName, $parameters);
     }
+    
+    /**
+     * {@inheritDoc}
+     * 
+     * NOTE: `$().datebox('setValue', var)` does not trigger a change event, so we do it
+     * manually here. This is important for auto-apply filters - e.g. an RangeSpinnerFilter
+     * or similar.
+     * 
+     * @see \exface\JEasyUIFacade\Facades\Elements\EuiInput::buildJsValueSetterMethod()
+     */
+    public function buildJsValueSetterMethod($value)
+    {
+        return parent::buildJsValueSetterMethod($value) . ".trigger('change')";
+    }
 }
