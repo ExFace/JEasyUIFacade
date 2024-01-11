@@ -49,10 +49,10 @@ class EuiInput extends EuiValue
     {
         /* @var $widget \exface\Core\Widgets\Input */
         $widget = $this->getWidget();
-        
+        $val = $widget->getValueWithDefaults();
         $output = '	<input style="height: 100%; width: 100%;"
 						name="' . $widget->getAttributeAlias() . '" 
-						value="' . $this->escapeString($widget->getValueWithDefaults(), false, true) . '" 
+						value="' . $this->escapeString($val, false, true) . '" 
 						id="' . $this->getId() . '"  
 						' . ($widget->isRequired() ? 'required="true" ' : '') . '
 						' . ($widget->isDisabled() ? 'disabled="disabled" ' : '') . ' 
@@ -84,19 +84,29 @@ class EuiInput extends EuiValue
      */
     protected function buildJsEventScripts()
     {
-        if ($this->getWidget()->isHidden() === true) {
+        $widget = $this->getWidget();
+        $hideInitiallyIfNeeded = '';
+        $getInitialValueFromLink = '';
+        
+        if ($widget->isHidden() === true) {
             $hideInitiallyIfNeeded = $this->buildJsSetHidden(true);
+        }
+        if ($widget->getValueWidgetLink() || (! $widget->hasValue() && $widget->getCalculationWidgetLink())) {
+            $getInitialValueFromLink = <<<JS
+
+    try {
+        {$this->buildJsLiveReference()}
+    } catch (e) {
+        console.warn('Failed to update live reference: ' + e);
+    }
+JS;
         }
         
         $js = $this->buildsJsAddValidationType();
         return $js . <<<JS
 
     // Event scripts for {$this->getId()}
-    try {
-        {$this->buildJsLiveReference()}
-    } catch (e) {
-        console.warn('Failed to update live reference: ' + e);
-    }
+    $getInitialValueFromLink
     $(function() { 
         {$this->buildJsOnChangeHandler()}
         {$this->buildjsConditionalProperties()}
