@@ -1,23 +1,27 @@
 <?php
 namespace exface\JEasyUIFacade\Facades\Elements;
 
-use exface\Core\Widgets\RangeFilter;
-use exface\Core\Facades\AbstractAjaxFacade\Elements\JsRangeFilterTrait;
+use exface\Core\Facades\AbstractAjaxFacade\Elements\JsSpinnerFilterTrait;
 
 /**
- * Creates and renders an InlineGroup with to and from filters.
+ * Creates and renders an InlineGroup with the filter input and +/- buttons.
  * 
- * @method RangeFilter getWidget();
+ * @method \exface\Core\Widgets\SpinnerFilter getWidget();
  * 
  * @author Andrej Kabachnik
  *
  */
-class EuiRangeFilter extends EuiFilter
+class EuiSpinnerFilter extends EuiFilter
 {
-    use JsRangeFilterTrait;
+    use JsSpinnerFilterTrait;
+    
+    protected function buildCssWidthOfStepButton() : string
+    {
+        return '26px';
+    }
     
     /**
-     * 
+     *
      * {@inheritDoc}
      * @see \exface\JEasyUIFacade\Facades\Elements\EuiFilter::buildHtml()
      */
@@ -27,7 +31,7 @@ class EuiRangeFilter extends EuiFilter
     }
     
     /**
-     * 
+     *
      * {@inheritDoc}
      * @see \exface\JEasyUIFacade\Facades\Elements\EuiFilter::buildJs()
      */

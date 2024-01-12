@@ -565,14 +565,4 @@ HTML;
         
         return;
     }
-    
-    /**
-     * 
-     * @param bool $hidden
-     * @return string
-     */
-    protected function buildJsSetHidden(bool $hidden) : string
-    {
-        return "$('#{$this->getId()}')" . ($hidden ? ".addClass('exf-hidden')" : ".removeClass('exf-hidden')");
-    }
 }
