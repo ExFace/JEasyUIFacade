@@ -180,23 +180,12 @@ HTML;
     }
     
     /**
-     * Returns an inline JS-snippet to hide the entire widget (including label, etc.).
      * 
-     * @return string
+     * {@inheritDoc}
+     * @see \exface\JEasyUIFacade\Facades\Elements\EuiAbstractElement::buildJsSetHidden()
      */
-    public function buildJsHideWidget() : string
+    protected function buildJsSetHidden(bool $hidden) : string
     {
-        return "$('#{$this->getId()}').parents('.exf-control').first().hide()";
-    }
-    
-    /**
-     * Returns an inline JS-snippet to show a previously hidden widget.
-     *
-     * @return string
-     */
-    public function buildJsShowWidget() : string
-    {
-        return "$('#{$this->getId()}').parents('.exf-control').first().show()";
+        return "$('#{$this->getId()}').parents('.exf-control').first()." . ($hidden ? 'hide()' : 'show()');
     }
 }
-?>

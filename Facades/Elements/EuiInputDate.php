@@ -3,6 +3,7 @@ namespace exface\JEasyUIFacade\Facades\Elements;
 
 use exface\Core\Facades\AbstractAjaxFacade\Elements\JqueryInputDateTrait;
 use exface\Core\DataTypes\DateDataType;
+use exface\Core\Widgets\InputDate;
 
 // Es waere wuenschenswert die Formatierung des Datums abhaengig vom Locale zu machen.
 // Das Problem dabei ist folgendes: Wird im DateFormatter das Datum von DateJs ent-
@@ -229,5 +230,33 @@ function(){
                         }
                     }()
 JS;
+    }
+    
+    /**
+     * 
+     * {@inheritDoc}
+     * @see \exface\Core\Facades\AbstractAjaxFacade\Elements\AbstractJqueryElement::buildJsCallFunction($functionName, $parameters)
+     */
+    public function buildJsCallFunction(string $functionName = null, array $parameters = []) : string
+    {
+        switch (true) {
+            case $functionName === InputDate::FUNCTION_ADD:
+                return $this->buildJsCallFunctionAddSubtract($parameters);
+        }
+        return parent::buildJsCallFunction($functionName, $parameters);
+    }
+    
+    /**
+     * {@inheritDoc}
+     * 
+     * NOTE: `$().datebox('setValue', var)` does not trigger a change event, so we do it
+     * manually here. This is important for auto-apply filters - e.g. an RangeSpinnerFilter
+     * or similar.
+     * 
+     * @see \exface\JEasyUIFacade\Facades\Elements\EuiInput::buildJsValueSetterMethod()
+     */
+    public function buildJsValueSetterMethod($value)
+    {
+        return parent::buildJsValueSetterMethod($value) . ".trigger('change')";
     }
 }
