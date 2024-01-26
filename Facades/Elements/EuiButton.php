@@ -9,6 +9,10 @@ use exface\Core\Widgets\Dialog;
 use exface\Core\Widgets\Button;
 use exface\Core\Widgets\ButtonGroup;
 use exface\Core\Interfaces\Actions\iShowDialog;
+use exface\Core\Facades\AbstractAjaxFacade\Elements\AbstractJqueryElement;
+use exface\Core\Facades\AbstractAjaxFacade\Interfaces\AjaxFacadeElementInterface;
+use exface\Core\Interfaces\Widgets\iHaveConfigurator;
+use exface\Core\Widgets\DataConfigurator;
 
 /**
  * Generates jEasyUI linkbutton controls for Button widgets
@@ -69,6 +73,10 @@ class EuiButton extends EuiAbstractElement
         
         // Initialize the conditional peroperties of the widget if set.
         $output .= $this->buildjsConditionalProperties(true);
+        
+        // Refresh/reset widget explicitly mentioned in the Buttons UXON after
+        // the action is performed
+        $output .= $this->buildJsRegisterOnActionPerformed();
         
         return $output;
     }
@@ -315,5 +323,61 @@ JS;
             case Button::APPEARANCE_FILLED: $class .= ' exf-btn-filled'; break;
         }
         return $class;
+    }
+    
+    /**
+     * Registers a jQuery custom event handler that refreshes/resets other widget if required by the buttons config.
+     *
+     * jEasyUI currently does not support refresh/reset of containers or individual
+     * elements via event, so we register this handler for each button to make sure
+     * widgets, that are explicitly required to reset/refresh in the Buttons UXON
+     * are affected.
+     * 
+     * jEasyUI data configurators, on the other hand, already listen to action performed
+     * events, so they are explicitly filtered away.
+     *
+     * @param string $scriptJs
+     * @return string
+     */
+    protected function buildJsRegisterOnActionPerformed() : string
+    {
+        // Don't bother if there is no action - this case is take care of
+        // by the JqueryButtonTrait::buildJsClickNoAction()
+        if ($this->getWidget()->hasAction() === false) {
+            return '';
+        }
+        
+        $actionperformed = AbstractJqueryElement::EVENT_NAME_ACTIONPERFORMED;
+        $filterDataEls = function(AjaxFacadeElementInterface $el) {
+            $w = $el->getWidget();
+            return ! (
+                ($w instanceof iHaveConfigurator) 
+                && ($w->getConfiguratorWidget() instanceof DataConfigurator)
+            );
+        };
+        $js = $this->buildJsRefreshWidgets(false, $filterDataEls) . $this->buildJsResetWidgets(false, $filterDataEls);
+        if (trim($js === '')) {
+            return '';
+        }
+        return <<<JS
+        
+$( document ).off( "{$actionperformed}.{$this->getId()}" );
+$( document ).on( "{$actionperformed}.{$this->getId()}", function( oEvent, oParams ) {
+    if (oParams.trigger_widget_id === "{$this->getId()}") {
+    }
+});
+
+JS;
+    }
+    
+    /**
+     * 
+     * {@inheritDoc}
+     * @see \exface\Core\Facades\AbstractAjaxFacade\Elements\AbstractJqueryElement::buildJsDestroy()
+     */
+    public function buildJsDestroy() : string
+    {
+        $actionperformed = AbstractJqueryElement::EVENT_NAME_ACTIONPERFORMED;
+        return "$( document ).off( '{$actionperformed}.{$this->getId()}' );";
     }
 }
