@@ -53,6 +53,7 @@ class EuiInputComboTable extends EuiInput
     {
         parent::init();
         $this->setJsDebugLevel($this->getFacade()->getConfig()->getOption("FACADE.JAVASCRIPT_DEBUG_LEVEL"));
+        $this->addOnChangeScript("console.log('change {$this->getWidget()->getDataColumnName()}')");
         
         // Register onChange-Handler for Filters with Live-Reference-Values
         $widget = $this->getWidget();
@@ -679,6 +680,7 @@ JS;
                         jqSelf.removeData("_otherSuppressLazyLoadingGroupUpdate");
                         suppressLazyLoadingGroupUpdate = true;
                     }
+                    console.log('onChange {$this->getWidget()->getDataColumnName()}');
                     if (!suppressAllUpdates) {
                         {$this->getOnChangeScript()}
                     }
@@ -805,7 +807,7 @@ JS;
                         {$dataParam}
                         {$valueFilterParam}
                     } else if (jqSelf.data("_firstLoad")) {
-                        param._firstLoad = true;
+                        param._firstLoad = true;console.log('first_load{$this->getWidget()->getDataColumnName()}');
                         {$first_load_script}
                     } else {
                          if (jqSelf.data("_currentText") !== '') {
@@ -886,6 +888,7 @@ JS;
                     {$this->buildJsDebugMessage('onLoadSuccess')}
                     var suppressAutoSelectSingleSuggestion = false;
                     var suppressLazyLoadingGroupUpdate = false;
+console.log('load success {$widget->getDataColumnName()}');
                     
                     if (jqSelf.data("_valueSetterUpdate")) {
                         // Update durch eine value-Referenz.
