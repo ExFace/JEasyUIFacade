@@ -224,7 +224,7 @@ function(){
                             return {$regularValidatorJs}
                         } catch (e) {
                             if (e.message.startsWith("Cannot read properties of undefined")) {
-                                return {$this->buildJsValidatorViaTrait($valJs)};
+                                return ({$this->buildJsValidatorViaTrait($valJs)});
                             }
                             throw e;
                         }
