@@ -240,8 +240,9 @@ HTML;
      */
     public function getHeight()
     {
-        if ($this->getWidget()->getHeight()->isUndefined()) {
-            if ($this->getWidget()->getColumnsInGrid() === 1) {
+        $widget = $this->getWidget();
+        if ($widget->getHeight()->isUndefined()) {
+            if ($widget->getWidth()->isRelative() && $widget->getWidth()->getValue() === 1) {
                 $this->getWidget()->setHeight('auto');
             } else {
                 $this->getWidget()->setHeight('85%');
