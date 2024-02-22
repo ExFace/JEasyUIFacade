@@ -1,0 +1,8 @@
+/* Global complete button removed*/
+.sv_complete_btn {display: none;}
+
+/* 
+ * Survey.js Creator 
+ */
+.svd_surveyjs_designer_container {padding: 10px;}
+.svd_commercial_container{display:none!important}
