@@ -40,10 +40,22 @@ trait EuiDataElementTrait
     protected function buildHtmlPanelWrapper(string $contentHtml, string $customHeaderHtml = null) : string
     {
         $output = '';
+        $widget = $this->getWidget();
         
         $header_html = $customHeaderHtml ?? $this->buildHtmlTableHeader();
         
-        $panel_options = ", title: '{$this->getCaption()}'";
+        $hint = $this->buildHintText($widget->getHint(), false);
+        if ($hint) {
+            if (strpos($hint, "'") !== false) {
+                $hint = str_replace("'", "`", $hint);
+            }
+            $hint = $this->escapeString($hint, false, true);
+            $hint = str_replace("\n", "\\n", $hint);
+            $titleWithHint = "<span title=\'{$hint}\'>{$this->escapeString($this->getCaption(), false, true)}</span>";
+        } else {
+            $titleWithHint = $widget->getCaption();
+        }
+        $panel_options = ", title: '{$titleWithHint}'";
         
         $gridItemClass = $this->buildCssElementClass();
         if ($this->getWidget()->getHideHeader()) {
