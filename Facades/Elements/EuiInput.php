@@ -141,7 +141,7 @@ JS;
     $.extend($.fn.validatebox.defaults.rules, {
         {$this->getValidationRuleName()}: {
             validator: function(currentValue) {
-                return {$this->buildJsValidatorViaTrait('currentValue')};
+                return ({$this->buildJsValidatorViaTrait('currentValue')});
             },
             message: {$this->escapeString($this->getValidationErrorText())}
         }

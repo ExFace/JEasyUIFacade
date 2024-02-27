@@ -73,8 +73,19 @@ HTML;
         $widget = $this->getWidget();
         $output = parent::buildJsDataOptions();
         
+        $hint = $this->buildHintText($widget->getHint(), false);
+        if ($hint) {
+            if (strpos($hint, "'") !== false) {
+                $hint = str_replace("'", "`", $hint);
+            }
+            $hint = $this->escapeString($hint, false, true);
+            $hint = str_replace("\n", "\\n", $hint);
+            $titleWithHint = "<span title=\'{$hint}\'>{$this->escapeString($widget->getCaption(), false, true)}</span>";
+        } else {
+            $titleWithHint = $widget->getCaption();
+        }
         $output .= ($output ? ',' : '') . 'region:\'' . $this->getRegion() . '\'
-					,title:\'' . $widget->getCaption() . '\'' . ($this->getRegion() !== 'center' ? ',split:' . ($widget->getResizable() ? 'true' : 'false') : '');
+					,title:\'' . $titleWithHint . '\'' . ($this->getRegion() !== 'center' ? ',split:' . ($widget->getResizable() ? 'true' : 'false') : '');
         
         if ($this->getWidget()->getVisibility() >= WidgetVisibilityDataType::PROMOTED) {
             $output .= ($output ? ',' : '') . "headerCls:'promoted'";
