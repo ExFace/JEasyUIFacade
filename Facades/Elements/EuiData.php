@@ -369,7 +369,7 @@ JS;
         $visibleColCnt = 0;
         foreach ($column_groups as $column_group) {
             if ($column_group->getCaption()) {
-                $header_rows[0][] = '{title: "' . str_replace('"', '\"', $column_group->getCaption()) . '", colspan: ' . $column_group->countColumnsVisible() . '}';
+                $header_rows[0][] = '{title: ' . $this->escapeString($column_group->getCaption()) . ', colspan: ' . $column_group->countColumnsVisible() . '}';
                 $put_into_header_row = 1;
             } else {
                 $put_into_header_row = 0;
@@ -438,8 +438,13 @@ JS;
         // sort those)
         $sortable = $col->isBoundToAttribute() ? ($col->isSortable() ? 'true' : 'false') : 'false';
         
+        $hint = $this->buildHintText($col->getHint(), false);
+        if ($hint) {
+            $hint = $this->escapeString($hint, false, true);
+            $hint = str_replace("\n", "\\n", $hint);
+        }
         $output = '
-                        title: "<span title=\"' . $this->buildHintText($col->getHint(), true) . '\">' . $col->getCaption() . '</span>"
+                        title: "<span title=\"' . $hint . '\">' . $this->escapeString($col->getCaption(), false, true) . '</span>"
                         , field: "' . ($col->getDataColumnName() ? $col->getDataColumnName() : $col->getId()) . '"
                         ' . ($col->isBoundToAttribute() ? ', _attributeAlias: "' . $col->getAttributeAlias() . '"' : '') . "
                         " . ($colspan ? ', colspan: ' . intval($colspan) : '') . ($rowspan ? ', rowspan: ' . intval($rowspan) : '') . "
