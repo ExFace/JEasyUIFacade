@@ -17,7 +17,7 @@ class EuiInputForm extends EuiInput
      */
     function buildHtml()
     {
-        return "<div id=\"{$this->getId()}\"></div>";
+        return $this->buildHtmlLabelWrapper("<div id=\"{$this->getId()}\"></div>");
     }
     
     /**
@@ -27,8 +27,9 @@ class EuiInputForm extends EuiInput
      */
     function buildJs()
     {
-        if ($initVal = $this->getWidget()->getValueWithDefaults()) {
-            $initValJs = $this->buildJsValueSetter($this->escapeString($initVal, true, false));
+        $initVal = $this->getWidget()->getValueWithDefaults();
+        if (empty($initVal)) {
+            $initVal = '{}';
         }
         
         return <<<JS
@@ -37,7 +38,7 @@ class EuiInputForm extends EuiInput
             var oSurvey;
             {$this->buildJsSurveySetup()}
             $('#{$this->getId()}').data('survey-model', {$this->getWidget()->getFormConfig()});
-            {$initValJs};
+            {$this->buildJsValueSetter($this->escapeString($initVal, true, false))};
         })();
         {$this->buildJsEventScripts()}
 JS;
