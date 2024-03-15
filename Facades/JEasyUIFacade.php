@@ -28,6 +28,7 @@ use exface\Core\Interfaces\Selectors\FacadeSelectorInterface;
 use exface\Core\DataTypes\StringDataType;
 use exface\Core\DataTypes\HtmlDataType;
 use exface\Core\DataTypes\MessageTypeDataType;
+use exface\Core\Widgets\DataSpreadSheet;
 
 /**
  * Renders pages using the jEasyUI JavaScript framework based on jQuery.
@@ -196,9 +197,17 @@ $.ajaxPrefilter(function( options ) {
             if (method_exists($widgetClass, 'buildResponseData') === true) {
                 return $widgetClass::buildResponseData($this, $data_sheet, $widget);
             }
-        }       
+        }
         
-        $rows = $this->buildResponseDataRowsSanitized($data_sheet);
+        switch (true) {
+            case $widget instanceof DataSpreadSheet:
+                $escapeHtml = false;
+                break;
+            default:
+                $escapeHtml = true;
+        }
+        
+        $rows = $this->buildResponseDataRowsSanitized($data_sheet, true, $escapeHtml);
         $data = array();
         $data['rows'] = $rows;
         $data['offset'] = $data_sheet->getRowsOffset();
