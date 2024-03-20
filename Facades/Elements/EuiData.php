@@ -1086,8 +1086,11 @@ JS;
      */
     protected function hasLinksToColumns() : bool
     {
-       $uidColName = $this->getWidget()->hasUidColumn() ? $this->getWidget()->getUidColumn()->getDataColumnName() : null;
-       foreach ($this->getWidget()->getValueLinksToThisWidget() as $link) {
+        $uidColName = null;
+        if ($this->getWidget()->hasUidColumn()) {
+            $uidColName = $this->getWidget()->getUidColumn()->getDataColumnName();
+        }
+        foreach ($this->getWidget()->getValueLinksToThisWidget() as $link) {
             if ($uidColName === null || $uidColName === $link->getTargetColumnId()) {
                 return true;
             }
