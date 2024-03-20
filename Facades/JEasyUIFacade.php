@@ -216,6 +216,46 @@ $.ajaxPrefilter(function( options ) {
         return $data;
     }
     
+    protected function buildResponseDataRowsSanitized(DataSheetInterface $data_sheet, bool $decrypt = true, bool $forceHtmlEntities = true, bool $stripHtmlTags = false) : array
+    {
+        $rows = $decrypt ? $data_sheet->getRowsDecrypted() : $data_sheet->getRows();
+        if (empty($rows)) {
+            return $rows;
+        }
+        
+        foreach ($data_sheet->getColumns() as $col) {
+            $colName = $col->getName();
+            $colType = $col->getDataType();
+            switch (true) {
+                case $colType instanceof HtmlDataType:
+                    // FIXME #xss-protection sanitize HTML here!
+                    break;
+                // FIXME in jEasyUI a JSON including HTML tags definitely is a security issue
+                // Need to test, if this applies to other facades too!
+                //case $colType instanceof JsonDataType:
+                    // FIXME #xss-protection sanitize JSON here!
+                    break;
+                case $colType instanceof StringDataType:
+                    if ($forceHtmlEntities === true || $stripHtmlTags === true) {
+                        foreach ($rows as $i => $row) {
+                            $val = $row[$colName];
+                            if ($val !== null && $val !== '') {
+                                if ($stripHtmlTags === true) {
+                                    $rows[$i][$colName] = strip_tags($val);
+                                }
+                                if ($forceHtmlEntities === true) {
+                                    $rows[$i][$colName] = htmlspecialchars($val, ENT_NOQUOTES);
+                                }
+                            }
+                        }
+                    }
+                    break;
+            }
+        }
+        
+        return $rows;
+    }
+    
     /**
      * 
      * {@inheritDoc}
