@@ -7,6 +7,7 @@ use exface\Core\Interfaces\Widgets\iLayoutWidgets;
 use exface\Core\Interfaces\Widgets\iFillEntireContainer;
 use exface\Core\Interfaces\Widgets\iContainOtherWidgets;
 use exface\Core\Facades\AbstractAjaxFacade\Elements\JsConditionalPropertyTrait;
+use exface\Core\DataTypes\StringDataType;
 
 abstract class EuiAbstractElement extends AbstractJqueryElement
 {
@@ -96,7 +97,7 @@ JS;
     public function buildJsShowMessageError($message_body_js, $title = null)
     {
         $title = ! is_null($title) ? $title : '"' . $this->translate('MESSAGE.ERROR_TITLE') . '"';
-        return "$.messager.alert(" . $title . "," . $message_body_js . ",'error');";
+        return "$.messager.alert(" . $title . "," . StringDataType::replaceLineBreaks($message_body_js, '\\n') . ",'error');";
     }
 
     /**
