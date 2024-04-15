@@ -183,7 +183,7 @@ JS;
         if ($widget->getMultiSelect() === false) {
             $rows = "[{ {$widget->getDataColumnName()}: {$this->buildJsValueGetter()} }]";
         } else {
-            $delim = str_replace("'", "\\'", $this->getWidget()->getMultiSelectTextDelimiter());
+            $delim = str_replace("'", "\\'", $this->getWidget()->getMultiSelectValueDelimiter());
             $rows = <<<JS
                             function(){
                                 var aVals = ({$this->buildJsValueGetter()}).split('{$delim}');
