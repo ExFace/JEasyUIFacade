@@ -1,0 +1,9 @@
+Version 1.0.x
+-------------
+
+* Bug
+ * Duplicated rows are exported to excel. fixed.
+ 
+* Improvement
+ * The 'toExcel' method is available to export rows to excel.
+ * Add 'toArray' and 'toCsv' methods.
