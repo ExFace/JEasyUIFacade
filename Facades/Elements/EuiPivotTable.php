@@ -26,7 +26,7 @@ class EuiPivotTable extends EuiDataTable
         return 'pivotgrid';
     }
 
-    function buildJs()
+    public function buildJs()
     {
         $widget = $this->getWidget();
         $output = '';
@@ -54,7 +54,10 @@ class EuiPivotTable extends EuiDataTable
         
         // get the standard params for grids
         $grid_head = $this->buildJsDataSource();
-        $grid_head .= $sortColumn . $sortOrder . ($this->buildJsOnBeforeLoadFunction() ? ', onBeforeLoad: ' . $this->buildJsOnBeforeLoadFunction() : '') . '
+        $grid_head .= $sortColumn 
+                    . $sortOrder 
+                    . ($this->buildJsOnBeforeLoadFunction() ? ', onBeforeLoad: ' . $this->buildJsOnBeforeLoadFunction() : '') 
+                    . '
 						, toolbar:[ {
 					        text:\'Layout\',
 					        handler:function(){
@@ -62,7 +65,22 @@ class EuiPivotTable extends EuiDataTable
 					        }
 					    } ]
 					    , fit: true
-						, pivot: {rows: [], columns: [], values: []}';
+						, pivot: {
+                            rows: [], 
+                            columns: [], 
+                            values: [], 
+                            aggregate: {
+                                column: {
+                                    field: "_total",
+                                    title: "Total",
+                                    width: 100,
+                                    align: "right"
+                                },
+                                footer: {
+                                    frozenColumnTitle: "Total"
+                                }
+                            }
+                        }';
         
         // instantiate the data grid
         $output .= '$("#' . $this->getId() . '").' . $this->getElementType() . '({' . $grid_head . '});';
@@ -73,7 +91,7 @@ class EuiPivotTable extends EuiDataTable
     function buildHtmlHeadTags()
     {
         $headers = parent::buildHtmlHeadTags();
-        $headers[] = '<script type="text/javascript" src="exface/vendor/exface/JEasyUIFacade/Facades/js/jeasyui/extensions/pivotgrid/jquery.pivotgrid.js"></script>';
+        $headers[] = '<script type="text/javascript" src="vendor/exface/JEasyUIFacade/Facades/js/jeasyui/extensions/pivotgrid/jquery.pivotgrid.js"></script>';
         return $headers;
     }
 
