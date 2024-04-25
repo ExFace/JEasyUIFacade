@@ -345,3 +345,21 @@ table.debug-profiler tr.event > td > .waterfall-bar {background-color: gray !imp
 	    font-size: calc(var(--size, 1)*12px);
 	}
 }
+
+/* PivotTable */
+.exf-pivottable-wrapper {overflow-y: auto}
+/* pivotUI() */
+.pvtUi .pvtVals,
+.pvtUi .pvtAxisContainer {background-color: #f5f5f5; border-color: #f5f5f5}
+.pvtUi tr {background-color: #f5f5f5}
+/* pivot() */
+.exf-pivottable table.pvtTable {margin-left: -1px}
+.exf-pivottable table.pvtTable tbody tr th, 
+.exf-pivottable table.pvtTable thead tr th {border-color: #dfdfdf; color: #a6a6a6; background-color: white;}
+.exf-pivottable table.pvtTable tbody tr th:last-of-type,
+.exf-pivottable table.pvtTable thead tr th:last-of-type {border-right: 1px solid #c2c2c2}
+.exf-pivottable table.pvtTable thead tr:last-of-type {border-bottom: 2px solid #c2c2c2;}
+.exf-pivottable table.pvtTable tbody tr td {border-color: #dfdfdf;}
+.exf-pivottable table.pvtTable tbody tr td.colTotal,
+.exf-pivottable table.pvtTable tbody tr td.pvtGrandTotal,
+.exf-pivottable table.pvtTable tbody tr th.pvtTotalLabel {border-top: 2px solid #c2c2c2; }
