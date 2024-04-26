@@ -277,9 +277,10 @@ JS;
                     var prevSelection = {$selfJs}.data("_prevSelection");
                     if (prevSelection !== undefined) {
                         var curSelectedIdx = -1;
+                        var curSelectedRow;
                         var curRows = {$selfJs}.{$this->getElementType()}('getRows');
                         for (var i in curRows) {
-                            if ({$this->buildJsRowCompare('curRows[i]', 'prevSelection')}) {
+                            if ({$this->buildJsRowCompare('curRows[i]', 'prevSelection', true)}) {
                                 curSelectedIdx = i;
                                 break;
                             }
@@ -299,9 +300,10 @@ JS;
     protected function buildJsOnChangeScript(string $rowJs = 'row', string $indexJs = 'index') : string
     {
         return <<<JS
+
                         var prevRow = $(this).data('_prevSelection');
                         $(this).data('_prevSelection', {$rowJs});
-                        if (prevRow !== undefined && {$this->buildJsRowCompare($rowJs, 'prevRow')}) {
+                        if (prevRow !== undefined && {$this->buildJsRowCompare($rowJs, 'prevRow', ! $this->hasLinksToColumns())}) {
                             return;
                         } 
                         {$this->getOnChangeScript()}
@@ -1076,5 +1078,23 @@ JS;
     protected function getFitOption() : bool
     {
         return $this->getWidget()->getHeight()->isAuto() ? false : true;
+    }
+    
+    /**
+     * 
+     * @return bool
+     */
+    protected function hasLinksToColumns() : bool
+    {
+        $uidColName = null;
+        if ($this->getWidget()->hasUidColumn()) {
+            $uidColName = $this->getWidget()->getUidColumn()->getDataColumnName();
+        }
+        foreach ($this->getWidget()->getValueLinksToThisWidget() as $link) {
+            if ($uidColName === null || $uidColName === $link->getTargetColumnId()) {
+                return true;
+            }
+        }
+        return false;
     }
 }

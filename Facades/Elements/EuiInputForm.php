@@ -3,6 +3,8 @@ namespace exface\JEasyUIFacade\Facades\Elements;
 
 use exface\Core\Facades\AbstractAjaxFacade\Elements\JqueryInputTrait;
 use exface\Core\Facades\AbstractAjaxFacade\Elements\SurveyJsTrait;
+use exface\Core\DataTypes\StringDataType;
+use exface\Core\CommonLogic\DataSheets\DataColumn;
 
 class EuiInputForm extends EuiInput
 {
@@ -15,9 +17,9 @@ class EuiInputForm extends EuiInput
      * {@inheritDoc}
      * @see \exface\JEasyUIFacade\Facades\Elements\EuiInput::buildHtml()
      */
-    function buildHtml()
+    public function buildHtml()
     {
-        return "<div id=\"{$this->getId()}\"></div>";
+        return $this->buildHtmlLabelWrapper("<div id=\"{$this->getId()}\"></div>");
     }
     
     /**
@@ -25,10 +27,24 @@ class EuiInputForm extends EuiInput
      * {@inheritDoc}
      * @see \exface\JEasyUIFacade\Facades\Elements\EuiInput::buildJs()
      */
-    function buildJs()
+    public function buildJs()
     {
-        if ($initVal = $this->getWidget()->getValueWithDefaults()) {
-            $initValJs = $this->buildJsValueSetter($this->escapeString($initVal, true, false));
+        $widget = $this->getWidget();
+        $initVal = $widget->getValueWithDefaults();
+        if (empty($initVal)) {
+            $initVal = '{}';
+        }
+        
+        switch (true) {
+            case $widget->isFormConfigBoundToAttribute():
+                $formConfigJs = '{}';
+                break;
+            case $widget->isFormConfigBoundByReference():
+                $link = $widget->getFormConfigExpression()->getWidgetLink($widget);
+                $formConfigJs = $this->getFacade()->getElement($link->getTargetWidget())->buildJsValueGetter();
+                break;
+            default: 
+                $formConfigJs = $widget->getFormConfig() ?? '{}';
         }
         
         return <<<JS
@@ -36,8 +52,8 @@ class EuiInputForm extends EuiInput
         (function(){
             var oSurvey;
             {$this->buildJsSurveySetup()}
-            $('#{$this->getId()}').data('survey-model', {$this->getWidget()->getFormConfig()});
-            {$initValJs};
+            $('#{$this->getId()}').data('survey-model', {$formConfigJs});
+            {$this->buildJsValueSetter($this->escapeString($initVal, true, false))};
         })();
         {$this->buildJsEventScripts()}
 JS;
@@ -53,6 +69,22 @@ JS;
     }
     
     /**
+     * 
+     * @param string $valueJs
+     * @return string
+     */
+    protected function buildJsSurveyModelSetter(string $valueJs) : string
+    {
+        return <<<JS
+(function(oModel) {
+            var oValue = {$this->buildJsValueGetter()};
+            $('#{$this->getId()}').data('survey-model', oModel);
+            {$this->buildJsValueSetter('oValue')};
+        })({$valueJs})
+JS;
+    }
+    
+    /**
      *
      * {@inheritDoc}
      * @see \exface\Core\Facades\AbstractAjaxFacade\Elements\AbstractJqueryElement::buildHtmlHeadTags()
@@ -62,18 +94,42 @@ JS;
         return $this->buildHtmlHeadTagsForSurvey();
     }
     
+    /**
+     * 
+     * @return string
+     */
     protected function buildJsSurveyTheme() : string
     {
         return '"default"';
     }
     
+    /**
+     * 
+     * @return string
+     */
     protected function getIdOfSurveyDiv() : string
     {
         return $this->getId();
     }
     
+    /**
+     * 
+     * @return string
+     */
     protected function getIdOfCreatorDiv() : string
     {
         return $this->getId();
+    }
+    
+    /**
+     * 
+     * {@inheritDoc}
+     * @see \exface\JEasyUIFacade\Facades\Elements\EuiInput::registerConditionalPropertiesLiveRefs()
+     */
+    protected function registerConditionalPropertiesLiveRefs()
+    {
+        parent::registerConditionalPropertiesLiveRefs();
+        $this->registerSurveyLiveConfigAtLinkedElement();
+        return;
     }
 }

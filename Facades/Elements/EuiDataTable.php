@@ -473,7 +473,8 @@ JS;
         $grid_head .= $this->buildJsInitOptionOnDblClickRow();
         $grid_head .= $this->buildJsInitOptionOnContxtMenu();
         
-        $grid_head .= ($this->getOnChangeScript() ? ', onClickRow: function(index, row){' . $this->buildJsOnChangeScript('row', 'index') . '}' : '');
+        $onChangeScript = $this->buildJsOnChangeScript('row', 'index');
+        $grid_head .= ($this->getOnChangeScript() ? ", onClickRow: function(index, row){{$onChangeScript}}, onSelect: function(index, row){{$onChangeScript}}" : '');
         $grid_head .= ($widget->getCaption() ? ', title: "' . str_replace('"', '\"', $widget->getCaption()) . '"' : '');
         $grid_head .= ', emptyMsg : ' . json_encode($widget->getEmptyText());
         

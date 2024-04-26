@@ -28,6 +28,7 @@ use exface\Core\Interfaces\Selectors\FacadeSelectorInterface;
 use exface\Core\DataTypes\StringDataType;
 use exface\Core\DataTypes\HtmlDataType;
 use exface\Core\DataTypes\MessageTypeDataType;
+use exface\Core\Widgets\DataSpreadSheet;
 
 /**
  * Renders pages using the jEasyUI JavaScript framework based on jQuery.
@@ -196,15 +197,63 @@ $.ajaxPrefilter(function( options ) {
             if (method_exists($widgetClass, 'buildResponseData') === true) {
                 return $widgetClass::buildResponseData($this, $data_sheet, $widget);
             }
-        }       
+        }
         
-        $rows = $this->buildResponseDataRowsSanitized($data_sheet);
+        switch (true) {
+            case $widget instanceof DataSpreadSheet:
+                $escapeHtml = false;
+                break;
+            default:
+                $escapeHtml = true;
+        }
+        
+        $rows = $this->buildResponseDataRowsSanitized($data_sheet, true, $escapeHtml);
         $data = array();
         $data['rows'] = $rows;
         $data['offset'] = $data_sheet->getRowsOffset();
         $data['total'] = $data_sheet->countRowsInDataSource();
         $data['footer'] = $data_sheet->getTotalsRows();
         return $data;
+    }
+    
+    protected function buildResponseDataRowsSanitized(DataSheetInterface $data_sheet, bool $decrypt = true, bool $forceHtmlEntities = true, bool $stripHtmlTags = false) : array
+    {
+        $rows = $decrypt ? $data_sheet->getRowsDecrypted() : $data_sheet->getRows();
+        if (empty($rows)) {
+            return $rows;
+        }
+        
+        foreach ($data_sheet->getColumns() as $col) {
+            $colName = $col->getName();
+            $colType = $col->getDataType();
+            switch (true) {
+                case $colType instanceof HtmlDataType:
+                    // FIXME #xss-protection sanitize HTML here!
+                    break;
+                // FIXME in jEasyUI a JSON including HTML tags definitely is a security issue
+                // Need to test, if this applies to other facades too!
+                //case $colType instanceof JsonDataType:
+                    // FIXME #xss-protection sanitize JSON here!
+                    break;
+                case $colType instanceof StringDataType:
+                    if ($forceHtmlEntities === true || $stripHtmlTags === true) {
+                        foreach ($rows as $i => $row) {
+                            $val = $row[$colName];
+                            if ($val !== null && $val !== '') {
+                                if ($stripHtmlTags === true) {
+                                    $rows[$i][$colName] = strip_tags($val);
+                                }
+                                if ($forceHtmlEntities === true) {
+                                    $rows[$i][$colName] = htmlspecialchars($val, ENT_NOQUOTES);
+                                }
+                            }
+                        }
+                    }
+                    break;
+            }
+        }
+        
+        return $rows;
     }
     
     /**

@@ -65,6 +65,16 @@ JS;
     /**
      * 
      * {@inheritDoc}
+     * @see \exface\JEasyUIFacade\Facades\Elements\EuiInputForm::buildJsSurveyModelSetter()
+     */
+    protected function buildJsSurveyModelSetter(string $valueJs) : string
+    {
+        return $this->buildJsValueSetter($valueJs);
+    }
+    
+    /**
+     * 
+     * {@inheritDoc}
      * @see \exface\JEasyUIFacade\Facades\Elements\EuiInput::buildJsValidator()
      */
     public function buildJsValidator(?string $valJs = null) : string
