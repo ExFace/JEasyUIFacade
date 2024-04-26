@@ -1,10 +1,6 @@
 /**
  * pivotgrid - jQuery EasyUI
- * 
- * Licensed under the GPL:
- *   http://www.gnu.org/licenses/gpl.txt
- *
- * Copyright (c) 2014 www.jeasyui.com
+ * version: 1.0.4
  * 
  * Dependencies:
  *   treegrid
@@ -17,7 +13,9 @@
 	function create(target){
 		var opts = $.data(target, 'pivotgrid').options;
 		opts.pivot.filters = opts.pivot.filters || [];
-		var filterRules = {};
+		opts.pivot.filterRules = opts.pivot.filterRules || {};
+		// var filterRules = {};
+		var filterRules = opts.pivot.filterRules || {};
 		$.map(opts.pivot.filters, function(field){
 			filterRules[field] = opts.pivot.filterRules[field] || [];
 		});
@@ -25,6 +23,7 @@
 
 		clearFilterBar(target);
 		$(target).treegrid($.extend({}, opts, {
+			showFooter: (opts.pivot.aggregate && opts.pivot.aggregate.footer),
 			onBeforeSortColumn:function(field){
 				var f = function(data){return data};
 				$(this).treegrid('options').loadFilter = f;
@@ -36,8 +35,9 @@
 			},
 			loadFilter: function(data, parentId){
 				var state = $(this).data('pivotgrid');
-				state.data = data;
 				var opts = state.options;
+				data = opts.loadFilter.call(this, data, parentId);
+				state.data = data;
 				var originalData = opts.data;
 				var originalUrl = opts.url;
 				var filteredData = getFilteredData(target, data);
@@ -47,7 +47,9 @@
 					url: null,
 					frozenColumns: [[
 						$.extend({}, opts.frozenColumns[0][0], {
-							title: opts.forzenColumnTitle
+							title: opts.frozenColumnTitle,
+							hformatter: (opts.headerFormatter),
+							hstyler: (opts.headerStyler)
 						})
 					]],
 					columns: getColumns(this, filteredData)
@@ -59,9 +61,11 @@
 				},0);
 
 				var rows = getRows(this, filteredData);
+				rows = aggregateColumn(this, rows);
 				return {
 					total: rows.length,
-					rows: rows
+					rows: rows,
+					footer: aggregateFooter(this, rows)
 				}
 
 				function getFields(row){
@@ -88,6 +92,39 @@
 		}));
 	}
 
+	function aggregateColumn(target, rows){
+		var opts = $(target).pivotgrid('options');
+		if (opts.pivot.aggregate && opts.pivot.aggregate.column){
+			var fields = $(target).datagrid('getColumnFields');
+			$.map(rows, function(row){
+				var value = 0;
+				for(var i=0; i<fields.length; i++){
+					value += parseFloat(row[fields[i]]) || 0;
+				}
+				row[opts.pivot.aggregate.column.field] = value;
+			});
+		}
+		return rows;
+	}
+
+	function aggregateFooter(target, rows){
+		var opts = $(target).pivotgrid('options');
+		if (opts.pivot.aggregate && opts.pivot.aggregate.footer){
+			var fields = $(target).datagrid('getColumnFields');
+			var footerRow = {};
+			footerRow[opts.treeField] = opts.pivot.aggregate.footer.frozenColumnTitle;
+			for(var i=0; i<fields.length; i++){
+				var value = 0;
+				$.map(rows, function(row){
+					value += parseFloat(row[fields[i]]) || 0;
+				});
+				footerRow[fields[i]] = value;
+			}
+			return [footerRow];
+		}
+		return [];
+	}
+
 	function getFilteredData(target, data){
 		var state = $.data(target, 'pivotgrid');
 		var opts = state.options;
@@ -102,7 +139,11 @@
 		function isMatch(row){
 			for(var field in opts.pivot.filterRules){
 				var values = opts.pivot.filterRules[field] || [];
-				if (values.length){
+				if ($.isFunction(values)){
+					if (!values.call(target, row[field])){
+						return false;
+					}
+				} else if (values.length){
 					if ($.inArray(String(row[field]), values) == -1){
 						return false;
 					}
@@ -163,6 +204,15 @@
 			function handler2(){
 				var field = $(this).attr('comboName');
 				var values = opts.pivot.filterRules[field] || [];
+				if ($.isFunction(values)){
+					vv = [];
+					$.map($(this).combobox('getData'), function(r){
+						if (values.call(target, r.value)){
+							vv.push(r.value);
+						}
+					});
+					values = vv;
+				}
 				$(this).combobox('setValues', values);
 				$(this).combobox('setText', values.length ? (values.length == 1 ? values[0] : 'multiple items') : '');
 			}
@@ -178,6 +228,25 @@
 				values.push({value:v,text:v});
 			}
 			return values;
+		}
+	}
+
+	function getCalcOperator(target, field){
+		var ff = field.split('_');
+		var field = ff[ff.length-1];
+		var opts = $.data(target, 'pivotgrid').options;
+		if ($.isFunction(opts.defaultOperator)){
+			return opts.defaultOperator.call(target, field);
+		} else {
+			var op = opts.defaultOperator;
+			for(var i=0; i<opts.pivot.values.length; i++){
+				var v = opts.pivot.values[i];
+				if (v['field'] == field){
+					op = v['op'] || op;
+					break;
+				}
+			}
+			return op;
 		}
 	}
 	
@@ -222,6 +291,10 @@
 		function sumR1(rows){
 			var r = {};
 			var fields = $(target).datagrid('getColumnFields');
+			if (opts.pivot.aggregate && opts.pivot.aggregate.column){
+				fields.splice(fields.length-1, 1);
+			}
+			
 			$.map(fields, function(field){
 				r[field] = _sum(field);
 			});
@@ -237,7 +310,8 @@
 					}
 					return row;
 				});
-				return opts.operators[col.op||'sum'].call(target, rr, col.tt[col.tt.length-1]);
+				var operatorName = getCalcOperator(target, field);
+				return opts.operators[operatorName].call(target, rr, col.tt[col.tt.length-1]);
 			}
 		}
 		
@@ -276,7 +350,9 @@
 							_field: field,
 							title: v,
 							tt: pcol.tt.concat(v),
-							colspan: opts.pivot.values.length
+							colspan: opts.pivot.values.length,
+							hformatter: (v.hformatter || opts.headerFormatter),
+							hstyler: (v.styler || opts.headerStyler)
 						});
 					});
 					pcol.colspan += (subcol.length-1)*opts.pivot.values.length;
@@ -289,7 +365,9 @@
 						_field: field,
 						title: v,
 						tt: [v],
-						colspan: opts.pivot.values.length
+						colspan: opts.pivot.values.length,
+						hformatter: (v.hformatter || opts.headerFormatter),
+						hstyler: (v.styler || opts.headerStyler)
 					});
 				});
 				columns.push(cc);
@@ -301,12 +379,14 @@
 			$.map(opts.pivot.values, function(v){
 				cc.push($.extend({}, v, {
 					field: col.tt.join('_')+'_'+v.field,
-					title: v.field,
+					title: (v.title || v.field),
 					tt: col.tt.concat(v.field),
 					width: (v.width || opts.valueFieldWidth),
 					align: (v.align || 'right'),
 					styler: (v.styler || opts.valueStyler),
 					formatter: (v.formatter || opts.valueFormatter),
+					hformatter: (v.hformatter || opts.headerFormatter),
+					hstyler: (v.hstyler || opts.headerStyler),
 					sortable: true,
 					sorter: function(a,b){
 						var v1 = parseFloat(a);
@@ -317,25 +397,45 @@
 			});
 		});
 		columns.push(cc);
+		if (opts.pivot.aggregate){
+			if (opts.pivot.aggregate.column){
+				columns[0].push($.extend({}, opts.pivot.aggregate.column, {
+					rowspan: columns.length
+				}));
+			}
+		}
 		
 		return columns;
 		
+		// function getV1(field, pfield, pvalue){
+		// 	var tmp = {};
+		// 	$.map(data, function(row){
+		// 		var val = row[field];
+		// 		if (pfield == undefined){
+		// 			tmp[val] = 1;
+		// 		} else if (row[pfield] == pvalue){
+		// 			tmp[val] = 1;
+		// 		}
+		// 	});
+		// 	var vv = [];
+		// 	for(var p in tmp){
+		// 		vv.push(p);
+		// 	}
+		// 	return vv;
+		// }
 		function getV1(field, pfield, pvalue){
-			var tmp = {};
+			var vv = [];
 			$.map(data, function(row){
-				var val = row[field];
-				if (pfield == undefined){
-					tmp[val] = 1;
-				} else if (row[pfield] == pvalue){
-					tmp[val] = 1;
+				var val = String(row[field]);
+				if (pfield == undefined || row[pfield] == pvalue){
+					if ($.inArray(val, vv) == -1){
+						vv.push(val);
+					}
 				}
 			});
-			var vv = [];
-			for(var p in tmp){
-				vv.push(p);
-			}
 			return vv;
 		}
+
 	}
 	
 	function layout(target){
@@ -397,8 +497,17 @@
 		function fill(p, d){
 			p.empty();
 			$.map(d, function(name){
-				var opts = typeof name == 'object' ? name : {field:name};
-				var text = typeof name == 'object' ? (name.field + '<span style="color:#aaa;margin:0 10px">'+(name.op||'sum')+'</span>') : name;
+				// var opts = typeof name == 'object' ? name : {field:name};
+				// var text = typeof name == 'object' ? (name.field + '<span style="color:#aaa;margin:0 10px">'+(name.op||'sum')+'</span>') : name;
+				if (p.hasClass('pg-values')){
+					var opts = name;
+					var field = name.field;
+					var operatorName = getCalcOperator(target, field);
+					var text = field + '<span style="color:#aaa;margin:0 10px">'+operatorName+'</span>';
+				} else {
+					var opts = {field:name};
+					var text = name;
+				}
 				var item = $('<a class="pivotgrid-item" href="javascript:void(0)"></a>').appendTo(p);
 				item.linkbutton($.extend({}, opts, {
 					text: text,
@@ -440,7 +549,9 @@
 					var opts = $(source).linkbutton('options');
 					var text = opts.field;
 					if ($(this).hasClass('pg-values')){
-						text += '<span style="color:#aaa;margin:0 10px">'+(opts.op||'sum')+'</span>';
+						// text += '<span style="color:#aaa;margin:0 10px">'+(opts.op||'sum')+'</span>';
+						var operatorName = getCalcOperator(target, opts.field);
+						text += '<span style="color:#aaa;margin:0 10px">'+operatorName+'</span>';
 					}
 					$(source).linkbutton({
 						text: text
@@ -515,6 +626,175 @@
 			);
 		}
 	}
+
+	function toHtml(target, rows, caption){
+        var dg = $(target);
+        var data = ['<table border="1" rull="all" style="border-collapse:collapse">'];
+        var fields = dg.datagrid('getColumnFields',true).concat(dg.datagrid('getColumnFields',false));
+        var trStyle = 'height:32px';
+        var tdStyle0 = 'vertical-align:middle;padding:0 4px';
+        if (caption){
+            data.push('<caption>'+caption+'</caption>');
+        }
+        var frozenColumns = $(target).datagrid('options').frozenColumns;
+        var columns = $(target).datagrid('options').columns;
+        for(var i=0; i<columns.length; i++){
+        	var rcolumns = columns[i];
+        	data.push('<tr style="'+trStyle+'">');
+        	if (i==0){
+        		var col = frozenColumns[0][0];
+        		var tdStyle = tdStyle0 + (col.boxWidth?(';width:'+col.boxWidth+'px;'):'');
+        		var align = col.halign||col.align||'';
+            	tdStyle += align?(';text-align:'+align):'';
+        		data.push('<td style="'+tdStyle+'" rowspan="'+columns.length+'">'+col.title+'</td>');
+        	}
+        	for(var j=0; j<rcolumns.length; j++){
+        		var col = rcolumns[j];
+        		var tdStyle = tdStyle0 + (col.boxWidth?(';width:'+col.boxWidth+'px;'):'');
+        		var align = col.halign||col.align||'';
+            	tdStyle += align?(';text-align:'+align):'';
+            	data.push('<td style="'+tdStyle+'" colspan="'+(col.colspan||1)+'">'+col.title+'</td>');
+        	}
+        	data.push('</tr>');
+        }
+
+        rows = rows || [];
+        if (!rows.length){
+	        $.easyui.forEach($(target).treegrid('getData'), true, function(row){
+	        	rows.push(row);
+	        });
+	        rows = rows.concat($(target).data('treegrid').footer||[]);
+        }
+
+        $.map(rows, function(row){
+			data.push('<tr style="'+trStyle+'">');
+			for(var i=0; i<fields.length; i++){
+                var field = fields[i];
+                var col   = dg.datagrid('getColumnOption', field);
+                var value = row[field];
+                if (value == undefined){
+                    value = '';
+                }
+                var tdStyle = tdStyle0;
+                var align = col.halign||col.align||'';
+            	tdStyle += align?(';text-align:'+align):'';
+                data.push(
+                    '<td style="'+tdStyle+'">'+value+'</td>'
+                );
+            }
+            data.push('</tr>');
+        });
+		data.push('</table>');
+        return data.join('');
+	}
+
+	function toArray(target, rows, footer){
+		var dg = $(target);
+        var fields = dg.datagrid('getColumnFields',true).concat(dg.datagrid('getColumnFields',false));
+        rows = rows || [];
+        if (!rows.length){
+	        $.easyui.forEach($(target).treegrid('getData'), true, function(row){
+	        	rows.push(row);
+	        });
+	        rows = rows.concat(footer||$(target).data('treegrid').footer||[]);
+        }
+        var data = [];
+        var r = [];
+        for(var i=0; i<fields.length; i++){
+            var col = dg.datagrid('getColumnOption', fields[i]);
+            r.push(col.tt ? col.tt.join('-') : col.title);
+        }
+        data.push(r);
+        $.map(rows, function(row){
+            var r = [];
+            for(var i=0; i<fields.length; i++){
+                r.push(row[fields[i]]);
+            }
+            data.push(r);
+        });
+        return data;
+	}
+
+	function toExcel(target, param){
+        var filename = null;
+        var rows = null;
+        var caption = null;
+        var worksheet = 'Worksheet';
+        if (typeof param == 'string'){
+            filename = param;
+        } else {
+            filename = param['filename'];
+            rows = param['rows'];
+            caption = param['caption'];
+            worksheet = param['worksheet'] || 'Worksheet';
+        }
+        var dg = $(target);
+        var uri = 'data:application/vnd.ms-excel;base64,'
+        , template = '<html xmlns:o="urn:schemas-microsoft-com:office:office" xmlns:x="urn:schemas-microsoft-com:office:excel" xmlns="http://www.w3.org/TR/REC-html40"><meta http-equiv="content-type" content="application/vnd.ms-excel; charset=UTF-8"><head><!--[if gte mso 9]><xml><x:ExcelWorkbook><x:ExcelWorksheets><x:ExcelWorksheet><x:Name>{worksheet}</x:Name><x:WorksheetOptions><x:DisplayGridlines/></x:WorksheetOptions></x:ExcelWorksheet></x:ExcelWorksheets></x:ExcelWorkbook></xml><![endif]--></head><body>{table}</body></html>'
+        , base64 = function (s) { return window.btoa(unescape(encodeURIComponent(s))) }
+        , format = function (s, c) { return s.replace(/{(\w+)}/g, function (m, p) { return c[p]; }) }
+
+        var table = toHtml(target, rows, caption);
+        var ctx = { worksheet: worksheet, table: table };
+        var data = base64(format(template, ctx));
+        if (window.navigator.msSaveBlob){
+            var blob = b64toBlob(data);
+            window.navigator.msSaveBlob(blob, filename);
+        } else {
+            var alink = $('<a style="display:none"></a>').appendTo('body');
+            alink[0].href = uri + data;
+            alink[0].download = filename;
+            alink[0].click();
+            alink.remove();
+        }
+	}
+
+	function toCsv(target, param){
+        var filename = null;
+        var rows = null;
+        var footer = null;
+        if (typeof param == 'string'){
+            filename = param;
+        } else {
+            filename = param['filename'];
+            rows = param['rows'];
+            footer = param['footer'];
+        }
+        var arrayData = toArray(target, rows, footer);
+        var csv = $.map(arrayData, function(row){
+            return row.join(',');
+        }).join("\r\n");
+        var data = window.btoa(unescape(encodeURIComponent(csv)));
+        if (window.navigator.msSaveBlob){
+            var blob = new Blob([data]);
+            window.navigator.msSaveBlob(blob, filename);
+        } else {
+            var uri = 'data:text/csv;charset=utf-8;base64,';
+            var alink = $('<a style="display:none"></a>').appendTo('body');
+            alink[0].href = uri + data;
+            alink[0].download = filename;
+            alink[0].click();
+            alink.remove();
+        }
+    }
+
+    function b64toBlob(data){
+        var sliceSize = 512;
+        var chars = atob(data);
+        var byteArrays = [];
+        for(var offset=0; offset<chars.length; offset+=sliceSize){
+            var slice = chars.slice(offset, offset+sliceSize);
+            var byteNumbers = new Array(slice.length);
+            for(var i=0; i<slice.length; i++){
+                byteNumbers[i] = slice.charCodeAt(i);
+            }
+            var byteArray = new Uint8Array(byteNumbers);
+            byteArrays.push(byteArray);
+        }
+        return new Blob(byteArrays, {
+            type: ''
+        });
+    }
 	
 	$.fn.pivotgrid = function(options, param){
 		if (typeof options == 'string'){
@@ -552,7 +832,20 @@
 			return jq.each(function(){
 				layout(this);
 			});
-		}
+		},
+		toArray: function(jq, rows){
+            return toArray(jq[0], rows);
+        },
+		toExcel: function(jq, param){
+			return jq.each(function(){
+                toExcel(this, param);
+            });
+		},
+		toCsv: function(jq, param){
+            return jq.each(function(){
+                toCsv(this, param);
+            });
+        }
 	}
 	
 	$.fn.pivotgrid.parseOptions = function(target){
@@ -569,11 +862,13 @@
 		autoRowHeight:false,
 		remoteSort:false,
 		
-		forzenColumnTitle:'',
+		frozenColumnTitle:'',
 		valueFieldWidth:80,
 		valuePrecision:0,
 		valueStyler:function(){},
 		valueFormatter:function(value){return value},
+		headerStyler:function(title,col){},
+		headerFormatter:function(title,col){return title},
 		i18n:{
 			fields:'Fields',
 			filters:'Filters',
@@ -583,6 +878,7 @@
 			ok:'Ok',
 			cancel:'Cancel'
 		},
+		defaultOperator: 'sum',	//function(field){return 'sum'}
 		operators:{
 			sum: function(rows, field){
 				var opts = $(this).pivotgrid('options');
