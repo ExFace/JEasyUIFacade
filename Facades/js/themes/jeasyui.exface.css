@@ -362,4 +362,11 @@ table.debug-profiler tr.event > td > .waterfall-bar {background-color: gray !imp
 .exf-pivottable table.pvtTable tbody tr td {border-color: #dfdfdf;}
 .exf-pivottable table.pvtTable tbody tr td.colTotal,
 .exf-pivottable table.pvtTable tbody tr td.pvtGrandTotal,
-.exf-pivottable table.pvtTable tbody tr th.pvtTotalLabel {border-top: 2px solid #c2c2c2; }
+.exf-pivottable table.pvtTable tbody tr th.pvtTotalLabel {border-top: 2px solid #c2c2c2;}
+/* Show/hide stuff */
+.exf-pivottable .exf-pvt-no-row-total thead > tr > th.pvtTotalLabel,
+.exf-pivottable .exf-pvt-no-row-total .pvtTotal.rowTotal,
+.exf-pivottable .exf-pvt-no-row-total .pvtGrandTotal { display: none; }
+.exf-pivottable .exf-pvt-no-column-total tbody > tr > th.pvtTotalLabel,
+.exf-pivottable .exf-pvt-no-column-total .pvtTotal.colTotal,
+.exf-pivottable .exf-pvt-no-column-total .pvtGrandTotal { display: none; }
