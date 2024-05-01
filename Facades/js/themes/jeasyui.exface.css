@@ -363,6 +363,12 @@ table.debug-profiler tr.event > td > .waterfall-bar {background-color: gray !imp
 .exf-pivottable table.pvtTable tbody tr td.colTotal,
 .exf-pivottable table.pvtTable tbody tr td.pvtGrandTotal,
 .exf-pivottable table.pvtTable tbody tr th.pvtTotalLabel {border-top: 2px solid #c2c2c2;}
+.exf-pivottable .pvtUiCell > select,
+.exf-pivottable .pvtFilterBox input[type=text] {border: 1px solid white; border-bottom: 1px solid #c2c2c2; height: 24px;}
+.exf-pivottable .pvtFilterBox input[type=text] {width: 100%; margin-bottom: 5px; border: 1px solid #c2c2c2;}
+.exf-pivottable .pvtFilterBox > p:first-of-type {text-align: left; margin-bottom: 5px}
+.exf-pivottable .pvtUiCell button {padding: 5px; color: #6200ee; cursor: pointer; background: transparent; border-width: 0; filter: none;}
+.exf-pivottable .pvtUiCell button:hover {background: #ddd; border-color: #ccc; color: #6200ee;}
 /* Subtotals */
 .exf-pivottable table.pvtTable .pvtColLabelFiller, 
 .exf-pivottable table.pvtTable tr td.pvtColSubtotal, 
