@@ -362,4 +362,22 @@ table.debug-profiler tr.event > td > .waterfall-bar {background-color: gray !imp
 .exf-pivottable table.pvtTable tbody tr td {border-color: #dfdfdf;}
 .exf-pivottable table.pvtTable tbody tr td.colTotal,
 .exf-pivottable table.pvtTable tbody tr td.pvtGrandTotal,
-.exf-pivottable table.pvtTable tbody tr th.pvtTotalLabel {border-top: 2px solid #c2c2c2; }
+.exf-pivottable table.pvtTable tbody tr th.pvtTotalLabel {border-top: 2px solid #c2c2c2;}
+.exf-pivottable .pvtUiCell > select,
+.exf-pivottable .pvtFilterBox input[type=text] {border: 1px solid white; border-bottom: 1px solid #c2c2c2; height: 24px;}
+.exf-pivottable .pvtFilterBox input[type=text] {width: 100%; margin-bottom: 5px; border: 1px solid #c2c2c2;}
+.exf-pivottable .pvtFilterBox > p:first-of-type {text-align: left; margin-bottom: 5px}
+.exf-pivottable .pvtUiCell button {padding: 5px; color: #6200ee; cursor: pointer; background: transparent; border-width: 0; filter: none;}
+.exf-pivottable .pvtUiCell button:hover {background: #ddd; border-color: #ccc; color: #6200ee;}
+/* Subtotals */
+.exf-pivottable table.pvtTable .pvtColLabelFiller, 
+.exf-pivottable table.pvtTable tr td.pvtColSubtotal, 
+.exf-pivottable table.pvtTable tr td.pvtRowSubtotal,
+.exf-pivottable table.pvtTable tr td.pvtRowSubtotal.rowcollapsed {background-color: #f5f5f5 !important;}
+/* Show/hide stuff */
+.exf-pivottable .exf-pvt-no-row-total thead > tr > th.pvtTotalLabel,
+.exf-pivottable .exf-pvt-no-row-total .pvtTotal.rowTotal,
+.exf-pivottable .exf-pvt-no-row-total .pvtGrandTotal { display: none; }
+.exf-pivottable .exf-pvt-no-column-total tbody > tr > th.pvtTotalLabel,
+.exf-pivottable .exf-pvt-no-column-total .pvtTotal.colTotal,
+.exf-pivottable .exf-pvt-no-column-total .pvtGrandTotal { display: none; }
