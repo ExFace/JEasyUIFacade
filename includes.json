@@ -1,0 +1,14 @@
+[
+    {
+        "name": "npm-asset/plotly.js",
+        "version": "2.32.0",
+        "license": [
+	        "MIT"
+	    ],
+        "license_link": [
+        	"https://github.com/plotly/plotly.js/blob/master/LICENSE"
+        ],
+        "description": "Open-source JavaScript charting library behind Plotly and Dash",
+        "homepage": "plotly.com/javascript/"
+    }
+]

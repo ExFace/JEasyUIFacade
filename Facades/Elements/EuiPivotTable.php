@@ -110,11 +110,6 @@ JS;
         return $includes;
     }
     
-    public function buildCssElementClass()
-    {
-        return parent::buildCssElementClass() . ' exf-pivottable';
-    }
-    
     /**
      *
      * @return string
