@@ -263,7 +263,9 @@ $.ajaxPrefilter(function( options ) {
      */
     protected function buildHtmlFromError(\Throwable $exception, ServerRequestInterface $request = null, UiPageInterface $page = null) : string
     {
-        if ($this->isShowingErrorDetails() === false && ! ($exception instanceof AuthenticationFailedError) && ! ($exception instanceof AuthorizationExceptionInterface && $this->getWorkbench()->getSecurity()->getAuthenticatedToken()->isAnonymous())) {
+        // Render the debug widget if showing details or a small error message
+        // for ordinary users, who do not see debug data.
+        if ($this->isShowingErrorDetails() === false) {
             $body = '';
             try {
                 $headTags = implode("\n", $this->buildHtmlHeadCommonIncludes());
