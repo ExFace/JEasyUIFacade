@@ -274,7 +274,7 @@ $.ajaxPrefilter(function( options ) {
                     $msg = $exception->getMessageModel($this->getWorkbench());
                     $title = ucfirst(strtolower($msg->getType(MessageTypeDataType::ERROR))) . ' ' . $exception->getAlias();
                     $message = $msg->getTitle();
-                    $details = htmlspecialchars($exception->getMessage());                    
+                    $details = $msg->getHint();                    
                     if ($exception instanceof AccessDeniedError) {
                         $page = $page ?? UiPageFactory::createEmpty($this->getWorkbench());
                         $logoutBtn = WidgetFactory::createFromUxon($page, new UxonObject([
@@ -296,7 +296,7 @@ HTML;
                     }
                 } else {
                     $title = 'Internal Error';
-                    $message = htmlspecialchars($exception->getMessage());
+                    $message = ! $this->isShowingErrorDetails() ? '' : htmlspecialchars($exception->getMessage());
                     $details = '';
                 }
                 $errorBody = <<<HTML
