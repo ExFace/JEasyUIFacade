@@ -483,14 +483,27 @@ JS;
     
     protected function buildJsInitOptionOnDblClickRow() : string
     {
-        // Double click actions. Currently only supports one double click action - the first one in the list of buttons
-        if ($dblclick_button = $this->getWidget()->getButtonsBoundToMouseAction(EXF_MOUSE_ACTION_DOUBLE_CLICK)[0]) {
+        $dblclick_buttons = $this->getWidget()->getButtonsBoundToMouseAction(EXF_MOUSE_ACTION_DOUBLE_CLICK);
+        if (! empty($dblclick_buttons)) {
+            $js = '';
+            // If there are multiple buttons bound to double-click, "click" the first and see if
+            // the function returns `false`. If so, the action was not performed and, thus, we
+            // can continue with the next action - and so on.
+            foreach ($dblclick_buttons as $btn) {
+                $btnEl = $this->getFacade()->getElement($btn);
+                $js .= <<<JS
+
+                        if ({$btnEl->buildJsClickFunctionName()}() !== false) {
+                            return;
+                        }
+JS;
+            }
             return <<<JS
 , onDblClickRow: function(index, row) {
                         $('#{$this->getId()}')
                             .{$this->getElementType()}('unselectAll')
                             .{$this->getElementType()}('selectRow', index);
-                        {$this->getFacade()->getElement($dblclick_button)->buildJsClickFunction()}
+                        {$js}
                     }
 JS;
         }

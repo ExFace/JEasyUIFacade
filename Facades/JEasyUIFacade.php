@@ -263,7 +263,9 @@ $.ajaxPrefilter(function( options ) {
      */
     protected function buildHtmlFromError(\Throwable $exception, ServerRequestInterface $request = null, UiPageInterface $page = null) : string
     {
-        if ($this->isShowingErrorDetails() === false && ! ($exception instanceof AuthenticationFailedError) && ! ($exception instanceof AuthorizationExceptionInterface && $this->getWorkbench()->getSecurity()->getAuthenticatedToken()->isAnonymous())) {
+        // Render the debug widget if showing details or a small error message
+        // for ordinary users, who do not see debug data.
+        if ($this->isShowingErrorDetails() === false) {
             $body = '';
             try {
                 $headTags = implode("\n", $this->buildHtmlHeadCommonIncludes());
@@ -272,7 +274,7 @@ $.ajaxPrefilter(function( options ) {
                     $msg = $exception->getMessageModel($this->getWorkbench());
                     $title = ucfirst(strtolower($msg->getType(MessageTypeDataType::ERROR))) . ' ' . $exception->getAlias();
                     $message = $msg->getTitle();
-                    $details = $exception->getMessage();                    
+                    $details = $msg->getHint();                    
                     if ($exception instanceof AccessDeniedError) {
                         $page = $page ?? UiPageFactory::createEmpty($this->getWorkbench());
                         $logoutBtn = WidgetFactory::createFromUxon($page, new UxonObject([
@@ -294,7 +296,7 @@ HTML;
                     }
                 } else {
                     $title = 'Internal Error';
-                    $message = $exception->getMessage();
+                    $message = ! $this->isShowingErrorDetails() ? '' : htmlspecialchars($exception->getMessage());
                     $details = '';
                 }
                 $errorBody = <<<HTML
