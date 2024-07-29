@@ -8,7 +8,7 @@ namespace exface\JEasyUIFacade\Facades\Elements;
  * @method \exface\Core\Widgets\DiffText getWidget()
  *
  */
-class EuiDiffText extends EuiAbstractElement
+class EuiDiffText extends EuiValue
 {
 
     /**
@@ -21,16 +21,16 @@ class EuiDiffText extends EuiAbstractElement
         $output = <<<HTML
 				<div id="{$this->getId()}_diffcontainer" class="difftext-container">
 					<pre id="{$this->getId()}_difforig" class="difftext-original" style="display: none;">
-{$this->escapeString($this->getWidget()->getLeftValue(), false, true)}
+{$this->escapeString($this->getWidget()->getValue(), false, true)}
 					</pre>
 					<pre id="{$this->getId()}_diffnew" class="difftext-new" style="display: none;">
-{$this->escapeString($this->getWidget()->getRightValue(), false, true)}
+{$this->escapeString($this->getWidget()->getValueToCompare(), false, true)}
 					</pre>
 					<pre id="{$this->getId()}_diff" class="difftext-diff">
 					</pre>
 				</div>
 HTML;
-        return $output;
+        return $this->buildHtmlLabelWrapper($output);
     }
 
     /**
