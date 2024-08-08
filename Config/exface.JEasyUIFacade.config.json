@@ -84,7 +84,8 @@
     ],
     
     "LIBS.EXFTOOLS.JS": "exface/Core/Facades/AbstractAjaxFacade/js/exfTools.js",
-    
+
+	"LIBS.HTMLDIFF.JS": "exface/JEasyUIFacade/Facades/js/htmldiff/js/htmldiff.js",
     "LIBS.JQUERY": "bower-asset/jquery/dist/jquery.min.js",
     "LIBS.JQUERY_PRETTY_TEXT_DIFF": "npm-asset/jquery-prettytextdiff/jquery.pretty-text-diff.min.js",
     "LIBS.JEASYUI.CORE": "bower-asset/jeasyui/jquery.easyui.min.js",
