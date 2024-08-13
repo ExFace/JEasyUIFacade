@@ -49,11 +49,11 @@ class EuiMenuButton extends EuiButton
                 $align_style = '';
         }
         
-        $hint = str_replace('"', '\"', $widget->getHint());
+        $hint = $this->buildHintText($widget->getHint());
         
         // Render jEasyUI menubutton
         $output .= <<<HTML
-            <a href="javascript:void(0)" id="{$this->getId()}" title="{$hint}" class="easyui-{$this->getElementType()}" data-options="menu:'#{$this->buildHtmlMenuId()}', {$this->buildJsDataOptions()}" style="{$align_style}" {$menu_disabled}>
+            <a href="javascript:void(0)" id="{$this->getId()}" title="{$hint}" class="easyui-{$this->getElementType()}" data-options="menu:'#{$this->buildHtmlMenuId()}', {$this->buildJsDataOptions()}" style="{$align_style}">
 				{$this->getCaption()}
 			</a>
 			<div id="{$this->buildHtmlMenuId()}">
