@@ -55,7 +55,7 @@ class EuiConsole extends EuiAbstractElement
     {
         $html = '';
         foreach ($this->getWidget()->getCommandPresets() as $nr => $preset) {
-            $hint = str_replace('"', '&quot;', $preset->getHint() . " (" . implode("; ", $preset->getCommands()) . ")");
+            $hint = $this->buildHintText($preset->getHint() . " (" . implode("; ", $preset->getCommands()) . ")");
             $dataOptions = '';
             if ($preset->getVisibility() !== EXF_WIDGET_VISIBILITY_PROMOTED) {
                 $dataOptions .= ', plain: true';

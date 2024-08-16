@@ -2,7 +2,6 @@
 namespace exface\JEasyUIFacade\Facades\Elements;
 
 use exface\Core\Widgets\DataColumnGroup;
-use exface\Core\Widgets\Data;
 use exface\Core\Exceptions\Configuration\ConfigOptionNotFoundError;
 use exface\Core\Facades\AbstractAjaxFacade\Elements\JqueryToolbarsTrait;
 use exface\Core\Widgets\MenuButton;
@@ -13,10 +12,7 @@ use exface\Core\Widgets\ButtonGroup;
 use exface\Core\DataTypes\SortingDirectionsDataType;
 use exface\Core\Interfaces\DataSheets\DataSheetInterface;
 use exface\Core\Widgets\DataColumn;
-use exface\Core\DataTypes\NumberDataType;
 use exface\Core\DataTypes\TextStylesDataType;
-use exface\Core\DataTypes\DateDataType;
-use exface\Core\DataTypes\TimestampDataType;
 use exface\Core\Facades\AbstractAjaxFacade\Interfaces\JsValueDecoratingInterface;
 use exface\Core\Interfaces\Widgets\iShowText;
 use exface\Core\Interfaces\Widgets\iDisplayValue;
@@ -29,7 +25,7 @@ use exface\Core\DataTypes\StringDataType;
 /**
  * Implementation of a basic grid.
  *
- * @method Data getWidget()
+ * @method \exface\Core\Widgets\Data getWidget()
  *
  * @author Andrej Kabachnik
  *
@@ -376,15 +372,30 @@ JS;
             } else {
                 $put_into_header_row = 0;
             }
+            $hiddenCols = [];
             foreach ($column_group->getColumns() as $col) {
-                if (! $col->isHidden()) {
+                if ($col->isHidden()) {
+                    // Move hidden columns to the end of the array. For some reason, there seem to be
+                    // scrolling issues if the first column happens to be hidden. To reproduce, comment
+                    // out the `continue;` below and add a hidden column to any table wit a lot of data,
+                    // scroll down, so the scrollbar neither touches top nor bottom and click a row - 
+                    // the scroll bar will jump up or down. This does not happen if the first column is
+                    // visible.
+                    $hiddenCols[] = $col;
+                    continue;
+                } else {
                     $visibleColCnt++;
                 }
+                $colJs = '{' . $this->buildJsInitOptionsColumn($col) . '}';
                 if ($visibleColCnt <= $frozenColumns) {
-                    $header_rows_frozen[$put_into_header_row][] = '{' . $this->buildJsInitOptionsColumn($col) . '}';
+                    $header_rows_frozen[$put_into_header_row][] = $colJs;
                 } else {
-                    $header_rows[$put_into_header_row][] = '{' . $this->buildJsInitOptionsColumn($col) . '}';
+                    $header_rows[$put_into_header_row][] = $colJs;
                 }
+            }
+            // Now append the hidden columns separately - see comment above
+            foreach ($hiddenCols as $col) {
+                $header_rows[$put_into_header_row][] = '{' . $this->buildJsInitOptionsColumn($col) . '}';
             }
         }
         

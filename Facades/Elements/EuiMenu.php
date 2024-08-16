@@ -56,7 +56,7 @@ HTML;
                 if (null !== $grpCaption = $b->getParent()->getCaption()) {
                     $buttons_html .= <<<HTML
 
-                <div {$icon} disabled=true title="{$b->getParent()->getHint()}" class="exf-menu-group-title">
+                <div {$icon} disabled=true title="{$this->buildHintText($b->getParent()->getHint())}" class="exf-menu-group-title">
     				{$grpCaption}
     			</div>
                 <div class="menu-sep" style="margin-top: 0; maring-bottom: 0;"></div>
@@ -71,7 +71,7 @@ HTML;
             $disabled = $b->isDisabled() ? ' disabled=true' : '';
             $buttons_html .= <<<HTML
 
-                <div {$icon} {$disabled} title="{$b->getHint()}" id="{$this->getFacade()->getElement($b)->getId()}" onclick="{$this->getFacade()->getElement($b)->buildJsClickFunctionName()}()">
+                <div {$icon} {$disabled} title="{$this->buildHintText($b->getHint())}" id="{$this->getFacade()->getElement($b)->getId()}" onclick="{$this->getFacade()->getElement($b)->buildJsClickFunctionName()}()">
     				{$b->getCaption()}
     			</div>
 HTML;
