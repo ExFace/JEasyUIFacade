@@ -24,7 +24,7 @@ class EuiTile extends EuiButton
         
         $output = <<<JS
 
-                <div id="{$this->getId()}" class="exf-tile-box" {$click} style="{$style}" title="{$widget->getHint()}">
+                <div id="{$this->getId()}" class="exf-tile-box" {$click} style="{$style}" title="{$this->buildHintText($widget->getHint())}">
                     <h3>{$widget->getTitle()}</h3>
    					<p>{$widget->getSubtitle()}</p>
             		<div class="exf-tile-icon">
