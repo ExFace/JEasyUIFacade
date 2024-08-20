@@ -45,15 +45,16 @@ trait EuiDataElementTrait
         $header_html = $customHeaderHtml ?? $this->buildHtmlTableHeader();
         
         $hint = $this->buildHintText($widget->getHint(), false);
-        if ($hint) {
+        $title = $this->escapeString($this->getCaption(), false, true);
+        if ($hint && $title) {
             if (strpos($hint, "'") !== false) {
                 $hint = str_replace("'", "`", $hint);
             }
             $hint = $this->escapeString($hint, false, true);
             $hint = str_replace("\n", "\\n", $hint);
-            $titleWithHint = "<span title=\'{$hint}\'>{$this->escapeString($this->getCaption(), false, true)}</span>";
+            $titleWithHint = "<span title=\'{$hint}\'>{$title}</span>";
         } else {
-            $titleWithHint = $widget->getCaption();
+            $titleWithHint = $title;
         }
         $panel_options = ", title: '{$titleWithHint}'";
         
