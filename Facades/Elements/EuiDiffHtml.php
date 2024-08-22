@@ -1,112 +1,51 @@
 <?php
 namespace exface\JEasyUIFacade\Facades\Elements;
 
-use exface\Core\DataTypes\HtmlDataType;
-use exface\Core\Widgets\DiffHtml;
 use exface\Core\Widgets\DiffText;
 
 /**
+ * JEasyUI implementation of the corresponding widget.
  *
- * @author andrej.kabachnik
- *
- * @method \exface\Core\Widgets\DiffHtml getWidget()
- *
+ * @author Georg Bieger
  */
 class EuiDiffHtml extends EuiValue
 {
-
     /**
-     *
      * {@inheritDoc}
-     * @see \exface\JEasyUIFacade\Facades\Elements\EuiAbstractElement::buildHtml()
      */
-    public function buildHtmlComposite() : string
-    {
-        $domId = "{$this->getId()}_{$this->getWidget()->getVersionToRender()}";
-        $versionToRender = $this->getWidget()->getVersionToRender();
-
-        return <<<HTML
-                <div id="{$domId}_shell">
-                    <div id="{$domId}" style="padding: 2.5%; outline: 5px solid lightgrey;">
-                        {$this->buildHtmlMessage(str_contains($versionToRender, 'diff'))}
-                    </div>
-                </div>
-HTML;
-    }
-
     public function buildHtml()
     {
-        $diffClass = DiffText::DIFF_CLASS;
-        $output = <<<HTML
+        $layout = $this->getWidget()->getLayoutArray();
+
+        return <<<HTML
                 <div style="width:40%; float:left; padding:5%; padding-left: 7.5%; padding-right: 2.5%;">
-                    <div id="{$this->getId()}_diff_orig" style="padding: 2.5%; outline: 5px solid lightgrey;">
-                        <div class="exf-message" style="text-align:center; background-color: darkgrey; margin-bottom: 30px;">
-                            <h1>Original Document</h1>
-                        </div>
-                    </div>
+                    {$this->buildHtmlContainer($layout["left"])}
                 </div>
                 <div style="width:40%; float:left; padding:5%; padding-left: 2.5%; padding-right: 7.5%;">
-                    <div id="{$this->getId()}_diff_diff" class="{$diffClass}" style="padding: 2.5%; outline: 5px solid lightgrey;">
-                        <div class="exf-message success" style="text-align:center; margin-bottom: 30px;">
-                            <h1>Review Changes</h1>
-                        </div>
-                    </div>
+                    {$this->buildHtmlContainer($layout["right"])}
                 </div>
 HTML;
-        return $output;
     }
 
     /**
-     *
      * {@inheritDoc}
-     * @see \exface\JEasyUIFacade\Facades\Elements\EuiAbstractElement::buildJs()
      */
-    public function buildJsComposite() : string
-    {
-        $origHtmlJs = $this->escapeString($this->getWidget()->getValue(), true, false);
-        $compHtmlJs = $this->escapeString($this->getWidget()->getValueToCompare(), true, false);
-        $versionToRender = $this->getWidget()->getVersionToRender();
-        $command = "jqThis.append(";
-        switch ($versionToRender) {
-            case 'old':
-                $command .= $origHtmlJs;
-                break;
-            case 'new':
-                $command .= $compHtmlJs;
-                break;
-            case 'diff':
-                $command .= "$(htmldiff(sValue, sValueToCompare))";
-                break;
-        }
-        $command .= ");";
-        $css = !str_contains($versionToRender, 'diff') ? '' : "jqThis.addClass(\"difftext-diff\")";
-
-        return <<<JS
-
-                (function() {
-                    var sValue = {$origHtmlJs};
-                    var sValueToCompare = {$compHtmlJs};
-                    var jqThis = $('#{$this->getId()}_{$versionToRender}');
-                    {$command}
-                    {$css}
-                })();
-JS;
-    }
-
     public function buildJs()
     {
         $origHtmlJs = $this->escapeString($this->getWidget()->getValue(), true, false);
         $compHtmlJs = $this->escapeString($this->getWidget()->getValueToCompare(), true, false);
+        $layout = $this->getWidget()->getLayoutArray();
+        $cleanSide = str_contains($layout["left"], "diff") ? "right" : "left";
+        $cleanHtmlJs = str_contains($layout[$cleanSide], "old") ? $origHtmlJs : $compHtmlJs;
+
         return <<<JS
 
                 (function() {
                     var sValue = {$origHtmlJs};
                     var sValueToCompare = {$compHtmlJs};
-                    var jqOrig = $('#{$this->getId()}_diff_orig');
-                    //var jqComp = $('#{$this->getId()}_diff_comp');
-                    var jqDiff = $('#{$this->getId()}_diff_diff');
-                    jqOrig.append({$origHtmlJs});
-                    //jqComp.append({$compHtmlJs});
+                    var jqClean = $('#{$this->getContainerId($layout[$cleanSide])}');
+                    var jqDiff = $('#{$this->getcontainerId("diff")}');
+                    jqClean.append({$cleanHtmlJs});
                     jqDiff.append($(htmldiff(sValue, sValueToCompare)));
                 })();
 JS;
@@ -124,23 +63,44 @@ JS;
         );
     }
 
-    public function buildHtmlMessage(bool $isDiff) : string
+    /**
+     * Generates a container depending on the corresponding layout.
+     *
+     * The container holds a title card and identifies whether it should be filled with the original, the revision
+     * or display the detected changes between the two.
+     * @param string $varName
+     * @return string
+     */
+    public function buildHtmlContainer(string $varName) : string
     {
-        if($isDiff) {
-            return <<< HTML
-            <div class="exf-message success" style="text-align:center; margin-bottom: 30px;">
-                <h1>Review Changes</h1>
-            </div>
-HTML;
-        } else {
-            $title = str_contains($this->getWidget()->getVersionToRender(), "old") ?
-                "Original Document" : "Current Revision";
+        $varName = strtolower($varName);
+        $isDiff = str_contains($varName, 'diff');
+        $color = $isDiff ? 'success' : '';
+        $diffClass = $isDiff ?  'class="'.DiffText::DIFF_CLASS.'"' : "";
+        $title = match (true) {
+            $isDiff => "Review Changes",
+            str_contains($varName, 'new') => "Revision",
+            str_contains($varName, 'old') => "Original",
+            default => "",
+        };
 
-            return <<< HTML
-            <div class="exf-message" style="text-align:center; background-color: darkgrey; margin-bottom: 30px;">
-                <h1>{$title}</h1>
-            </div>
+        return <<< HTML
+<div id="{$this->getContainerId($varName)}" {$diffClass} style="padding: 2.5%; outline: 5px solid lightgrey;">
+    <div class="exf-message {$color}" style="text-align:center; background-color: darkgrey; margin-bottom: 30px;">
+        <h1>{$title}</h1>
+    </div>
+</div>
 HTML;
-        }
+    }
+
+    /**
+     * Generates a meaningful ID to consistently query divs.
+     *
+     * @param $varName
+     * @return string
+     */
+    public function getContainerId($varName) : string
+    {
+        return "{$this->getId()}_htmlDiff_{$varName}";
     }
 }
