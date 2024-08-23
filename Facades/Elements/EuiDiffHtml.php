@@ -13,16 +13,16 @@ class EuiDiffHtml extends EuiValue
     /**
      * {@inheritDoc}
      */
-    public function buildHtml()
+    public function buildHtml() : string
     {
-        $layout = $this->getWidget()->getLayoutArray();
+        $widget = $this->getWidget();
 
         return <<<HTML
-                <div style="width:40%; float:left; padding:5%; padding-left: 7.5%; padding-right: 2.5%;">
-                    {$this->buildHtmlContainer($layout["left"])}
+                <div style="width:40%; float:left; padding:2.5%; padding-left: 7.5%;">
+                    {$this->buildHtmlContainer($widget, "left")}
                 </div>
-                <div style="width:40%; float:left; padding:5%; padding-left: 2.5%; padding-right: 7.5%;">
-                    {$this->buildHtmlContainer($layout["right"])}
+                <div style="width:40%; float:left; padding:2.5%; padding-right: 7.5%;">
+                    {$this->buildHtmlContainer($widget, "right")}
                 </div>
 HTML;
     }
@@ -32,18 +32,18 @@ HTML;
      */
     public function buildJs()
     {
-        $origHtmlJs = $this->escapeString($this->getWidget()->getValue(), true, false);
-        $compHtmlJs = $this->escapeString($this->getWidget()->getValueToCompare(), true, false);
-        $layout = $this->getWidget()->getLayoutArray();
-        $cleanSide = str_contains($layout["left"], "diff") ? "right" : "left";
-        $cleanHtmlJs = str_contains($layout[$cleanSide], "old") ? $origHtmlJs : $compHtmlJs;
+        $widget = $this->getWidget();
+        $origHtmlJs = $this->escapeString($widget->getValue(), true, false);
+        $compHtmlJs = $this->escapeString($widget->getValueToCompare(), true, false);
+        $cleanSide = !str_contains($widget->getRenderedVersion("left"), "diff") ? "left" : "right";
+        $cleanHtmlJs = str_contains($widget->getRenderedVersion($cleanSide), "old") ? $origHtmlJs : $compHtmlJs;
 
         return <<<JS
 
                 (function() {
                     var sValue = {$origHtmlJs};
                     var sValueToCompare = {$compHtmlJs};
-                    var jqClean = $('#{$this->getContainerId($layout[$cleanSide])}');
+                    var jqClean = $('#{$this->getContainerId($widget->getRenderedVersion($cleanSide))}');
                     var jqDiff = $('#{$this->getcontainerId("diff")}');
                     jqClean.append({$cleanHtmlJs});
                     jqDiff.append($(htmldiff(sValue, sValueToCompare)));
@@ -68,26 +68,19 @@ JS;
      *
      * The container holds a title card and identifies whether it should be filled with the original, the revision
      * or display the detected changes between the two.
-     * @param string $varName
+     *
+     * @param DiffText $widget
+     * @param string $side
      * @return string
      */
-    public function buildHtmlContainer(string $varName) : string
+    public function buildHtmlContainer(DiffText $widget, string $side) : string
     {
-        $varName = strtolower($varName);
-        $isDiff = str_contains($varName, 'diff');
-        $color = $isDiff ? 'success' : '';
-        $diffClass = $isDiff ?  'class="'.DiffText::DIFF_CLASS.'"' : "";
-        $title = match (true) {
-            $isDiff => "Review Changes",
-            str_contains($varName, 'new') => "Revision",
-            str_contains($varName, 'old') => "Original",
-            default => "",
-        };
-
+        $renderedVersion = $widget->getRenderedVersion($side);
+        $diffClass = str_contains($renderedVersion, 'diff') ?  'class="'.DiffText::DIFF_CLASS.'"' : "";
         return <<< HTML
-<div id="{$this->getContainerId($varName)}" {$diffClass} style="padding: 2.5%; outline: 5px solid lightgrey;">
-    <div class="exf-message {$color}" style="text-align:center; background-color: darkgrey; margin-bottom: 30px;">
-        <h1>{$title}</h1>
+<div id="{$this->getContainerId($renderedVersion)}" {$diffClass} style="padding: 2.5%; outline: 5px solid lightgrey;">
+    <div class="exf-message {$widget->getTitleColor($side, true)}" style="text-align:center; background-color: darkgrey; margin-bottom: 30px;">
+        <h1>{$widget->getTitle($side)}</h1>
     </div>
 </div>
 HTML;
