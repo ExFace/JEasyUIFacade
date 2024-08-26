@@ -38,6 +38,9 @@ ul.nav_menu li.active a.current {color: white; background: #6caef5}
 .panel-tool-a.fa {font-size: 14px; padding: 1px 0 1px 3px; text-decoration: none; color: black;}
 .panel-icon.fa {padding: 0;}
 
+/* SVG iconss */
+.easyui-menu > .exf-svg-icon .l-btn-icon {margin-left: -24px}
+
 /* Context bar */
 .toolbar-element {height: 30px; display:inline-block; line-height: 30px; vertical-align: top; }
 .toolbar-element.user-info {padding: 0 10px; border-right: 1px solid #c3d9e0; border-left: 1px solid #c3d9e0;}
