@@ -9,6 +9,18 @@
         	"https://github.com/plotly/plotly.js/blob/master/LICENSE"
         ],
         "description": "Open-source JavaScript charting library behind Plotly and Dash",
-        "homepage": "plotly.com/javascript/"
+        "homepage": "https://plotly.com/javascript/"
+    },
+    {
+        "name": "npm-asset/htmldiff-js",
+        "version": "1.0.5",
+        "license": [
+	        "ISC"
+	    ],
+        "license_file": [
+        	"exface/JEasyUIFacade/Facades/js/htmldiff/LICENSE"
+        ],
+        "description": "JavaScript port of htmldiff.net",
+        "homepage": "https://github.com/dfoverdx/htmldiff-js"
     }
 ]
