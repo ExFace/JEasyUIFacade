@@ -101,6 +101,8 @@ class EuiButton extends EuiAbstractElement
         $widget = $this->getWidget();
         
         $style = '';
+        $prefix = '';
+        $cssClass = '';
         if (! $widget->getParent() instanceof ButtonGroup){
             // TODO look for the default alignment for buttons for the input
             // widget in the config of this facade
@@ -119,9 +121,14 @@ class EuiButton extends EuiAbstractElement
             $style .= ' height:' . $this->buildCssHeight();
         }
         
+        if ($widget->getIconSet() === 'svg' && null !== $icon = $widget->getIcon()) {
+            $prefix = '<span class="l-btn-icon">' . $icon . '</span>';
+            $cssClass = 'exf-svg-icon';
+        }
+
         $output = '
-				<a id="' . $this->getId() . '" title="' . $this->buildHintText($widget->getHint()) . '" href="#" class="easyui-' . $this->getElementType() . '" data-options="' . $this->buildJsDataOptions() . '" style="' . $style . '" onclick="' . $this->buildJsFunctionPrefix() . 'click();">
-						' . $this->getCaption() . '
+				<a id="' . $this->getId() . '" title="' . $this->buildHintText($widget->getHint()) . '" href="#" class="easyui-' . $this->getElementType() . ' ' . $cssClass . '" data-options="' . $this->buildJsDataOptions() . '" style="' . $style . '" onclick="' . $this->buildJsFunctionPrefix() . 'click();">
+                    ' . $prefix . $this->getCaption() . '
 				</a>';
         return $output;
     }
@@ -140,8 +147,8 @@ class EuiButton extends EuiAbstractElement
         }
         
         $showIconByDefault = $widget->getAppearance() !== Button::APPEARANCE_LINK;
-        if ($widget->getIcon() && $widget->getShowIcon($showIconByDefault)) {
-            $data_options .= ", iconCls: '" . $this->buildCssIconClass($widget->getIcon()) . "'";
+        if (null !== ($icon = $widget->getIcon()) && $widget->getShowIcon($showIconByDefault)) {
+            $data_options .= ", iconCls: '" . $this->buildCssIconClass($icon) . "'";
         }
         
         return $data_options;
