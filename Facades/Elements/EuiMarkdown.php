@@ -2,9 +2,35 @@
 namespace exface\JEasyUIFacade\Facades\Elements;
 
 use exface\Core\Widgets\Markdown;
+use exface\Core\Widgets\Tab;
 
 class EuiMarkdown extends EuiHtml
 {    
+    protected function init()
+    {
+        parent::init();
+
+        // Mermaid diagrams throw JS exceptions if renderend in an inivisble element. This
+        // breaks diagrams in tabs, which are very common in debug widgets. Thus, we need
+        // to treat tabs separately here and make sure any tab switch leads to an attempt
+        // to render the then-visible diagrams.
+        if ($this->hasMermaidSupport()) {
+            foreach($this->getWidget()->findParentsByClass(Tab::class) as $tab) {
+                $tabsEl = $this->getFacade()->getElement($tab->getTabs());
+                $tabsEl->addOnTabSelectScript(<<<JS
+
+                    (function(){
+                        var jqMD = $('#{$this->getId()}');
+                        if (jqMD.is(':visible')) {
+                            mermaid.init(undefined, '#{$this->getId()} .language-mermaid');
+                        }
+                    })()
+JS
+                    , $tab
+                );
+            }
+        }
+    }
     /**
      * 
      * {@inheritDoc}
@@ -15,8 +41,17 @@ class EuiMarkdown extends EuiHtml
         $includes = parent::buildHtmlHeadTags();   
         $f = $this->getFacade();
         $includes[] = '<link href="' . $f->buildUrlToSource('LIBS.MARKDOWN.CSS') . '" rel="stylesheet">';
-        if (($widget = $this->getWidget()) instanceof Markdown && $widget->hasRenderMermaidDiagrams()) {
+        if ($this->hasMermaidSupport()) {
             $includes[] = '<script type="text/javascript" src="' . $f->buildUrlToSource("LIBS.MERMAID.JS") . '"></script>';
+            $includes[] = <<<JS
+
+    <script language="javascript">
+        mermaid.initialize({
+            startOnLoad:true,
+            theme: 'default'
+        });
+    </script>
+JS;
         }
         return $includes;
     }
@@ -40,20 +75,29 @@ class EuiMarkdown extends EuiHtml
     {
         $js = parent::buildJs();
         
-        if ($this->getWidget()->hasRenderMermaidDiagrams()) {
+        if ($this->hasMermaidSupport()) {
             $js .= <<<JS
 
 setTimeout(function(){
-    mermaid.initialize({
-        startOnLoad:true,
-        theme: 'default'
-    });
-    mermaid.init(undefined, '.language-mermaid');
+    var jqMD = $('#{$this->getId()}');
+    if (jqMD.is(':visible')) {
+        mermaid.init(undefined, '#{$this->getId()} .language-mermaid');
+    }
 }, 0);
 
 JS;
         }
         
         return $js;
+    }
+
+    /**
+     * 
+     * @return bool
+     */
+    protected function hasMermaidSupport() : bool
+    {
+        $widget = $this->getWidget();
+        return ($widget instanceof Markdown) && $widget->hasRenderMermaidDiagrams();
     }
 }
