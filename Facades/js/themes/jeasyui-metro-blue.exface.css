@@ -54,3 +54,7 @@ div.panel-body {background-color:#fff;}
 
 /* Global Layout */
 .main-content > .easyui-tabs > .tabs-header {border-top: 1px solid #c3d9e0; border-left: 1px solid #c3d9e0; border-right: 1px solid #c3d9e0}
+
+/* SVG icons */
+.l-btn.exf-svg-icon svg {fill: #fff;}
+.l-btn-plain.exf-svg-icon svg {fill: #404040;}

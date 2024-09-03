@@ -74,15 +74,16 @@ HTML;
         $output = parent::buildJsDataOptions();
         
         $hint = $this->buildHintText($widget->getHint(), false);
-        if ($hint) {
+        $title = $this->escapeString($this->getCaption(), false, true);
+        if ($hint && $title) {
             if (strpos($hint, "'") !== false) {
                 $hint = str_replace("'", "`", $hint);
             }
             $hint = $this->escapeString($hint, false, true);
             $hint = str_replace("\n", "\\n", $hint);
-            $titleWithHint = "<span title=\'{$hint}\'>{$this->escapeString($widget->getCaption(), false, true)}</span>";
+            $titleWithHint = "<span title=\'{$hint}\'>{$title}</span>";
         } else {
-            $titleWithHint = $widget->getCaption();
+            $titleWithHint = $title;
         }
         $output .= ($output ? ',' : '') . 'region:\'' . $this->getRegion() . '\'
 					,title:\'' . $titleWithHint . '\'' . ($this->getRegion() !== 'center' ? ',split:' . ($widget->getResizable() ? 'true' : 'false') : '');

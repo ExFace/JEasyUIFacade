@@ -44,3 +44,7 @@ div.panel-body{background-color:#fff;}
 
 /* Tile widget */
 .exf-tile-box {background-color: #fafafa; border-color: #c3d9e0;}
+
+/* SVG icons */
+.l-btn.exf-svg-icon svg {fill: #fff;}
+.l-btn-plain.exf-svg-icon svg {fill: #404040;}
