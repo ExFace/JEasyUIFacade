@@ -40,8 +40,7 @@ HTML;
      */
     public function buildJs()
     {
-        return '
-				$("#' . $this->getId() . '_diffcontainer").prettyTextDiff({
+        return '$("#' . $this->getId() . '_diffcontainer").prettyTextDiff({
 					cleanup: true,
 					originalContainer: "#' . $this->getId() . '_difforig",
 					changedContainer: "#' . $this->getId() . '_diffnew",

@@ -38,6 +38,9 @@ ul.nav_menu a:hover {background-color: #6200ee; color: white}
 
 /* Buttons */
 .l-btn-plain {color: #6200ee;}
+/* SVG icons */
+.l-btn.exf-svg-icon svg {fill: #fff;}
+.l-btn-plain.exf-svg-icon svg {fill: #6200ee;}
 
 /* Inputs */
 .exf-input textarea {border-color: #dfdfdf; border-bottom-color: #c2c2c2; height: 100%; width: 100%;}
