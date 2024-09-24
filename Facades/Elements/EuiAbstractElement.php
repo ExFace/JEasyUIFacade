@@ -566,4 +566,34 @@ HTML;
         
         return;
     }
+
+    /**
+     * @inheritDoc
+     */
+    public function buildJsAskForConfirmationDialog(array $translationTokens, string $fnConfirm = 'fnAction'): string
+    {
+        $showDialogJs = <<<JS
+
+$.messager.confirm({
+	title: '{$this->translate($translationTokens['title'])}',
+	msg: '{$this->translate($translationTokens['content'])}',
+	ok: '{$this->translate($translationTokens['confirm'])}',
+	cancel: '{$this->translate($translationTokens['cancel'])}',
+	fn: function(confirm){
+		if (confirm){
+			{$fnConfirm}();
+		}
+	}
+});
+JS;
+
+
+        return <<<JS
+
+(function (){
+    {$showDialogJs}
+    return true;
+})({$fnConfirm})
+JS;
+    }
 }
