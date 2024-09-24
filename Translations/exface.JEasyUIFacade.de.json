@@ -23,5 +23,21 @@
 	
 	"WIDGET.IMAGEGALLERY.CANNOT_DOWNLOAD_WITHOUT_URL": "Datei kann nicht herutergeladen werden: sie ist entweder noch nicht komplett hochgeladen worden or hat keine Download-URL",
 	
-	"WIDGET.UPLOADER.BROWSE": "Durchsuchen"
+	"WIDGET.UPLOADER.BROWSE": "Durchsuchen",
+
+
+	"MESSAGE.CONFIRM.CANCEL": "Abbrechen",
+
+	"MESSAGE.CONFIRM.CHANGES.TITLE": "Änderungen verwerfen?",
+	"MESSAGE.CONFIRM.CHANGES.TEXT": "Es gibt ungespeicherte Änderungen. Wenn sie wegnavigieren, gehe diese verloren!",
+	"MESSAGE.CONFIRM.CHANGES.DISCARD": "Verwerfen",
+
+	"MESSAGE.CONFIRM.ACTION.TITLE": "Bestätigung erforderlich",
+	"MESSAGE.CONFIRM.ACTION.TEXT": "Bitte bestätigen Sie, dass Sie diese Aktion wirklich durchführen wollen.",
+	"MESSAGE.CONFIRM.ACTION.CONFIRM": "Bestätigen",
+
+	"MESSAGE.CONFIRM.DELETE.TITLE": "Eintrag löschen",
+	"MESSAGE.CONFIRM.DELETE.TEXT": "Wollen Sie diesen Eintrag wirklich löschen?",
+	"MESSAGE.CONFIRM.DELETE.CONFIRM": "Löschen"
+
 }
