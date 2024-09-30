@@ -413,7 +413,7 @@ JS;
      * @see \exface\JEasyUIFacade\Facades\Elements\EuiData::buildJsInitOptionsColumn()
      */
     protected function buildJsInitOptionsColumn(DataColumn $col){
-        $editor = $this->getEditors()[$col->getId()];
+        $editor = $this->getEditors()[$col->getId()] ?? null;
         $output = parent::buildJsInitOptionsColumn($col);
         $output .= "\n
                         " . ($editor ? ', editor: {type: "' . $editor->getElementType() . '"' . ($editor->buildJsInitOptions() ? ', options: {' . $editor->buildJsInitOptions() . '}' : '') . '}' : '');
