@@ -362,7 +362,7 @@ table.debug-profiler tr.event > td > .waterfall-bar {background-color: gray !imp
 .exf-pivottable table.pvtTable tbody tr th:last-of-type,
 .exf-pivottable table.pvtTable thead tr th:last-of-type {border-right: 1px solid #c2c2c2}
 .exf-pivottable table.pvtTable thead tr:last-of-type {border-bottom: 2px solid #c2c2c2;}
-.exf-pivottable table.pvtTable tbody tr td {border-color: #dfdfdf;}
+.exf-pivottable table.pvtTable tbody tr td {border-color: #dfdfdf; white-space: nowrap;}
 .exf-pivottable table.pvtTable tbody tr td.colTotal,
 .exf-pivottable table.pvtTable tbody tr td.pvtGrandTotal,
 .exf-pivottable table.pvtTable tbody tr th.pvtTotalLabel {border-top: 2px solid #c2c2c2;}
