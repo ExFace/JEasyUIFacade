@@ -74,6 +74,10 @@ fieldset.exface_inputgroup legend {color: #404040;}
 /* In split with split-caption and data header */
 .panel > .panel-body.panel-filled:not(.panel-body-noheader) > .exf-data-widget:not(.exf-data-hide-header) > .panel > .panel-body {border-top-width: 0}
 
+/* IFrames */
+iframe {border: 0}
+.panel-filled > iframe {border: 1px solid #dfdfdf}
+
 /* jEasyUI customizing */
 div.panel-body {background-color:#fff;}
 div.panel-body-noheader > .exf-container-filler > .panel > .panel-body-noheader {border-top: 1px solid #dfdfdf;}
