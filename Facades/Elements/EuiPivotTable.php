@@ -2,6 +2,7 @@
 namespace exface\JEasyUIFacade\Facades\Elements;
 
 use exface\Core\Interfaces\DataSheets\DataSheetInterface;
+use exface\Core\Interfaces\DataTypes\EnumDataTypeInterface;
 use exface\Core\Interfaces\WidgetInterface;
 use exface\JEasyUIFacade\Facades\JEasyUIFacade;
 use exface\JEasyUIFacade\Facades\Elements\Traits\EuiDataElementTrait;
@@ -137,13 +138,33 @@ JS;
     public static function buildResponseData(JEasyUIFacade $facade, DataSheetInterface $data_sheet, WidgetInterface $widget)
     {
         $data = array();
+        $colFormatters = [];
+        $colCaptions = [];
+        foreach ($data_sheet->getColumns() as $col) {
+            $colWidget = $widget->getColumnByDataColumnName($col->getName());
+            if (! $colWidget) {
+                continue;
+            }
+            $colCaptions[$col->getName()] = $colWidget->getCaption();
+            $colType = $col->getDataType();
+            switch (true) {
+                case $colType instanceof EnumDataTypeInterface:
+                    $colFormatters[$col->getName()] = $colType;
+                    break;
+            }
+        }
+        
         foreach ($data_sheet->getRows() as $row_nr => $row) {
             foreach ($row as $fld => $val) {
-                if ($col = $widget->getColumnByDataColumnName($fld)) {
-                    $data[$row_nr][$col->getCaption()] = $val;
+                if ($colCaption = $colCaptions[$fld] ?? null) {
+                    if (null !== $colType = $colFormatters[$fld] ?? null) {
+                        $val = $colType->format($val);
+                    }
+                    $data[$row_nr][$colCaption] = $val;
                 }
             }
         }
+
         return [
             'pivotdata' => $data
         ];

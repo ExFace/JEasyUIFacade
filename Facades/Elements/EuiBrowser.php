@@ -40,6 +40,6 @@ class EuiBrowser extends EuiAbstractElement
      */
     public function buildCssElementStyle()
     {
-        return 'width: 100%; height: calc(100% - 3px); border: 0;';
+        return 'width: 100%; height: calc(100% - 3px);';
     }
 }
