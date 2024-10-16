@@ -72,7 +72,7 @@ HTML;
         // zeigt wird. Aus diesem Grund wird hier dann overflow-y: hidden gesetzt. Falls
         // das Probleme gibt, muss u.U. eine andere Loesung gefunden werden.
         if ($widget->getHeight()->isUndefined() && ($containerWidget = $widget->getParentByClass('exface\\Core\\Interfaces\\Widgets\\iContainOtherWidgets')) && ($containerWidget->countWidgetsVisible() > 1)) {
-            $styleScript = 'overflow-y:hidden;';
+            $styleScript = '';
         }
         
         // Wrapper wird gebraucht, denn es wird von easyui neben dem .easyui-panel div
@@ -85,7 +85,7 @@ HTML;
                             id="{$this->getId()}"
                             data-options="{$this->buildJsDataOptions()}"
                             {$title}
-                            style="{$styleScript}"">
+                            style="{$styleScript}">
                         {$children_html}
                 </div>
 
