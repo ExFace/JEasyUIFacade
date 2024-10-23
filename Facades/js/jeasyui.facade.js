@@ -102,6 +102,11 @@ function contextBarRefresh(data){
 					</div> \
 				</div>');
 		$('#contextBar').prepend(btn);
+
+		// Handle JS tracer if it is enabled in the DebugContext
+		if (id.endsWith('CoreDebugContext')) {
+			_setupTracer(data[id]);
+		}
 	}
 	$.parser.parse($('#contextBar'));
 	
@@ -185,6 +190,34 @@ function contextShowMenu(containerSelector){
 			jeasyui_show_error(jqXHR.status + " " + jqXHR.statusText, jqXHR.responseText, $(containerSelector).data('widget'));
 		}
 	});
+}
+
+function _setupTracer(oCtxtData) {
+	var jqBar = $('#contextBar');
+	if (oCtxtData.indicator !== 'OFF' && oCtxtData.indicator.includes('F')) {
+		if (jqBar.data('traceJs') !== true) {
+			jqBar.data('traceJs', true);
+			if (window.eruda === undefined) {
+				var script = document.createElement('script'); 
+				script.src="vendor/npm-asset/eruda/eruda.js"; 
+				document.body.appendChild(script); 
+				script.onload = function () { 
+					eruda.init();
+				} 
+			}
+			$(document).on('debugShowJsTrace', function(oEvent) {
+				if (window.eruda !== undefined) {
+					eruda.show();
+				}
+				oEvent.preventDefault();
+			});
+		}
+	} else {
+		if (jqBar.data('traceJs') === true) {
+			jqBar.data('traceJs', false);
+			$(document).off('debugShowJsTrace');
+		}
+	}
 }
 
 function getPageId(){
