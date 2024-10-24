@@ -148,8 +148,8 @@
     "LIBS.TERMINAL.UNIX_FORMATTING_JS": "npm-asset/jquery.terminal/js/unix_formatting.js",
     "LIBS.TERMINAL.TERMINAL_CSS": "npm-asset/jquery.terminal/css/jquery.terminal.min.css",
 
-	"LIBS.TOASTUI.EDITOR_JS": "exface/jeasyuifacade/Facades/js/toastui-editor-all.min.js",
-	"LIBS.TOASTUI.EDITOR_CSS": "npm-asset/toast-ui--editor/dist/toastui-editor.css",
+	"LIBS.TOASTUI.EDITOR.JS": "exface/jeasyuifacade/Facades/js/toastui-editor-all.min.js",
+	"LIBS.TOASTUI.EDITOR.CSS": "npm-asset/toast-ui--editor/dist/toastui-editor.css",
 	"LIBS.CODEMIRROR.JS": "npm-asset/codemirror/lib/codemirror.js",
 	"LIBS.CODEMIRROR.CSS": "npm-asset/codemirror/lib/codemirror.css",
     
