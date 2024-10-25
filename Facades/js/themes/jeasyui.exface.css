@@ -144,6 +144,7 @@ div.messager-body{overflow-y: auto;}
 /* InputJson widget */
 .jsoneditor {text-align: left;}
 .exf-control .jsoneditor div.outer {margin: 0;}
+.exf-control .jsoneditor .jsoneditor-contextmenu-root {position: fixed; z-index: 1;}
 
 /* Markdown */
 .markdown-body {font-size: 14px !important;}
