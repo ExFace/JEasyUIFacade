@@ -15,6 +15,10 @@ use exface\Core\Facades\AbstractAjaxFacade\Elements\JqueryMasonryGridTrait;
  */
 class EuiDialogHeader extends EuiWidgetGrid
 {
+    /**
+     * 
+     * @return void
+     */
     protected function init()
     {
         parent::init();
@@ -37,6 +41,23 @@ class EuiDialogHeader extends EuiWidgetGrid
             }
         }
     }
+
+    /**
+     * Returns the HTML for a jEasyUI layout region panel
+     * 
+     * @link https://www.jeasyui.com/documentation/index.php > layout
+     * 
+     * @return string
+     */
+    public function buildHtmlLayoutRegion() : string
+    {
+        return <<<HTML
+
+                    <div data-options="region:'north'" class="exf-dialog-header" style="height: {$this->getHeight()}">
+                        {$this->buildHtml()}
+                    </div>
+HTML;
+    }
     
     public function buildCssElementClass()
     {
@@ -51,9 +72,15 @@ class EuiDialogHeader extends EuiWidgetGrid
      */
     public function buildJsLayouter() : string
     {
+        $dialogEl = $this->getFacade()->getElement($this->getWidget()->getDialog());
+        if ($dialogEl->isLayout()) {
+            $panelSelectorJs = "$('#{$this->getId()}').parents('.easyui-layout').first().layout('panel','north')";
+        } else {
+            $panelSelectorJs = "$('#{$this->getId()}')";
+        }
         return parent::buildJsLayouter() . <<<JS
 (function(){
-                var jqPanel = $('#{$this->getId()}').parents('.easyui-layout').first().layout('panel','north');
+                var jqPanel = {$panelSelectorJs};
                 if (! jqPanel) return;
                 var jqGrid = jqPanel.find('.grid');
                 if (! jqGrid) return;
