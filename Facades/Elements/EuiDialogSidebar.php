@@ -40,8 +40,8 @@ class EuiDialogSidebar extends EuiWidgetGrid
 
         return <<<HTML
 
-                    <div data-options="region:'east', border: false, {$options}" class="{$this->buildCssElementClass()}" style="{$style}">
-                        {$this->buildHtml()}
+                    <div data-options="region:'east', {$options}" class="{$this->buildCssElementClass()}" style="{$style}">
+                        {$this->buildHtmlForChildren()}
                     </div>
 HTML;
     }   
