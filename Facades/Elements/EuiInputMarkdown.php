@@ -2,7 +2,13 @@
 namespace exface\JEasyUIFacade\Facades\Elements;
 
 use exface\Core\Facades\AbstractAjaxFacade\Elements\ToastUIEditorTrait;
+use exface\Core\Widgets\InputMarkdown;
 
+/**
+ * JEasyUI implementation of the corresponding widget.
+ * 
+ * @see InputMarkdown
+ */
 class EuiInputMarkdown extends EuiInput
 {
     use ToastUIEditorTrait;
@@ -60,7 +66,7 @@ class EuiInputMarkdown extends EuiInput
      */
     public function buildJs()
     {
-        $editorInit = $this->buildJsMarkdownInitEditor($this->getWidget()->isDisabled());
+        $editorInit = $this->getWidget()->isDisabled() ? $this->buildJsMarkdownInitViewer() : $this->buildJsMarkdownInitEditor();
         return <<<JS
 
         var {$this->buildJsMarkdownVar()} = {$editorInit}

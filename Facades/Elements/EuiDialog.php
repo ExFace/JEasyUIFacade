@@ -75,14 +75,13 @@ HTML;
                 </div>
 HTML;
         }
+
+        $headerElem = $widget->hasHeader() ? $this->getFacade()->getElement($widget->getHeader()) : null;
+        $sidebarElem = $widget->hasSidebar() ? $this->getFacade()->getElement($widget->getSidebar()) : null;
         
-        if ($widget->hasHeader() === true) {
-            $headerElem = $this->getFacade()->getElement($widget->getHeader());
+        if ($headerElem !== null || $sidebarElem !== null) {
             
-            // If the dialog does not have a fixed height, we cannot use jEasyUI split as it will have
-            // a height of 0. Instead, use a simple <div>.
-            // TODO height:max of inner widgets probably won't work here - only in the split.
-            if ($widget->getHeight()->isUndefined() || $widget->getHeight()->getValue() === 'auto') {
+            if ($headerElem && ! $this->isLayout()) {
                 $children_html = <<<HTML
                 
                 <div style="height: 100%">
@@ -94,15 +93,17 @@ HTML;
                 
 HTML;
             } else {
+                $headerHtml = $headerElem !== null ? $headerElem->buildHtmlLayoutRegion() : '';
+                $sidebarHtml = $sidebarElem !== null ? $sidebarElem->buildHtmlLayoutRegion() : '';
+
                 $children_html = <<<HTML
             
                 <div class="easyui-layout" data-options="fit:true">
-                    <div data-options="region:'north'" class="exf-dialog-header" style="height: {$headerElem->getHeight()}">
-                        {$headerElem->buildHtml()}
-                    </div>
+                    {$headerHtml}
                     <div data-options="region:'center'">
                         {$children_html}
                     </div>
+                    {$sidebarHtml}
                 </div>
             
 HTML;
@@ -135,6 +136,17 @@ HTML;
         	</div><!-- /dialog -->
 HTML;
         return $output;
+    }
+
+    /**
+     * 
+     * @return bool
+     */
+    public function isLayout() : bool
+    {
+        $widget = $this->getWidget();
+        $noLayout = ($widget->getHeight()->isUndefined() || $widget->getHeight()->getValue() === 'auto') && $widget->hasSidebar() === false;
+        return $noLayout === false;  
     }
     
     /**
