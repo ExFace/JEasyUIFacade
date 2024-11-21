@@ -220,10 +220,10 @@ JS;
     /**
      * TODO: Replace stub with proper implementation.
      * 
-     * @param string $aLegendActive
+     * @param string $aLegendActiveJs
      * @return string
      */
-    protected function buildJsLegendActiveEventHandler(string $aLegendActive): string
+    protected function buildJsLegendActiveEventHandler(string $aLegendActiveJs): string
     {
         return '';
     }
@@ -231,10 +231,10 @@ JS;
     /**
      * TODO: Replace stub with proper implementation.
      * 
-     * @param string $aLegendDisabled
+     * @param string $aLegendDisabledJs
      * @return string
      */
-    protected function buildJsLegendDisabledEventHandler(string $aLegendDisabled): string
+    protected function buildJsLegendDisabledEventHandler(string $aLegendDisabledJs): string
     {
         return '';
     }
