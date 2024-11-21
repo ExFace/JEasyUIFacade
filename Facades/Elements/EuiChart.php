@@ -216,4 +216,26 @@ JS;
     {
         return $this->buildJsResizeInnerWidget() . $this->buildJsEChartsResize();
     }
+
+    /**
+     * TODO: Replace stub with proper implementation.
+     * 
+     * @param string $aLegendActive
+     * @return string
+     */
+    protected function buildJsLegendActiveEventHandler(string $aLegendActive): string
+    {
+        return '';
+    }
+
+    /**
+     * TODO: Replace stub with proper implementation.
+     * 
+     * @param string $aLegendDisabled
+     * @return string
+     */
+    protected function buildJsLegendDisabledEventHandler(string $aLegendDisabled): string
+    {
+        return '';
+    }
 }
