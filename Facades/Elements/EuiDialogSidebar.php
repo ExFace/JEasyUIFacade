@@ -30,12 +30,17 @@ class EuiDialogSidebar extends EuiWidgetGrid
         }
         if (! $widget->isCollapsible()) {
             $options .= "collapsible: false,";
+        } else {
+            $options .= "collapsible: true,";
         }
         if ($widget->isCollapsed()) {
             $options .= "collapsed: true,";
         }
         if ($widget->isResizable()) {
             $options .= "split: true,";
+        }
+        if (null !== $this->getOnResizeScript()) {
+            $options .= "onResize: {$this->buildJsFunctionPrefix()}_onResize, ";
         }
 
         return <<<HTML
@@ -45,6 +50,22 @@ class EuiDialogSidebar extends EuiWidgetGrid
                     </div>
 HTML;
     }   
+
+    public function buildJs()
+    {
+        $js = parent::buildJs();
+        
+        if (null !== $script = $this->getOnResizeScript()) {
+            $js .= <<<JS
+
+function {$this->buildJsFunctionPrefix()}_onResize(){
+    $script
+}
+JS;
+        }
+
+        return $js;
+    }
 
     public function buildCssElementClass()
     {
