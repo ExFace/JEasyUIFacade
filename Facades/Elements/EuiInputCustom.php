@@ -3,8 +3,19 @@ namespace exface\JEasyUIFacade\Facades\Elements;
 
 use exface\Core\Interfaces\Actions\ActionInterface;
 
+/**
+ * @method \exface\Core\Widgets\InputCustom getWidget()
+ */
 class EuiInputCustom extends EuiInput
 {
+    protected function init()
+    {
+        parent::init();
+        if (null !== $js = $this->getWidget()->getScriptToResize()) {
+            $this->getFacade()->getElement($this->getWidget()->getParent())->addOnResizeScript($js);
+        }
+    }
+
     /**
      * 
      * {@inheritDoc}
