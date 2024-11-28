@@ -88,4 +88,16 @@ JS;
     {
         return $this->buildJsResizeInnerWidget();
     }
+
+    /**
+     * 
+     * @see \exface\Core\Facades\AbstractAjaxFacade\Elements\AbstractJqueryElement::buildJsCallFunction()
+     */
+    public function buildJsCallFunction(string $functionName = null, array $parameters = []) : string
+    {
+        if (null !== $js = $this->buildJsCallFunctionOfJExcel($functionName, $parameters)) {
+            return $js;
+        }
+        return parent::buildJsCallFunction($functionName, $parameters);
+    }
 }
