@@ -23,5 +23,19 @@
 	
 	"WIDGET.IMAGEGALLERY.CANNOT_DOWNLOAD_WITHOUT_URL": "Cannot download file: it is either not uploaded correctly or has is no download URL",
 	
-	"WIDGET.UPLOADER.BROWSE": "Browse"
+	"WIDGET.UPLOADER.BROWSE": "Browse",
+
+	"MESSAGE.CANCEL": "Cancel",
+
+	"MESSAGE.CONFIRM.ACTION.TITLE": "Confirmation required",
+	"MESSAGE.CONFIRM.ACTION.TEXT": "Please confirm that you wish to proceed with this action.",
+	"MESSAGE.CONFIRM.ACTION.CONFIRM": "Confirm",
+
+	"MESSAGE.CONFIRM.CHANGES.TITLE": "Discard changes?",
+	"MESSAGE.CONFIRM.CHANGES.TEXT": "There seem to be unsaved changes here. If you navigate away, they will be lost.",
+	"MESSAGE.CONFIRM.CHANGES.CONFIRM": "Discard changes",
+
+	"MESSAGE.CONFIRM.DELETE.TITLE": "Delete item",
+	"MESSAGE.CONFIRM.DELETE.TEXT": "Do you really want to delete this item?.",
+	"MESSAGE.CONFIRM.DELETE.CONFIRM": "Delete"
 }
