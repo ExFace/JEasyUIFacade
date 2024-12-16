@@ -389,3 +389,6 @@ table.debug-profiler tr.event > td > .waterfall-bar {background-color: gray !imp
 /* IFrames */
 iframe {border: 0}
 .panel-filled > iframe {border: 1px solid #c3d9e0}
+
+/* AIChat, DeepChat */
+.exf-inputcustom > deep-chat {border-color: transparent !important;}
