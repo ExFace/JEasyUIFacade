@@ -21,21 +21,34 @@ class EuiDialogSidebar extends EuiWidgetGrid
         $widget = $this->getWidget();
         $options = '';
         $style = '';
+        $title = $this->getCaption();
+        if ($title !== null && trim($title) === '') {
+            $title = null;
+        }
 
+        // Width
         if ($widthCss = $this->buildCssWidth()) {
             $style .= "width: {$widthCss};";
         }
-        if ($title = $this->getCaption()) {
-            $options .= "title: '{$title}',";
-        }
-        if (! $widget->isCollapsible()) {
-            $options .= "collapsible: false,";
-        } else {
+
+        // Collapsible
+        if ($widget->isCollapsible()) {
             $options .= "collapsible: true,";
+            if ($widget->isCollapsed()) {
+                $options .= "collapsed: true,";
+            }
+            // Make sure, there is always a title if the sidebar is collapsible because it will
+            // need its header to house the collapse-button
+            if ($title === null) {
+                $title = '';
+            }
+        } else {
+            $options .= "collapsible: false,";
         }
-        if ($widget->isCollapsed()) {
-            $options .= "collapsed: true,";
+        if ($title !== null) {
+            $options .= "title: '{$this->escapeString($title, false, true)}',";
         }
+        
         if ($widget->isResizable()) {
             $options .= "split: true,";
         }

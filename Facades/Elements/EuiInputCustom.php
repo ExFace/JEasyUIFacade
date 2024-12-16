@@ -44,7 +44,7 @@ class EuiInputCustom extends EuiInput
         
         $initPropsJs = '';
         if (($value = $this->getWidget()->getValueWithDefaults()) !== null) {
-            $initPropsJs .= ($this->getWidget()->getScriptToSetValue($this->escapeString($value, true, false)) ?? '');
+            $initPropsJs .= $this->getWidget()->getScriptToSetValue($this->escapeString($value, true, false) ?? '') . ';';
         }
         if ($this->getWidget()->isDisabled()) {
             $initPropsJs .= $this->buildJsSetDisabled(true);
