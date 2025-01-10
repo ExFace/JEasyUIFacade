@@ -324,7 +324,6 @@ $(function(){
     	{$this->buildJsFunctionPrefix()}ExecuteCommand(command, myTerm{$this->getId()})
     }, {
         greetings: {$this->escapeString($this->getCaption(), true, false)},
-        execHistory: true,
         scrollOnEcho: true,
         prompt: {$this->getStyledPrompt("'" . $this->getWidget()->getWorkingDirectoryPath(). "'")}
     });
