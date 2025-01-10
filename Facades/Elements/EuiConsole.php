@@ -3,6 +3,7 @@ namespace exface\JEasyUIFacade\Facades\Elements;
 
 use exface\Core\Facades\WebConsoleFacade;
 use exface\Core\Factories\FacadeFactory;
+use exface\Core\Widgets\Console;
 use exface\Core\Widgets\Parts\ConsoleCommandPreset;
 use exface\JEasyUIFacade\Facades\Elements\Traits\EuiPanelWrapperTrait;
 
@@ -202,15 +203,15 @@ JS;
     /**
      * Build JS to execute commands
      * 
-     * @param string $commandsJs
+     * @param string $aCommandsJs
      * @param string $terminalJs
      * @param string $placeholdersJs
      * @return string
      */
-    protected function buildJsRunCommands(string $commandsJs, string $terminalJs, string $placeholdersJs = null) : string
+    protected function buildJsRunCommands(string $aCommandsJs, string $terminalJs, string $placeholdersJs = null) : string
     {
         $placeholdersJs = $placeholdersJs !== null ? ', ' . $placeholdersJs : '';
-        return "{$this->buildJsFunctionPrefix()}ExecuteCommandsJson({$commandsJs}, {$terminalJs} {$placeholdersJs});";
+        return "{$this->buildJsFunctionPrefix()}ExecuteCommandsJson({$aCommandsJs}, {$terminalJs} {$placeholdersJs});";
     }
     
     /**
@@ -290,7 +291,7 @@ function {$this->buildJsFunctionPrefix()}ExecuteCommand(command, terminal) {
 //Function to send commands given in an array to server one after another
 function {$this->buildJsFunctionPrefix()}ExecuteCommandsJson(commandsarray, terminal, placeholders){            
     setTimeout(function(){ 
-        $('#{$this->getId()}').terminal().focus(); 
+        terminal.focus(); 
     }, 0);
     
     if (placeholders && ! $.isEmptyObject(placeholders)) {
@@ -307,6 +308,7 @@ function {$this->buildJsFunctionPrefix()}ExecuteCommandsJson(commandsarray, term
                 return terminal.echo(terminal.get_prompt() + command);
             })
             .then(function(){
+                terminal.history().append(command);
                 return {$this->buildJsFunctionPrefix()}ExecuteCommand(command, terminal).promise();
             })
             
@@ -321,7 +323,8 @@ $(function(){
     var myTerm{$this->getId()} = $('#{$this->getId()}').terminal(function(command) {
     	{$this->buildJsFunctionPrefix()}ExecuteCommand(command, myTerm{$this->getId()})
     }, {
-        greetings: '{$this->getCaption()}',
+        greetings: {$this->escapeString($this->getCaption(), true, false)},
+        execHistory: true,
         scrollOnEcho: true,
         prompt: {$this->getStyledPrompt("'" . $this->getWidget()->getWorkingDirectoryPath(). "'")}
     });
@@ -373,5 +376,16 @@ JS;
     public function buildCssElementClass()
     {
         return 'exf-console';
+    }
+
+    public function buildJsCallFunction(string $functionName = null, array $parameters = []) : string
+    {
+        switch (true) {
+            case $functionName === Console::FUNCTION_RUN_COMMAND:
+                $cmd = $parameters[0];
+                $cmd = trim(trim($cmd), '"');
+                return "{$this->buildJsFunctionPrefix()}ExecuteCommandsJson([{$this->escapeString($cmd, true, false)}], $('#{$this->getId()}').terminal());";
+        }
+        return parent::buildJsCallFunction($functionName, $parameters);
     }
 }
