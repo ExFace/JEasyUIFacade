@@ -11,7 +11,8 @@ class EuiInputCustom extends EuiInput
     protected function init()
     {
         parent::init();
-        if (null !== $js = $this->getWidget()->getScriptToResize()) {
+        $widget = $this->getWidget();
+        if ($widget->hasParent() && null !== $js = $this->getWidget()->getScriptToResize()) {
             $this->getFacade()->getElement($this->getWidget()->getParent())->addOnResizeScript($js);
         }
     }
@@ -61,6 +62,10 @@ setTimeout(function(){
     {$this->buildJsLiveReference()}
     {$this->buildJsOnChangeHandler()}
 }, 0);
+
+setTimeout(function(){
+    {$this->getWidget()->getScriptToResize()}
+}, 100);
 
 JS;
     }
