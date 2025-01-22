@@ -45,6 +45,11 @@ class EuiNavTiles extends EuiWidgetGrid
             default: 
                 foreach ($this->getWidget()->getWidgets() as $tiles) {
                     $tiles->setNumberOfColumns(1);
+                    // Make sure tile groups are displayed next-to-each-other (by default
+                    // a Tiles widget would take up all the available space)
+                    if ($tiles->getWidth()->isUndefined()) {
+                        $tiles->setWidth(1);
+                    }
                     $this->colorize($tiles);
                 }
                 break;
