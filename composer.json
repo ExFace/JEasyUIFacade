@@ -1,71 +1,73 @@
 {
-	"name" : "exface/JEasyUIFacade",
-	"description" : "UI facade for the ExFace plattform based on jQuery EasyUI",
-	"type" : "library",
-	"license" : [
-		"GPL-3.0+",
-		"proprietary"
-	],
-	"authors" : [{
-			"name" : "Andrej Kabachnik",
-			"email" : "kabachnik@gmail.com",
-			"role" : "Creator"
-		}
-	],
-	"support" : {
-		"issues" : "https://github.com/exface/JEasyUIFacade/issues"
-	},
-	"require" : {
-		"exface/core" : "^1.0",
-		"bower-asset/masonry" : "^4",
-		"bower-asset/blueimp-file-upload" : "^9.12",
-		"bower-asset/paste.js" : "^0.0.15",
-		"bower-asset/font-awesome" : "^4.7",
-		"bower-asset/jquery-qrcode" : "^1.0",
-		"npm-asset/slick-carousel" : "^1.8",
-		"npm-asset/slick-lightbox" : "~0.2.12",
-		"npm-asset/jsoneditor" : "^7.0||^8.0||^9.0",
-		"npm-asset/picomodal" : "^3.0.0",
-		"npm-asset/jquery-prettytextdiff" : "^1.0.3",
-		"npm-asset/blueimp-load-image" : "^2.6",
-		"npm-asset/github-markdown-css" : "^2.10.0",
-		"npm-asset/jquery.terminal" : "^2.5.0",
-		"npm-asset/echarts" : "^5",
-		"npm-asset/jspreadsheet-ce" : "^4.10",
-		"npm-asset/jspreadsheet--autowidth" : "^2.5",
-		"npm-asset/moment" : "^2.24.0",
-		"npm-asset/cronstrue" : "^1.108",
-		"npm-asset/diff-match-patch" : "^1.0",
-		"npm-asset/leaflet" : "^1.7",
-		"npm-asset/leaflet-extra-markers" : "^1.2",
-		"npm-asset/leaflet-fullscreen" : "^1.0",
-		"npm-asset/leaflet.locatecontrol" : "~0.72",
-		"npm-asset/esri-leaflet" : "^3.0",
-		"npm-asset/leaflet.markercluster" : "^1.4",
-		"npm-asset/geoman-io--leaflet-geoman-free" : "^2.16",
-		"npm-asset/toast-ui--editor" : "^3.1",
-		"npm-asset/tinycolor2" : "^1.4.2",
-		"npm-asset/tinygradient" : "^1.1.4",
-		"npm-asset/pivottable" : "^2.23",
-		"npm-asset/jquery-ui" : "^1"
-	},
-	"suggest" : {
-		"bower-asset/jeasyui" : "Free (GPL) version of jEasyUI up-to 1.4.3. Otherwise provide your own!"
-	},
-	"extra" : {
-		"app" : {
-			"app_uid" : "0x11e6c930ff1f486693cce4b318306b9a",
-			"app_alias" : "exface.JEasyUIFacade"
-		}
-	},
-	"autoload" : {
-		"psr-4" : {
-			"exface\\JEasyUIFacade\\" : ""
-		},
-		"exclude-from-classmap" : [
-			"/Config/",
-			"/Translations/",
-			"/Model/"
-		]
-	}
+    "name": "exface/JEasyUIFacade",
+    "description": "UI facade for the ExFace plattform based on jQuery EasyUI",
+    "type": "library",
+    "license": [
+        "GPL-3.0+",
+        "proprietary"
+    ],
+    "authors": [
+        {
+            "name": "Andrej Kabachnik",
+            "email": "kabachnik@gmail.com",
+            "role": "Creator"
+        }
+    ],
+    "support": {
+        "issues": "https://github.com/exface/JEasyUIFacade/issues"
+    },
+    "require": {
+        "exface/core": "^1.0",
+        "bower-asset/masonry": "^4",
+        "bower-asset/blueimp-file-upload": "^9.12",
+        "bower-asset/paste.js": "^0.0.15",
+        "bower-asset/font-awesome": "^4.7",
+        "bower-asset/jquery-qrcode": "^1.0",
+        "npm-asset/slick-carousel": "^1.8",
+        "npm-asset/slick-lightbox": "~0.2.12",
+        "npm-asset/jsoneditor": "^7.0||^8.0||^9.0||^10",
+        "npm-asset/picomodal": "^3.0",
+        "npm-asset/jquery-prettytextdiff": "^1.0.3",
+        "npm-asset/blueimp-load-image": "^2.6",
+        "npm-asset/github-markdown-css": "^2.10",
+        "npm-asset/jquery.terminal": "^2.5",
+        "npm-asset/echarts": "^5",
+        "npm-asset/jspreadsheet-ce": "^4.10",
+        "npm-asset/jspreadsheet--autowidth": "^2.5",
+        "npm-asset/moment": "^2.24",
+        "npm-asset/cronstrue": "^1.108",
+        "npm-asset/diff-match-patch": "^1.0",
+        "npm-asset/leaflet": "^1.7",
+        "npm-asset/leaflet-extra-markers": "^1.2",
+        "npm-asset/leaflet-fullscreen": "^1.0",
+        "npm-asset/leaflet.locatecontrol": "~0.72",
+        "npm-asset/esri-leaflet": "^3.0",
+        "npm-asset/leaflet.markercluster": "^1.4",
+        "npm-asset/geoman-io--leaflet-geoman-free": "^2.16",
+        "npm-asset/toast-ui--editor": "^3.1",
+        "npm-asset/tinycolor2": "^1.4.2",
+        "npm-asset/tinygradient": "^1.1.4",
+        "npm-asset/pivottable": "^2.23",
+        "npm-asset/jquery-ui": "^1",
+        "npm-asset/jquery-comments": "^1.5"
+    },
+    "suggest": {
+        "bower-asset/jeasyui": "Free (GPL) version of jEasyUI up-to 1.4.3. Otherwise provide your own!"
+    },
+    "extra": {
+        "app": {
+            "app_uid": "0x11e6c930ff1f486693cce4b318306b9a",
+            "app_alias": "exface.JEasyUIFacade"
+        }
+    },
+    "autoload": {
+        "psr-4": {
+            "exface\\JEasyUIFacade\\": ""
+        },
+        "exclude-from-classmap": [
+            "/Config/",
+            "/Translations/",
+            "/Model/"
+        ]
+    }
 }

@@ -4,6 +4,11 @@ namespace exface\JEasyUIFacade\Facades\Elements;
 use exface\Core\Widgets\MenuButton;
 use exface\Core\Widgets\Tabs;
 
+/**
+ * Renders a jEasyUI Dialog for a Dialog widget using a Layout inside if the dialog has header and/or sidebar
+ * 
+ * @method \exface\Core\Widgets\Dialog getWidget()
+ */
 class EuiDialog extends EuiForm
 {
 
@@ -181,6 +186,9 @@ HTML;
         $output .= $this->buildJsForWidgets();
         if ($widget->hasHeader() === true) {
             $output .= $this->getFacade()->getElement($widget->getHeader())->buildJs();
+        }
+        if ($widget->hasSidebar()) {
+            $output .= $this->getFacade()->getElement($widget->getSidebar())->buildJs();
         }
         $output .= $this->buildJsButtons();
         

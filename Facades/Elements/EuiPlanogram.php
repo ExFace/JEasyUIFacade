@@ -92,7 +92,7 @@ HTML;
         /* @var $relation_to_diagram \exface\Core\CommonLogic\Model\RelationPath */
         $relation_to_diagram = $shape->getRelationPathToDiagramObject();
         $relation_from_data_to_diagram = $shape->getData()->getMetaObject()->findRelationPath($widget->getMetaObject())->toString();
-        $filter_shape_options = 'data.' . $this->getFacade()->getUrlFilterPrefix() . RelationPath::relationPathAdd($relation_to_diagram->toString(), $relation_to_diagram->getEndObject()->getUidAttributeAlias()) . ' = ' . $this->getFacade()->getElement($widget->getDiagramObjectSelectorWidget())->buildJsValueGetter() . ';';
+        $filter_shape_options = 'data.' . $this->getFacade()->getUrlFilterPrefix() . RelationPath::join($relation_to_diagram->toString(), $relation_to_diagram->getEndObject()->getUidAttributeAlias()) . ' = ' . $this->getFacade()->getElement($widget->getDiagramObjectSelectorWidget())->buildJsValueGetter() . ';';
         $filter_shape_data = 'data.' . $this->getFacade()->getUrlFilterPrefix() . $relation_from_data_to_diagram . ' = ' . $this->getFacade()->getElement($widget->getDiagramObjectSelectorWidget())->buildJsValueGetter() . ';';
         
         $bg_image = $widget->getPrefillData()->getCellValue($widget->getBackgroundImageAttributeAlias(), 0);
