@@ -1,7 +1,11 @@
 <?php
 namespace exface\JEasyUIFacade\Facades\Elements;
 
+use exface\Core\CommonLogic\Constants\Icons;
+use exface\Core\CommonLogic\UxonObject;
 use exface\Core\Facades\AbstractAjaxFacade\Elements\JsUploaderTrait;
+use exface\Core\Interfaces\Actions\ActionInterface;
+use exface\Core\Widgets\DataButton;
 use exface\Core\Widgets\Parts\Uploader;
 use exface\Core\DataTypes\DateTimeDataType;
 use exface\Core\Factories\DataTypeFactory;
@@ -41,7 +45,6 @@ class EuiCommentsFeed extends EuiData
     public function buildHtml()
     {
         $chart_panel_options = "title: '{$this->getCaption()}'";
-        //$this->addCarouselFeatureButtons($this->getWidget()->getToolbarMain()->getButtonGroupForSearchActions(), 1);
         $gridItemClass = $this->getMasonryItemClass() . ' exf-commentsfeed exf-data-widget';
         if ($this->getWidget()->getHideHeader()) {
             $gridItemClass .= ' exf-data-hide-header';
@@ -76,6 +79,8 @@ HTML;
     {$this->buildJsDataLoadFunction()}
 
     {$this->buildJsFunctionPrefix()}_init();
+
+    {$this->buildJsButtons()}
 
 JS;
     }
@@ -143,7 +148,9 @@ JS;
 						{$this->buildJsDataLoadFunctionBody('oParams')};
 					},
 					postComment: function(data, success, error) {
-						setTimeout(function() {
+                        $('#{$this->getId()}').data('_exfInput', data);
+						setTimeout(function() {console.log('create');
+                            {$this->getFacade()->getElement($this->getWidget()->getButtonCreate())->buildJsClickFunctionName()}()
 							success(saveComment(data));
 						}, 500);
 					},
@@ -193,10 +200,10 @@ JS;
         $('#{$this->getId()}').data('_loading', 1);
 
         var param = {
-        action: '{$widget->getLazyLoadingActionAlias()}',
-        resource: "{$widget->getPage()->getAliasWithNamespace()}",
-        element: "{$widget->getId()}",
-        object: "{$widget->getMetaObject()->getId()}"
+            action: '{$widget->getLazyLoadingActionAlias()}',
+            resource: "{$widget->getPage()->getAliasWithNamespace()}",
+            element: "{$widget->getId()}",
+            object: "{$widget->getMetaObject()->getId()}"
         };
 
         var checkOnBeforeLoad = function(param){
@@ -209,6 +216,21 @@ JS;
         }
 
         param = $.extend(param, ({$oParamsJs} || {}));
+        param.data.filters = {
+            "operator": "AND",
+            "ignore_empty_values": true,
+            "conditions": [
+                {
+                    "expression": "OffenePunkte__Nummer",
+                    "value": "OP-1530",
+                    "comparator": "==",
+                    "object_alias": "suedlink.Trasse.OffenePunkteKommentare",
+                    "apply_to_aggregates": "true"
+                }
+            ],
+            "nested_groups": []
+        };
+        console.log('AJAX request', param);
         
         $.ajax({
         url: "{$this->getAjaxUrl()}",
@@ -342,5 +364,53 @@ JS;
     protected function buildJsResize() : string
     {
         return $this->buildJsResizeInnerWidget();
+    }
+    
+    /**
+     * 
+     * @see AbstractJqueryElement::buildJsDataGetter()
+     */
+    public function buildJsDataGetter(ActionInterface $action = null)
+    {
+        $widget = $this->getWidget();
+        $dataObj = $this->getMetaObjectForDataGetter($action);
+        // Determine the columns we need in the actions data
+        $colNamesList = implode(',', $widget->getActionDataColumnNames());
+        
+        if ($action !== null && $action->isDefinedInWidget() && $action->getWidgetDefinedIn() instanceof DataButton) {
+            $customMode = $action->getWidgetDefinedIn()->getInputRows();
+        } else {
+            $customMode = null;
+        }
+        
+        switch (true) {
+            // If no action or explicitly requested ALL rows, return all loaded data
+            // TODO save the data loaded from the server somewhere and return it here
+            case $customMode === DataButton::INPUT_ROWS_ALL:
+            case $action === null:
+                return "($('#{$this->getId()}').data('_exfData') || {oId: '{$widget->getMetaObject()->getId()}', rows: []})";
+                
+            // If the button requires none of the rows explicitly
+            case $customMode === DataButton::INPUT_ROWS_NONE:
+                return '{}';
+
+            default:
+                return <<<JS
+
+                    (function(jqComments){
+                        var oInputData = jqComments.data('_exfInput');
+                        var oData = {
+                            oId: "{$widget->getMetaObject()->getId()}",
+                            rows: [
+                                {
+                                    oInputData
+                                }
+                            ]
+                        };
+                        console.log('data getter', oInputData);
+                        return oData;
+                    })($('#{$this->getId()}'))
+JS;
+        }
     }
 }
