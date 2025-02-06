@@ -87,6 +87,18 @@ JS;
 
     protected function buildJsCommentsInit() : string
     {
+        $btnCreateEl = $this->getFacade()->getElement($this->getWidget()->getButtonCreate());
+        $btnCreateEl->addOnSuccessScript("$('#{$this->getId()}')[0].successCallback()");
+        $btnCreateEl->addOnErrorScript("$('#{$this->getId()}')[0].errorCallback()");
+
+        // Include system columns for update/delete
+        $systemColsJs = '';
+        foreach ($this->getWidget()->getColumns() as $col) {
+            if ($col->isBoundToAttribute() && $col->getAttribute()->getRelationPath()->isEmpty() && $col->getAttribute()->isSystem()) {
+                $systemColsJs .= "{$col->getDataColumnName()}: data.{$col->getDataColumnName()},";
+            }
+        } 
+        $dateFormatJs = $this->escapeString($this->getWorkbench()->getCoreApp()->getTranslator()->translate('LOCALIZATION.DATE.DATETIME_FORMAT'), true, false);
         return <<<JS
 
             $(function() {
@@ -128,11 +140,12 @@ JS;
 									//isNew: 'is_new',
 									//createdByAdmin: 'created_by_admin',
 									//upvoteCount: 'upvote_count',
-									//userHasUpvoted: 'user_has_upvoted',
-                                    timeFormatter: function(time) {
-                                        return moment(time).fromNow();
-                                    }
+									//userHasUpvoted: 'user_has_upvoted'
 								},
+                    timeFormatter: function(time) {
+                        console.log('datetime', time);
+                        return exfTools.date.format(time, {$dateFormatJs})
+                    },
 					searchUsers: function(term, success, error) {
 					    setTimeout(function() {
 					        success(usersArray.filter(function(user) {
@@ -148,16 +161,28 @@ JS;
 						{$this->buildJsDataLoadFunctionBody('oParams')};
 					},
 					postComment: function(data, success, error) {
-                        $('#{$this->getId()}').data('_exfInput', data);
-						setTimeout(function() {console.log('create');
-                            {$this->getFacade()->getElement($this->getWidget()->getButtonCreate())->buildJsClickFunctionName()}()
-							success(saveComment(data));
-						}, 500);
+                        var oDataRow = {
+                            {$this->getWidget()->getCommentTitleColumn()->getDataColumnName()} : data.{$this->getWidget()->getCommentTitleColumn()->getDataColumnName()},
+                        };
+                        $('#{$this->getId()}').data('_exfInput', oDataRow);
+                        $('#{$this->getId()}')[0].successCallback = function(){
+                            success(data);
+                        };
+                        $('#{$this->getId()}')[0].errorCallback = error;
+                        {$btnCreateEl->buildJsClickFunctionName()}();
 					},
 					putComment: function(data, success, error) {
-						setTimeout(function() {
-							success(saveComment(data));
-						}, 500);
+						var oDataRow = {
+                            {$systemColsJs}
+                            {$this->getWidget()->getCommentTitleColumn()->getDataColumnName()} : data.{$this->getWidget()->getCommentTitleColumn()->getDataColumnName()},
+                        };
+                        $('#{$this->getId()}').data('_exfInput', oDataRow);
+                        $('#{$this->getId()}')[0].successCallback = function(){
+                            success(data);
+                            // TODO Force to read all comments from the server!
+                        };
+                        $('#{$this->getId()}')[0].errorCallback = error;
+                        {$btnCreateEl->buildJsClickFunctionName()}();
 					},
 					deleteComment: function(data, success, error) {
 						setTimeout(function() {
@@ -402,11 +427,10 @@ JS;
                         var oData = {
                             oId: "{$widget->getMetaObject()->getId()}",
                             rows: [
-                                {
-                                    oInputData
-                                }
+                                oInputData
                             ]
                         };
+                        {$this->buildJsLoadFilterHandleWidgetLinks('oData')};  
                         console.log('data getter', oInputData);
                         return oData;
                     })($('#{$this->getId()}'))
