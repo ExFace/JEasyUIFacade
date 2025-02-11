@@ -88,9 +88,15 @@ JS;
     protected function buildJsCommentsInit() : string
     {
         $btnCreateEl = $this->getFacade()->getElement($this->getWidget()->getButtonCreate());
-        $btnCreateEl->addOnSuccessScript("$('#{$this->getId()}')[0].successCallback()");
         $btnCreateEl->addOnErrorScript("$('#{$this->getId()}')[0].errorCallback()");
 
+        
+        $btnEditEl = $this->getFacade()->getElement($this->getWidget()->getButtonEdit());
+        $btnEditEl->addOnErrorScript("$('#{$this->getId()}')[0].errorCallback()");
+
+        $btnDeleteEl = $this->getFacade()->getElement($this->getWidget()->getButtonDelete());
+        $btnDeleteEl->addOnErrorScript("$('#{$this->getId()}')[0].errorCallback()");
+        
         // Include system columns for update/delete
         $systemColsJs = '';
         foreach ($this->getWidget()->getColumns() as $col) {
@@ -128,11 +134,12 @@ JS;
                     fieldMappings: {
                                     id: '{$this->getWidget()->getCommentIdColumn()->getDataColumnName()}',
 									created: '{$this->getWidget()->getCommentCreatedDateColumn()->getDataColumnName()}',
-									modified: '{$this->getWidget()->getCommentEditedDateColumn()->getDataColumnName()}',
-									content: '{$this->getWidget()->getCommentTitleColumn()->getDataColumnName()}',
+									modified: '_modified',
+									content: '{$this->getWidget()->getCommentContentColumn()->getDataColumnName()}',
 									creator: '{$this->getWidget()->getCommentAuthorIdColumn()->getDataColumnName()}',
 									fullname: '{$this->getWidget()->getCommentAuthorColumn()->getDataColumnName()}',
 								    createdByCurrentUser: '{$this->getWidget()->getIsCurrentUserAuthor()->getDataColumnName()}',
+                                    dbModified: '{$this->getWidget()->getCommentEditedDateColumn()->getDataColumnName()}',
 									//parent: 'parent',
 									//attachments: 'attachments',
 									//pings: 'pings',
@@ -143,7 +150,6 @@ JS;
 									//userHasUpvoted: 'user_has_upvoted'
 								},
                     timeFormatter: function(time) {
-                        console.log('datetime', time);
                         return exfTools.date.format(time, {$dateFormatJs})
                     },
 					searchUsers: function(term, success, error) {
@@ -162,32 +168,25 @@ JS;
 					},
 					postComment: function(data, success, error) {
                         var oDataRow = {
-                            {$this->getWidget()->getCommentTitleColumn()->getDataColumnName()} : data.{$this->getWidget()->getCommentTitleColumn()->getDataColumnName()},
+                            {$this->getWidget()->getCommentContentColumn()->getDataColumnName()} : data.{$this->getWidget()->getCommentContentColumn()->getDataColumnName()},
                         };
                         $('#{$this->getId()}').data('_exfInput', oDataRow);
-                        $('#{$this->getId()}')[0].successCallback = function(){
-                            success(data);
-                        };
                         $('#{$this->getId()}')[0].errorCallback = error;
                         {$btnCreateEl->buildJsClickFunctionName()}();
 					},
 					putComment: function(data, success, error) {
 						var oDataRow = {
                             {$systemColsJs}
-                            {$this->getWidget()->getCommentTitleColumn()->getDataColumnName()} : data.{$this->getWidget()->getCommentTitleColumn()->getDataColumnName()},
+                            {$this->getWidget()->getCommentContentColumn()->getDataColumnName()} : data.{$this->getWidget()->getCommentContentColumn()->getDataColumnName()},
                         };
                         $('#{$this->getId()}').data('_exfInput', oDataRow);
-                        $('#{$this->getId()}')[0].successCallback = function(){
-                            success(data);
-                            // TODO Force to read all comments from the server!
-                        };
                         $('#{$this->getId()}')[0].errorCallback = error;
-                        {$btnCreateEl->buildJsClickFunctionName()}();
+                        {$btnEditEl->buildJsClickFunctionName()}();
 					},
 					deleteComment: function(data, success, error) {
-						setTimeout(function() {
-							success();
-						}, 500);
+                        $('#{$this->getId()}').data('_exfInput', data);
+                        $('#{$this->getId()}')[0].errorCallback = error;
+                        {$btnDeleteEl->buildJsClickFunctionName()}();
 					},
 					upvoteComment: function(data, success, error) {
 						setTimeout(function() {
@@ -241,35 +240,38 @@ JS;
         }
 
         param = $.extend(param, ({$oParamsJs} || {}));
-        param.data.filters = {
-            "operator": "AND",
-            "ignore_empty_values": true,
-            "conditions": [
-                {
-                    "expression": "OffenePunkte__Nummer",
-                    "value": "OP-1530",
-                    "comparator": "==",
-                    "object_alias": "suedlink.Trasse.OffenePunkteKommentare",
-                    "apply_to_aggregates": "true"
-                }
-            ],
-            "nested_groups": []
-        };
-        console.log('AJAX request', param);
+        // param.data.filters = {
+        //     "operator": "AND",
+        //     "ignore_empty_values": true,
+        //     "conditions": [
+        //         {
+        //             "expression": "OffenePunkte__Nummer",
+        //             "value": "OP-1530",
+        //             "comparator": "==",
+        //             "object_alias": "suedlink.Trasse.OffenePunkteKommentare",
+        //             "apply_to_aggregates": "true"
+        //         }
+        //     ],
+        //     "nested_groups": []
+        // };
+        // console.log('AJAX request', param);
         
         $.ajax({
         url: "{$this->getAjaxUrl()}",
         data: param,
         method: 'POST',
         success: function(json){
+                var aRowsMod = [];
                 try {
-                    console.log(json);
-
-                    var carousel = $('#{$this->getId()}');
 
                     {$this->buildJsLoadFilterHandleWidgetLinks('json.rows')}
                         
-                    {$successJs} (json.rows);
+                    json.rows.forEach(function(oRow, i){
+                        var oRowMod = oRow;
+                        oRowMod._modified = oRow['{$this->getWidget()->getCommentEditedDateColumn()->getDataColumnName()}'];
+                        aRowsMod.push(oRowMod);
+                    });
+                    {$successJs} (aRowsMod);
                     
                     $('#{$this->getId()}').data('_loading', 0);
 
@@ -436,5 +438,15 @@ JS;
                     })($('#{$this->getId()}'))
 JS;
         }
+    }
+
+    /**
+     * Function to refresh the chart
+     *
+     * @return string
+     */
+    public function buildJsRefresh() : string
+    {
+        return "$('#{$this->getId()}').data('comments').fetchDataAndRender()";
     }
 }
