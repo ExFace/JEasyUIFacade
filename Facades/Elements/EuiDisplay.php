@@ -26,7 +26,7 @@ class EuiDisplay extends EuiValue implements JsValueDecoratingInterface
         $value = '';
         if ($expr !== null && ! $expr->isEmpty() && ! $expr->isReference()) {
             $value = $widget->getValueWithDefaults();
-            $value = $this->escapeString(nl2br($value), false, true);
+            $value = $this->escapeString(nl2br($value ?? ''), false, true);
         }
         
         $element = <<<HTML

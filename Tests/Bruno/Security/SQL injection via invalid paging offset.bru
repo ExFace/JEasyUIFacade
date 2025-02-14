@@ -1,0 +1,43 @@
+meta {
+  name: SQL injection via invalid paging offset
+  type: http
+  seq: 2
+}
+
+post {
+  url: {{BASE_URL}}/api/jeasyui?resource=exface.core.page-groups&element=DataTable&object=0x11ea4aba4bb25832b2cfe4b318306b9a&action=exface.Core.ReadData&page=HCL4ppsc4nbuggyRandomValue&rows=40&data%5BoId%5D=0x11ea4aba4bb25832b2cfe4b318306b9a&data%5Bfilters%5D%5Boperator%5D=AND&data%5Bfilters%5D%5Bignore_empty_values%5D=true&data%5Bfilters%5D%5Bconditions%5D%5B0%5D%5Bexpression%5D=NAME&data%5Bfilters%5D%5Bconditions%5D%5B0%5D%5Bcomparator%5D=&data%5Bfilters%5D%5Bconditions%5D%5B0%5D%5Bvalue%5D=&data%5Bfilters%5D%5Bconditions%5D%5B0%5D%5Bobject_alias%5D=exface.Core.PAGE_GROUP&data%5Bfilters%5D%5Bconditions%5D%5B1%5D%5Bexpression%5D=PAGE_GROUP_PAGES__PAGE&data%5Bfilters%5D%5Bconditions%5D%5B1%5D%5Bcomparator%5D=%3D%3D&data%5Bfilters%5D%5Bconditions%5D%5B1%5D%5Bvalue%5D=&data%5Bfilters%5D%5Bconditions%5D%5B1%5D%5Bobject_alias%5D=exface.Core.PAGE_GROUP&data%5Bfilters%5D%5Bconditions%5D%5B2%5D%5Bexpression%5D=AUTHORIZATION_POLICY&data%5Bfilters%5D%5Bconditions%5D%5B2%5D%5Bcomparator%5D=%3D%3D&data%5Bfilters%5D%5Bconditions%5D%5B2%5D%5Bvalue%5D=&data%5Bfilters%5D%5Bconditions%5D%5B2%5D%5Bobject_alias%5D=exface.Core.PAGE_GROUP&data%5Bfilters%5D%5Bconditions%5D%5B3%5D%5Bexpression%5D=APP&data%5Bfilters%5D%5Bconditions%5D%5B3%5D%5Bcomparator%5D=%3D%3D&data%5Bfilters%5D%5Bconditions%5D%5B3%5D%5Bvalue%5D=&data%5Bfilters%5D%5Bconditions%5D%5B3%5D%5Bobject_alias%5D=exface.Core.PAGE_GROUP
+  body: none
+  auth: none
+}
+
+params:query {
+  resource: exface.core.page-groups
+  element: DataTable
+  object: 0x11ea4aba4bb25832b2cfe4b318306b9a
+  action: exface.Core.ReadData
+  page: HCL4ppsc4nbuggyRandomValue
+  rows: 40
+  data[oId]: 0x11ea4aba4bb25832b2cfe4b318306b9a
+  data[filters][operator]: AND
+  data[filters][ignore_empty_values]: true
+  data[filters][conditions][0][expression]: NAME
+  data[filters][conditions][0][comparator]: 
+  data[filters][conditions][0][value]: 
+  data[filters][conditions][0][object_alias]: exface.Core.PAGE_GROUP
+  data[filters][conditions][1][expression]: PAGE_GROUP_PAGES__PAGE
+  data[filters][conditions][1][comparator]: ==
+  data[filters][conditions][1][value]: 
+  data[filters][conditions][1][object_alias]: exface.Core.PAGE_GROUP
+  data[filters][conditions][2][expression]: AUTHORIZATION_POLICY
+  data[filters][conditions][2][comparator]: ==
+  data[filters][conditions][2][value]: 
+  data[filters][conditions][2][object_alias]: exface.Core.PAGE_GROUP
+  data[filters][conditions][3][expression]: APP
+  data[filters][conditions][3][comparator]: ==
+  data[filters][conditions][3][value]: 
+  data[filters][conditions][3][object_alias]: exface.Core.PAGE_GROUP
+}
+
+docs {
+  Here the `&page` URL parameter is set to an invalid value `HCL4ppsc4nbuggyRandomValue` to test for a possible pass-through to the resulting SQL. 
+}
