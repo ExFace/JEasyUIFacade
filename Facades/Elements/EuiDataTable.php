@@ -267,7 +267,7 @@ JS;
 JS;
     }
 
-    public function buildJsChangesGetter()
+    public function buildJsChangesGetter(bool $onlyVisible = false) : string
     {
         if ($this->isEditable()) {
             $output = $this->buildJsFunctionPrefix() . "getChanges()";
