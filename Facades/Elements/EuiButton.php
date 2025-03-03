@@ -1,6 +1,7 @@
 <?php
 namespace exface\JEasyUIFacade\Facades\Elements;
 
+use exface\Core\Interfaces\Widgets\ConfirmationWidgetInterface;
 use exface\Core\Widgets\DialogButton;
 use exface\Core\Interfaces\Actions\ActionInterface;
 use exface\Core\Facades\AbstractAjaxFacade\Elements\JqueryButtonTrait;
@@ -56,10 +57,12 @@ class EuiButton extends EuiAbstractElement
         // Get the click function for the button. This might also be required for buttons without actions
         if ($click = $this->buildJsClickFunction()) {
             // Generate the function to be called, when the button is clicked
-            $output .= "
-				function " . $this->buildJsClickFunctionName() . "(){
-					" . $click . "
-				}";
+            $output .= <<<JS
+
+				function {$this->buildJsClickFunctionName()}() {
+					{$click}
+				}
+JS;
         }
         
         // Get the java script required for the action itself
@@ -387,5 +390,29 @@ JS;
     {
         $actionperformed = AbstractJqueryElement::EVENT_NAME_ACTIONPERFORMED;
         return "$( document ).off( '{$actionperformed}.{$this->getId()}' );";
+    }
+
+    protected function buildJsConfirmation(ConfirmationWidgetInterface $widget, string $jsRequestData, string $onContinueJs, string $onCancelJs = null)
+    {
+        return <<<JS
+            $.messager.confirm({
+                title: {$this->escapeString($widget->getCaption())},
+                msg: {$this->escapeString($widget->getQuestionText())},
+                ok: {$this->escapeString($widget->getButtonContinue()->getCaption())},
+                cancel: {$this->escapeString($widget->getButtonCancel()->getCaption())},
+                fn: function(confirm){
+                    if (confirm){
+                        $onContinueJs;
+                    } else {
+                        $onCancelJs;
+                    }
+                }
+            });
+            $('.messager-window > .messager-button > a').each(function(i, domBtn){
+                if (i > 0) {
+                    $(domBtn).addClass('l-btn-plain');
+                }
+            });
+JS;
     }
 }
