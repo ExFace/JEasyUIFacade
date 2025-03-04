@@ -60,7 +60,7 @@ class EuiButton extends EuiAbstractElement
             $output .= <<<JS
 
 				function {$this->buildJsClickFunctionName()}() {
-					{$click}
+					return {$click};
 				}
 JS;
         }
