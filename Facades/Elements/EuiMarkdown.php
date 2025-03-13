@@ -22,7 +22,11 @@ class EuiMarkdown extends EuiHtml
                     (function(){
                         var jqMD = $('#{$this->getId()}');
                         if (jqMD.is(':visible')) {
-                            mermaid.init(undefined, '#{$this->getId()} .language-mermaid');
+                            mermaid.initialize({
+                                startOnLoad:true,
+                                config: '#{$this->getId()} .language-mermaid',
+                                theme: 'default'
+                            });
                         }
                     })()
 JS
@@ -41,16 +45,18 @@ JS
         $includes = parent::buildHtmlHeadTags();   
         $f = $this->getFacade();
         $includes[] = '<link href="' . $f->buildUrlToSource('LIBS.MARKDOWN.CSS') . '" rel="stylesheet">';
+
         if ($this->hasMermaidSupport()) {
             $includes[] = '<script type="text/javascript" src="' . $f->buildUrlToSource("LIBS.MERMAID.JS") . '"></script>';
+            $includes[] = '<script type="text/javascript" src="' . $f->buildUrlToSource("LIBS.PANZOOM.JS") . '"></script>';
             $includes[] = <<<JS
 
-    <script language="javascript">
-        mermaid.initialize({
-            startOnLoad:true,
-            theme: 'default'
-        });
-    </script>
+            <script language="javascript">
+                mermaid.initialize({
+                    startOnLoad:true,
+                    theme: 'default'
+                });
+            </script>
 JS;
         }
         return $includes;
@@ -78,12 +84,84 @@ JS;
         if ($this->hasMermaidSupport()) {
             $js .= <<<JS
 
-setTimeout(function(){
-    var jqMD = $('#{$this->getId()}');
-    if (jqMD.is(':visible')) {
-        mermaid.init(undefined, '#{$this->getId()} .language-mermaid');
-    }
-}, 0);
+
+            setTimeout(function(){
+                var jqMD = $('#{$this->getId()}');
+                if (jqMD.is(':visible')) {
+                    mermaid.initialize({
+                        startOnLoad:true,
+                        config: '#{$this->getId()} .language-mermaid',
+                        theme: 'default'
+                    });
+
+                    mermaid.run({
+                        querySelector: '.language-mermaid',
+                        postRenderCallback: (id) => {
+
+                            let svgChild = document.getElementById(id);  
+
+                            if (svgChild) {
+
+                                var sSvgId = svgChild.id;
+                                var doPan = false;
+                                var eventsHandler;
+                                var panZoom;
+                                var mousepos;
+
+                                // Set the SVG height explicitly because otherwise panZoom will break it.
+                                // see https://github.com/bumbu/svg-pan-zoom?tab=readme-ov-file#svg-height-is-broken
+                                svgChild.setAttribute("height", svgChild.height.animVal.value + 'px');
+
+
+                                // Only pan if clicked on an empty space. Click-drag on a node should select text.
+                                // Idea from here: https://github.com/bumbu/svg-pan-zoom/issues/81
+                                // TODO It does not seem to work though
+                                
+                                eventsHandler = {
+                                    haltEventListeners: ['mousedown', 'mousemove', 'mouseup'], 
+                                    mouseDownHandler: function (ev) {
+                                        if (ev.target.id === sSvgId) {
+                                            doPan = true;
+                                            mousepos = { x: ev.clientX, y: ev.clientY };
+                                        };
+                                    }, 
+                                    mouseMoveHandler: function (ev) {
+                                        if (doPan) {
+                                            panZoom.panBy({ x: ev.clientX - mousepos.x, y: ev.clientY - mousepos.y });
+                                            mousepos = { x: ev.clientX, y: ev.clientY };
+                                            window.getSelection().removeAllRanges();
+                                        }
+                                    },
+                                    mouseUpHandler: function (ev) {
+                                        doPan = false;
+                                    }, 
+                                    init: function (options) {
+                                        options.svgElement.addEventListener('mousedown', this.mouseDownHandler, false);
+                                        options.svgElement.addEventListener('mousemove', this.mouseMoveHandler, false);
+                                        options.svgElement.addEventListener('mouseup', this.mouseUpHandler, false);
+                                    }, 
+                                    destroy: function (options) {
+                                        options.svgElement.removeEventListener('mousedown', this.mouseDownHandler, false);
+                                        options.svgElement.removeEventListener('mousemove', this.mouseMoveHandler, false);
+                                        options.svgElement.removeEventListener('mouseup', this.mouseUpHandler, false);
+                                    }
+                                }
+
+                                panZoom = svgPanZoom(
+                                    '#' + sSvgId, {
+                                    zoomEnabled: true
+                                    , controlIconsEnabled: true
+                                    , fit: 1
+                                    , center: 1
+                                    , customEventsHandler: eventsHandler
+                                    , preventMouseEventsDefault: false
+                                });
+
+                            }
+                        }
+                    });
+                }
+            }, 0);
 
 JS;
         }
