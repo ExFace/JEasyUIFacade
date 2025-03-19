@@ -114,7 +114,7 @@ p.exf-text {padding: 0}
 div.panel-body{background-color:#fff;}
 div.messager-body{overflow-y: auto;}
 .window .window-header .panel-with-icon {padding-left: 21px !important;}
-.dialog-button {min-height: 26px; text-align: left !important}
+.dialog-button:not(.messager-button) {min-height: 26px; text-align: left !important}
 
 /* Dialog */
 .exf-dialog-header {background-color: #daeef5 !important;}
