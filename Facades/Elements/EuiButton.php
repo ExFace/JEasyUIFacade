@@ -1,6 +1,7 @@
 <?php
 namespace exface\JEasyUIFacade\Facades\Elements;
 
+use exface\Core\DataTypes\MessageTypeDataType;
 use exface\Core\Interfaces\Widgets\ConfirmationWidgetInterface;
 use exface\Core\Widgets\DialogButton;
 use exface\Core\Interfaces\Actions\ActionInterface;
@@ -392,8 +393,18 @@ JS;
         return "$( document ).off( '{$actionperformed}.{$this->getId()}' );";
     }
 
+    /**
+     * {@inheritDoc}
+     * @see \exface\Core\Facades\AbstractAjaxFacade\Elements\JqueryButtonTrait::buildJsConfirmation()
+     */
     protected function buildJsConfirmation(ConfirmationWidgetInterface $widget, string $jsRequestData, string $onContinueJs, string $onCancelJs = null)
     {
+        switch ($widget->getType()) {
+            case MessageTypeDataType::WARNING: $class = 'messager-warning'; break;
+            case MessageTypeDataType::ERROR: $class = 'messager-error'; break;
+            case MessageTypeDataType::QUESTION: $class = 'messager-question'; break;
+            default: $class = 'messager-info'; break;
+        }
         return <<<JS
             $.messager.confirm({
                 title: {$this->escapeString($widget->getCaption())},
@@ -413,6 +424,7 @@ JS;
                     $(domBtn).addClass('l-btn-plain');
                 }
             });
+            $('.messager-body > .messager-icon').removeClass('messager-question').addClass('$class');
 JS;
     }
 }
