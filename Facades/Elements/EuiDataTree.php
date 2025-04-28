@@ -534,16 +534,17 @@ JS;
                     
                     // Make parentId a regular filter instead of an extra URL parameter
                     var parentId = {$js_var_param}['id'];
+                    delete {$js_var_param}['id'];
                     if (parentId) {
                         if ({$js_var_param}['data'] !== undefined && {$js_var_param}['data']['filters'] !== undefined && {$js_var_param}['data']['filters']['conditions'] !== undefined) {
-                            var conditions = {$js_var_param}['data']['filters']['conditions'];
-                            for (var c in conditions) {
-                                if (conditions[c]['expression'] == '{$this->getWidget()->getTreeParentRelationAlias()}') {
-                                    {$js_var_param}['data']['filters']['conditions'][c]['value'] = row['{$this->getWidget()->getTreeFolderFilterColumn()->getDataColumnName()}'];
+                            {$js_var_param}['data']['filters']['conditions'].push(
+                                {
+                                    expression: '{$this->getWidget()->getTreeParentRelationAlias()}',
+                                    comparator: {$this->escapeString(ComparatorDataType::EQUALS)},
+                                    value: row['{$this->getWidget()->getTreeFolderFilterColumn()->getDataColumnName()}']
                                 }
-                            }
+                            );
                         }
-                        delete {$js_var_param}['id'];
                     } else {                        
                         {$this->buildJsOnBeforeLoadExpandFilters($js_var_param, $js_var_row)}
                     }
