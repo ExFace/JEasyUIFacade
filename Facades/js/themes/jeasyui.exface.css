@@ -113,6 +113,7 @@ p.exf-text {padding: 0}
 /* jEasyUI customizing */
 div.panel-body{background-color:#fff;}
 div.messager-body{overflow-y: auto;}
+.messager-icon + div {margin-left: 42px;}
 .window .window-header .panel-with-icon {padding-left: 21px !important;}
 .dialog-button:not(.messager-button) {min-height: 26px; text-align: left !important}
 
