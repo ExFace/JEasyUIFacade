@@ -75,20 +75,36 @@ HTML;
         $dialogEl = $this->getFacade()->getElement($this->getWidget()->getDialog());
         if ($dialogEl->isLayout()) {
             $panelSelectorJs = "$('#{$this->getId()}').parents('.easyui-layout').first().layout('panel','north')";
+            // TODO how to resize the north panel properly? It does not seem to work if there are tabs in the
+            // center. Here is a suggestion: https://www.jeasyui.com/forum/index.php?topic=6325.0. But resizing
+            // was actually reverted by calling `layout('resize')`!
         } else {
             $panelSelectorJs = "$('#{$this->getId()}')";
+            $setBodyHeightJs = <<<JS
+
+                    var jqBody = jqDialog.find('.exf-dialog-body');
+                    jqBody.height(jqDialog.height() - jqDialog.find('.exf-dialog-header').height());
+                    if (jqDialog.hasClass('exf-dialog-with-tabs')) {
+                        jqDialog.find('.tabs-container').tabs('resize'); 
+                    }
+JS;
         }
         return parent::buildJsLayouter() . <<<JS
-(function(){
+
+            setTimeout(function(){
+                var jqDialog = $('#{$dialogEl->getId()}'); 
                 var jqPanel = {$panelSelectorJs};
                 if (! jqPanel) return;
                 var jqGrid = jqPanel.find('.grid');
                 if (! jqGrid) return;
                 var iHeight = jqGrid.outerHeight() + 20;
-                if (jqPanel.height() > iHeight) {
-                    jqPanel.height(iHeight);
+                var fDiff = jqPanel.height() - iHeight;
+                if (fDiff > 1) {
+                    jqPanel.height(Math.round(iHeight));
+                    {$setBodyHeightJs}
                 }
-            })();
+                console.log(jqPanel.height(), iHeight);
+            }, 0);
 JS;
     }
 }

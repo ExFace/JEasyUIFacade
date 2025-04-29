@@ -56,11 +56,17 @@ class EuiDialog extends EuiForm
         $widget = $this->getWidget();
         
         $children_html = '';
-        if (($filler = $widget->getFillerWidget()) && ($alternative = $filler->getAlternativeContainerForOrphanedSiblings())) {
-            $alternative->addWidget($widget->getMessageList(), 0);
-            $messageListHtml = '';
-        } else {
-            $messageListHtml = $this->getFacade()->getElement($widget->getMessageList())->buildHtml();
+        $filler = $widget->getFillerWidget();
+        $messageListHtml = '';
+        switch (true) {
+            case $filler !== null && $widget->hasHeader():
+                $widget->getHeader()->addWidget($widget->getMessageList());
+                break;
+            case $filler && $alternative = $filler->getAlternativeContainerForOrphanedSiblings():
+                $alternative->addWidget($widget->getMessageList(), 0);
+                break;
+            default:
+                $messageListHtml = $this->getFacade()->getElement($widget->getMessageList())->buildHtml();
         }
         
         $children_html = <<<HTML
@@ -93,7 +99,9 @@ HTML;
                     <div class="exf-dialog-header">
                         {$headerElem->buildHtml()}
                     </div>
-                    {$children_html}
+                    <div class="exf-dialog-body" style="height: 100%">
+                        {$children_html}
+                    </div>
                 </div>
                 
 HTML;
