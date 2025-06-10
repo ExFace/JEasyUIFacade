@@ -1,6 +1,7 @@
 <?php
 namespace exface\JEasyUIFacade\Facades\Templates;
 
+use exface\Core\Interfaces\Debug\LogBookInterface;
 use exface\Core\Interfaces\TemplateRenderers\PlaceholderResolverInterface;
 use exface\Core\Interfaces\Facades\FacadeInterface;
 use exface\JEasyUIFacade\Facades\JEasyUIFacade;
@@ -35,7 +36,7 @@ class EuiCustomPlaceholders implements PlaceholderResolverInterface
      * {@inheritDoc}
      * @see \exface\Core\Interfaces\TemplateRenderers\PlaceholderResolverInterface::resolve()
      */
-    public function resolve(array $placeholders) : array
+    public function resolve(array $placeholders, ?LogBookInterface $logbook = null) : array
     {
         if (in_array('breadcrumbs', $placeholders)) {
             $widgetResolver = new WidgetRenderPlaceholders($this->facade, $this->page, '~widget:');
