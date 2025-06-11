@@ -157,7 +157,7 @@ JS;
         foreach ($data_sheet->getRows() as $row_nr => $row) {
             foreach ($row as $fld => $val) {
                 if ($colCaption = $colCaptions[$fld] ?? null) {
-                    if (null !== $colType = $colFormatters[$fld] ?? null) {
+                    if (null !== $colType = ($colFormatters[$fld] ?? null)) {
                         $val = $colType->format($val);
                     }
                     $data[$row_nr][$colCaption] = $val;
