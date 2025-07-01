@@ -107,15 +107,35 @@ HTML;
     {
         return $this->getFacade()->getConfig()->getOption("WIDGET.DATACONFIGURATOR.COLUMNS_BY_DEFAULT");
     }
-    
+
+    /**
+     * {@inheritDoc}
+     * @see EuiTabs::buildJs()
+     */
     public function buildJs()
     {
         return parent::buildJs() . <<<JS
 
-{$this->getFacade()->getElement($this->getWidget()->getFilterTab())->buildJsLayouter()}
+{$this->buildJsRegisterOnActionPerformed($this->buildJsRefreshConfiguredWidget(true))}
+JS;
+    }
+
+    /**
+     * Returns JS code required for the header of the panel-wrapper for the widget
+     *
+     * The panel header does not show the entire configurator, but rather just the contents of the filters
+     * tab with some additional logic like refresh on Enter-key. So we do not need all the JS here. In
+     * particular, no JS for sorters or widget setups.
+     *
+     * @return string
+     */
+    public function buildJsForPanelHeader()
+    {
+        return <<<JS
+
+{$this->getFacade()->getElement($this->getWidget()->getFilterTab())->buildJs()}
 {$this->buildJsRefreshOnEnter()}
 {$this->buildJsRegisterOnActionPerformed($this->buildJsRefreshConfiguredWidget(true))}
-
 JS;
     }
     
