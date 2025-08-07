@@ -1,6 +1,7 @@
 <?php
 namespace exface\JEasyUIFacade\Facades\Elements;
 
+use exface\Core\CommonLogic\WidgetDimension;
 use exface\Core\Facades\AbstractAjaxFacade\Elements\AbstractJqueryElement;
 use exface\JEasyUIFacade\Facades\JEasyUIFacade;
 use exface\Core\Interfaces\Widgets\iLayoutWidgets;
@@ -141,7 +142,7 @@ JS;
      *
      * @see \exface\Core\Facades\AbstractAjaxFacade\Elements\AbstractJqueryElement::getWidth()
      */
-    public function getWidth()
+    public function getWidth(?WidgetDimension $width = null)
     {
         $widget = $this->getWidget();
         
@@ -151,7 +152,7 @@ JS;
             $columnNumber = $this->getFacade()->getConfig()->getOption("WIDGET.ALL.COLUMNS_BY_DEFAULT");
         }
         
-        $dimension = $widget->getWidth();
+        $dimension = $width ?? $widget->getWidth();
         if ($dimension->isRelative()) {
             $cols = $dimension->getValue();
             if ($cols === 'max') {
