@@ -1,6 +1,7 @@
 <?php
 namespace exface\JEasyUIFacade\Facades\Elements;
 
+use exface\Core\CommonLogic\WidgetDimension;
 use exface\Core\Widgets\MenuButton;
 use exface\Core\Widgets\Tabs;
 
@@ -240,9 +241,9 @@ HTML;
      *
      * @see \exface\Core\Facades\AbstractAjaxFacade\Elements\AbstractJqueryElement::getWidth()
      */
-    public function getWidth()
+    public function getWidth(?WidgetDimension $width = null)
     {
-        $width = $this->getWidget()->getWidth();
+        $width = $width ?? $this->getWidget()->getWidth();
         
         if ($width->isUndefined()) {
             $number_of_columns = $this->getNumberOfColumns();
@@ -257,7 +258,7 @@ HTML;
             return $width->getValue() * $this->getWidthRelativeUnit() + 35 . 'px';
         }
         
-        return parent::getWidth();
+        return parent::getWidth($width);
     }
 
     /**

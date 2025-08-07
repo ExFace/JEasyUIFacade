@@ -1,6 +1,7 @@
 <?php
 namespace exface\JEasyUIFacade\Facades\Elements;
 
+use exface\Core\CommonLogic\WidgetDimension;
 use exface\Core\Facades\AbstractAjaxFacade\Elements\JqueryMessageListTrait;
 
 class EuiMessageList extends EuiContainer
@@ -22,12 +23,12 @@ class EuiMessageList extends EuiContainer
      * {@inheritDoc}
      * @see \exface\JEasyUIFacade\Facades\Elements\EuiAbstractElement::getWidth()
      */
-    public function getWidth()
+    public function getWidth(?WidgetDimension $width = null)
     {
         if ($this->getWidget()->getWidth()->isUndefined()) {
             $this->getWidget()->setWidth('max');
         } 
-        return parent::getWidth();
+        return parent::getWidth($width);
     }
     
     public function getPadding($default = 0)
