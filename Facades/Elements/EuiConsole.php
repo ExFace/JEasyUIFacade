@@ -377,7 +377,7 @@ JS;
         return 'exf-console';
     }
 
-    public function buildJsCallFunction(string $functionName = null, array $parameters = []) : string
+    public function buildJsCallFunction(string $functionName = null, array $parameters = [], ?string $jsRequestData = null) : string
     {
         switch (true) {
             case $functionName === Console::FUNCTION_RUN_COMMAND:
@@ -385,6 +385,6 @@ JS;
                 $cmd = trim(trim($cmd), '"');
                 return "{$this->buildJsFunctionPrefix()}ExecuteCommandsJson([{$this->escapeString($cmd, true, false)}], $('#{$this->getId()}').terminal());";
         }
-        return parent::buildJsCallFunction($functionName, $parameters);
+        return parent::buildJsCallFunction($functionName, $parameters, $jsRequestData);
     }
 }

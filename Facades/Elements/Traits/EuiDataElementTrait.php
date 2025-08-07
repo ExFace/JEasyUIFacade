@@ -96,7 +96,7 @@ HTML;
         
         return <<<JS
 
-                    {$configurator_element->buildJs()}
+                    {$configurator_element->buildJsForPanelHeader()}
                     {$this->buildJsButtons()}
 
                     $('#{$configurator_element->getIdOfHeaderPanel()}').find('.grid').on('layoutComplete', function( event, items ) {
