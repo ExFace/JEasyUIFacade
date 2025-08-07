@@ -169,7 +169,7 @@ HTML;
         return parent::buildJs() . <<<JS
 
 // Add Scripts for the configurator widget first as they may be needed for the others   
-{$configurator_element->buildJs()}
+{$configurator_element->buildJsForPanelHeader()}
 
 $(setTimeout(function(){
     
