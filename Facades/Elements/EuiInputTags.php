@@ -217,4 +217,16 @@ JS;
             
 JS;
     }
+
+    /**
+     * {@inheritDoc}
+     * @see JqueryInputValidationTrait::isValidationRequired()
+     */
+    protected function isValidationRequired() : bool
+    {
+        // TODO add meaningful validation here. For some reason, the value, that reaches the validator is the
+        // text and not the inner value. So if we have numeric keys, we get their text values in the validator
+        // and cannot validate the keys
+        return false;
+    }
 }
