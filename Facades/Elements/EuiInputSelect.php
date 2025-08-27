@@ -2,6 +2,7 @@
 
 namespace exface\JEasyUIFacade\Facades\Elements;
 
+use exface\Core\Interfaces\DataTypes\EnumDataTypeInterface;
 use exface\Core\Widgets\InputSelect;
 
 /**
@@ -143,13 +144,17 @@ JS;
     
     protected function buildJsOptionFormatter() : string
     {
-        // TODO enable for enums
-        if (false) {
-            return <<<JS
+        $dataType = $this->getWidget()->getValueDataType();
 
-            , formatter: function (row){
-                var s = '<span title="asdf">' + row.text + '</span>';
-                return s;
+        if ($dataType instanceof EnumDataTypeInterface) {
+            $hints = $dataType->getValueHints();
+            if (empty($hints)) return '';
+
+            $hintsJson = json_encode($hints);
+            return <<<JS
+            , formatter: function (row) {
+                let oHints = $hintsJson;
+                return '<span title="' + oHints[row.value] + '">' + row.text + '</span>';
             }
 JS;
         }
