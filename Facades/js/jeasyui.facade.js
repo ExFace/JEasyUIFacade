@@ -353,6 +353,26 @@ $.extend($.fn.combo.methods, {
     },
 });
 
+function jeasyui_wait_for_element(jqEl, type, callback, interval = 50, timeout = 1000) {
+    const start = Date.now();
+    (function check() {
+        // check if linkbutton is initialized
+        if (jqEl.data(type) !== undefined) {
+            callback(jqEl);
+            return;
+        }
+
+        // stop after timeout
+        if (Date.now() - start > timeout) {
+            console.error("Timeout waiting for " + type, jqEl);
+            return;
+        }
+
+        // retry after interval
+        setTimeout(check, interval);
+    })();
+}
+
 // compare arrays (http://stackoverflow.com/questions/7837456/how-to-compare-arrays-in-javascript)
 // Warn if overriding existing method
 if(Array.prototype.equals)
