@@ -319,10 +319,11 @@ JS;
     {
         // setTimeout() required to make sure, the jEasyUI element was initialized (especially in lazy loading dialogs)
         if ($trueOrFalse === true) {
-            return "setTimeout(function(){ $('#{$this->getId()}').{$this->getElementType()}('disable') }, 0)";
+            $js = "jqEl.{$this->getElementType()}('disable');";
         } else {
-            return "setTimeout(function(){ $('#{$this->getId()}').{$this->getElementType()}('enable') }, 0)";
+            $js = "jqEl.{$this->getElementType()}('enable');";
         }
+        return "jeasyui_wait_for_element($('#{$this->getId()}'), '{$this->getElementType()}', function(jqEl){ {$js} })";
     }
     
     public function buildCssElementClass()
