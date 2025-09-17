@@ -1,30 +1,32 @@
 <?php
+
 namespace exface\JEasyUIFacade\Facades\Elements;
 
+use exface\Core\Interfaces\DataTypes\EnumDataTypeInterface;
 use exface\Core\Widgets\InputSelect;
 
 /**
  * The InputSelect widget will be rendered into a combobox in jEasyUI.
  *
  * @method InputSelect getWidget()
- *        
+ *
  * @author Andrej Kabachnik
- *        
+ *
  */
 class EuiInputSelect extends EuiInput
 {
     /**
-     * 
+     *
      * {@inheritDoc}
      * @see \exface\JEasyUIFacade\Facades\Elements\EuiInput::getElementType()
      */
-    public function getElementType() : ?string
+    public function getElementType(): ?string
     {
         return 'combobox';
     }
-    
+
     /**
-     * 
+     *
      * {@inheritDoc}
      * @see \exface\JEasyUIFacade\Facades\Elements\EuiInput::buildHtml()
      */
@@ -37,7 +39,7 @@ class EuiInputSelect extends EuiInput
         $multiselect = $this->getWidget()->getMultiSelect();
         $widgetValue = $this->getWidget()->getValueWithDefaults();
         foreach ($widget->getSelectableOptions() as $value => $text) {
-            if ($multiselect === true && $selected_cnt > 1 && $value !== '' && ! is_null($value)) {
+            if ($multiselect === true && $selected_cnt > 1 && $value !== '' && !is_null($value)) {
                 $selected = in_array($value, $selected_vals);
             } else {
                 $selected = strcasecmp($widgetValue ?? '', $value ?? '') == 0 ? true : false;
@@ -45,7 +47,7 @@ class EuiInputSelect extends EuiInput
             $options .= '
 					<option value="' . $value . '"' . ($selected ? ' selected="selected"' : '') . '>' . $text . '</option>';
         }
-        
+
         $output = '	<select style="height: 100%; width: 100%;"
 						name="' . $widget->getAttributeAlias() . '"  
 						id="' . $this->getId() . '"  
@@ -58,7 +60,7 @@ class EuiInputSelect extends EuiInput
     }
 
     /**
-     * 
+     *
      * {@inheritDoc}
      * @see \exface\JEasyUIFacade\Facades\Elements\EuiInput::buildJs()
      */
@@ -100,7 +102,7 @@ JS;
 return $("#{$this->getId()}").{$this->getElementType()}("getValue");
 JS;
         }
-        
+
         $output = <<<JS
 
 (function(){
@@ -120,17 +122,18 @@ JS;
     }
 
     /**
-     * 
+     *
      * {@inheritDoc}
      * @see \exface\JEasyUIFacade\Facades\Elements\EuiInput::buildJsDataOptions()
      */
     public function buildJsDataOptions()
     {
         $parentOptions = parent::buildJsDataOptions();
-        
+
         $options = ($parentOptions ? $parentOptions . ',' : '') . <<<JS
         
             panelHeight: 'auto'
+            {$this->buildJsOptionFormatter()}
             {$this->buildJsOptionMultiple()}
             {$this->buildJsOptionHeight()}
             {$this->buildJsOptionValue()}
@@ -139,28 +142,47 @@ JS;
         return rtrim(trim($options), ",");
     }
     
+    protected function buildJsOptionFormatter() : string
+    {
+        $dataType = $this->getWidget()->getValueDataType();
+
+        if ($dataType instanceof EnumDataTypeInterface) {
+            $hints = $dataType->getValueHints();
+            if (empty($hints)) return '';
+
+            $hintsJson = json_encode($hints);
+            return <<<JS
+            , formatter: function (row) {
+                let oHints = $hintsJson;
+                return '<span title="' + oHints[row.value] + '">' + row.text + '</span>';
+            }
+JS;
+        }
+        return '';
+    }
+
     /**
-     * 
+     *
      * @return string
      */
-    protected function buildJsOptionMultiple() : string
+    protected function buildJsOptionMultiple(): string
     {
         // Enable multiselect. Make sure the "none" element is never selected and the selection is cleared when the user clicks on it.
         return $this->getWidget()->getMultiSelect() ? ", multiple:true, onShowPanel: function(){ $(this).{$this->getElementType()}('unselect',''); }, onSelect: function(record){ if(record.value == '') $(this).{$this->getElementType()}('clear'); }" : '';
     }
-    
-    protected function buildJsOptionHeight() : string
+
+    protected function buildJsOptionHeight(): string
     {
         $widget = $this->getWidget();
         // Increase hight automatically for multiline selects
         return $widget->getHeight()->isRelative() && $widget->getHeight()->getValue() > 1 ? ", multiline:true" : '';
     }
-    
+
     /**
-     * 
+     *
      * @return string
      */
-    protected function buildJsOptionValue() : string
+    protected function buildJsOptionValue(): string
     {
         $vals = $this->getWidget()->getValues();
         if ($this->getWidget()->getMultiSelect() && count($vals) > 1) {
@@ -168,13 +190,13 @@ JS;
         }
         return '';
     }
-    
+
     /**
      *
      * {@inheritDoc}
      * @see \exface\JEasyUIFacade\Facades\Elements\EuiInput::buildJsValidator()
      */
-    public function buildJsValidator(?string $valJs = null) : string
+    public function buildJsValidator(?string $valJs = null): string
     {
         // The regular validator (calling `.combobox('isValid')`) throws an exception if called
         // too early - e.g. when checking required filters in a pages root data widget. It seems
