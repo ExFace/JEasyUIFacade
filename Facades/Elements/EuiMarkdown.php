@@ -1,6 +1,7 @@
 <?php
 namespace exface\JEasyUIFacade\Facades\Elements;
 
+use exface\Core\Exceptions\Widgets\WidgetConfigurationError;
 use exface\Core\Widgets\Markdown;
 use exface\Core\Widgets\Tab;
 
@@ -80,6 +81,8 @@ JS;
     public function buildJs()
     {
         $js = parent::buildJs();
+        
+        $js .= $this->buildJsHyperlinksCatcher();
         
         if ($this->hasMermaidSupport()) {
             $js .= <<<JS
@@ -178,4 +181,83 @@ JS;
         $widget = $this->getWidget();
         return ($widget instanceof Markdown) && $widget->hasRenderMermaidDiagrams();
     }
+
+    /**
+     * This function catches the hyperlink click event 
+     * and overrides it if the "open_links_in" property is defined.
+     * 
+     * @return string
+     */
+    protected function buildJsHyperlinksCatcher() : string
+    {
+        $widget = $this->getWidget();
+        $openLinksIn = $widget->getOpenLinksIn();
+        
+        if ($openLinksIn == null || $openLinksIn == 'self') return '';
+            
+            $openLinkInJs = '';
+            
+            switch ($openLinksIn) {
+                case 'popup':
+                    $openLinkInJs .= $this->buildJsOpenLinkInPopup('link.href', $widget->getOpenLinksInPopupWidth(), $widget->getOpenLinksInPopupHeight());
+                    break;
+                case 'new_tab':
+                    $openLinkInJs .= $this->buildJsOpenLinkInNewTab('link.href');
+                    break;
+                default:
+                    throw new WidgetConfigurationError($this->getWidget(), 'Invalid value: ' . $openLinksIn . '. Only self, popup or new_tab are supported!' );
+            }
+            
+            return <<<JS
+          
+              (function(){
+                const currentDiv = document.getElementById('{$this->getId()}');
+                currentDiv.addEventListener('click', function (e) {
+                  const link = e.target.closest('a[href]');
+                  // If a hyperlink begins with a '#', it is an anchor link and should be executed normally.
+                  if (!link 
+                      || !currentDiv.contains(link)
+                      || link.getAttribute('href').startsWith('#')
+                  ) return;
+                  
+                  e.preventDefault();
+                  {$openLinkInJs}
+                });
+              })();
+JS;
+    }
+
+    /**
+     * It creates JavaScript that opens a URL with a specified width and height in a simple pop-up window.
+     * 
+     * @param $url
+     * @param $width
+     * @param $height
+     * @return string
+     */
+    protected function buildJsOpenLinkInPopup($url, $width, $height) : string
+    {
+        
+        $widthTag = $width ? 'width=' . $width . ',' : '';
+        $heightTag = $height ? 'height=' . $height . ',' : '';
+        return <<<JS
+
+        window.open({$url}, 'window', '{$widthTag} {$heightTag} toolbar=no, menubar=no, resizable=yes');
+JS;
+    }
+
+    /**
+     * It creates JavaScript that opens a URL in a new browser tab.
+     * 
+     * @param $url
+     * @return string
+     */
+    protected function buildJsOpenLinkInNewTab($url) : string
+    {
+        return <<<JS
+        
+          window.open({$url}, '_blank');
+JS;
+    }
+    
 }
