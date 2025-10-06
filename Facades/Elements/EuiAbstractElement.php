@@ -104,18 +104,32 @@ JS;
     /**
      *
      * {@inheritdoc}
-     *
      * @see \exface\Core\Facades\AbstractAjaxFacade\Elements\AbstractJqueryElement::buildJsShowMessageSuccess($message_body_js, $title)
      */
     public function buildJsShowMessageSuccess($message_body_js, $title = null)
     {
-        $title = ! is_null($title) ? $title : "'" . $this->translate('MESSAGE.SUCCESS_TITLE') . "'";
-        return "$.messager.show({
-					title: " . str_replace('"', '\"', $title) . ",
-	                msg: " . $message_body_js . ",
-	                timeout:5000,
-	                showType:'slide'
-	            });";
+        $title = $title ? $title : $this->escapeString($this->translate('MESSAGE.SUCCESS_TITLE'));
+        return <<<JS
+            (function(sBody, sTitle){
+                if (sBody.length <= 100) {
+                    $.messager.show({
+                        title: sTitle,
+                        msg: sBody,
+                        timeout:5000,
+                        showType: 'slide'
+                    });
+                } else {
+                    jeasyui_create_dialog(
+                        $('body'), 
+                        {$this->escapeString($this->getId() . '_success_dialog')}, 
+                        {
+                            title: sTitle
+                        }, 
+                        '<pre>' + sBody + '</pre>'
+                    );
+                }
+            })({$message_body_js}, {$title});
+JS;
     }
 
     /**
