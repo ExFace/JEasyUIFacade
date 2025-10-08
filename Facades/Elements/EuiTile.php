@@ -1,6 +1,8 @@
 <?php
 namespace exface\JEasyUIFacade\Facades\Elements;
 
+use exface\Core\CommonLogic\Constants\Icons;
+
 /**
  * Tile-widget for JEasyUi-Facade.
  *
@@ -14,7 +16,12 @@ class EuiTile extends EuiButton
     {
         $widget = $this->getWidget();
         
-        $icon_class = $widget->getIcon() && $widget->getShowIcon(true) ? $this->buildCssIconClass($widget->getIcon()) : '';
+        $icon_content = '';
+        $icon_class = '';
+        if ($widget->getIcon() && $widget->getShowIcon(true)) {
+            $icon_class = $this->buildCssIconClass($widget->getIcon());
+            $icon_content = $widget->getIconSet() === 'svg' ? $widget->getIcon() : '';
+        }
         $style = $this->buildCssElementStyle();
         
         if ($this->getWidget()->hasAction()) {
@@ -28,7 +35,7 @@ class EuiTile extends EuiButton
                     <h3>{$widget->getTitle()}</h3>
    					<p>{$widget->getSubtitle()}</p>
             		<div class="exf-tile-icon">
-            			<i class="{$icon_class}"></i>
+            			<i class="{$icon_class}">$icon_content</i>
             		</div>
     			</div>
 JS;
