@@ -722,7 +722,7 @@ JS;
         // onShowPanel in case the grid is empty (see above).
         $value = $widget->getValueWithDefaults();
         if (! is_null($value) && $value !== '') {
-            $valueJs = $this->escapeString($value, true, false);
+            $valueJs = $this->escapeString('==' . $value, true, false);
             if (! $allColumnsRequired && trim($widget->getValueText())) {
                 // If the text is already known, set it and prevent initial backend request
                 $widget_value_text = $this->escapeString(trim($widget->getValueText()), false, false);
