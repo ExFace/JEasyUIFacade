@@ -27,7 +27,7 @@ class EuiDataTree extends EuiDataTable
         
         if ($this->getWidget()->getTreeLeafIdColumnId() !== null) {
             $leafIdCol = $this->getWidget()->getColumn($this->getWidget()->getTreeLeafIdColumnId());
-            if (! $leafIdCol->getDataColumnName()) {
+            if ($leafIdCol && ! $leafIdCol->getDataColumnName()) {
                 $leafIdCol->setDataColumnName('_leafId');
             }
         }
@@ -531,19 +531,28 @@ JS;
     protected function buildJsOnBeforeLoadScript($js_var_param = 'param', $js_var_row = 'row')
     {
         return parent::buildJsOnBeforeLoadScript($js_var_param) . <<<JS
-                    
+
                     // Make parentId a regular filter instead of an extra URL parameter
                     var parentId = {$js_var_param}['id'];
+                    console.log('onBeforeLoad', parentId);
                     delete {$js_var_param}['id'];
                     if (parentId) {
                         if ({$js_var_param}['data'] !== undefined && {$js_var_param}['data']['filters'] !== undefined && {$js_var_param}['data']['filters']['conditions'] !== undefined) {
-                            {$js_var_param}['data']['filters']['conditions'].push(
-                                {
-                                    expression: '{$this->getWidget()->getTreeParentRelationAlias()}',
-                                    comparator: {$this->escapeString(ComparatorDataType::EQUALS)},
-                                    value: row['{$this->getWidget()->getTreeFolderFilterColumn()->getDataColumnName()}']
+                            {$js_var_param}['data']['filters']['conditions'].forEach(function(oCond) {
+                                if (oCond.expression === '{$this->getWidget()->getTreeParentRelationAlias()}') {
+                                    oCond.value = row['{$this->getWidget()->getTreeFolderFilterColumn()->getDataColumnName()}'];
+                                    parentId = null;
                                 }
-                            );
+                            });
+                            if (parentId) {
+                                {$js_var_param}['data']['filters']['conditions'].push(
+                                    {
+                                        expression: '{$this->getWidget()->getTreeParentRelationAlias()}',
+                                        comparator: {$this->escapeString(ComparatorDataType::EQUALS)},
+                                        value: row['{$this->getWidget()->getTreeFolderFilterColumn()->getDataColumnName()}']
+                                    }
+                                );
+                            }
                         }
                     } else {                        
                         {$this->buildJsOnBeforeLoadExpandFilters($js_var_param, $js_var_row)}
@@ -568,7 +577,7 @@ JS;
         $treeFolderFilterCol = $widget->getTreeFolderFilterColumn();
         $treeFolderFilterDelim = $treeFolderFilterCol->getAttribute()->getValueListDelimiter();
         return <<<JS
-
+                    
                     var treeData = $('#{$this->getId()}').{$this->getElementType()}('getData');
                         (function (){
                             function addNode(node) {
@@ -596,7 +605,7 @@ JS;
                                     });
                                 }
                                 return null;
-                            }                            
+                            }
                             if (Array.isArray(treeData) && treeData.length > 0) {
                                 if ({$js_var_param}['data'] !== undefined && {$js_var_param}['data']['filters'] !== undefined && {$js_var_param}['data']['filters']['conditions'] !== undefined) {
                                     var addNodes = true;
