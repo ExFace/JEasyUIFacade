@@ -76,7 +76,7 @@ class EuiDialog extends EuiForm
                 <div id="{$this->getId()}_sizer" style="width:calc(100%/{$this->getNumberOfColumns()});min-width:{$this->getMinWidth()};"></div>
 HTML;
             
-        if ($widget->countWidgetsVisible() > 1) {
+        if ($this->needsLayout()) {
             // masonry_grid-wrapper wird benoetigt, da sonst die Groesse des Dialogs selbst
             // veraendert wird -> kein Scrollbalken.
             $children_html = <<<HTML
