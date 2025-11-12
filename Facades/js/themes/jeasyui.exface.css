@@ -332,9 +332,9 @@ pre.sf-dump .sf-dump-private, pre.sf-dump .sf-dump-public, pre.sf-dump .sf-dump-
 table.debug-profiler {border-collapse: collapse}
 table.debug-profiler th {font-size: 80%; padding: 3px;}
 table.debug-profiler td {font-size: 80%; padding: 3px; border: 1px solid lightgray;} 
-table.debug-profiler tr.action > td > .waterfall-bar {background-color: lightcoral !important;}
-table.debug-profiler tr.query > td > .waterfall-bar {background-color: lightblue !important;}
-table.debug-profiler tr.event > td > .waterfall-bar {background-color: gray !important; font-weight: bold;}
+table.debug-profiler tr.action > td > .waterfall-bar:not(:last-of-type) {background-color: lightcoral !important;}
+table.debug-profiler tr.query > td > .waterfall-bar:not(:last-of-type) {background-color: lightblue !important;}
+table.debug-profiler tr.event > td > .waterfall-bar:not(:last-of-type) {background-color: gray !important; font-weight: bold;}
 
 /* Console */
 /* FIX Output remains black or loses padding until window is resized - remove if fixed in Terminal lib */
