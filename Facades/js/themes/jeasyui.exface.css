@@ -123,7 +123,7 @@ div.messager-body{overflow-y: auto;}
 
 /* TextDiff widget */
 .difftext-container {border: 1px solid #c3d9e0;}
-.difftext-container pre {white-space: normal;}
+.difftext-container pre {white-space: pre-wrap;}
 .difftext-diff del {text-decoration: line-through; color: white; background-color: red;}
 .difftext-diff ins {text-decoration: none; color: white; background-color: green;}
 

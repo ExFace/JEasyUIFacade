@@ -38,9 +38,7 @@ class EuiTab extends EuiPanel
 HTML;
         
         // Wrap children widgets with a grid for masonry layouting - but only if there is something to be layed out
-        if ($widget->countWidgetsVisible() > 1) {
-            // masonry_grid-wrapper wird benoetigt, da die Groesse des Tabs selbst nicht
-            // veraendert werden soll.
+        if ($this->needsLayout()) {
             $children_html = <<<HTML
 
         <div class="grid" id="{$this->getId()}_masonry_grid" style="width:100%;height:100%;">
