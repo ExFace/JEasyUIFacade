@@ -469,9 +469,12 @@ JS;
     protected function buildHtmlGridItemWrapper($html, $title = '')
     {
         $widget = $this->getWidget();
-        $grid = $widget->getParentByClass('exface\\Core\\Interfaces\\Widgets\\iLayoutWidgets');
-        if ($grid && $grid->countWidgetsVisible() > 1){
-            $gridClasses = 'exf-grid-item ' . $this->getMasonryItemClass();
+        $grid = $widget->getParentByClass(iLayoutWidgets::class);
+        if ($grid) {
+            $gridEl = $this->getFacade()->getElement($grid);
+            if (($gridEl instanceof EuiWidgetGrid) && $gridEl->needsLayout()) {
+                $gridClasses = 'exf-grid-item ' . $this->getMasonryItemClass();
+            }
         } else {
             $gridClasses = '';
         }
