@@ -1,6 +1,8 @@
 <?php
 namespace exface\JEasyUIFacade\Facades\Elements;
 
+use exface\Core\CommonLogic\WidgetDimension;
+
 /**
  *
  * @method exface\Core\Widgets\DialogSidebar getWidget()
@@ -78,6 +80,36 @@ JS;
         }
 
         return $js;
+    }
+
+    /**
+     * {@inheritDoc}
+     * @see EuiAbstractElement::getWidth()
+     */
+    public function getWidth(?WidgetDimension $width = null) : string
+    {
+        $widget = $this->getWidget();
+        $dimension = $width ?? $widget->getWidth();
+
+        // Relative dimensions like 1, 2 or 3 will produce calculated css - e.g. `calc(100% * 1 / 3)`, which will
+        // not work in jEasyUI layouts. So we calculate percent values here instead.
+        if ($dimension->isRelative()) {
+            $dialogWidget = $widget->getParent();
+            $columnNumber = $this->getFacade()->getElement($dialogWidget)->getNumberOfColumns();
+            
+            $cols = $dimension->getValue();
+            if ($cols === 'max') {
+                $cols = $columnNumber;
+            }
+            if (is_numeric($cols)) {
+                if ($cols == $columnNumber) {
+                    return '100%';
+                } else {
+                    return floor($cols / $columnNumber * 100) . '%';
+                }
+            } 
+        }
+        return parent::getWidth($width);
     }
 
     public function buildCssElementClass()
