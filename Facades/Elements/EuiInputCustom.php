@@ -152,7 +152,17 @@ JS;
      */
     public function buildHtmlHeadTags()
     {
-        return array_merge(parent::buildHtmlHeadTags(), $this->getWidget()->getHtmlHeadTags());
+        $widget = $this->getWidget();
+        $tags = array_merge(parent::buildHtmlHeadTags(), $widget->getHtmlHeadTags());
+        if ($customCss = $widget->getCss()) {
+            $tags[] = <<<HTML
+
+<style type="text/css">
+{$customCss}
+</style>
+HTML;
+        }
+        return $tags;
     }
     
     /**
