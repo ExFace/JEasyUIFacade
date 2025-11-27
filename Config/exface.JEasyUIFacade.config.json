@@ -87,9 +87,9 @@
   
   "LIBS.INPUT_CODE.ACE.JS": "npm-asset/ace-builds/src-min/ace.js",
   "LIBS.INPUT_CODE.ACE.THEME": "npm-asset/ace-builds/src-noconflict/theme-crimson_editor.js",
-  "LIBS.INPUT_CODE.ACE.SRC": "npm-asset/ace-builds/src-noconflict",
   "LIBS.INPUT_CODE.SQL.FORMATTER": "npm-asset/sql-formatter/dist/sql-formatter.min.js",
-
+  "LIBS.INPUT_CODE.PRETTIER": "npm-asset/prettier/standalone.js",
+  "LIBS.INPUT_CODE.PRETTIER.PLUGINS": "npm-asset/prettier/plugins",
 
 	"LIBS.HTMLDIFF.JS": "exface/JEasyUIFacade/Facades/js/htmldiff/js/htmldiff.js",
     "LIBS.JQUERY": "bower-asset/jquery/dist/jquery.min.js",

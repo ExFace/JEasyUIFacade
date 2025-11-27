@@ -23,8 +23,7 @@ class EuiInputCode extends EuiInput
     public function buildHtmlHeadTags()
     {
         $widget = $this->getWidget();
-        $codeLanguage = $widget->getLanguage();
-        $colorizeCode = $widget->getCodeFormatter()->getColorize();
+        $codeFormatterLanguage = $widget->getCodeFormatter()->getLanguage();
         
         $includes = parent::buildHtmlHeadTags();
         $facade = $this->getFacade();
@@ -32,8 +31,11 @@ class EuiInputCode extends EuiInput
         $includes[] = '<script type="text/javascript" src="' . $facade->buildUrlToSource('LIBS.INPUT_CODE.ACE.THEME') . '"></script>';
         $includes[] = '<script type="text/javascript" src="' . $facade->buildUrlToSource('LIBS.INPUT_CODE.SQL.FORMATTER') . '"></script>';
         
-        if ($colorizeCode) {
-            $includes[] = '<script type="text/javascript" src="' . $facade->buildUrlToSource('LIBS.INPUT_CODE.ACE.SRC') . '/mode-' . $codeLanguage .'.js' . '"></script>';
+        if ($codeFormatterLanguage === 'javascript') {
+            // the prettier formatter needs different plugins for different languages.
+            $includes[] = '<script type="text/javascript" src="' . $facade->buildUrlToSource('LIBS.INPUT_CODE.PRETTIER') . '"></script>';
+            $includes[] = '<script type="text/javascript" src="' . $facade->buildUrlToSource('LIBS.INPUT_CODE.PRETTIER.PLUGINS', false) . '/babel.js' . '"></script>';
+            $includes[] = '<script type="text/javascript" src="' . $facade->buildUrlToSource('LIBS.INPUT_CODE.PRETTIER.PLUGINS', false) . '/estree.js' . '"></script>';
         }
         
         return $includes;
@@ -52,8 +54,8 @@ class EuiInputCode extends EuiInput
     public function buildHtml()
     {
         $widget = $this->getWidget();
-        $editorWidth = $widget->getWidth()->getValue();
-        $editorHeight = $widget->getHeight()->getValue();
+        $editorWidth = $widget->getWidth()->getValue() ?? '100%';
+        $editorHeight = $widget->getHeight()->getValue() ?? '100%';
         
         return <<<HTML
         <div id="exf-ace-editor" style="width: $editorWidth ; height: $editorHeight"></div>
@@ -67,7 +69,7 @@ HTML;
         $widget = $this->getWidget();
         $aceEditorLanguage = $widget->getLanguage();
         $inputValue = $widget->getValue();
-        $editable = json_encode($widget->getEditable());
+        $disabled = json_encode($widget->isDisabled());
         $colorizeCode = json_encode($widget->getCodeFormatter()->getColorize());
         
         $js .= <<<JS
@@ -76,16 +78,17 @@ HTML;
           
           const editor = ace.edit('exf-ace-editor', {
             theme: 'ace/theme/crimson_editor',
-            readOnly: !$editable,
+            readOnly: $disabled,
           });
           
           if ($colorizeCode) {
             editor.session.setMode('ace/mode/$aceEditorLanguage');
           }
           
-          let formattedInput = {$this->buildJsFormatCode('inputValue')}
-
-          editor.setValue(formattedInput, -1);
+          {$this->buildJsFormatCode('inputValue')}.then(function (formattedInput) {
+            editor.setValue(formattedInput, -1);
+          })
+          
 JS;
         
         return $js;
@@ -107,7 +110,7 @@ JS;
         
         return <<<JS
       
-      (function(input){
+      (async function(input){
         if (!$prettifyCode) return input;
         
         const language = '{$codeFormatterLanguage}';
@@ -118,13 +121,17 @@ JS;
             const language = dialect || 'sql';
             return sqlFormatter.format(code, {language});
           },
+          javascript: async function (code) {
+            return await prettier.format(code, {
+              parser: "babel",
+              plugins: prettierPlugins,
+            });
+          },
           json: (code) => {
               const obj = JSON.parse(code);
               return JSON.stringify(obj, null, 2);
           },
 
-          //TODO SR: There is a formatter for many other languages: "prettier-standalone"
-          // js: (code) => prettier.format(code, { parser: 'babel' }),
         };
         
           const formatter = FORMATTERS[language];
@@ -132,7 +139,7 @@ JS;
           if (!formatter) return input;
         
           try { 
-            return formatter(input, dialect);
+            return await formatter(input, dialect);
           } catch (e) {
             console.warn(
               "Code could not be formatted (language: " + language + ", dialect: " + dialect +")",
@@ -141,7 +148,7 @@ JS;
             return input;
           }
         
-      })($input);
+      })($input)
 JS;
 
     }
