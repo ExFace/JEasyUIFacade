@@ -58,8 +58,13 @@ class EuiInputCode extends EuiInput
         $editorHeight = $widget->getHeight()->getValue() ?? '100%';
         
         return <<<HTML
-        <div id="exf-ace-editor" style="width: $editorWidth ; height: $editorHeight"></div>
+        <div id="{$this->getIdOfAce()}" style="width: $editorWidth ; height: $editorHeight"></div>
 HTML;
+    }
+    
+    protected function getIdOfAce() : string
+    {
+        return $this->getId() . '_ace';
     }
 
     public function buildJs()
@@ -74,21 +79,22 @@ HTML;
         
         $js .= <<<JS
           
-          const inputValue = `$inputValue`;
-          
-          const editor = ace.edit('exf-ace-editor', {
-            theme: 'ace/theme/crimson_editor',
-            readOnly: $disabled,
-          });
-          
-          if ($colorizeCode) {
-            editor.session.setMode('ace/mode/$aceEditorLanguage');
-          }
-          
-          {$this->buildJsFormatCode('inputValue')}.then(function (formattedInput) {
-            editor.setValue(formattedInput, -1);
-          })
-          
+            (function(){
+                const inputValue = `$inputValue`;
+                
+                const editor = ace.edit('{$this->getIdOfAce()}', {
+                    theme: 'ace/theme/crimson_editor',
+                    readOnly: $disabled,
+                });
+                
+                if ($colorizeCode) {
+                    editor.session.setMode('ace/mode/$aceEditorLanguage');
+                }
+                
+                {$this->buildJsFormatCode('inputValue')}.then(function (formattedInput) {
+                    editor.setValue(formattedInput, -1);
+                })
+            })();          
 JS;
         
         return $js;

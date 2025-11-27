@@ -22,5 +22,17 @@
         ],
         "description": "JavaScript port of htmldiff.net",
         "homepage": "https://github.com/dfoverdx/htmldiff-js"
+    },
+    {
+        "name": "npm-asset/sql-formatter",
+        "version": "15.6.10",
+        "description": "Format whitespace in a SQL query to make it more readable",
+        "homepage": "https://github.com/sql-formatter-org/sql-formatter",
+        "license": [
+            "MIT"
+        ],
+        "license_file": [
+            "exface/JEasyUIFacade/Facades/js/sql-formatter/LICENSE"
+        ]
     }
 ]
