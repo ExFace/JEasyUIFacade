@@ -151,6 +151,8 @@ div.messager-body{overflow-y: auto;}
 /* Markdown */
 .markdown-body {font-size: 14px !important;}
 .easyui-dialog > .markdown-body {padding: 20px 10px 10px 10px}
+.exf-markdown.markdown-body table > thead > tr {background-color: #f2f2f2;}
+.exf-markdown.markdown-body table {display: table;}
 
 /* jQuery FileUpload */
 .fileupload-files{margin-top: 10px;}
