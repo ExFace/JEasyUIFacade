@@ -209,6 +209,7 @@ $.ajaxPrefilter(function( options ) {
         
         $rows = $this->buildResponseDataRowsSanitized($data_sheet, true, $escapeHtml);
         $data = array();
+        $data['oId'] = $data_sheet->getMetaObject()->getId();
         $data['rows'] = $rows;
         $data['offset'] = $data_sheet->getRowsOffset();
         $data['total'] = $data_sheet->countRowsInDataSource();
