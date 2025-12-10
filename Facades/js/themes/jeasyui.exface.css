@@ -151,6 +151,8 @@ div.messager-body{overflow-y: auto;}
 /* Markdown */
 .markdown-body {font-size: 14px !important;}
 .easyui-dialog > .markdown-body {padding: 20px 10px 10px 10px}
+.exf-markdown.markdown-body table > thead > tr {background-color: #f2f2f2;}
+.exf-markdown.markdown-body table {display: table;}
 
 /* jQuery FileUpload */
 .fileupload-files{margin-top: 10px;}
@@ -185,7 +187,8 @@ pre.sf-dump .sf-dump-private, pre.sf-dump .sf-dump-public, pre.sf-dump .sf-dump-
 .datagrid-empty {line-height: initial; height: auto; min-height: 25px;}
 
 /* Tile widget */
-.exf-tile {padding: 4px;} /* This makes a stand-alone tile have the same padding as .exf-grid-item.exf-tile */
+.exf-tile {padding: 4px} /* This makes a stand-alone tile have the same padding as .exf-grid-item.exf-tile */
+.exf-tile {hyphens: auto;}
 .exf-tile-box { position: relative; background-color: #fafafa; border: 1px solid #c3d9e0; height: 100%; overflow: hidden;}
 .exf-tile-box h3, .exf-tile-box p { overflow: hidden; text-overflow: ellipsis;}
 .exf-tile-box h3 { white-space: nowrap;}
@@ -332,9 +335,9 @@ pre.sf-dump .sf-dump-private, pre.sf-dump .sf-dump-public, pre.sf-dump .sf-dump-
 table.debug-profiler {border-collapse: collapse}
 table.debug-profiler th {font-size: 80%; padding: 3px;}
 table.debug-profiler td {font-size: 80%; padding: 3px; border: 1px solid lightgray;} 
-table.debug-profiler tr.action > td > .waterfall-bar {background-color: lightcoral !important;}
-table.debug-profiler tr.query > td > .waterfall-bar {background-color: lightblue !important;}
-table.debug-profiler tr.event > td > .waterfall-bar {background-color: gray !important; font-weight: bold;}
+table.debug-profiler tr.action > td > .waterfall-bar:not(:last-of-type) {background-color: lightcoral !important;}
+table.debug-profiler tr.query > td > .waterfall-bar:not(:last-of-type) {background-color: lightblue !important;}
+table.debug-profiler tr.event > td > .waterfall-bar:not(:last-of-type) {background-color: gray !important; font-weight: bold;}
 
 /* Console */
 /* FIX Output remains black or loses padding until window is resized - remove if fixed in Terminal lib */

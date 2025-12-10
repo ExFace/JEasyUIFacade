@@ -18,24 +18,11 @@ class EuiMarkdown extends EuiHtml
         if ($this->hasMermaidSupport()) {
             foreach($this->getWidget()->findParentsByClass(Tab::class) as $tab) {
                 $tabsEl = $this->getFacade()->getElement($tab->getTabs());
-                $tabsEl->addOnTabSelectScript(<<<JS
-
-                    (function(){
-                        var jqMD = $('#{$this->getId()}');
-                        if (jqMD.is(':visible')) {
-                            mermaid.initialize({
-                                startOnLoad:true,
-                                config: '#{$this->getId()} .language-mermaid',
-                                theme: 'default'
-                            });
-                        }
-                    })()
-JS
-                    , $tab
-                );
+                $tabsEl->addOnTabSelectScript($this->buildJsMermaidInit(), $tab);
             }
         }
     }
+    
     /**
      * 
      * {@inheritDoc}
@@ -70,7 +57,7 @@ JS;
      */
     public function buildCssElementClass()
     {
-        return parent::buildCssElementClass() . ' markdown-body';
+        return parent::buildCssElementClass() . ' exf-markdown markdown-body';
     }
     
     /**
@@ -85,8 +72,15 @@ JS;
         $js .= $this->buildJsHyperlinksCatcher();
         
         if ($this->hasMermaidSupport()) {
-            $js .= <<<JS
-
+            $js .= $this->buildJsMermaidInit();
+        }
+        
+        return $js;
+    }
+    
+    protected function buildJsMermaidInit() : string
+    {
+        return <<<JS
 
             setTimeout(function(){
                 var jqMD = $('#{$this->getId()}');
@@ -167,9 +161,6 @@ JS;
             }, 0);
 
 JS;
-        }
-        
-        return $js;
     }
 
     /**
@@ -259,5 +250,4 @@ JS;
           window.open({$url}, '_blank');
 JS;
     }
-    
 }
