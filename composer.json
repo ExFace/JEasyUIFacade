@@ -1,5 +1,5 @@
 {
-    "name": "exface/JEasyUIFacade",
+    "name": "exface/jeasyuifacade",
     "description": "UI facade for the ExFace plattform based on jQuery EasyUI",
     "type": "library",
     "license": [
