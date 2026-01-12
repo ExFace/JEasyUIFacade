@@ -520,7 +520,7 @@ HTML;
      * 
      * @uxon-property theme_css
      * @uxon-type array
-     * @uxon-template ["exface/JEasyUIFacade/Facades/js/themes/jeasyui.exface.css",""]
+     * @uxon-template ["exface/jeasyuifacade/Facades/js/themes/jeasyui.exface.css",""]
      * 
      * @param UxonObject|array $value
      * @throws InvalidArgumentException
