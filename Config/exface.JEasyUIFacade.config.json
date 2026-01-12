@@ -44,9 +44,9 @@
 	"THEME.EMPHASIS_COLOR": null,
 	"THEME.LINK_COLOR": null,
 	"THEME.CSS": [
-		"exface/JEasyUIFacade/Facades/js/themes/material/easyui.css",
-		"exface/JEasyUIFacade/Facades/js/themes/jeasyui.exface.css",
-		"exface/JEasyUIFacade/Facades/js/themes/jeasyui-material.exface.css"
+		"exface/jeasyuifacade/Facades/js/themes/material/easyui.css",
+		"exface/jeasyuifacade/Facades/js/themes/jeasyui.exface.css",
+		"exface/jeasyuifacade/Facades/js/themes/jeasyui-material.exface.css"
 	],
 	
 	"ICON_CLASSES.DEFAULT_CLASS_PREFIX": "fa fa-",
@@ -87,21 +87,21 @@
   
     "LIBS.INPUT_CODE.ACE.JS": "npm-asset/ace-builds/src-min/ace.js",
     "LIBS.INPUT_CODE.ACE.THEME": "npm-asset/ace-builds/src-noconflict/theme-crimson_editor.js",
-    "LIBS.INPUT_CODE.SQL.FORMATTER": "exface/JEasyUIFacade/Facades/js/sql-formatter/dist/sql-formatter.min.js",
+    "LIBS.INPUT_CODE.SQL.FORMATTER": "exface/jeasyuifacade/Facades/js/sql-formatter/dist/sql-formatter.min.js",
     "LIBS.INPUT_CODE.PRETTIER": "npm-asset/prettier/standalone.js",
     "LIBS.INPUT_CODE.PRETTIER.PLUGINS": "npm-asset/prettier/plugins",
 
-	"LIBS.HTMLDIFF.JS": "exface/JEasyUIFacade/Facades/js/htmldiff/js/htmldiff.js",
+	"LIBS.HTMLDIFF.JS": "exface/jeasyuifacade/Facades/js/htmldiff/js/htmldiff.js",
     "LIBS.JQUERY": "bower-asset/jquery/dist/jquery.min.js",
     "LIBS.JQUERY_PRETTY_TEXT_DIFF": "npm-asset/jquery-prettytextdiff/jquery.pretty-text-diff.min.js",
     "LIBS.JEASYUI.CORE": "bower-asset/jeasyui/jquery.easyui.min.js",
     "LIBS.JEASYUI.LANG_DEFAULT": "bower-asset/jeasyui/locale/easyui-lang-de.js",
-    "LIBS.JEASYUI.THEME": "exface/JEasyUIFacade/Facades/js/jeasyui/themes/metro-blue/easyui.css",
-    "LIBS.JEASYUI.EXTENSIONS.DATAGRID_GROUPVIEW": "exface/JEasyUIFacade/Facades/js/jeasyui/extensions/datagridview/datagrid-groupview.js",
-    "LIBS.JEASYUI.EXTENSIONS.DATAGRID_DETAILVIEW": "exface/JEasyUIFacade/Facades/js/jeasyui/extensions/datagridview/datagrid-detailview.js",
-    "LIBS.JEASYUI.EXTENSIONS.TREEGRID_DND": "exface/JEasyUIFacade/Facades/js/jeasyui/extensions/treegrid-dnd/treegrid-dnd.js",
-    "LIBS.JEASYUI.PATCHES": "exface/JEasyUIFacade/Facades/js/jquery.easyui.patch.1.43.js",
-	"LIBS.JEASYUI.FACADE_ADDONS.JS": "exface/JEasyUIFacade/Facades/js/jeasyui.facade.js",
+    "LIBS.JEASYUI.THEME": "exface/jeasyuifacade/Facades/js/jeasyui/themes/metro-blue/easyui.css",
+    "LIBS.JEASYUI.EXTENSIONS.DATAGRID_GROUPVIEW": "exface/jeasyuifacade/Facades/js/jeasyui/extensions/datagridview/datagrid-groupview.js",
+    "LIBS.JEASYUI.EXTENSIONS.DATAGRID_DETAILVIEW": "exface/jeasyuifacade/Facades/js/jeasyui/extensions/datagridview/datagrid-detailview.js",
+    "LIBS.JEASYUI.EXTENSIONS.TREEGRID_DND": "exface/jeasyuifacade/Facades/js/jeasyui/extensions/treegrid-dnd/treegrid-dnd.js",
+    "LIBS.JEASYUI.PATCHES": "exface/jeasyuifacade/Facades/js/jquery.easyui.patch.1.43.js",
+	"LIBS.JEASYUI.FACADE_ADDONS.JS": "exface/jeasyuifacade/Facades/js/jeasyui.facade.js",
 	
 	"LIBS.JEXCEL.JS": "npm-asset/jspreadsheet-ce/dist/index.js",
    	"LIBS.JEXCEL.JS_JSUITES": "npm-asset/jsuites/dist/jsuites.js",
@@ -155,7 +155,7 @@
     "LIBS.TERMINAL.UNIX_FORMATTING_JS": "npm-asset/jquery.terminal/js/unix_formatting.js",
     "LIBS.TERMINAL.TERMINAL_CSS": "npm-asset/jquery.terminal/css/jquery.terminal.min.css",
 
-	"LIBS.TOASTUI.EDITOR.JS": "exface/JEasyUIFacade/Facades/js/toastui-editor-all.min.js",
+	"LIBS.TOASTUI.EDITOR.JS": "exface/jeasyuifacade/Facades/js/toastui-editor-all.min.js",
 	"LIBS.TOASTUI.EDITOR.CSS": "npm-asset/toast-ui--editor/dist/toastui-editor.css",
 	"LIBS.CODEMIRROR.JS": "npm-asset/codemirror/lib/codemirror.js",
 	"LIBS.CODEMIRROR.CSS": "npm-asset/codemirror/lib/codemirror.css",
@@ -171,7 +171,7 @@
    	"LIBS.PIVOTTABLE.SUBTOTAL.JS": "exface/core/Facades/AbstractAjaxFacade/js/subtotal/dist/subtotal.min.js",
    	"LIBS.PIVOTTABLE.RENDERERS.CHARTS": "npm-asset/pivottable/dist/plotly_renderers.min.js",
    	"LIBS.PIVOTTABLE.RENDERERS.EXPORT": "npm-asset/pivottable/dist/export_renderers.min.js",
-   	"LIBS.PIVOTTABLE.LIBS.PLOTLY": "exface/JEasyUIFacade/Facades/js/plotly-basic-latest.min.js",
+   	"LIBS.PIVOTTABLE.LIBS.PLOTLY": "exface/jeasyuifacade/Facades/js/plotly-basic-latest.min.js",
    	"LIBS.PIVOTTABLE.SUBTOTAL.CSS": "exface/core/Facades/AbstractAjaxFacade/js/subtotal/dist/subtotal.min.css",
    	"LIBS.PIVOTTABLE.UI.JS": "npm-asset/jquery-ui/dist/jquery-ui.min.js",
    	"LIBS.PIVOTTABLE.UI.CSS": "npm-asset/jquery-ui/dist/themes/base/jquery-ui.min.css",
@@ -187,7 +187,7 @@
 	"LIBS.SURVEY.SURVEY_JS": "npm-asset/survey-knockout/survey.ko.min.js",
 	"LIBS.SURVEY.SURVEY_JS_I18N": "npm-asset/survey-core/survey.i18n.min.js",
 	"LIBS.SURVEY.SURVEY_CSS": "npm-asset/survey-knockout/survey.min.css",
-	"LIBS.SURVEY.THEME_CSS": "exface/JEasyUIFacade/Facades/js/survey-js/jeasyui-survey.css",
+	"LIBS.SURVEY.THEME_CSS": "exface/jeasyuifacade/Facades/js/survey-js/jeasyui-survey.css",
 	"LIBS.SURVEY.CREATOR_JS": "npm-asset/survey-creator/survey-creator.min.js",
 	"LIBS.SURVEY.CREATOR_CSS": "npm-asset/survey-creator/survey-creator.min.css",
 	"LIBS.SURVEY.CREATOR_ACE_JS": [
