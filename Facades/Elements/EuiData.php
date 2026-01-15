@@ -195,7 +195,7 @@ class EuiData extends EuiAbstractElement
                 , pageSize: ' . $default_page_size . '
 				, striped: ' . ($widget->getStriped() ? 'true' : 'false') . '
 				, nowrap: ' . ($widget->getNowrap() ? 'true' : 'false') . '
-				, toolbar: "#' . $this->getFacade()->getElement($widget->getConfiguratorWidget())->getIdOfHeaderPanel() . '"
+				, toolbar: "#' . $this->getIdOfToolbar() . '"
 				' . ($this->buildJsOnBeforeLoadFunction() ? ', onBeforeLoad: ' . $this->buildJsOnBeforeLoadFunction() : '') . '
 				' . $this->buildJsOnLoadSuccessOption() . '
 				, onLoadError: function(response) {
@@ -740,6 +740,11 @@ JS;
     {
         return $this->getId() . '_cmenu';
     }
+
+    protected function getIdOfToolbar() : string
+    {
+        return $this->getId() . '_toolbar';
+    }
     
     /**
      * Returns the base HTML element to construct the widget from: e.g. div, table, etc.
@@ -763,10 +768,14 @@ JS;
     protected function buildHtmlTableHeader()
     {
         $widget = $this->getWidget();
+        $configuratorWidget = $widget->getConfiguratorWidget();
+        $configuratorEl = $this->getFacade()->getElement($configuratorWidget);
         
-        // Add header collapse button to the toolbar
-        if ($widget->getConfiguratorWidget()->getFilterTab()->countWidgetsVisible() > 0) {
-            $this->getFacade()->getElement($widget->getConfiguratorWidget())->addButtonToCollapseExpand($widget->getToolbarMain()->getButtonGroupForSearchActions(), 0, $this->buildJsResize());
+        if (! $widget->isConfiguratorLinked()) {
+            // Add header collapse button to the toolbar
+            if ($configuratorWidget->getFilterTab()->countWidgetsVisible() > 0) {
+                $configuratorEl->addButtonToCollapseExpand($widget->getToolbarMain()->getButtonGroupForSearchActions(), 0, $this->buildJsResize());
+            }
         }
         
         // Build the HTML for the button toolbars.
@@ -782,9 +791,15 @@ JS;
             $context_menu_html = '';
         }
         
+        if ($widget->isConfiguratorLinked()) {
+            $headerHtml = $configuratorEl->buildHtmlHeaderPanelLinked($this->getIdOfToolbar(), $toolbars_html);
+        } else {
+            $headerHtml = $configuratorEl->buildHtmlHeaderPanel($this->getIdOfToolbar(), $toolbars_html);
+        }
+        
         return <<<HTML
 
-        {$this->getFacade()->getElement($this->getWidget()->getConfiguratorWidget())->buildHtmlHeaderPanel($toolbars_html)}
+        {$headerHtml}
         {$context_menu_html}
 
 HTML;

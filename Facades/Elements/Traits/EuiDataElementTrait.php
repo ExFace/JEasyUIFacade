@@ -14,6 +14,8 @@ trait EuiDataElementTrait
     use JqueryToolbarsTrait;
 
     abstract protected function buildJsDataLoaderOnLoaded(string $dataJs) : string;
+
+    abstract protected function getIdOfToolbar() : string;
     
     protected function getDataWidget() : iShowData
     {
@@ -99,7 +101,7 @@ HTML;
                     {$configurator_element->buildJsForPanelHeader()}
                     {$this->buildJsButtons()}
 
-                    $('#{$configurator_element->getIdOfHeaderPanel()}').find('.grid').on('layoutComplete', function( event, items ) {
+                    $('#{$this->getIdOfToolbar()}').find('.grid').on('layoutComplete', function( event, items ) {
                         setTimeout(function(){
                             {$this->buildJsResizeInnerWidget()}
                         }, 0);               
@@ -109,11 +111,10 @@ JS;
     
     protected function buildJsResizeInnerWidget(string $elementId = null) : string
     {
-        $elementId = $elementId ?? $this->getId(); 
         return <<<JS
 
                     var newHeight = $('#{$this->getId()}_wrapper').innerHeight();
-                    $('#{$this->getId()}').height(newHeight - $('#{$this->getFacade()->getElement($this->getWidget()->getConfiguratorWidget())->getIdOfHeaderPanel()}').outerHeight());
+                    $('#{$this->getId()}').height(newHeight - $('#{$this->getIdOfToolbar()}').outerHeight());
 
 JS;
     }
