@@ -16,19 +16,6 @@ class EuiInput extends EuiValue
     use JqueryInputValidationTrait {
         buildJsValidator as buildJsValidatorViaTrait;
     }
-
-    /**
-     * 
-     * {@inheritDoc}
-     * @see \exface\JEasyUIFacade\Facades\Elements\EuiText::init()
-     */
-    protected function init()
-    {
-        parent::init();
-        
-        // Register an onChange-Script on the element linked by a disable condition and similar thins.
-        $this->registerConditionalPropertiesLiveRefs();
-    }
     
     /**
      * 
@@ -64,7 +51,7 @@ class EuiInput extends EuiValue
     /**
      * 
      * {@inheritDoc}
-     * @see \exface\JEasyUIFacade\Facades\Elements\EuiText::buildJs()
+     * @see \exface\JEasyUIFacade\Facades\Elements\EuiValue::buildJs()
      */
     public function buildJs()
     {
@@ -84,36 +71,14 @@ class EuiInput extends EuiValue
      */
     protected function buildJsEventScripts()
     {
-        $widget = $this->getWidget();
-        $hideInitiallyIfNeeded = '';
-        $getInitialValueFromLink = '';
-        
-        if ($widget->isHidden() === true) {
-            $hideInitiallyIfNeeded = $this->buildJsSetHidden(true);
-        }
-        if ($widget->getValueWidgetLink() || (! $widget->hasValue() && $widget->getCalculationWidgetLink())) {
-            $getInitialValueFromLink = <<<JS
+        return <<<JS
 
-    try {
-        {$this->buildJsLiveReference()}
-    } catch (e) {
-        console.warn('Failed to update live reference: ' + e);
-    }
-JS;
-        }
-        
-        $js = $this->buildsJsAddValidationType();
-        return $js . <<<JS
-
-    // Event scripts for {$this->getId()}
-    $getInitialValueFromLink
+    {$this->buildsJsAddValidationType()};
     $(function() { 
         {$this->buildJsOnChangeHandler()}
-        {$this->buildjsConditionalProperties()}
-        {$hideInitiallyIfNeeded}
     });
 
-JS;
+JS . parent::buildJsEventScripts();
     }
     
     /**

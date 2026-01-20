@@ -95,11 +95,8 @@ JS;
             }
         }
         
-        // Register an onChange-Script on the element linked by a disable condition and other things.
-        $this->registerConditionalPropertiesLiveRefs();
-        
         // Make sure, the table in the combo has a smaller default page size than regular (big) tables
-        // This makes combotables faster with large data sets.
+        // This makes combo tables faster with large data sets.
         if ($widget->getTable()->getPaginator()->getPageSize() === null) {
             $widget->getTable()->getPaginator()->setPageSize($this->getFacade()->getConfig()->getOption('WIDGET.INPUTCOMBOTABLE.PAGE_SIZE'));
         }
