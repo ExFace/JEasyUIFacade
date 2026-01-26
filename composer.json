@@ -35,7 +35,6 @@
         "npm-asset/jquery.terminal": "^2.5",
         "npm-asset/echarts": "^5",
         "npm-asset/jspreadsheet-ce": "^4.10",
-        "npm-asset/jspreadsheet--autowidth": "^2.5",
         "npm-asset/moment": "^2.24",
         "npm-asset/cronstrue": "^1.108",
         "npm-asset/diff-match-patch": "^1.0",

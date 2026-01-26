@@ -34,5 +34,17 @@
         "license_file": [
             "exface/jeasyuifacade/Facades/js/sql-formatter/LICENSE"
         ]
+    },
+    {
+        "name": "npm-asset/jspreadsheet--autowidth",
+        "version": "2.6.1",
+        "description": "Plugins and Editors for JSpreadsheet",
+        "homepage": "https://repo.gbonnaire.fr/category/jspreadsheetpro",
+        "license": [
+            "MIT"
+        ],
+        "license_file": [
+            "exface/jeasyuifacade/Facades/js/jspreadsheet/plugins/LICENSE"
+        ]
     }
 ]
