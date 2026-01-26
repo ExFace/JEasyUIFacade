@@ -84,6 +84,7 @@
     ],
     
     "LIBS.EXFTOOLS.JS": "exface/core/Facades/AbstractAjaxFacade/js/exfTools.js",
+	"LIBS.EXFDEBUGGER.JS": "exface/core/Facades/AbstractAjaxFacade/js/exfDebugger.js",
   
     "LIBS.INPUT_CODE.ACE.JS": "npm-asset/ace-builds/src-min/ace.js",
     "LIBS.INPUT_CODE.ACE.THEME": "npm-asset/ace-builds/src-noconflict/theme-crimson_editor.js",
