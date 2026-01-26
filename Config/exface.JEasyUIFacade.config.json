@@ -109,7 +109,7 @@
    	"LIBS.JEXCEL.CSS": "npm-asset/jspreadsheet-ce/dist/jspreadsheet.css",
  	"LIBS.JEXCEL.CSS_JSUITES": "npm-asset/jsuites/dist/jsuites.css",
  	"LIBS.JEXCEL.PLUGINS": {
- 		"jss_autoWidth": "npm-asset/jspreadsheet--autowidth/plugins/dist/autoWidth.min.js"
+ 		"jss_autoWidth": "exface/jeasyuifacade/Facades/js/jspreadsheet/plugins/autoWidth.min.js"
 	},
 	
 	"LIBS.JSONEDITOR.JS": "npm-asset/jsoneditor/dist/jsoneditor.min.js",
