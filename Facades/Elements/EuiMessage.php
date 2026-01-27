@@ -4,7 +4,7 @@ namespace exface\JEasyUIFacade\Facades\Elements;
 use exface\Core\Facades\AbstractAjaxFacade\Elements\HtmlMessageTrait;
 use exface\Core\Widgets\MessageList;
 
-class EuiMessage extends EuiText
+class EuiMessage extends EuiDisplay
 {
     use HtmlMessageTrait;
     
