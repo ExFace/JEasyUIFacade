@@ -36,8 +36,9 @@ class EuiValue extends EuiAbstractElement
         if (! $this->getWidget()->isInTable()) {
             $this->registerLiveReferenceAtLinkedElement();
         }
-        
-        return;
+
+        // Register an onChange-Script on the element linked by a disable condition and similar thins.
+        $this->registerConditionalPropertiesLiveRefs();
     }
     
     /**
@@ -176,7 +177,7 @@ HTML;
      */
     public function buildJs()
     {
-        return '';
+        return $this->buildJsEventScripts();
     }
     
     /**
@@ -187,5 +188,43 @@ HTML;
     protected function buildJsSetHidden(bool $hidden) : string
     {
         return "$('#{$this->getId()}').parents('.exf-control').first()." . ($hidden ? 'hide()' : 'show()');
+    }
+
+    /**
+     * Returns JS scripts for event handling like live references, onChange-handlers,
+     * disable conditions, etc.
+     *
+     * @return string
+     */
+    protected function buildJsEventScripts()
+    {
+        $widget = $this->getWidget();
+        $hideInitiallyIfNeeded = '';
+        $getInitialValueFromLink = '';
+
+        if ($widget->isHidden() === true) {
+            $hideInitiallyIfNeeded = $this->buildJsSetHidden(true);
+        }
+        if ($widget->getValueWidgetLink() || (! $widget->hasValue() && $widget->getCalculationWidgetLink())) {
+            $getInitialValueFromLink = <<<JS
+
+    try {
+        {$this->buildJsLiveReference()}
+    } catch (e) {
+        console.warn('Failed to update live reference: ' + e);
+    }
+JS;
+        }
+
+        return <<<JS
+
+    // Event scripts for {$this->getId()}
+    $getInitialValueFromLink
+    $(function() { 
+        {$this->buildjsConditionalProperties()}
+        {$hideInitiallyIfNeeded}
+    });
+
+JS;
     }
 }

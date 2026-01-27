@@ -49,9 +49,10 @@ class EuiDataConfigurator extends EuiTabs
      * Creates the HTML for the header controls: filters, sorters, buttons, etc.
      * @return string
      */
-    public function buildHtmlHeaderPanel(string $toolbarHtml = '')
+    public function buildHtmlHeaderPanel(string $toolbarId, string $toolbarHtml = '')
     {
         $configuredWidget = $this->getWidget()->getWidgetConfigured();
+        $header_style = '';
         $toolbar_style = '';
         $panel_options = "border: false";
         
@@ -67,11 +68,11 @@ class EuiDataConfigurator extends EuiTabs
         // tabs like in the default editor of `axenox.Deployer.project` in the tab
         // "Deployments".
         $this->getFacade()->getElement($configuredWidget)->addOnResizeScript("setTimeout(function(){
-            $('#{$this->getIdOfHeaderPanel()}').find('.easyui-panel').panel('doLayout');
+            $('#{$toolbarId}').find('.easyui-panel').panel('doLayout');
             {$this->getFacade()->getElement($configuratorWidget->getFilterTab())->buildJsLayouter()}
         },0);");
-            
-        if ($configuredWidget->getHideHeader()){
+
+        if ($configuredWidget->getHideHeader()) {
             $panel_options .= ', collapsed: true';
             $toolbar_style .= 'display: none; height: 0;';
         } else {
@@ -79,18 +80,38 @@ class EuiDataConfigurator extends EuiTabs
                 $panel_options .= ', collapsed: true';
             }
         }
-        
-        if ($configuredWidget->getHideHeader()){
+
+        if ($configuredWidget->getHideHeader()) {
             $header_style = 'visibility: hidden; height: 0px; padding: 0px;';
         }
         
         return <<<HTML
         
-        <div id="{$this->getIdOfHeaderPanel()}" style="{$header_style}">
-            <div class="easyui-panel exf-data-header" data-options="footer: '#{$this->getIdOfHeaderPanel()}_footer', {$panel_options}">
+        <div id="{$toolbarId}" style="{$header_style}">
+            <div class="easyui-panel exf-data-header" data-options="footer: '#{$toolbarId}_footer', {$panel_options}">
                 {$this->getFacade()->getElement($configuratorWidget->getFilterTab())->buildHtml()}
             </div>
-            <div id="{$this->getIdOfHeaderPanel()}_footer" class="datatable-toolbar" style="{$toolbar_style}">
+            <div id="{$toolbarId}_footer" class="datatable-toolbar" style="{$toolbar_style}">
+                {$toolbarHtml}
+            </div>
+        </div>
+                
+HTML;
+    }
+
+    public function buildHtmlHeaderPanelLinked($toolbarId, string $toolbarHtml = '')
+    {
+        $header_style = '';
+        $toolbar_style = '';
+        $panel_options = "border: false";
+
+        return <<<HTML
+        
+        <div id="{$toolbarId}" style="{$header_style}">
+            <div class="easyui-panel exf-data-header" data-options="footer: '#{$toolbarId}_footer', {$panel_options}">
+                
+            </div>
+            <div id="{$toolbarId}_footer" class="datatable-toolbar" style="{$toolbar_style}">
                 {$toolbarHtml}
             </div>
         </div>

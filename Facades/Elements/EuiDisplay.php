@@ -12,7 +12,9 @@ use exface\Core\Facades\AbstractAjaxFacade\Elements\JqueryDisplayTrait;
  */
 class EuiDisplay extends EuiValue implements JsValueDecoratingInterface
 {
-    use JqueryDisplayTrait;
+    use JqueryDisplayTrait {
+        buildJs as buildJsViaTrait;
+    }
     
     /**
      * 
@@ -50,5 +52,15 @@ HTML;
     public function getElementType() : ?string
     {
         return 'div';
+    }
+
+    /**
+     *
+     * {@inheritDoc}
+     * @see \exface\JEasyUIFacade\Facades\Elements\EuiValue::buildJs()
+     */
+    public function buildJs()
+    {
+        return $this->buildJsViaTrait() . ';' . parent::buildJs();
     }
 }
