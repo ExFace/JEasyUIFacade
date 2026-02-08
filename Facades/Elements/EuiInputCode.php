@@ -82,17 +82,17 @@ HTML;
             (function(){
                 const inputValue = `$inputValue`;
                 
-                const editor = ace.edit('{$this->getIdOfAce()}', {
+                const aceEditor = ace.edit('{$this->getIdOfAce()}', {
                     theme: 'ace/theme/crimson_editor',
                     readOnly: $disabled,
                 });
                 
                 if ($colorizeCode) {
-                    editor.session.setMode('ace/mode/$aceEditorLanguage');
+                    aceEditor.session.setMode('ace/mode/$aceEditorLanguage');
                 }
                 
                 {$this->buildJsFormatCode('inputValue')}.then(function (formattedInput) {
-                    editor.setValue(formattedInput, -1);
+                    aceEditor.setValue(formattedInput, -1);
                 })
             })();          
 JS;
