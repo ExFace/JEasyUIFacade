@@ -1,6 +1,7 @@
 <?php
 namespace exface\JEasyUIFacade\Facades;
 
+use exface\Core\Contexts\DebugContext;
 use exface\Core\Facades\AbstractAjaxFacade\AbstractAjaxFacade;
 use exface\Core\Exceptions\DependencyNotFoundError;
 use exface\JEasyUIFacade\Facades\Middleware\EuiDatagridUrlParamsReader;
@@ -8,10 +9,7 @@ use exface\Core\Interfaces\DataSheets\DataSheetInterface;
 use exface\Core\Interfaces\WidgetInterface;
 use Psr\Http\Message\ServerRequestInterface;
 use exface\Core\Interfaces\Model\UiPageInterface;
-use GuzzleHttp\Psr7\Response;
 use exface\Core\Interfaces\Exceptions\ExceptionInterface;
-use exface\Core\Exceptions\Security\AuthenticationFailedError;
-use exface\Core\Interfaces\Exceptions\AuthorizationExceptionInterface;
 use exface\Core\Exceptions\OutOfBoundsException;
 use exface\Core\Exceptions\Security\AccessDeniedError;
 use exface\Core\Factories\UiPageFactory;
@@ -161,6 +159,10 @@ $.ajaxPrefilter(function( options ) {
 	}
 });
 </script>';
+        }
+        
+        if ($this->getWorkbench()->getContext()->getScopeWindow()->hasContext(DebugContext::class)) {
+            $includes[] = '<script type="text/javascript" src="' . $this->buildUrlToSource('LIBS.EXFDEBUGGER.JS') . '"></script>';
         }
         
         return $includes;        

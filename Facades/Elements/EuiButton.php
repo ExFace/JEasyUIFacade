@@ -1,8 +1,10 @@
 <?php
 namespace exface\JEasyUIFacade\Facades\Elements;
 
+use exface\Core\CommonLogic\Constants\Icons;
 use exface\Core\DataTypes\MessageTypeDataType;
 use exface\Core\Interfaces\Widgets\ConfirmationWidgetInterface;
+use exface\Core\Interfaces\Widgets\iHaveIcon;
 use exface\Core\Widgets\DialogButton;
 use exface\Core\Interfaces\Actions\ActionInterface;
 use exface\Core\Facades\AbstractAjaxFacade\Elements\JqueryButtonTrait;
@@ -125,9 +127,15 @@ JS;
             $style .= ' height:' . $this->buildCssHeight();
         }
         
-        if ($widget->getIconSet() === 'svg' && null !== $icon = $widget->getIcon()) {
+        if (Icons::isIconSetSVG($widget->getIconSet()) && null !== $icon = $widget->getIcon()) {
             $prefix = '<span class="l-btn-icon">' . $icon . '</span>';
-            $cssClass = 'exf-svg-icon';
+            $iconSet = $widget->getIconSet();
+            
+            if ($iconSet === iHaveIcon::ICON_SET_SVG_COLORED) {
+                $cssClass = 'exf-svg-icon exf-svg-colored';
+            } else if ($iconSet === iHaveIcon::ICON_SET_SVG) {
+                $cssClass = 'exf-svg-icon';
+            }
         }
 
         $output = '

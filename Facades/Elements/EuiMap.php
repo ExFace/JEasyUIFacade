@@ -2,12 +2,11 @@
 namespace exface\JEasyUIFacade\Facades\Elements;
 
 use exface\Core\Facades\AbstractAjaxFacade\Elements\LeafletTrait;
+use exface\Core\Widgets\Parts\Maps\Interfaces\DataMapLayerInterface;
+use exface\Core\Widgets\Parts\Maps\Interfaces\DataSelectionMapLayerInterface;
 use exface\JEasyUIFacade\Facades\Elements\Traits\EuiDataElementTrait;
 use exface\Core\Interfaces\Widgets\iShowData;
-use exface\Core\Interfaces\Widgets\iUseData;
-use exface\Core\Widgets\Parts\Maps\DataSelectionMarkerLayer;
 use exface\Core\Factories\WidgetFactory;
-use exface\Core\CommonLogic\UxonObject;
 
 /**
  * 
@@ -143,10 +142,10 @@ JS;
     protected function registerLiveReferenceAtLinkedElements()
     {
         foreach ($this->getWidget()->getLayers() as $layer) {
-            if (($layer instanceof iUseData) && $link = $layer->getDataWidgetLink()) {
+            if (($layer instanceof DataMapLayerInterface) && $link = $layer->getDataWidgetLink()) {
                 $linked_element = $this->getFacade()->getElement($link->getTargetWidget());
                 if ($linked_element) {
-                    if ($layer instanceof DataSelectionMarkerLayer) {
+                    if ($layer instanceof DataSelectionMapLayerInterface) {
                         $linked_element->addOnChangeScript($this->buildJsLeafletRefresh());
                     } else {
                         $linked_element->addOnLoadSuccess($this->buildJsLeafletRefresh());

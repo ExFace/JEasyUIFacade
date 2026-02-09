@@ -118,7 +118,7 @@ function contextBarRefresh(data){
 			setTimeout(function(){
         	content.panel({
                 width: 200,
-                height: 300,
+                height: 'auto',
                 border: false,
                 href: 'api/jeasyui',
                 method: 'GET',
@@ -132,7 +132,8 @@ function contextBarRefresh(data){
                 	var $p = $(this);
                 	setTimeout(function(){
                 		try {
-                			$p.panel('resize', {width: 200, height: 300});
+							var iInnerHeight = $p.children().first().outerHeight() + 2;
+                			$p.panel('resize', {width: 200, height: Math.max(iInnerHeight, 300)});
                 		} catch (e) {
                 			// do nothing
                 		}
