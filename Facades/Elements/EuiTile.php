@@ -20,7 +20,7 @@ class EuiTile extends EuiButton
         $icon_class = '';
         if ($widget->getIcon() && $widget->getShowIcon(true)) {
             $icon_class = $this->buildCssIconClass($widget->getIcon());
-            $icon_content = $widget->getIconSet() === 'svg' ? $widget->getIcon() : '';
+            $icon_content = Icons::isIconSetSVG($widget->getIconSet()) ? $widget->getIcon() : '';
         }
         $style = $this->buildCssElementStyle();
         
