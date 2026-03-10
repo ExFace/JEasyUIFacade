@@ -25,8 +25,8 @@ class EuiDataTree extends EuiDataTable
     {
         parent::init();
         
-        if ($this->getWidget()->getTreeLeafIdColumnId() !== null) {
-            $leafIdCol = $this->getWidget()->getColumn($this->getWidget()->getTreeLeafIdColumnId());
+        if ($this->getWidget()->hasCustomTreeLeafIdColumn()) {
+            $leafIdCol = $this->getWidget()->getTreeLeafIdColumn();
             if ($leafIdCol && ! $leafIdCol->getDataColumnName()) {
                 $leafIdCol->setDataColumnName('_leafId');
             }
@@ -67,9 +67,11 @@ class EuiDataTree extends EuiDataTable
 					}
 					');
         }
-        
+
         if (($leafIdDelim = $widget->getTreeLeafIdConcatenate()) !== null) {
             $calculatedIdField = ', idField: "_leafId"';
+        } elseif ($widget->hasCustomTreeLeafIdColumn()) {
+            $calculatedIdField = ', idField: "' . $widget->getTreeLeafIdColumn()->getDataColumnName() . '"';
         }
         
         $grid_head = parent::buildJsInitOptionsHead() . $calculatedIdField;
