@@ -1,6 +1,7 @@
 <?php
 namespace exface\JEasyUIFacade\Facades\Elements;
 
+use exface\Core\Facades\AbstractAjaxFacade\Elements\JsInputCustomTrait;
 use exface\Core\Interfaces\Actions\ActionInterface;
 
 /**
@@ -8,6 +9,8 @@ use exface\Core\Interfaces\Actions\ActionInterface;
  */
 class EuiInputCustom extends EuiInput
 {
+    use JsInputCustomTrait;
+    
     protected function init()
     {
         parent::init();
@@ -72,81 +75,6 @@ JS;
     
     /**
      * 
-     * @param string $widgetProperty
-     * @param string $returnValueJs
-     * @return string
-     */
-    protected function buildJsFallbackForEmptyScript(string $widgetProperty, string $returnValueJs = "''") : string
-    {
-        return "(function(){console.warn('Property {$widgetProperty} not set for widget InputCustom. Falling back to empty string'); return {$returnValueJs};})()";
-    }
-
-    /**
-     * 
-     * {@inheritDoc}
-     * @see \exface\JEasyUIFacade\Facades\Elements\EuiInput::buildJsValueSetterMethod()
-     */
-    public function buildJsValueSetter($value)
-    {
-        return $this->getWidget()->getScriptToSetValue($value) ?? $this->buildJsFallbackForEmptyScript('script_to_set_value');
-    }
-    
-    /**
-     * 
-     * {@inheritDoc}
-     * @see \exface\Core\Facades\AbstractAjaxFacade\Elements\AbstractJqueryElement::buildJsValueGetter()
-     */
-    public function buildJsValueGetter()
-    {
-        return $this->getWidget()->getScriptToGetValue() ?? $this->buildJsFallbackForEmptyScript('script_to_get_value');
-    }
-    
-    /**
-     * 
-     * {@inheritDoc}
-     * @see \exface\JEasyUIFacade\Facades\Elements\EuiInput::buildJsValidator()
-     */
-    public function buildJsValidator(?string $valJs = null) : string
-    {
-        return $this->getWidget()->getScriptToValidateInput() ?? $this->buildJsValidatorViaTrait($valJs);
-    }
-    
-    /**
-     * 
-     * {@inheritDoc}
-     * @see \exface\JEasyUIFacade\Facades\Elements\EuiInput::buildJsSetDisabled()
-     */
-    public function buildJsSetDisabled(bool $trueOrFalse) : string
-    {
-        if ($trueOrFalse === true) {
-            return $this->getWidget()->getScriptToDisable() ?? parent::buildJsSetDisabled($trueOrFalse);
-        } else {
-            return $this->getWidget()->getScriptToEnable() ?? parent::buildJsSetDisabled($trueOrFalse);
-        }
-    }
-    
-    /**
-     *
-     * {@inheritDoc}
-     * @see \exface\Core\Facades\AbstractAjaxFacade\Elements\AbstractJqueryElement::buildJsDataGetter()
-     */
-    public function buildJsDataGetter(ActionInterface $action = null)
-    {
-        return $this->getWidget()->getScriptToGetData($action) ?? parent::buildJsDataGetter($action);
-    }
-    
-    /**
-     * 
-     * {@inheritDoc}
-     * @see \exface\Core\Facades\AbstractAjaxFacade\Elements\AbstractJqueryElement::buildJsDataSetter()
-     */
-    public function buildJsDataSetter(string $jsData) : string
-    {
-        return $this->getWidget()->getScriptToSetData($jsData) ?? parent::buildJsDataSetter($jsData);
-    }
-    
-    /**
-     * 
      * {@inheritDoc}
      * @see \exface\Core\Facades\AbstractAjaxFacade\Elements\AbstractJqueryElement::buildHtmlHeadTags()
      */
@@ -178,20 +106,16 @@ HTML;
     /**
      * 
      * {@inheritDoc}
-     * @see \exface\JEasyUIFacade\Facades\Elements\EuiInput::buildJsOnChangeHandler()
-     */
-    protected function buildJsOnChangeHandler()
-    {
-        $this->getWidget()->getScriptToAttachOnChange($this->getOnChangeScript()) ?? $this->buildJsFallbackForEmptyScript('script_to_attach_on_change');
-    }
-    
-    /**
-     * 
-     * {@inheritDoc}
      * @see \exface\JEasyUIFacade\Facades\Elements\EuiInput::getElementType()
      */
     public function getElementType() : ?string
     {
         return 'div';
+    }
+
+    protected function registerLiveReferenceAtLinkedElement()
+    {
+        parent::registerLiveReferenceAtLinkedElement();
+        $this->registerLiveReferencesAtCustomLinks();
     }
 }
