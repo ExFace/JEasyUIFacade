@@ -73,7 +73,7 @@ HTML;
         
         $widget = $this->getWidget();
         $aceEditorLanguage = $widget->getLanguage();
-        $inputValue = $widget->getValue();
+        $inputValue = str_replace('`', '\\`', $widget->getValue());
         $disabled = json_encode($widget->isDisabled());
         $colorizeCode = json_encode($widget->getCodeFormatter()->getColorize());
         

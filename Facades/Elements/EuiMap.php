@@ -93,7 +93,7 @@ JS;
     }
     
     
-    protected function buildJsLeafletDataLoader(string $oRequestParamsJs, string $aResultRowsJs, string $onLoadedJs) : string
+    protected function buildJsLeafletDataLoader(DataMapLayerInterface $layer, string $oRequestParamsJs, string $aResultRowsJs, string $onLoadedJs) : string
     {
         return <<<JS
 
