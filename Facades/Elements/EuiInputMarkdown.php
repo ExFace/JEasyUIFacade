@@ -8,6 +8,8 @@ use exface\Core\Widgets\InputMarkdown;
  * JEasyUI implementation of the corresponding widget.
  * 
  * @see InputMarkdown
+ * 
+ * @method \exface\Core\Widgets\InputMarkdown getWidget()
  */
 class EuiInputMarkdown extends EuiInput
 {
@@ -54,7 +56,9 @@ class EuiInputMarkdown extends EuiInput
         $includes = parent::buildHtmlHeadTags();
         $includes[] = '<link rel="stylesheet" href="' . $f->buildUrlToSource('LIBS.TOASTUI.EDITOR.CSS') . '" />';
         $includes[] = '<script type="text/javascript" src="' . $f->buildUrlToSource("LIBS.TOASTUI.EDITOR.JS") . '"></script>';
-        //$includes[] = '<script type="text/javascript" src="' . $f->buildUrlToSource("LIBS.MERMAID.JS") . '"></script>';
+        if ($this->getWidget()->hasRenderMermaidDiagrams()) {
+            $includes[] = '<script type="text/javascript" src="' . $f->buildUrlToSource("LIBS.MERMAID.JS") . '"></script>';
+        }
         //$includes[] = '<script src="https://uicdn.toast.com/editor/latest/toastui-editor-all.min.js"></script>';
         return $includes;
     }
