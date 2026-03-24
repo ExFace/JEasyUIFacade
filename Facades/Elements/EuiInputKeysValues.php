@@ -18,7 +18,7 @@ class EuiInputKeysValues extends EuiInputText
      */
     public function getElementType() : ?string
     {
-        return 'div';
+        return null;
     }
     
     /**

@@ -33,7 +33,7 @@ class EuiDisplay extends EuiValue implements JsValueDecoratingInterface
         
         $element = <<<HTML
 
-        <{$this->getElementType()} id="{$this->getId()}" style="{$this->buildCssElementStyle()}">{$value}</{$this->getElementType()}>
+        <div id="{$this->getId()}" style="{$this->buildCssElementStyle()}">{$value}</div>
 
 HTML;
         return $this->buildHtmlLabelWrapper($element);
@@ -51,7 +51,7 @@ HTML;
      */
     public function getElementType() : ?string
     {
-        return 'div';
+        return null;
     }
 
     /**
