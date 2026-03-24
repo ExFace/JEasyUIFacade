@@ -22,7 +22,7 @@ class EuiText extends EuiDisplay
      */
     public function getElementType() : ?string
     {
-        return $this->getCaption() ? 'span' : 'p';
+        return null;
     }
     
     public function buildHtml()
@@ -48,10 +48,10 @@ class EuiText extends EuiDisplay
                     break;
             }
         }
-        
+        $tag = $this->getCaption() ? 'span' : 'p';
         $output = <<<HTML
 
-        <{$this->getElementType()} id="{$this->getId()}" class="exf-text" style="{$style}">{$text}</{$this->getElementType()}>
+        <{$tag} id="{$this->getId()}" class="exf-text" style="{$style}">{$text}</{$tag}>
 
 HTML;
         return $this->buildHtmlLabelWrapper($output);

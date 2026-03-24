@@ -14,7 +14,7 @@ class EuiInputHidden extends EuiInput
      */
     public function getElementType() : ?string
     {
-        return 'hidden';
+        return null;
     }
     
     /**

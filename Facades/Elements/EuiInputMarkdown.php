@@ -22,7 +22,7 @@ class EuiInputMarkdown extends EuiInput
      */
     public function getElementType() : ?string
     {
-        return 'div';
+        return null;
     }
     
     /**

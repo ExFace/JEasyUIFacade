@@ -208,7 +208,7 @@ JS;
      */
     public function buildJsValidator(?string $valJs = null) : string
     {
-        if ($valJs === null && $this->isValidationRequired() === true) {
+        if ($valJs === null && $this->isValidationRequired() === true && $this->getElementType()) {
             return "$('#{$this->getId()}').{$this->getElementType()}('isValid')";
         }
         

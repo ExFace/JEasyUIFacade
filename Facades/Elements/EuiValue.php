@@ -48,7 +48,7 @@ class EuiValue extends EuiAbstractElement
      */
     public function getElementType() : ?string
     {
-        return $this->getCaption() ? 'span' : 'p';
+        return null;
     }
     
     /**
