@@ -73,11 +73,14 @@ HTML;
         
         $widget = $this->getWidget();
         $aceEditorLanguage = mb_strtolower($widget->getLanguage() ?? 'text');
-        $inputValue = str_replace('`', '\\`', $widget->getValue());
-        $disabled = json_encode($widget->isDisabled());
         $setModeJs = '';
         if (in_array($aceEditorLanguage, $this->getAceLanguages())) {
-            $setModeJs = "editor.session.setMode('ace/mode/$aceEditorLanguage');";
+            $setModeJs = "
+                editor.session.setMode('ace/mode/$aceEditorLanguage');";
+        }
+        if ($widget->hasWrapLines()) {
+            $setModeJs .= "
+                editor.session.setUseWrapMode(true);";
         }
         
         $js .= <<<JS
@@ -85,14 +88,14 @@ HTML;
             (function(inputValue){
                 const editor = ace.edit('{$this->getIdOfAce()}', {
                     theme: 'ace/theme/crimson_editor',
-                    readOnly: $disabled,
+                    readOnly: {$this->escapeBool($widget->isDisabled())},
                 });
                 {$setModeJs}
                 
                 {$this->buildJsFormatCode('inputValue')}.then(function (formattedInput) {
                     editor.setValue(formattedInput, -1);
                 })
-            })(`$inputValue`);          
+            })({$this->escapeString($widget->getValueWithDefaults(), true, false)});          
 JS;
         
         return $js;
