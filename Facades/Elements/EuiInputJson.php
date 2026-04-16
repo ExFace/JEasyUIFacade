@@ -26,7 +26,7 @@ class EuiInputJson extends EuiInputText
      */
     public function getElementType() : ?string
     {
-        return 'div';
+        return null;
     }
     
     /**
