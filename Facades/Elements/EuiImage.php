@@ -61,6 +61,6 @@ class EuiImage extends EuiText
      */
     public function getElementType() : ?string
     {
-        return 'img';
+        return null;
     }
 }

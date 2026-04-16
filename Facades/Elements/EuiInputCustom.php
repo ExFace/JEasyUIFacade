@@ -110,7 +110,7 @@ HTML;
      */
     public function getElementType() : ?string
     {
-        return 'div';
+        return null;
     }
 
     protected function registerLiveReferenceAtLinkedElement()
