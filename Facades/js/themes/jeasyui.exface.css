@@ -237,6 +237,8 @@ pre.sf-dump .sf-dump-private, pre.sf-dump .sf-dump-public, pre.sf-dump .sf-dump-
 .exf-spreadsheet-invalid {background-color: #ffebeb;}
 .exf-spreadsheet-invalid::before {color: #b00;}
 .jdropdown-searchbar > .jdropdown-container-header {height: 42px !important; max-height: 42px !important}
+table.jexcel > thead > tr > td {border-top-color: rgb(140, 140, 140); border-left-color: rgb(140, 140, 140); background-color: #dcdcdc;}
+table.jexcel > tbody > tr > td.jexcel_row {background-color: #dcdcdc; border-top-color: rgb(229, 229, 229) !important;}
 /* Fix for flickering widht on double-click cell */
 .jexcel td.highlight-selected > * {min-width: 3em; width: auto;}
 .jexcel td.editor > input, 
