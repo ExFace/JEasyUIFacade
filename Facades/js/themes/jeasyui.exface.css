@@ -238,13 +238,18 @@ pre.sf-dump .sf-dump-private, pre.sf-dump .sf-dump-public, pre.sf-dump .sf-dump-
 .exf-spreadsheet-invalid::before {color: #b00;}
 .jdropdown-searchbar > .jdropdown-container-header {height: 42px !important; max-height: 42px !important}
 table.jexcel > thead > tr > td {border-top-color: rgb(140, 140, 140); border-left-color: rgb(140, 140, 140); background-color: #dcdcdc;}
-table.jexcel > tbody > tr > td.jexcel_row {background-color: #dcdcdc; border-top-color: rgb(229, 229, 229) !important;}
+table.jexcel > tbody > tr > td.jexcel_row {background-color: #dcdcdc; border-top-color: rgb(140, 140, 140); border-left-color: rgb(140, 140, 140);}
 /* Fix for flickering widht on double-click cell */
 .jexcel td.highlight-selected > * {min-width: 3em; width: auto;}
 .jexcel td.editor > input, 
 .jexcel td.editor > textarea {padding-top: 7px !important; padding: 4px 6px 4px 4px; text-align: inherit !important; font-family: inherit; font-size: inherit;}
 .jexcel td.editor > textarea {margin-top: -1px; margin-bottom: -1px;}
 
+/* input cells: differentiate through darker borders */
+table.jexcel > tbody > tr > td:not(:first-child):not(.readonly):not(.highlight-selected) {
+    border-left-color: #666;
+    border-bottom: 1.5px solid #666;
+}
 
 /* adjustments to allow opening dropdowns with single click */
 table.jexcel > tbody > tr > td.jexcel_dropdown {
@@ -268,7 +273,13 @@ table.jexcel > tbody > tr > td.jexcel_dropdown.exf-dropdown-hitbox-hover:not(.re
 
 /* flip arrow when dropdown is open */
 table.jexcel .jdropdown-default.jdropdown-focus .jdropdown-header {
+    background-color: transparent;
     background-image: url("data:image/svg+xml,%0A%3Csvg xmlns='http://www.w3.org/2000/svg' width='24' height='24' viewBox='0 0 24 24'%3E%3Cpath fill='none' d='M0 0h24v24H0V0z'/%3E%3Cpath d='M7 10l5 5 5-5H7z' fill='gray' transform='rotate(180 12 12)'/%3E%3C/svg%3E");
+}
+
+/* dropdown in header should not have white background */
+table.jexcel > thead .jdropdown{
+    background-color: #dcdcdc;
 }
 
 /* if wrapping is enabled for captions, hypenate and break lines */
@@ -279,6 +290,22 @@ table.jexcel .jdropdown-default.jdropdown-focus .jdropdown-header {
     vertical-align: text-top;
     hyphens: auto;
     padding-top: 4px !important;
+}
+
+/* Border under header */
+table.jexcel > thead > tr:last-child > td {border-bottom: 1px solid rgb(140, 140, 140);}
+
+/* readonly: striped background and dotted/light borders */
+table.jexcel > tbody > tr > td.readonly {
+    background-image: repeating-linear-gradient(-45deg, transparent, transparent 4px, rgba(0, 0, 0, 0.02) 4px, rgba(0, 0, 0, 0.02) 8px);
+    border-top: 0px dashed #a7a7a74d;
+    border-left: 1px solid #a7a7a74d; 
+}
+
+/* use disallowed cursor to differentiate readonly cells, but make text dark enough to read */
+table.jexcel > tbody > tr > td.readonly {
+    color: rgb(73, 73, 73);
+    cursor: not-allowed;
 }
 
 /* DataImporter */
