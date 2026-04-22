@@ -15,7 +15,7 @@ class EuiInputCustom extends EuiInput
     {
         parent::init();
         $widget = $this->getWidget();
-        if ($widget->hasParent() && null !== $js = $this->getWidget()->getScriptToResize()) {
+        if ($widget->hasParent() && null !== $js = $this->getOnResizeScript()) {
             $this->getFacade()->getElement($this->getWidget()->getParent())->addOnResizeScript($js);
         }
     }
