@@ -292,6 +292,24 @@ table.jexcel > thead .jdropdown{
     padding-top: 4px !important;
 }
 
+/* contetx menu indicator above first cell in top left corner */
+table.jexcel > thead > tr > td.jexcel_selectall:hover {
+    background-color: #9c9c9c;
+    position: relative;
+}
+
+table.jexcel > thead > tr > td.jexcel_selectall:hover::after {
+    content: "...";
+    position: absolute;
+    right: 36%;
+    top: 45%;
+    transform: translateY(-50%);
+    font-size: 1rem;
+    font-weight: bold;
+    color: #555;
+    pointer-events: none;
+}
+
 
 /* replace filter icon */
 table.jexcel .jexcel_column_filter {
