@@ -383,7 +383,18 @@ JS;
             case $functionName === Console::FUNCTION_RUN_COMMAND:
                 $cmd = $parameters[0];
                 $cmd = trim(trim($cmd), '"');
-                return "{$this->buildJsFunctionPrefix()}ExecuteCommandsJson([{$this->escapeString($cmd, true, false)}], $('#{$this->getId()}').terminal());";
+                $jsRequestData ??= '{}';
+                return <<<JS
+                
+                (function(sCommand, oData) {console.log('sCommand');
+                    oRow = oData.rows[0] || {};
+                    for (var sFld in oRow) {
+                        mVal = oRow[sFld];
+                        sCommand = sCommand.replace('[#' + sFld + '#]', mVal);
+                    }
+                    {$this->buildJsFunctionPrefix()}ExecuteCommandsJson([sCommand], $('#{$this->getId()}').terminal());
+                })({$this->escapeString($cmd, true, false)}, $jsRequestData)
+JS;
         }
         return parent::buildJsCallFunction($functionName, $parameters, $jsRequestData);
     }
