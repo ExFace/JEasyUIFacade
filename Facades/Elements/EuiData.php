@@ -1116,7 +1116,7 @@ JS;
         if ($this->getWidget()->hasUidColumn()) {
             $uidColName = $this->getWidget()->getUidColumn()->getDataColumnName();
         }
-        foreach ($this->getWidget()->getValueLinksToThisWidget() as $link) {
+        foreach ($this->getWidget()->getLinksToThisWidget() as $link) {
             if ($uidColName === null || $uidColName === $link->getTargetColumnId()) {
                 return true;
             }
