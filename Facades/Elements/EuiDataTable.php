@@ -36,17 +36,6 @@ class EuiDataTable extends EuiData
         parent::init();
         $widget = $this->getWidget();
         
-        // Take care of refresh links
-        if ($refresh_link = $widget->getRefreshWithWidget()) {
-            if ($refresh_link_element = $this->getFacade()->getElement($refresh_link->getTargetWidget())) {
-                if ($refresh_link_element instanceof EuiData) {
-                    $refresh_link_element->addOnBeforeLoad("setTimeout(function(){ {$this->buildJsRefresh()} }, 0)");
-                } else {
-                    $refresh_link_element->addOnChangeScript($this->buildJsRefresh());
-                }
-            }
-        }
-        
         // Initialize editors and cell mergers
         $colsToMerge = [];
         /* @var $col \exface\Core\Widgets\DataColumn */
