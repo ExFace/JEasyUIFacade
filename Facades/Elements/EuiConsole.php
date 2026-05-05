@@ -386,7 +386,7 @@ JS;
                 $jsRequestData ??= '{}';
                 return <<<JS
                 
-                (function(sCommand, oData) {console.log('sCommand');
+                (function(sCommand, oData) {
                     oRow = oData.rows[0] || {};
                     for (var sFld in oRow) {
                         mVal = oRow[sFld];
