@@ -1,6 +1,7 @@
 <?php
 namespace exface\JEasyUIFacade\Facades\Elements;
 
+use exface\Core\Interfaces\Widgets\iUseData;
 use exface\Core\Widgets\DataColumnGroup;
 use exface\Core\Exceptions\Configuration\ConfigOptionNotFoundError;
 use exface\Core\Facades\AbstractAjaxFacade\Elements\JqueryToolbarsTrait;
@@ -49,6 +50,24 @@ class EuiData extends EuiAbstractElement
     private $headers_colspan = array();
     
     private $headers_rowspan = array();
+
+    protected function init()
+    {
+        parent::init();
+        $widget = $this->getWidget();
+        $dataWidget = $widget instanceof iUseData ? $widget->getData() : $widget;
+
+        // Take care of refresh links
+        if ($refresh_link = $dataWidget->getRefreshWithWidget()) {
+            if ($refresh_link_element = $this->getFacade()->getElement($refresh_link->getTargetWidget())) {
+                if ($refresh_link_element instanceof EuiData) {
+                    $refresh_link_element->addOnBeforeLoad("setTimeout(function(){ {$this->buildJsRefresh()} }, 0);");
+                } else {
+                    $refresh_link_element->addOnChangeScript($this->buildJsRefresh());
+                }
+            }
+        }
+    }    
     
     /**
      * The Data element by itself does not generate anything - it just offers common utility methods.
