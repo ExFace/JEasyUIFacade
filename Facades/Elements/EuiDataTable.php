@@ -17,7 +17,7 @@ use exface\Core\Widgets\Parts\DataRowGrouper;
  *
  * @author Andrej Kabachnik
  *        
- * @method exface\Core\Widgets\DataTable getWidget()
+ * @method \exface\Core\Widgets\DataTable getWidget()
  *        
  */
 class EuiDataTable extends EuiData
@@ -35,17 +35,6 @@ class EuiDataTable extends EuiData
     {
         parent::init();
         $widget = $this->getWidget();
-        
-        // Take care of refresh links
-        if ($refresh_link = $widget->getRefreshWithWidget()) {
-            if ($refresh_link_element = $this->getFacade()->getElement($refresh_link->getTargetWidget())) {
-                if ($refresh_link_element instanceof EuiData) {
-                    $refresh_link_element->addOnBeforeLoad("setTimeout(function(){ {$this->buildJsRefresh()} }, 0)");
-                } else {
-                    $refresh_link_element->addOnChangeScript($this->buildJsRefresh());
-                }
-            }
-        }
         
         // Initialize editors and cell mergers
         $colsToMerge = [];
@@ -362,6 +351,11 @@ JS;
     public function buildHtmlHeadTags()
     {
         $facade = $this->getFacade();
+        
+        // Disable setups for the table as they are not supported by jEasyUI anyway. This will save us some
+        // performance.
+        $this->getWidget()->setConfiguratorSetupsEnabled(false);
+        
         $includes = parent::buildHtmlHeadTags();
         // Row details view
         if ($this->getWidget()->hasRowDetails()) {

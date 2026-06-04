@@ -43,7 +43,12 @@ class EuiNavTiles extends EuiWidgetGrid
                 $this->colorize($tiles);
                 break;
             default: 
-                foreach ($this->getWidget()->getWidgets() as $tiles) {
+                foreach ($this->getWidget()->getWidgets() as $i => $tiles) {
+                    // hide the first tile group (the overview) unless depth is 1, there is
+                    // only one group, or show_overview_group is explicitly enabled
+                    if ($i === 0 && $this->getWidget()->getDepth() !== 1 && $this->getWidget()->getShowOverviewGroup() === false) {
+                        $tiles->setHidden(true);
+                    }
                     $tiles->setNumberOfColumns(1);
                     // Make sure tile groups are displayed next-to-each-other (by default
                     // a Tiles widget would take up all the available space)

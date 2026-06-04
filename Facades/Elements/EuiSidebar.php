@@ -5,11 +5,11 @@ use exface\Core\CommonLogic\WidgetDimension;
 
 /**
  *
- * @method exface\Core\Widgets\DialogSidebar getWidget()
+ * @method exface\Core\Widgets\Sidebar getWidget()
  * @author Andrej Kabachnik
  *        
  */
-class EuiDialogSidebar extends EuiWidgetGrid
+class EuiSidebar extends EuiWidgetGrid
 {
     /**
      * Returns the HTML for a jEasyUI layout region panel
