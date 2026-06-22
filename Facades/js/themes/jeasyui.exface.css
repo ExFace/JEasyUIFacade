@@ -292,6 +292,10 @@ table.jexcel > thead .jdropdown{
     padding-top: 4px !important;
 }
 
+/* if auto column width is enabled, use auto table layout to allow columns to grow with content. */
+.exf-auto-column-width table.jexcel { table-layout: auto; }
+.exf-auto-column-width table.jexcel > thead > tr > td.jexcel_selectall { min-width: 2.5rem; }
+
 /* contetx menu indicator above first cell in top left corner */
 table.jexcel > thead > tr > td.jexcel_selectall:hover {
     background-color: #9c9c9c;
