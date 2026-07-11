@@ -536,7 +536,6 @@ JS;
 
                     // Make parentId a regular filter instead of an extra URL parameter
                     var parentId = {$js_var_param}['id'];
-                    console.log('onBeforeLoad', parentId);
                     delete {$js_var_param}['id'];
                     if (parentId) {
                         if ({$js_var_param}['data'] !== undefined && {$js_var_param}['data']['filters'] !== undefined && {$js_var_param}['data']['filters']['conditions'] !== undefined) {
