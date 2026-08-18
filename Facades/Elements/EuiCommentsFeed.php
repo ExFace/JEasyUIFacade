@@ -37,8 +37,8 @@ class EuiCommentsFeed extends EuiData
     {
         return [
             '<script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/jquery.textcomplete/1.8.0/jquery.textcomplete.js"></script>',
-            '<script type="text/javascript" src="vendor/npm-asset/jquery-comments/js/jquery-comments.js"></script>',
-            '<link rel="stylesheet" type="text/css" href="vendor/npm-asset/jquery-comments/css/jquery-comments.css">'
+            '<script type="text/javascript" src="vendor/bower-asset/jquery-comments/js/jquery-comments.js"></script>',
+            '<link rel="stylesheet" type="text/css" href="vendor/bower-asset/jquery-comments/css/jquery-comments.css">'
         ];
     }
 
