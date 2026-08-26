@@ -6,7 +6,46 @@ use exface\Core\Widgets\Markdown;
 use exface\Core\Widgets\Tab;
 
 class EuiMarkdown extends EuiHtml
-{    
+{
+    /**
+     * Builds the Markdown HTML while rendering embedded script elements as source text.
+     *
+     * {@inheritDoc}
+     * @see \exface\Core\Facades\AbstractAjaxFacade\Elements\JqueryHtmlTrait::buildHtml()
+     */
+    public function buildHtml()
+    {
+        return $this->escapeScriptElements(parent::buildHtml());
+    }
+
+    /**
+     * Escapes script elements so inserting Markdown HTML cannot execute their contents.
+     *
+     * Script markup inside fenced code blocks is already HTML-encoded by the Markdown
+     * parser and is therefore left unchanged.
+     *
+     * @param string $html Rendered Markdown HTML.
+     * @return string Rendered HTML with script elements represented as text.
+     */
+    protected function escapeScriptElements(string $html) : string
+    {
+        $html = preg_replace_callback(
+            '~<script\b[^>]*>.*?</script\s*>~is',
+            static function (array $matches) : string {
+                return htmlspecialchars($matches[0], ENT_NOQUOTES | ENT_SUBSTITUTE | ENT_HTML5, 'UTF-8');
+            },
+            $html
+        );
+
+        return preg_replace_callback(
+            '~</?script\b[^>]*>~is',
+            static function (array $matches) : string {
+                return htmlspecialchars($matches[0], ENT_NOQUOTES | ENT_SUBSTITUTE | ENT_HTML5, 'UTF-8');
+            },
+            $html
+        );
+    }
+
     protected function init()
     {
         parent::init();
