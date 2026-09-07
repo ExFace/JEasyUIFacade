@@ -27,6 +27,8 @@ use exface\Core\DataTypes\StringDataType;
 use exface\Core\DataTypes\HtmlDataType;
 use exface\Core\DataTypes\MessageTypeDataType;
 use exface\Core\Widgets\DataSpreadSheet;
+use exface\Core\Widgets\PivotTable;
+use exface\JEasyUIFacade\Facades\Elements\EuiPerspectivePivotTable;
 
 /**
  * Renders pages using the jEasyUI JavaScript framework based on jQuery.
@@ -77,6 +79,19 @@ class JEasyUIFacade extends AbstractAjaxFacade
         if (! is_dir($folder)) {
             throw new DependencyNotFoundError('jEasyUI files not found! Please install jEasyUI to "' . $folder . '"!', '6T6HUFO');
         }
+    }
+
+    /**
+     * {@inheritDoc}
+     * @see \exface\Core\Facades\AbstractAjaxFacade\AbstractAjaxFacade::getElementClassForWidget()
+     */
+    protected function getElementClassForWidget(WidgetInterface $widget) : string
+    {
+        /* TODO #perspective-pivottable remove PivotTable.js integration once perspective covers all use-cases */
+        if ($widget instanceof PivotTable && strcasecmp((string) $this->getConfig()->getOption('WIDGET.PIVOTTABLE.RENDERER'), 'Perspective') === 0) {
+            return EuiPerspectivePivotTable::class;
+        }
+        return parent::getElementClassForWidget($widget);
     }
     
     /**
