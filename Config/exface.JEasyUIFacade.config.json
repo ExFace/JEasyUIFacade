@@ -6,6 +6,7 @@
 	"FACADE.HEADERS.CONTENT_SECURITY_POLICY.CONNECT_SRC": "'self'",
 	"FACADE.HEADERS.CONTENT_SECURITY_POLICY.SCRIPT_SRC": "'self' 'unsafe-eval' 'unsafe-inline'",
 	"FACADE.HEADERS.CONTENT_SECURITY_POLICY.SCRIPT_SRC_ELEM": "'self' 'unsafe-inline' blob:",
+	"FACADE.HEADERS.CONTENT_SECURITY_POLICY.WORKER_SRC": "'self' blob:",
 	"FACADE.HEADERS.CONTENT_SECURITY_POLICY.FONT_SRC": "'self' 'unsafe-eval' 'unsafe-inline' blob: data:",
 	"FACADE.HEADERS.CONTENT_SECURITY_POLICY.IMG_SRC": "* 'self' 'unsafe-inline' blob: data: filesystem:",
 	"FACADE.HEADERS.CONTENT_SECURITY_POLICY.MEDIA_SRC": "* 'self' 'unsafe-inline' blob: data: filesystem: mediastream:",
@@ -165,6 +166,14 @@
 	"LIBS.ECHARTS.ECHARTSHEATMAP_JS": "exface/core/Facades/AbstractAjaxFacade/js/echarts/echarts46Heatmap.custom.min.js",
 	"LIBS.TINYCOLOR.JS": "npm-asset/tinycolor2/dist/tinycolor-min.js",
 	"LIBS.TINYGRADIENT.JS": "npm-asset/tinygradient/browser.js",
+
+	"LIBS.PERSPECTIVE.LOADER.JS": "exface/core/Facades/AbstractAjaxFacade/js/perspective/perspective-loader.js",
+	"LIBS.PERSPECTIVE.CLIENT.JS": "npm-asset/perspective-dev--client/dist/esm/perspective.inline.js",
+	"LIBS.PERSPECTIVE.VIEWER.JS": "npm-asset/perspective-dev--viewer/dist/cdn/perspective-viewer.js",
+	"LIBS.PERSPECTIVE.DATAGRID.JS": "npm-asset/perspective-dev--viewer-datagrid/dist/cdn/perspective-viewer-datagrid.js",
+	"LIBS.PERSPECTIVE.CHARTS.JS": "npm-asset/perspective-dev--viewer-charts/dist/cdn/perspective-viewer-charts.js",
+	"LIBS.PERSPECTIVE.THEME.CSS": "npm-asset/perspective-dev--viewer/dist/css/pro.css",
+	"LIBS.PERSPECTIVE.FACADE.CSS": "exface/core/Facades/AbstractAjaxFacade/js/perspective/perspective.css",
 	
 	"LIBS.PIVOTTABLE.CORE.JS": "npm-asset/pivottable/dist/pivot.min.js",
    	"LIBS.PIVOTTABLE.CORE.CSS": "npm-asset/pivottable/dist/pivot.min.css",
@@ -229,6 +238,7 @@
     "WIDGET.DATATABLE.HEIGHT_DEFAULT": 10,
     "WIDGET.DATATABLE.PAGE_SIZES_SELECTABLE": [20, 40, 60, 100, 200],
 	"WIDGET.DATATABLE.PAGE_SIZE": 40,
+	"WIDGET.PIVOTTABLE.RENDERER": "PivotTable.js",
 	
 	"WIDGET.DIALOG.COLUMNS_BY_DEFAULT": 2,
 	"WIDGET.DIALOG.DEFAULT_BUTTON_ALIGNMENT": "left",
