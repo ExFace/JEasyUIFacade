@@ -791,6 +791,7 @@ JS;
         $configuratorEl = $this->getFacade()->getElement($configuratorWidget);
         
         if (! $widget->isConfiguratorLinked()) {
+            $this->addButtonsToSearchGroup($widget->getToolbarMain()->getButtonGroupForSearchActions());
             // Add header collapse button to the toolbar
             if ($configuratorWidget->getFilterTab()->countWidgetsVisible() > 0) {
                 $configuratorEl->addButtonToCollapseExpand($widget->getToolbarMain()->getButtonGroupForSearchActions(), 0, $this->buildJsResize());
@@ -822,6 +823,16 @@ JS;
         {$context_menu_html}
 
 HTML;
+    }
+
+    /**
+     * Adds facade-specific controls to the table header toolbar.
+     *
+     * @param ButtonGroup $buttonGroup
+     * @return void
+     */
+    protected function addButtonsToSearchGroup(ButtonGroup $buttonGroup) : void
+    {
     }
     
     /**
