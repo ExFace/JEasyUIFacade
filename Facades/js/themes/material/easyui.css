@@ -120,7 +120,7 @@
   height: 16px;
   opacity: 0.6;
   filter: alpha(opacity=60);
-  margin: 0 0 0 2px;
+  margin: 0 2px 0 0;
   vertical-align: top;
 }
 .panel-tool a:hover {
@@ -3535,9 +3535,81 @@
   color: #404040;
   background: #e1e1e1;
 }
-.datagrid-filter-row .textbox,
 .datagrid-editable .textbox {
   border: 1px solid #dfdfdf;
+}
+.datagrid-filter-row {
+  height: 24px;
+}
+.datagrid-filter-row td {
+  height: 24px;
+  padding: 0;
+}
+.datagrid-filter-c {
+  display: flex;
+  align-items: flex-start;
+  height: 24px;
+  box-sizing: border-box;
+  padding: 0 0 2px;
+  overflow: hidden;
+  background: inherit;
+}
+.datagrid-filter-row input.datagrid-filter,
+.datagrid-filter-row .textbox {
+  height: 21px !important;
+  min-height: 0;
+  box-sizing: border-box;
+  margin: 0;
+  padding: 2px 6px;
+  border: 0;
+  border-bottom: 1px solid #dfdfdf;
+  border-radius: 0;
+  background: #fff;
+  color: inherit;
+  line-height: 16px;
+  outline: none;
+}
+.datagrid-filter-row input.datagrid-filter:focus,
+.datagrid-filter-c:focus-within input.datagrid-filter,
+.datagrid-filter-c:focus-within .textbox,
+.datagrid-filter-row .textbox-focused {
+  border-color: transparent;
+  border-bottom-color: #6200ee;
+  box-shadow: none;
+}
+.datagrid-filter-row .textbox .textbox-text {
+  border-radius: 0;
+}
+.datagrid-filter-row input {
+  margin: 0;
+  border-radius: 0;
+}
+a.datagrid-filter-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  flex: 0 0 22px;
+  width: 22px;
+  height: 21px !important;
+  box-sizing: border-box;
+  margin: 0 0 0 2px;
+  padding: 0 !important;
+  vertical-align: middle;
+  cursor: pointer;
+  opacity: 0.65;
+  filter: alpha(opacity=65);
+  text-decoration: none;
+  background: none;
+}
+a:hover.datagrid-filter-btn {
+  opacity: 1;
+  filter: alpha(opacity=100);
+}
+.datagrid-filter-cache {
+  position: absolute;
+  width: 10px;
+  height: 10px;
+  left: -99999px;
 }
 .datagrid-editable .textbox-invalid {
   border-color: #c62828;

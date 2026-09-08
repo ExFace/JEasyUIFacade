@@ -13,6 +13,7 @@
 	"WIDGET.INPUTPASSWORD.CONFIRM": "Confirm password",
 	
 	"WIDGET.DATATABLE.CONFIGURATOR_EXPAND_COLLAPSE": "Collapse/expand quick filters",
+	"WIDGET.DATATABLE.HEADER_FILTER_TOGGLE": "Show/hide column filters",
 	
 	"WIDGET.SEARCH": "Search",
 		

@@ -1,6 +1,7 @@
 <?php
 namespace exface\JEasyUIFacade\Facades\Elements;
 
+use exface\Core\DataTypes\ComparatorDataType;
 use exface\Core\Interfaces\Actions\ActionInterface;
 use exface\Core\Facades\AbstractAjaxFacade\Elements\JqueryDataTableTrait;
 use exface\Core\Interfaces\Actions\iReadData;
@@ -173,6 +174,7 @@ $(setTimeout(function(){
     // Init the table
     $('#{$this->getId()}').data('_prevExpanded', []);
     $("#{$this->getId()}").{$this->getElementType()}({ {$grid_head} });
+    {$this->buildJsHeaderFilterInit()}
 
     {$this->buildJsInitPager()}
 
@@ -344,6 +346,19 @@ JS;
     }
 
     /**
+     * {@inheritDoc}
+     * @see \exface\Core\Facades\AbstractAjaxFacade\Elements\JqueryDataTableTrait::buildJsResetter()
+     */
+    public function buildJsResetter() : string
+    {
+        $configuratorElement = $this->getFacade()->getElement($this->getWidget()->getConfiguratorWidget());
+        return $this->buildJsDataResetter()
+            . "; $('#{$this->getId()}').{$this->getElementType()}('removeFilterRule');"
+            . '; try {' . $configuratorElement->buildJsResetter()
+            . '} finally {' . $this->buildJsRefresh() . ';}';
+    }
+
+    /**
      * 
      * {@inheritDoc}
      * @see \exface\JEasyUIFacade\Facades\Elements\EuiData::buildHtmlHeadTags()
@@ -357,6 +372,7 @@ JS;
         $this->getWidget()->setConfiguratorSetupsEnabled(false);
         
         $includes = parent::buildHtmlHeadTags();
+        $includes[] = '<script type="text/javascript" src="' . $facade->buildUrlToVendorFile('exface/jeasyuifacade/Facades/js/jeasyui/extensions/datagrid-filter/datagrid-filter.js') . '"></script>';
         // Row details view
         if ($this->getWidget()->hasRowDetails()) {
             $includes[] = '<script type="text/javascript" src="' . $facade->buildUrlToSource('LIBS.JEASYUI.EXTENSIONS.DATAGRID_DETAILVIEW') . '"></script>';
@@ -365,6 +381,85 @@ JS;
             $includes[] = '<script type="text/javascript" src="' . $facade->buildUrlToSource('LIBS.JEASYUI.EXTENSIONS.DATAGRID_GROUPVIEW') . '"></script>';
         }
         return $includes;
+    }
+
+    /**
+     * {@inheritDoc}
+     * @see \exface\JEasyUIFacade\Facades\Elements\EuiData::addButtonsToSearchGroup()
+     */
+    protected function addButtonsToSearchGroup(\exface\Core\Widgets\ButtonGroup $buttonGroup) : void
+    {
+        /** @var EuiDataConfigurator $configuratorEl */
+        $configuratorEl = $this->getFacade()->getElement($this->getWidget()->getConfiguratorWidget());
+        $configuratorEl->addButtonToToggleHeaderFilters($buttonGroup, 0, $this->buildJsResize());
+    }
+
+    /**
+     * Builds the hidden header filter row and its canonical comparator menu.
+     *
+     * @return string
+     */
+    protected function buildJsHeaderFilterInit() : string
+    {
+        $translator = $this->getWorkbench()->getCoreApp()->getTranslator();
+        $operators = [];
+        foreach ([
+            'IS' => ComparatorDataType::IS,
+            'IS_NOT' => ComparatorDataType::IS_NOT,
+            'EQUALS' => ComparatorDataType::EQUALS,
+            'EQUALS_NOT' => ComparatorDataType::EQUALS_NOT,
+            'LESS_THAN' => ComparatorDataType::LESS_THAN,
+            'LESS_THAN_OR_EQUALS' => ComparatorDataType::LESS_THAN_OR_EQUALS,
+            'GREATER_THAN' => ComparatorDataType::GREATER_THAN,
+            'GREATER_THAN_OR_EQUALS' => ComparatorDataType::GREATER_THAN_OR_EQUALS,
+            'IN' => ComparatorDataType::IN,
+            'NOT_IN' => ComparatorDataType::NOT_IN,
+            'BETWEEN' => ComparatorDataType::BETWEEN,
+        ] as $constant => $comparator) {
+            $operators[$comparator] = [
+                'text' => $translator->translate('GLOBAL.COMPARATOR.' . $constant . '_NAME'),
+                'hint' => $translator->translate('GLOBAL.COMPARATOR.' . $constant . '_HINT'),
+            ];
+        }
+
+        $filters = [];
+        foreach ($this->getWidget()->getColumns() as $col) {
+            if (! $col->isFilterable() || ! $col->isBoundToAttribute()) {
+                $filters[] = [
+                    'field' => $col->getDataColumnName(),
+                    'type' => 'label',
+                    'options' => new \stdClass(),
+                ];
+                continue;
+            }
+            $filters[] = [
+                'field' => $col->getDataColumnName(),
+                'type' => 'text',
+                'op' => array_keys($operators),
+                'defaultFilterOperator' => ComparatorDataType::IS,
+                'options' => new \stdClass(),
+            ];
+        }
+
+        $operatorsJs = json_encode($operators, JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES);
+        $filtersJs = json_encode($filters, JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES);
+
+        return <<<JS
+
+    (function(jqTable){
+        var oOptions = jqTable.datagrid('options');
+        var oOperators = {$operatorsJs};
+        oOperators.nofilter = oOptions.operators.nofilter;
+        oOptions.operators = oOperators;
+        oOptions.filterBtnIconCls = 'fa fa-filter';
+        oOptions.filterBtnPosition = 'left';
+        oOptions.filterDelay = 0;
+        oOptions.remoteFilter = true;
+        oOptions.clientPaging = false;
+        oOptions.showFilterBar = false;
+        jqTable.datagrid('enableFilter', {$filtersJs});
+    })($('#{$this->getId()}'));
+JS;
     }
 
     /**
@@ -934,7 +1029,55 @@ JS;
     
     protected function buildJsOnBeforeLoadAddConfiguratorData(string $js_var_param = 'param') : string
     {
+        $parsers = [];
+        foreach ($this->getWidget()->getColumns() as $col) {
+            if (! $col->isFilterable() || ! $col->isBoundToAttribute()) {
+                continue;
+            }
+            $formatter = $this->getFacade()->getDataTypeFormatter($col->getDataType());
+            $parsers[] = json_encode($col->getDataColumnName()) . ': function(mVal, sComparator){ return ' . $formatter->buildJsFilterParser('mVal', 'sComparator') . '; }';
+        }
+        $parsersJs = '{' . implode(",\n", $parsers) . '}';
+        $between = ComparatorDataType::BETWEEN;
+
         return parent::buildJsOnBeforeLoadAddConfiguratorData($js_var_param) . <<<JS
+
+                    // Add datagrid header filters to the canonical ExFace condition tree.
+                    var aHeaderFilterRules = jqself.{$this->getElementType()}('options').filterRules || [];
+                    var oHeaderFilterParsers = {$parsersJs};
+                    if (aHeaderFilterRules.length > 0) {
+                        var oHeaderFilterGroup = {operator: 'AND', ignore_empty_values: true, conditions: [], nested_groups: []};
+                        aHeaderFilterRules.forEach(function(oRule){
+                            var oColumn = jqself.{$this->getElementType()}('getColumnOption', oRule.field);
+                            var fnParser = oHeaderFilterParsers[oRule.field];
+                            if (!oColumn || !oColumn._attributeAlias || typeof fnParser !== 'function') {
+                                return;
+                            }
+                            var oParsedFilter = fnParser(oRule.value, oRule.op);
+                            var oParsedInput = oParsedFilter.comparator === '{$between}'
+                                ? exfTools.data.filterComparator.extract(String(oParsedFilter.value))
+                                : {comparator: oParsedFilter.comparator, value: oParsedFilter.value};
+                            var oParsedValue = exfTools.data.filterComparator.parseValue(oParsedInput);
+                            if (!oParsedValue.hasValue) {
+                                return;
+                            }
+                            oHeaderFilterGroup.conditions.push({
+                                expression: oColumn._attributeAlias,
+                                comparator: oParsedFilter.comparator,
+                                value: oParsedValue.value,
+                                object_alias: '{$this->getWidget()->getMetaObject()->getAliasWithNamespace()}',
+                                apply_to_aggregates: false
+                            });
+                        });
+                        if (oHeaderFilterGroup.conditions.length > 0) {
+                            if (!{$js_var_param}.data.filters) {
+                                {$js_var_param}.data.filters = {operator: 'AND', ignore_empty_values: true, conditions: [], nested_groups: []};
+                            }
+                            {$js_var_param}.data.filters.nested_groups = {$js_var_param}.data.filters.nested_groups || [];
+                            {$js_var_param}.data.filters.nested_groups.push(oHeaderFilterGroup);
+                        }
+                    }
+                    delete {$js_var_param}.filterRules;
 
                     // Enrich sorting options
                     if ({$js_var_param}.sort !== undefined) {

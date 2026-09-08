@@ -207,6 +207,45 @@ JS;
 JS);
         return $collapseButton;
     }
+
+    /**
+     * Adds a button that toggles the configured datagrid's header filter row.
+     *
+     * @param ButtonGroup $buttonGroup
+     * @param int $position
+     * @param string $onFinishedJs
+     * @return \exface\Core\Widgets\Button
+     */
+    public function addButtonToToggleHeaderFilters(ButtonGroup $buttonGroup, int $position = 0, string $onFinishedJs = '')
+    {
+        /** @var EuiDataTable $tableEl */
+        $tableEl = $this->getFacade()->getElement($this->getWidget()->getWidgetConfigured());
+        /** @var \exface\Core\Widgets\Button $filterButton */
+        $filterButton = WidgetFactory::createFromUxon($this->getWidget()->getPage(), new UxonObject([
+            'widget_type' => 'Button',
+            'id' => 'headerFilterButton_' . $tableEl->getId(),
+            'action' => [
+                'alias' => 'exface.Core.CustomFacadeScript'
+            ],
+            'icon' => Icons::FILTER,
+            'caption' => $this->translate('WIDGET.DATATABLE.HEADER_FILTER_TOGGLE'),
+            'align' => 'right',
+            'hide_caption' => true
+        ]), $buttonGroup);
+        $buttonGroup->addButton($filterButton, $position);
+
+        /** @var \exface\Core\Actions\CustomFacadeScript $filterAction */
+        $filterAction = $filterButton->getAction();
+        $filterAction->setScript(<<<JS
+
+    var jqTable = $('#{$tableEl->getId()}');
+    var bVisible = jqTable.datagrid('options').showFilterBar;
+    jqTable.datagrid(bVisible ? 'hideFilterBar' : 'showFilterBar');
+    {$onFinishedJs}
+
+JS);
+        return $filterButton;
+    }
     
     /**
      *
