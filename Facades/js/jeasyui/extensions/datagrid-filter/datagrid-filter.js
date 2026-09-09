@@ -109,7 +109,7 @@
 			return jq.each(function(){
 				var state = $(this).data('treegrid');
 				var opts = state.options;
-				if (opts.oldLoadFilter){
+				if (opts.oldLoadFilter && state.filterSource){
 					var rows = translateTreeData(this, param.data, param.parent);
 					state.filterSource.total += rows.length;
 					state.filterSource.rows = state.filterSource.rows.concat(rows);
@@ -123,7 +123,7 @@
 			return jq.each(function(){
 				var state = $(this).data('treegrid');
 				var opts = state.options;
-				if (opts.oldLoadFilter){
+				if (opts.oldLoadFilter && state.filterSource){
 					var ref = param.before || param.after;
 					var index = getNodeIndex(param.before || param.after);
 					var pid = index>=0 ? state.filterSource.rows[index]._parentId : null;
