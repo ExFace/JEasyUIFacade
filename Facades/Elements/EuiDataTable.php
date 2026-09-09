@@ -447,7 +447,7 @@ JS;
         return <<<JS
 
     (function(jqTable){
-        var oOptions = jqTable.datagrid('options');
+        var oOptions = jqTable.{$this->getElementType()}('options');
         var oOperators = {$operatorsJs};
         oOperators.nofilter = oOptions.operators.nofilter;
         oOptions.operators = oOperators;
@@ -457,6 +457,7 @@ JS;
         oOptions.remoteFilter = true;
         oOptions.clientPaging = false;
         oOptions.showFilterBar = false;
+        jqTable.datagrid('options').showFilterBar = false;
         jqTable.datagrid('enableFilter', {$filtersJs});
     })($('#{$this->getId()}'));
 JS;
