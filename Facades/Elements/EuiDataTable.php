@@ -516,6 +516,7 @@ JS;
     public function buildJsInitOptionsHead()
     {
         $widget = $this->getWidget();
+        $configurator_element = $this->getFacade()->getElement($widget->getConfiguratorWidget());
         $this->registerPaginationFixer();
         
         // Add single-result action to onLoadSuccess
@@ -552,7 +553,13 @@ JS;
         $emptyResultJs = <<<JS
         
                         if (data && data.rows && data.rows.length === 0 && data.total != undefined) {
-                            {$this->buildJsAutoloadDisabledMessageShow($this->getWidget()->getEmptyText())}
+                            if (! {$configurator_element->buildJsValidator()}) {
+                                // Message if any required filters are invalid.
+                                {$this->buildJsAutoloadDisabledMessageShow($widget->getEmptyTextIfInvalidFilters())}
+                            } else {
+                                // Message if result was just empty.
+                                {$this->buildJsAutoloadDisabledMessageShow($widget->getEmptyText())}
+                            }
                         } else {
                             {$this->buildJsAutoloadDisabledMessageHide()};
                         }
@@ -569,7 +576,13 @@ JS;
         $onChangeScript = $this->buildJsOnChangeScript('row', 'index');
         $grid_head .= ($this->getOnChangeScript() ? ", onClickRow: function(index, row){{$onChangeScript}}, onSelect: function(index, row){{$onChangeScript}}" : '');
         $grid_head .= ($widget->getCaption() ? ', title: "' . str_replace('"', '\"', $widget->getCaption()) . '"' : '');
-        $grid_head .= ', emptyMsg : ' . json_encode($widget->getEmptyText());
+        
+        // TODO emptyMsg removed on purpose - the onLoadSuccess handler above shows context-aware messages
+        // (empty result vs. invalid filters) via the same .datagrid-empty node. The only case not covered
+        // is a purely client-side empty state without a load event (e.g. all rows removed in an editable
+        // grid) - hook buildJsAutoloadDisabledMessageShow()/...Hide() into those client events instead.
+        
+        //$grid_head .= ', emptyMsg : ' . json_encode($widget->getEmptyText());
         
         return $grid_head;
     }
@@ -795,6 +808,9 @@ JS;
         $changes_col_array = array();
         $this->addOnLoadSuccess($this->buildJsEditModeEnabler());
         // add data and changes getter if the grid is editable
+        // TODO editable grids can end up empty via client-side row removal (no load event fires), so the
+        // onLoadSuccess empty-message handler never runs. Call buildJsAutoloadDisabledMessageShow()/...Hide()
+        // from the row-delete/insert handlers here to keep the empty message in sync in those cases.
         $output .= <<<JS
 
 						function {$this->buildJsFunctionPrefix()}getDataRows(){

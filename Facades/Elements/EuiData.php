@@ -1035,7 +1035,7 @@ JS;
                 try {
                     if (! {$configurator_element->buildJsValidator()}) {
                         {$this->buildJsDataResetter()}
-                        {$this->buildJsAutoloadDisabledMessageShow()}
+                        {$this->buildJsAutoloadDisabledMessageShow($this->getWidget()->getEmptyTextIfInvalidFilters())}
                         return false;
                     }
                 } catch (e) {
