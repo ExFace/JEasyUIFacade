@@ -589,7 +589,7 @@ JS;
                                             if (node['children'] !== undefined && node['state'] === 'open') {
                                                 var oldValue = {$js_var_param}['data']['filters']['conditions'][c]['value'];
                                                 if (oldValue === '' || oldValue === undefined || oldValue === null) {
-                                                    {$js_var_param}['data']['filters']['conditions'][c]['value'] = '{$this->getWidget()->getTreeRootUid()}';
+                                                    oldValue = '{$this->getWidget()->getTreeRootUid()}';
                                                 }
                                                 {$js_var_param}['data']['filters']['conditions'][c]['value'] = oldValue + '{$treeFolderFilterDelim}' + node['{$treeFolderFilterCol->getDataColumnName()}'];
                                                 {$js_var_param}['data']['filters']['conditions'][c]['comparator'] = '{$comparatorIn}';

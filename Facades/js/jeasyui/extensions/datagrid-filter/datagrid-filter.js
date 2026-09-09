@@ -748,10 +748,12 @@
 				data.rows = pd.rows.concat(childRows);
 			}
 		}
-		$.map(data.rows, function(row){
-			// row.children = undefined;
-			delete row.children;
-		});
+		if (name != 'treegrid' || !opts.remoteFilter){
+			$.map(data.rows, function(row){
+				// row.children = undefined;
+				delete row.children;
+			});
+		}
 		return data;
 
 		function getPageData(dataRows){
