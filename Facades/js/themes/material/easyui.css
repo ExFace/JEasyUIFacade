@@ -3557,6 +3557,7 @@
 .datagrid-filter-row input.datagrid-filter,
 .datagrid-filter-row .textbox {
   height: 21px !important;
+  max-width: calc(100% - 28px);
   min-height: 0;
   box-sizing: border-box;
   margin: 0;
