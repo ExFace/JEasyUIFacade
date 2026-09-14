@@ -60,6 +60,16 @@ class EuiDataConfigurator extends EuiTabs
         }
         return $this->headerPanelId;
     }
+
+    /**
+     *
+     * @param string $toolbarId
+     * @return string
+     */
+    protected function getIdOfHeaderFooter(string $toolbarId) : string
+    {
+        return $toolbarId . '_footer';
+    }
     
     /**
      * Creates the HTML for the header controls: filters, sorters, buttons, etc.
@@ -68,6 +78,7 @@ class EuiDataConfigurator extends EuiTabs
     public function buildHtmlHeaderPanel(string $toolbarId, string $toolbarHtml = '')
     {
         $configuredWidget = $this->getWidget()->getWidgetConfigured();
+        $footerId = $this->getIdOfHeaderFooter($toolbarId);
         $header_style = '';
         $toolbar_style = '';
         $panel_options = "border: false";
@@ -99,16 +110,16 @@ class EuiDataConfigurator extends EuiTabs
             $toolbar_style = 'display: none; height: 0;';
         }
         
-        // If the header is hidden permanently, the filters live in the configurator dialog
-        $filtersHtml = $this->hasTabFilters() ? '' : $this->getFacade()->getElement($configuratorWidget->getFilterTab())->buildHtml();
+        // Responsive filters start in the header and are moved into the dialog on smartphones.
+        $filtersHtml = $configuredWidget->getHideHeader() === true ? '' : $this->getFacade()->getElement($configuratorWidget->getFilterTab())->buildHtml();
         
         return <<<HTML
         
         <div id="{$toolbarId}" style="{$header_style}">
-            <div class="easyui-panel exf-data-header" data-options="footer: '#{$toolbarId}_footer', {$panel_options}">
+            <div class="easyui-panel exf-data-header" data-options="footer: '#{$footerId}', {$panel_options}">
                 {$filtersHtml}
             </div>
-            <div id="{$toolbarId}_footer" class="datatable-toolbar" style="{$toolbar_style}">
+            <div id="{$footerId}" class="datatable-toolbar" style="{$toolbar_style}">
                 {$toolbarHtml}
             </div>
         </div>
@@ -119,6 +130,7 @@ HTML;
 
     public function buildHtmlHeaderPanelLinked($toolbarId, string $toolbarHtml = '')
     {
+        $footerId = $this->getIdOfHeaderFooter($toolbarId);
         $header_style = '';
         $toolbar_style = '';
         $panel_options = "border: false";
@@ -126,10 +138,10 @@ HTML;
         return <<<HTML
         
         <div id="{$toolbarId}" style="{$header_style}">
-            <div class="easyui-panel exf-data-header" data-options="footer: '#{$toolbarId}_footer', {$panel_options}">
+            <div class="easyui-panel exf-data-header" data-options="footer: '#{$footerId}', {$panel_options}">
                 
             </div>
-            <div id="{$toolbarId}_footer" class="datatable-toolbar" style="{$toolbar_style}">
+            <div id="{$footerId}" class="datatable-toolbar" style="{$toolbar_style}">
                 {$toolbarHtml}
             </div>
         </div>
@@ -193,10 +205,9 @@ JS;
     public function addButtonToCollapseExpand(ButtonGroup $buttonGroup, int $position = 0, string $onFinishedJs = '')
     {
         $tableEl = $this->getFacade()->getElement($this->getWidget()->getWidgetConfigured());
-        $collapseButtonId = 'headerCollapseButton_' . $tableEl->getId();
         $collapseButton = WidgetFactory::createFromUxon($this->getWidget()->getPage(), new UxonObject([
             'widget_type' => 'Button',
-            'id' => $collapseButtonId,
+            'id' => $this->getIdOfCollapseButton($tableEl->getId()),
             'action' => [
                 'alias' => 'exface.Core.CustomFacadeScript'
             ],
@@ -206,6 +217,7 @@ JS;
             'hide_caption' => true
         ]), $buttonGroup);
         $buttonGroup->addButton($collapseButton, $position);
+        $this->btnCollaps = $collapseButton;
         
         // Give the script to the button AFTER being created to make sure eventual id spaces are appended to the
         // id, which is used inside the script. Otherwise the id will not match in dialogs with id spaces!
@@ -245,7 +257,7 @@ JS);
         /** @var \exface\Core\Widgets\Button $configuratorButton */
         $configuratorButton = WidgetFactory::createFromUxon($this->getWidget()->getPage(), new UxonObject([
             'widget_type' => 'Button',
-            'id' => 'configuratorButton_' . $tableEl->getId(),
+            'id' => $this->getIdOfConfiguratorButton($tableEl->getId()),
             'action' => [
                 'alias' => 'exface.Core.CustomFacadeScript'
             ],
@@ -280,7 +292,7 @@ JS);
         /** @var \exface\Core\Widgets\Button $filterButton */
         $filterButton = WidgetFactory::createFromUxon($this->getWidget()->getPage(), new UxonObject([
             'widget_type' => 'Button',
-            'id' => 'headerFilterButton_' . $tableEl->getId(),
+            'id' => $this->getIdOfHeaderFilterButton($tableEl->getId()),
             'action' => [
                 'alias' => 'exface.Core.CustomFacadeScript'
             ],
@@ -369,8 +381,18 @@ JS;
      */
     protected function hasTabFilters() : bool
     {
-        return $this->getWidget()->getWidgetConfigured()->getHideHeader() === true
+        return $this->getWidget()->getWidgetConfigured()->getHideHeader() !== false
             && $this->getWidget()->getFilterTab()->countWidgetsVisible() > 0;
+    }
+
+    /**
+     * Returns TRUE if the unset hide_header option is to be resolved in the browser.
+     *
+     * @return bool
+     */
+    protected function hasResponsiveHeader() : bool
+    {
+        return $this->getWidget()->getWidgetConfigured()->getHideHeader() === null;
     }
     
     /**
@@ -423,6 +445,54 @@ JS;
     {
         return $this->getId() . '_dialog_tabs';
     }
+
+    /**
+     *
+     * @return string
+     */
+    protected function getIdOfFiltersTab() : string
+    {
+        return $this->getIdOfConfiguratorTabs() . '_filters';
+    }
+
+    /**
+     *
+     * @return string
+     */
+    protected function getIdOfResponsiveStaging() : string
+    {
+        return $this->getIdOfConfiguratorTabs() . '_responsive_staging';
+    }
+
+    /**
+     *
+     * @param string $tableId
+     * @return string
+     */
+    protected function getIdOfCollapseButton(string $tableId) : string
+    {
+        return 'headerCollapseButton_' . $tableId;
+    }
+
+    /**
+     *
+     * @param string $tableId
+     * @return string
+     */
+    protected function getIdOfConfiguratorButton(string $tableId) : string
+    {
+        return 'configuratorButton_' . $tableId;
+    }
+
+    /**
+     *
+     * @param string $tableId
+     * @return string
+     */
+    protected function getIdOfHeaderFilterButton(string $tableId) : string
+    {
+        return 'headerFilterButton_' . $tableId;
+    }
     
     /**
      * 
@@ -458,10 +528,11 @@ JS;
         
         if ($this->hasTabFilters()) {
             $tab = $widget->getFilterTab();
+            $filtersHtml = $this->hasResponsiveHeader() ? '' : $this->getFacade()->getElement($tab)->buildHtml();
             $tabsHtml .= <<<HTML
 
-                <div title="{$this->escapeString($tab->getCaption(), false, true)}" data-options="iconCls: '{$this->buildCssIconClass(Icons::FILTER)}'" style="padding: 10px; overflow: auto;">
-                    {$this->getFacade()->getElement($tab)->buildHtml()}
+                <div id="{$this->getIdOfFiltersTab()}" title="{$this->escapeString($tab->getCaption(), false, true)}" data-options="iconCls: '{$this->buildCssIconClass(Icons::FILTER)}'" style="padding: 10px; overflow: auto;">
+                    {$filtersHtml}
                 </div>
 HTML;
         }
@@ -487,6 +558,7 @@ HTML;
         
         return <<<HTML
 
+        <div id="{$this->getIdOfResponsiveStaging()}" style="display: none;"></div>
         <div id="{$this->getIdOfConfiguratorDialog()}" class="exf-data-configurator" style="display: none;">
             <div id="{$this->getIdOfConfiguratorTabs()}">
                 {$tabsHtml}
@@ -516,19 +588,22 @@ HTML;
         $clearHeaderSortersJs = ($dataEl instanceof EuiData && $this->hasTabSorters()) ? $dataEl->buildJsHeaderSortersReset() : '';
         $syncHeaderFiltersJs = ($dataEl instanceof EuiData && $this->hasTabAdvancedSearch()) ? $dataEl->buildJsHeaderFiltersSet($this->buildJsSearchConditionsGetter()) : '';
         $clearHeaderFiltersJs = ($dataEl instanceof EuiData && $this->hasTabAdvancedSearch()) ? $dataEl->buildJsHeaderFiltersReset() : '';
+        $responsiveHeaderJs = $this->buildJsResponsiveHeader();
         
         return <<<JS
 
 {$this->buildJsSorterBuilderInit()}
 {$this->buildJsConditionBuilderInit()}
+    {$responsiveHeaderJs}
 
 function {$this->buildJsFunctionPrefix()}ShowConfigurator() {
     var jqDialog = $('#{$this->getIdOfConfiguratorDialog()}');
+    var bMobile = window.matchMedia('(max-width: 600px)').matches;
     if (jqDialog.data('dialog') === undefined) {
         jqDialog.show().dialog({
             title: {$this->escapeString($this->translate('WIDGET.DATACONFIGURATOR.DIALOG_TITLE'))},
-            width: 800,
-            height: 500,
+            width: bMobile ? $(window).width() : 800,
+            height: bMobile ? $(window).height() : 500,
             closed: true,
             modal: true,
             cache: true,
@@ -563,6 +638,9 @@ function {$this->buildJsFunctionPrefix()}ShowConfigurator() {
                 }
             ],
             onOpen: function(){
+                if (bMobile) {
+                    jqDialog.dialog('maximize');
+                }
                 $('#{$this->getIdOfConfiguratorTabs()}').tabs('resize');
                 {$layoutFiltersJs}
             }
@@ -571,7 +649,50 @@ function {$this->buildJsFunctionPrefix()}ShowConfigurator() {
         jqDialog.dialog('panel').addClass('exf-data-configurator-dialog');
         $('#{$this->getIdOfConfiguratorTabs()}').tabs({fit: true, border: false});
     }
-    jqDialog.dialog('open').dialog('center');
+    jqDialog.dialog('open');
+    if (! bMobile) {
+        jqDialog.dialog('center');
+    }
+}
+
+JS;
+    }
+
+    /**
+     * Moves default header filters into the configurator and collapses their panel on smartphones.
+     *
+     * @return string
+     */
+    protected function buildJsResponsiveHeader() : string
+    {
+        if ($this->hasResponsiveHeader() === false || $this->hasTabFilters() === false) {
+            return '';
+        }
+
+        $filterTabId = $this->getFacade()->getElement($this->getWidget()->getFilterTab())->getId();
+        $collapseButtonJs = $this->btnCollaps === null
+            ? ''
+            : "$('#" . $this->getFacade()->getElement($this->btnCollaps)->getId() . "').hide();";
+
+        return <<<JS
+
+if (window.matchMedia('(max-width: 600px)').matches) {
+    var jqResponsiveFilters = $('#{$filterTabId}');
+    var jqResponsiveHeader = jqResponsiveFilters.closest('.exf-data-header');
+    var iResponsiveHeaderInitAttempts = 0;
+    $('#{$this->getIdOfFiltersTab()}').append(jqResponsiveFilters);
+    (function fnCollapseResponsiveHeader(){
+        if (jqResponsiveHeader.data('panel') === undefined) {
+            if (iResponsiveHeaderInitAttempts++ < 100) {
+                setTimeout(fnCollapseResponsiveHeader, 10);
+            }
+            return;
+        }
+        jqResponsiveHeader.panel('collapse', false);
+    })();
+    {$collapseButtonJs}
+} else {
+    $('#{$this->getIdOfResponsiveStaging()}').append($('#{$this->getIdOfFiltersTab()}'));
 }
 
 JS;
