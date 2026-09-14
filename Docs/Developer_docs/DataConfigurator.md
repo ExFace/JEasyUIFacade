@@ -29,7 +29,9 @@ toolbars of the data widget:
 
 | Model | Filters | Toolbar with buttons |
 |---|---|---|
-| default | visible | visible |
+| default, desktop | visible | visible |
+| default, smartphone (up to 600px) | in the configurator dialog | visible |
+| `hide_header: false` | visible on every screen size | visible |
 | `hide_header: true` | in the configurator dialog | visible |
 | `hide_header: true` + `hide_caption: true` | in the configurator dialog | hidden |
 | `hide_header_toolbar: false` | as above | always visible |
@@ -52,7 +54,9 @@ at position `0` one after another, so the resulting order is:
 | filter | `addButtonToToggleHeaderFilters()` (`EuiDataTable`) | toggles the datagrid filter row |
 
 The cog button is only added if there is something to configure - see `hasConfiguratorDialog()`.
-The collapse button is skipped when the filters were moved into the dialog.
+The collapse button is skipped when the filters were moved into the dialog permanently. For the
+responsive default it remains available on desktop and is hidden on smartphones together with the
+quick-filter panel.
 
 ## The configurator dialog
 
