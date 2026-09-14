@@ -117,6 +117,9 @@ div.messager-body{overflow-y: auto;}
 .window .window-header .panel-with-icon {padding-left: 21px !important;}
 .dialog-button:not(.messager-button) {min-height: 26px; text-align: left !important}
 
+/* Data configurator dialog */
+.exf-data-configurator-dialog .dialog-button:not(.messager-button) {text-align: right !important;}
+
 /* Dialog */
 .exf-dialog-header {background-color: #daeef5 !important;}
 .exf-dialog-header .easyui-panel {background-color: transparent !important; border: none;}

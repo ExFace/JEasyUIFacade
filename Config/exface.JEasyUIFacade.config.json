@@ -102,6 +102,8 @@
     "LIBS.JEASYUI.EXTENSIONS.DATAGRID_GROUPVIEW": "exface/jeasyuifacade/Facades/js/jeasyui/extensions/datagridview/datagrid-groupview.js",
     "LIBS.JEASYUI.EXTENSIONS.DATAGRID_DETAILVIEW": "exface/jeasyuifacade/Facades/js/jeasyui/extensions/datagridview/datagrid-detailview.js",
     "LIBS.JEASYUI.EXTENSIONS.TREEGRID_DND": "exface/jeasyuifacade/Facades/js/jeasyui/extensions/treegrid-dnd/treegrid-dnd.js",
+    "LIBS.JEASYUI.EXTENSIONS.CONDITIONBUILDER": "exface/jeasyuifacade/Facades/js/jeasyui/extensions/conditionbuilder/jquery.conditionbuilder.js",
+    "LIBS.JEASYUI.EXTENSIONS.SORTERBUILDER": "exface/jeasyuifacade/Facades/js/jeasyui/extensions/sorterbuilder/jquery.sorterbuilder.js",
     "LIBS.JEASYUI.PATCHES": "exface/jeasyuifacade/Facades/js/jquery.easyui.patch.1.43.js",
 	"LIBS.JEASYUI.FACADE_ADDONS.JS": "exface/jeasyuifacade/Facades/js/jeasyui.facade.js",
 	

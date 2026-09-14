@@ -1,7 +1,0 @@
-Version 1.0.x
--------------
-
-* Improvement
- * The 'operators' property is available for a field.
- * The 'editor' property is available for a field.
- * The 'defaultEditor' property is available for all operators.

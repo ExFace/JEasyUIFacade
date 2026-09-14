@@ -452,6 +452,7 @@ JS;
         oOperators.nofilter = oOptions.operators.nofilter;
         oOptions.operators = oOperators;
         oOptions.filterBtnIconCls = 'fa fa-filter';
+        oOptions.filterMenuIconCls = 'fa fa-check';
         oOptions.filterBtnPosition = 'left';
         oOptions.filterDelay = 0;
         oOptions.remoteFilter = true;
@@ -1046,6 +1047,7 @@ JS;
     
     protected function buildJsOnBeforeLoadAddConfiguratorData(string $js_var_param = 'param') : string
     {
+        $configuratorEl = $this->getFacade()->getElement($this->getWidget()->getConfiguratorWidget());
         $parsers = [];
         foreach ($this->getWidget()->getColumns() as $col) {
             if (! $col->isFilterable() || ! $col->isBoundToAttribute()) {
@@ -1062,6 +1064,7 @@ JS;
                     // Add datagrid header filters to the canonical ExFace condition tree.
                     var aHeaderFilterRules = jqself.{$this->getElementType()}('options').filterRules || [];
                     var oHeaderFilterParsers = {$parsersJs};
+                    var aHeaderConditions = [];
                     if (aHeaderFilterRules.length > 0) {
                         var oHeaderFilterGroup = {operator: 'AND', ignore_empty_values: true, conditions: [], nested_groups: []};
                         aHeaderFilterRules.forEach(function(oRule){
@@ -1070,6 +1073,12 @@ JS;
                             if (!oColumn || !oColumn._attributeAlias || typeof fnParser !== 'function') {
                                 return;
                             }
+                            // The advanced search works with the raw user input - just like the filter row does
+                            aHeaderConditions.push({
+                                expression: oColumn._attributeAlias,
+                                comparator: oRule.op,
+                                value: oRule.value
+                            });
                             var oParsedFilter = fnParser(oRule.value, oRule.op);
                             var oParsedInput = oParsedFilter.comparator === '{$between}'
                                 ? exfTools.data.filterComparator.extract(String(oParsedFilter.value))
@@ -1095,19 +1104,127 @@ JS;
                         }
                     }
                     delete {$js_var_param}.filterRules;
+                    // Keep the advanced search tab of the configurator in sync with the column filters
+                    {$configuratorEl->buildJsSearchConditionsSetter('aHeaderConditions', $this->buildJsonForFilterableColumnAliases())}
 
                     // Enrich sorting options
                     if ({$js_var_param}.sort !== undefined) {
                         var sortNames = {$js_var_param}.sort.split(',');
+                        var sortOrders = String({$js_var_param}.order || '').split(',');
                         var sortAttrs = [];
+                        var aHeaderSorters = [];
                         for (var i=0; i<sortNames.length; i++) {
                             colOpts = jqself.{$this->getElementType()}('getColumnOption', sortNames[i]);
                             sortAttrs.push(colOpts !== null ? colOpts['_attributeAlias'] : sortNames[i]);
+                            aHeaderSorters.push({attribute_alias: sortAttrs[i], direction: (sortOrders[i] || 'asc').toUpperCase()});
                         }
                         {$js_var_param}.sortAttr = sortAttrs.join(',');
+                        {$configuratorEl->buildJsSortersSetter('aHeaderSorters')}
                     }
 
 JS;
+    }
+    
+    /**
+     * 
+     * {@inheritDoc}
+     * @see \exface\JEasyUIFacade\Facades\Elements\EuiData::buildJsHeaderSortersReset()
+     */
+    public function buildJsHeaderSortersReset() : string
+    {
+        return <<<JS
+
+                (function(){
+                    var jqSelf = $('#{$this->getId()}');
+                    // Removing `sortName` also removes the `sort` parameter from the next request
+                    jqSelf.{$this->getElementType()}('options').sortName = null;
+                    jqSelf.{$this->getElementType()}('getPanel').find('.datagrid-header div.datagrid-cell').removeClass('datagrid-sort-asc datagrid-sort-desc');
+                })();
+
+JS;
+    }
+    
+    /**
+     * 
+     * {@inheritDoc}
+     * @see \exface\JEasyUIFacade\Facades\Elements\EuiData::buildJsHeaderFiltersSet()
+     */
+    public function buildJsHeaderFiltersSet(string $aConditionsJs) : string
+    {
+        return <<<JS
+
+                (function(aConditions){
+                    var jqSelf = $('#{$this->getId()}');
+                    var oFields = {$this->buildJsonForFilterableColumnFields()};
+                    var aRules = (jqSelf.{$this->getElementType()}('options').filterRules || []).slice();
+                    var aSetFields = [];
+                    aConditions.forEach(function(oCondition){
+                        var sField = oFields[oCondition.expression];
+                        // Only the first condition per column can be shown in the filter row
+                        if (sField === undefined || aSetFields.indexOf(sField) !== -1) {
+                            return;
+                        }
+                        if (oCondition.value === null || oCondition.value === undefined || String(oCondition.value) === '') {
+                            return;
+                        }
+                        aSetFields.push(sField);
+                        jqSelf.{$this->getElementType()}('addFilterRule', {
+                            field: sField,
+                            op: oCondition.comparator,
+                            value: oCondition.value
+                        });
+                    });
+                    aRules.forEach(function(oRule){
+                        if (aSetFields.indexOf(oRule.field) === -1) {
+                            jqSelf.{$this->getElementType()}('removeFilterRule', oRule.field);
+                        }
+                    });
+                })({$aConditionsJs});
+
+JS;
+    }
+    
+    /**
+     * 
+     * {@inheritDoc}
+     * @see \exface\JEasyUIFacade\Facades\Elements\EuiData::buildJsHeaderFiltersReset()
+     */
+    public function buildJsHeaderFiltersReset() : string
+    {
+        return "$('#{$this->getId()}').{$this->getElementType()}('removeFilterRule');";
+    }
+    
+    /**
+     * Returns a JSON array with the attribute aliases of all columns, that have a column filter
+     * 
+     * @return string
+     */
+    protected function buildJsonForFilterableColumnAliases() : string
+    {
+        return json_encode(array_keys(json_decode($this->buildJsonForFilterableColumnFields(), true)), JSON_UNESCAPED_UNICODE);
+    }
+    
+    /**
+     * Returns a JSON object with attribute aliases for keys and the corresponding column names for values
+     * 
+     * If multiple columns show the same attribute, the first one wins - just like when syncing the
+     * advanced search with the column filters.
+     * 
+     * @return string
+     */
+    protected function buildJsonForFilterableColumnFields() : string
+    {
+        $fields = [];
+        foreach ($this->getWidget()->getColumns() as $col) {
+            if (! $col->isFilterable() || ! $col->isBoundToAttribute()) {
+                continue;
+            }
+            if (array_key_exists($col->getAttributeAlias(), $fields)) {
+                continue;
+            }
+            $fields[$col->getAttributeAlias()] = $col->getDataColumnName();
+        }
+        return json_encode($fields, JSON_UNESCAPED_UNICODE | JSON_FORCE_OBJECT);
     }
     
     protected function buildJsEuiSetHeigthMax(iContainOtherWidgets $containerWidget, string $onChangeHeightJs = '') : string
