@@ -507,6 +507,42 @@
 		}
 	}
 
+	/**
+	 * Marks the given operator as the active one in the operator menu of a filter input.
+	 */
+	function markFilterOperator(target, input, op){
+		var name = getPluginName(target);
+		var opts = $(target)[name]('options');
+		var menu = input.length ? input[0].menu : null;
+		var operator, item;
+		if (!menu){
+			return;
+		}
+		// filterMenuIconCls may consist of several classes (e.g. 'fa fa-check'), which is not a selector
+		menu.find('.' + $.trim(opts.filterMenuIconCls).split(/\s+/).join('.')).removeClass(opts.filterMenuIconCls);
+		operator = opts.operators[op];
+		if (!operator){
+			return;
+		}
+		item = menu.menu('findItem', operator.text);
+		if (item){
+			menu.menu('setIcon', {
+				target: item.target,
+				iconCls: opts.filterMenuIconCls
+			});
+		}
+	}
+
+	/**
+	 * Returns the operator a filter input falls back to if no filter rule is set.
+	 */
+	function getDefaultFilterOperator(target, input){
+		var name = getPluginName(target);
+		var opts = $(target)[name]('options');
+		var filterOpts = input.length ? input[0].filterOptions : null;
+		return (filterOpts ? filterOpts.defaultFilterOperator : null) || opts.defaultFilterOperator;
+	}
+
 	function syncFilterRules(target){
 		var name = getPluginName(target);
 		var dg = $(target);
@@ -565,15 +601,7 @@
 				if (value != param.value){
 					input[0].filter.setValue(input, param.value);					
 				}
-			}
-			var menu = input[0].menu;
-			if (menu){
-				menu.find('.'+opts.filterMenuIconCls).removeClass(opts.filterMenuIconCls);
-				var item = menu.menu('findItem', opts.operators[param.op]['text']);
-				menu.menu('setIcon', {
-					target: item.target,
-					iconCls: opts.filterMenuIconCls
-				});
+				markFilterOperator(target, input, param.op);
 			}
 		}
 	}
@@ -599,10 +627,8 @@
 				var input = getFilterComponent(target, fields[i]);
 				if (input.length){
 					input[0].filter.setValue(input, '');
-					var menu = input[0].menu;
-					if (menu){
-						menu.find('.'+opts.filterMenuIconCls).removeClass(opts.filterMenuIconCls);
-					}
+					// Keep the menu showing, which operator a new value would be filtered with
+					markFilterOperator(target, input, getDefaultFilterOperator(target, input));
 				}
 			}
 		}
@@ -978,6 +1004,7 @@
 					input[0].filter = filter;
 					input[0].filterOptions = fopts;
 					input[0].menu = createFilterButton(div, fopts.op);
+					markFilterOperator(target, input, fopts.defaultFilterOperator || opts.defaultFilterOperator);
 					if (fopts.op && fopts.op.length){
 						if (fopts.options && fopts.options.onInit){
 							fopts.options.onInit.call(input[0], target);

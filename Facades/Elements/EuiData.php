@@ -792,8 +792,10 @@ JS;
         
         if (! $widget->isConfiguratorLinked()) {
             $this->addButtonsToSearchGroup($widget->getToolbarMain()->getButtonGroupForSearchActions());
-            // Add header collapse button to the toolbar
-            if ($configuratorWidget->getFilterTab()->countWidgetsVisible() > 0) {
+            // Add the configurator button between the header filter toggle and the collapse button
+            $configuratorEl->addButtonToShowConfigurator($widget->getToolbarMain()->getButtonGroupForSearchActions(), 0);
+            // Add header collapse button to the toolbar - unless the filters live in the configurator dialog
+            if ($configuratorWidget->getFilterTab()->countWidgetsVisible() > 0 && $widget->getHideHeader() !== true) {
                 $configuratorEl->addButtonToCollapseExpand($widget->getToolbarMain()->getButtonGroupForSearchActions(), 0, $this->buildJsResize());
             }
         }
@@ -833,6 +835,37 @@ HTML;
      */
     protected function addButtonsToSearchGroup(ButtonGroup $buttonGroup) : void
     {
+    }
+    
+    /**
+     * Returns JS to remove the sorting the user applied via column headers - empty if not applicable.
+     * 
+     * @return string
+     */
+    public function buildJsHeaderSortersReset() : string
+    {
+        return '';
+    }
+    
+    /**
+     * Returns JS to replace the column filters with an array of `{expression, comparator, value}` - empty if not applicable.
+     * 
+     * @param string $aConditionsJs
+     * @return string
+     */
+    public function buildJsHeaderFiltersSet(string $aConditionsJs) : string
+    {
+        return '';
+    }
+    
+    /**
+     * Returns JS to remove all column filters - empty if not applicable.
+     * 
+     * @return string
+     */
+    public function buildJsHeaderFiltersReset() : string
+    {
+        return '';
     }
     
     /**
@@ -1043,6 +1076,7 @@ JS;
                 }
                 {$this->buildJsAutoloadDisabledMessageHide()}
                 {$paramJs}['data'] = {$configurator_element->buildJsDataGetter()};
+                {$configurator_element->buildJsOnBeforeLoadAddSorters($paramJs)}
                 
 JS;
     }
