@@ -11,8 +11,10 @@ use exface\Core\Widgets\DataButton;
 use exface\Core\Exceptions\Facades\FacadeOutputError;
 use exface\Core\Exceptions\Widgets\WidgetLogicError;
 use exface\Core\Interfaces\Widgets\iContainOtherWidgets;
+use exface\Core\Interfaces\Widgets\iSupportWidgetSetups;
 use exface\Core\Widgets\Tab;
 use exface\Core\Widgets\Parts\DataRowGrouper;
+use exface\JEasyUIFacade\Facades\Elements\Traits\EuiDataTableSetupTrait;
 
 /**
  *
@@ -24,6 +26,7 @@ use exface\Core\Widgets\Parts\DataRowGrouper;
 class EuiDataTable extends EuiData
 {
     use JqueryDataTableTrait;
+    use EuiDataTableSetupTrait;
     
     private $collapseConfiguratorButton = null;
 
@@ -180,6 +183,8 @@ $(setTimeout(function(){
 
     {$this->buildJsContextMenu()}
 
+    {$this->buildJsSetupAutoApply()}
+
 }, 0));
 
 {$editorFunctions}
@@ -312,6 +317,7 @@ JS;
                         if ($relAlias === null || $relAlias === '') {
                             throw new WidgetLogicError($widget, 'Cannot use editable table with object "' . $widget->getMetaObject()->getName() . '" (alias ' . $widget->getMetaObject()->getAliasWithNamespace() . ') as input widget for action "' . $action->getName() . '" with object "' . $dataObj->getName() . '" (alias ' . $dataObj->getAliasWithNamespace() . '): no forward relation could be found from action object to widget object!', '7B7KU9Q');
                         }
+                        $nestedRowsJs = $this->buildJsActionRowsProjection($this->buildJsFunctionPrefix() . 'getDataRows()');
                         return <<<JS
         
             {
@@ -320,7 +326,7 @@ JS;
                     {
                         '{$relAlias}': {
                             oId: '{$widget->getMetaObject()->getId()}', 
-                            rows: {$this->buildJsFunctionPrefix()}getDataRows()
+                            rows: {$nestedRowsJs}
                         }
                     }
                 ]
@@ -331,7 +337,35 @@ JS;
             default:
                 $rows = "$('#" . $this->getId() . "')." . $this->getElementType() . "('getSelections')";
         }
+        if ($action !== null && $rows !== '') {
+            $rows = $this->buildJsActionRowsProjection($rows);
+        }
         return "{oId: '" . $widget->getMetaObject()->getId() . "'" . ($rows ? ", rows: " . $rows : '') . ($filters ? ", filters: " . $filters : "") . "}";
+    }
+
+    /**
+     * Returns a JS expression that removes non-action columns from table rows.
+     *
+     * @param string $rowsJs
+     * @return string
+     */
+    protected function buildJsActionRowsProjection(string $rowsJs) : string
+    {
+        $actionColumnsJs = json_encode($this->getWidget()->getActionDataColumnNames());
+
+        return <<<JS
+(function(aRows, aColumns){
+    return (aRows || []).map(function(oRow){
+        var oActionRow = {};
+        aColumns.forEach(function(sColumn){
+            if (Object.prototype.hasOwnProperty.call(oRow, sColumn)) {
+                oActionRow[sColumn] = oRow[sColumn];
+            }
+        });
+        return oActionRow;
+    });
+})({$rowsJs}, {$actionColumnsJs})
+JS;
     }
 
     /**
@@ -359,6 +393,20 @@ JS;
     }
 
     /**
+     * {@inheritDoc}
+     * @see \exface\Core\Facades\AbstractAjaxFacade\Elements\AbstractJqueryElement::buildJsCallFunction()
+     */
+    public function buildJsCallFunction(string $functionName = null, array $parameters = [], ?string $jsRequestData = null) : string
+    {
+        $setupFunctionJs = $this->buildJsCallFunctionForSetup($functionName, $parameters, $jsRequestData);
+        if ($setupFunctionJs !== null) {
+            return $setupFunctionJs;
+        }
+
+        return parent::buildJsCallFunction($functionName, $parameters, $jsRequestData);
+    }
+
+    /**
      * 
      * {@inheritDoc}
      * @see \exface\JEasyUIFacade\Facades\Elements\EuiData::buildHtmlHeadTags()
@@ -366,13 +414,13 @@ JS;
     public function buildHtmlHeadTags()
     {
         $facade = $this->getFacade();
-        
-        // Disable setups for the table as they are not supported by jEasyUI anyway. This will save us some
-        // performance.
-        $this->getWidget()->setConfiguratorSetupsEnabled(false);
-        
         $includes = parent::buildHtmlHeadTags();
         $includes[] = '<script type="text/javascript" src="' . $facade->buildUrlToVendorFile('exface/jeasyuifacade/Facades/js/jeasyui/extensions/datagrid-filter/datagrid-filter.js') . '"></script>';
+        $configurator = $this->getWidget()->getConfiguratorWidget();
+        if ($configurator instanceof iSupportWidgetSetups && $configurator->hasSetups()) {
+            $includes[] = '<script type="text/javascript" src="' . $facade->buildUrlToVendorFile('npm-asset/dexie/dist/dexie.min.js') . '"></script>';
+            $includes[] = '<script type="text/javascript" src="' . $facade->buildUrlToVendorFile('exface/jeasyuifacade/Facades/js/exfSetupManager.js') . '"></script>';
+        }
         // Row details view
         if ($this->getWidget()->hasRowDetails()) {
             $includes[] = '<script type="text/javascript" src="' . $facade->buildUrlToSource('LIBS.JEASYUI.EXTENSIONS.DATAGRID_DETAILVIEW') . '"></script>';
@@ -1048,66 +1096,27 @@ JS;
     protected function buildJsOnBeforeLoadAddConfiguratorData(string $js_var_param = 'param') : string
     {
         $configuratorEl = $this->getFacade()->getElement($this->getWidget()->getConfiguratorWidget());
-        $parsers = [];
-        foreach ($this->getWidget()->getColumns() as $col) {
-            if (! $col->isFilterable() || ! $col->isBoundToAttribute()) {
-                continue;
-            }
-            $formatter = $this->getFacade()->getDataTypeFormatter($col->getDataType());
-            $parsers[] = json_encode($col->getDataColumnName()) . ': function(mVal, sComparator){ return ' . $formatter->buildJsFilterParser('mVal', 'sComparator') . '; }';
-        }
-        $parsersJs = '{' . implode(",\n", $parsers) . '}';
-        $between = ComparatorDataType::BETWEEN;
+        $parentJs = parent::buildJsOnBeforeLoadAddConfiguratorData($js_var_param);
 
-        return parent::buildJsOnBeforeLoadAddConfiguratorData($js_var_param) . <<<JS
+        return <<<JS
 
-                    // Add datagrid header filters to the canonical ExFace condition tree.
+                    // Header filters are remote controls for the advanced search model.
                     var aHeaderFilterRules = jqself.{$this->getElementType()}('options').filterRules || [];
-                    var oHeaderFilterParsers = {$parsersJs};
                     var aHeaderConditions = [];
-                    if (aHeaderFilterRules.length > 0) {
-                        var oHeaderFilterGroup = {operator: 'AND', ignore_empty_values: true, conditions: [], nested_groups: []};
-                        aHeaderFilterRules.forEach(function(oRule){
-                            var oColumn = jqself.{$this->getElementType()}('getColumnOption', oRule.field);
-                            var fnParser = oHeaderFilterParsers[oRule.field];
-                            if (!oColumn || !oColumn._attributeAlias || typeof fnParser !== 'function') {
-                                return;
-                            }
-                            // The advanced search works with the raw user input - just like the filter row does
+                    aHeaderFilterRules.forEach(function(oRule){
+                        var oColumn = jqself.{$this->getElementType()}('getColumnOption', oRule.field);
+                        if (oColumn && oColumn._attributeAlias) {
                             aHeaderConditions.push({
                                 expression: oColumn._attributeAlias,
                                 comparator: oRule.op,
                                 value: oRule.value
                             });
-                            var oParsedFilter = fnParser(oRule.value, oRule.op);
-                            var oParsedInput = oParsedFilter.comparator === '{$between}'
-                                ? exfTools.data.filterComparator.extract(String(oParsedFilter.value))
-                                : {comparator: oParsedFilter.comparator, value: oParsedFilter.value};
-                            var oParsedValue = exfTools.data.filterComparator.parseValue(oParsedInput);
-                            if (!oParsedValue.hasValue) {
-                                return;
-                            }
-                            oHeaderFilterGroup.conditions.push({
-                                expression: oColumn._attributeAlias,
-                                comparator: oParsedFilter.comparator,
-                                value: oParsedValue.value,
-                                object_alias: '{$this->getWidget()->getMetaObject()->getAliasWithNamespace()}',
-                                apply_to_aggregates: false
-                            });
-                        });
-                        if (oHeaderFilterGroup.conditions.length > 0) {
-                            if (!{$js_var_param}.data.filters) {
-                                {$js_var_param}.data.filters = {operator: 'AND', ignore_empty_values: true, conditions: [], nested_groups: []};
-                            }
-                            {$js_var_param}.data.filters.nested_groups = {$js_var_param}.data.filters.nested_groups || [];
-                            {$js_var_param}.data.filters.nested_groups.push(oHeaderFilterGroup);
                         }
-                    }
-                    delete {$js_var_param}.filterRules;
-                    // Keep the advanced search tab of the configurator in sync with the column filters
+                    });
                     {$configuratorEl->buildJsSearchConditionsSetter('aHeaderConditions', $this->buildJsonForFilterableColumnAliases())}
+                    delete {$js_var_param}.filterRules;
 
-                    // Enrich sorting options
+                    // Header sorters are remote controls for the configurator sorting model.
                     if ({$js_var_param}.sort !== undefined) {
                         var sortNames = {$js_var_param}.sort.split(',');
                         var sortOrders = String({$js_var_param}.order || '').split(',');
@@ -1120,7 +1129,11 @@ JS;
                         }
                         {$js_var_param}.sortAttr = sortAttrs.join(',');
                         {$configuratorEl->buildJsSortersSetter('aHeaderSorters')}
+                        delete {$js_var_param}.sort;
+                        delete {$js_var_param}.order;
                     }
+
+                    {$parentJs}
 
 JS;
     }

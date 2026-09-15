@@ -7,8 +7,10 @@ use exface\Core\DataTypes\ComparatorDataType;
 use exface\Core\DataTypes\SortingDirectionsDataType;
 use exface\Core\Facades\AbstractAjaxFacade\Elements\JqueryDataConfiguratorTrait;
 use exface\Core\Interfaces\Actions\ActionInterface;
+use exface\Core\Interfaces\Widgets\iSupportWidgetSetups;
 use exface\Core\Widgets\ButtonGroup;
 use exface\Core\Widgets\Data;
+use exface\Core\Widgets\DataTableConfigurator;
 use exface\Core\Widgets\Filter;
 use exface\Core\Factories\WidgetFactory;
 use exface\Core\CommonLogic\UxonObject;
@@ -19,7 +21,7 @@ use exface\Core\CommonLogic\Constants\Icons;
  * 
  * See [architecture documentation](../../../Docs/Developer_docs/DataConfigurator.md) for technical details.
  * 
- * @method \exface\Core\Widgets\DataConfigurator getWidget()
+ * @method DataTableConfigurator getWidget()
  * 
  * @author Andrej Kabachnik
  *
@@ -420,6 +422,18 @@ JS;
         }
         return empty($this->getSearchableFields()) === false;
     }
+
+    /**
+     * Returns TRUE if the configured DataTable supports persisted setups.
+     *
+     * @return bool
+     */
+    protected function hasTabSetups() : bool
+    {
+        return $this->getWidget() instanceof iSupportWidgetSetups
+            && $this->getWidget()->hasSetups()
+            && $this->getFacade()->getElement($this->getWidget()->getWidgetConfigured()) instanceof EuiDataTable;
+    }
     
     /**
      * 
@@ -427,7 +441,7 @@ JS;
      */
     protected function hasConfiguratorDialog() : bool
     {
-        return $this->hasTabFilters() || $this->hasTabSorters() || $this->hasTabAdvancedSearch();
+        return $this->hasTabFilters() || $this->hasTabSorters() || $this->hasTabAdvancedSearch() || $this->hasTabSetups();
     }
     
     /**
@@ -500,7 +514,7 @@ JS;
      * 
      * @return string
      */
-    protected function getIdOfSorterBuilder() : string
+    public function getIdOfSorterBuilder() : string
     {
         return $this->getId() . '_sorters';
     }
@@ -509,7 +523,7 @@ JS;
      * 
      * @return string
      */
-    protected function getIdOfConditionBuilder() : string
+    public function getIdOfConditionBuilder() : string
     {
         return $this->getId() . '_search';
     }
@@ -527,6 +541,10 @@ JS;
         
         $widget = $this->getWidget();
         $tabsHtml = '';
+
+        if ($this->hasTabSetups()) {
+            $tabsHtml .= $this->getFacade()->getElement($widget->getSetupsTab())->buildHtml();
+        }
         
         if ($this->hasTabFilters()) {
             $tab = $widget->getFilterTab();
@@ -557,7 +575,7 @@ HTML;
                 </div>
 HTML;
         }
-        
+
         return <<<HTML
 
         <div id="{$this->getIdOfResponsiveStaging()}" style="display: none;"></div>
@@ -591,11 +609,34 @@ HTML;
         $syncHeaderFiltersJs = ($dataEl instanceof EuiData && $this->hasTabAdvancedSearch()) ? $dataEl->buildJsHeaderFiltersSet($this->buildJsSearchConditionsGetter()) : '';
         $clearHeaderFiltersJs = ($dataEl instanceof EuiData && $this->hasTabAdvancedSearch()) ? $dataEl->buildJsHeaderFiltersReset() : '';
         $responsiveHeaderJs = $this->buildJsResponsiveHeader();
+        $setupsJs = '';
+        $refreshSetupsJs = '';
+        $clearSetupJs = '';
+        if ($this->hasTabSetups()) {
+            /** @var Data $setupsTable */
+            $setupsTable = $this->getWidget()->getSetupsTab()->getWidgetFirst();
+            $setupsTable->setAutoloadData(false);
+            $configuredWidget = $this->getWidget()->getWidgetConfigured();
+            /** @var EuiDataTable $setupsTableElement */
+            $setupsTableElement = $this->getFacade()->getElement($setupsTable);
+            $setupsTableElement->addOnLoadSuccess('exfSetupManager.markCurrentSetupAsActive(' .
+                $this->escapeString($setupsTableElement->getId()) . ', ' .
+                $this->escapeString($configuredWidget->getUiScreen()->getUrlSlug()) . ', ' .
+                $this->escapeString($configuredWidget->getIdInScreen()) . ', ' .
+                $this->escapeString($configuredWidget->getMetaObject()->getId()) . ');');
+            $setupsJs = $this->getFacade()->getElement($this->getWidget()->getSetupsTab())->buildJs();
+            $refreshSetupsJs = $setupsTableElement->buildJsRefresh();
+            $clearSetupJs = "exfSetupManager.dexie.deleteCurrentSetup(" .
+                $this->escapeString($configuredWidget->getUiScreen()->getUrlSlug()) . ', ' .
+                $this->escapeString($configuredWidget->getIdInScreen()) . ', ' .
+                $this->escapeString($configuredWidget->getMetaObject()->getId()) . ');';
+        }
         
         return <<<JS
 
 {$this->buildJsSorterBuilderInit()}
 {$this->buildJsConditionBuilderInit()}
+    {$setupsJs}
     {$responsiveHeaderJs}
 
 function {$this->buildJsFunctionPrefix()}ShowConfigurator() {
@@ -619,6 +660,7 @@ function {$this->buildJsFunctionPrefix()}ShowConfigurator() {
                         $('#{$this->getIdOfConfiguratorDialog()}').dialog('close');
                         {$clearHeaderSortersJs}
                         {$clearHeaderFiltersJs}
+                        {$clearSetupJs}
                         {$this->buildJsResetter()}
                     }
                 }, {
@@ -645,6 +687,7 @@ function {$this->buildJsFunctionPrefix()}ShowConfigurator() {
                 }
                 $('#{$this->getIdOfConfiguratorTabs()}').tabs('resize');
                 {$layoutFiltersJs}
+                {$refreshSetupsJs}
             }
         });
         // The `cls` option cannot be used here because easyui overrides it with `window` for every window
@@ -920,7 +963,7 @@ function(){
                 }()
 JS;
     }
-    
+
     /**
      * Returns JS to merge an array of `{expression, comparator, value}` into the advanced search
      * 

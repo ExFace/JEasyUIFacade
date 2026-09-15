@@ -75,8 +75,42 @@ values are read on every data request - no matter whether the dialog was ever op
 | Filters | `hide_header: true` and the filter tab has visible widgets | the regular filter widgets |
 | Sorting | the widget has sortable columns or sorters | `$.fn.exfSorterBuilder` |
 | Advanced search | the widget has filterable columns or filters | `$.fn.exfConditionBuilder` |
+| Setups | `DataTableConfigurator::hasSetups()` for a regular `EuiDataTable` | Core-provided setups table |
 
-Widget setups are not implemented yet.
+Widget setups are supported only for regular `EuiDataTable` elements. Other `EuiData` descendants,
+including spreadsheets, charts and maps, do not inherit the setup implementation. This keeps each
+future widget type free to implement the payload defined by its own setup prototype.
+
+The setups table is initialized without autoloading and refreshed whenever the configurator dialog
+opens. Its Save, Update, Apply and Delete actions call the DataTable widget functions implemented by
+`EuiDataTableSetupTrait`.
+
+### Widget setup state
+
+The jEasyUI implementation uses the same `DataTableSetup` UXON payload and the same local identity
+triple (`slug`, `widget_id`, `object_id`) as UI5. It currently captures and restores:
+
+- sorting from the sorter builder;
+- the flat top-level `AND` conditions from Advanced Search;
+- available column visibility state, including the legacy `attribute_alias` lookup when applying.
+
+Column header filters are not stored separately. They are remote controls for matching Advanced
+Search conditions and are restored from those conditions when a setup is applied.
+
+Nested Advanced Search groups and column order are left unchanged because the current Core setup
+rules and jEasyUI DataTable personalization UI do not support them yet. The payload remains additive,
+so those capabilities can be added without invalidating saved setups.
+
+The last explicitly applied setup is stored in IndexedDB and automatically restored when the table
+is initialized. Reset removes that local preference, and deleting the currently applied setup resets
+the table as well. The storage implementation is in
+[`Facades/js/exfSetupManager.js`](../../Facades/js/exfSetupManager.js).
+
+The setups table's `SETUP_APPLIED` column is client-only. After every table load,
+`markCurrentSetupAsActive()` compares each row UID with the active setup UID in IndexedDB and places
+a check icon on the matching row. Applying another setup moves the marker without reloading data.
+Saving a new setup reloads the setups table once because the newly created row is not yet present in
+the client model, after which the normal load hook marks it.
 
 ### Buttons
 
@@ -94,10 +128,10 @@ Widget setups are not implemented yet.
 | advanced search | `buildJsDataGetter()` override | appended to `data.filters.nested_groups` |
 | sorters | `buildJsOnBeforeLoadAddSorters()` | `sortAttr` + `order` |
 
-`buildJsOnBeforeLoadAddSorters()` deletes the datagrid's `sort` parameter when the configurator has
-sorters, because `EuiDataTable::buildJsOnBeforeLoadAddConfiguratorData()` would otherwise overwrite
-`sortAttr` with the column based sorting afterwards. In other words: as soon as the user configures
-sorters explicitly, they replace the sorting of the column headers.
+Before serializing a request, `EuiDataTable::buildJsOnBeforeLoadAddConfiguratorData()` copies a
+column-header sort into the sorter builder and removes the datagrid's native `sort`/`order`
+parameters. `buildJsOnBeforeLoadAddSorters()` then serializes the canonical sorter-builder state as
+`sortAttr`/`order`.
 
 Both getters tolerate uninitialized controls (`.data('exfConditionBuilder') !== undefined`), so
 unrendered configurators - e.g. inside an `InputComboTable` - keep working.
@@ -111,9 +145,8 @@ Both ways of sorting stay in sync, and whichever the user touched last wins:
 | click on a column header | the datagrid sends `sort`/`order`, `EuiDataTable` maps the column names to attribute aliases and pushes the result into the sorting tab via `buildJsSortersSetter()` |
 | Apply / Reset in the dialog | `buildJsHeaderSortersReset()` clears `sortName` of the datagrid (and the sort arrows), so the next request has no `sort` and `buildJsOnBeforeLoadAddSorters()` sends the sorters of the tab as `sortAttr`/`order` |
 
-`buildJsOnBeforeLoadAddSorters()` therefore never overrides an active column header sorting - it
-only fills in `sortAttr`/`order` when `sort` is absent. `buildJsSortersSetter()` compares before
-writing, so a refresh with unchanged sorting does not re-render the tab.
+`buildJsSortersSetter()` compares before writing, so a refresh with unchanged sorting does not
+re-render the tab.
 
 ### Advanced search vs. column filters
 
@@ -137,9 +170,10 @@ Rules of the merge:
 - Raw values are exchanged - exactly what the user typed. Both sides run the same data type parsers
   when building the request, so the conditions stay equivalent.
 
-Because both sides are kept equal, the request contains the conditions twice (once from the filter
-row, once from the advanced search). That is intentional: `A AND A` is equivalent to `A`, and it
-keeps the filters working even if the advanced search is not rendered at all.
+Before serializing a request, header rules are merged into Advanced Search and the native
+`filterRules` parameter is removed. The request therefore contains each condition only once, from
+the canonical Advanced Search model. Applying a setup replaces that model and then updates matching
+column filters from the first condition for each attribute.
 
 ## The jEasyUI extensions
 
