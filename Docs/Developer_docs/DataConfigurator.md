@@ -77,6 +77,10 @@ values are read on every data request - no matter whether the dialog was ever op
 | Advanced search | the widget has filterable columns or filters | `$.fn.exfConditionBuilder` |
 | Setups | `DataTableConfigurator::hasSetups()` for a regular `EuiDataTable` | Core-provided setups table |
 
+## Widget setups
+
+### Scope and entry points
+
 Widget setups are supported only for regular `EuiDataTable` elements. Other `EuiData` descendants,
 including spreadsheets, charts and maps, do not inherit the setup implementation. This keeps each
 future widget type free to implement the payload defined by its own setup prototype.
@@ -85,17 +89,54 @@ The setups table is initialized without autoloading and refreshed whenever the c
 opens. Its Save, Update, Apply and Delete actions call the DataTable widget functions implemented by
 `EuiDataTableSetupTrait`.
 
-### Widget setup state
+### Where the implementation lives
 
-The jEasyUI implementation uses the same `DataTableSetup` UXON payload and the same local identity
-triple (`slug`, `widget_id`, `object_id`) as UI5. It currently captures and restores:
+The setup implementation is split deliberately between the facade-neutral Core model, the jEasyUI
+PHP elements and the browser-side setup manager:
+
+| Layer | Source | Responsibility |
+|---|---|---|
+| Widget interface | [`iSupportWidgetSetups.php`](../../../core/Interfaces/Widgets/iSupportWidgetSetups.php) | identifies configurators that expose setups and their setups table |
+| Configurator widget | [`DataTableConfigurator.php`](../../../core/Widgets/DataTableConfigurator.php) | builds the setups tab, table, filters and Save, Update, Apply and Delete actions |
+| Core setup model | [`DataTableSetup.php`](../../../core/Mutations/Prototypes/DataTableSetup.php) and [`Mutations/MutationRules/`](../../../core/Mutations/MutationRules/) | defines and validates the facade-neutral columns, Advanced Search and sorters payload |
+| jEasyUI configurator element | [`EuiDataConfigurator.php`](../../Facades/Elements/EuiDataConfigurator.php) | renders the setups tab, refreshes its table and projects the active setup marker |
+| jEasyUI DataTable element | [`EuiDataTable.php`](../../Facades/Elements/EuiDataTable.php) | gates setup support to regular DataTables, loads the required scripts and starts auto-apply |
+| jEasyUI shared setup logic | [`EuiDataTableSetupTrait.php`](../../Facades/Elements/Traits/EuiDataTableSetupTrait.php) | emits the JavaScript for `dump_setup`, `apply_setup` and clearing the current setup |
+| jEasyUI browser state | [`exfSetupManager.js`](../../Facades/js/exfSetupManager.js) | translates between jEasyUI controls and setup JSON, applies setups and stores the active setup in IndexedDB |
+
+PHP decides whether setups are available, constructs their widgets and actions, and routes widget
+functions. JavaScript reads and writes the live configurator controls, converts sorter directions
+where necessary, persists the last applied setup and updates the client-only active marker.
+
+### Shared setup model
+
+The JSON stored in a setup is a **facade-neutral model**, not a serialization of jEasyUI controls.
+It follows the Core `DataTableSetup` UXON contract and must remain usable by every facade that
+supports DataTable setups. In particular, setups created with jEasyUI must be loadable by UI5 and
+setups created with UI5 must be loadable by jEasyUI. Facade implementations may translate between
+their local control state and this shared model, but must not persist facade-specific control IDs,
+widget structures or value conventions in it.
+
+The jEasyUI implementation therefore uses the same `DataTableSetup` UXON payload and the same local
+identity triple (`slug`, `widget_id`, `object_id`) as UI5. It currently captures and restores:
 
 - sorting from the sorter builder;
 - the flat top-level `AND` conditions from Advanced Search;
 - available column visibility state, including the legacy `attribute_alias` lookup when applying.
 
-Column header filters are not stored separately. They are remote controls for matching Advanced
-Search conditions and are restored from those conditions when a setup is applied.
+Advanced Search is the canonical filter state shared by setups and column-header filters:
+
+| Interaction | Result |
+|---|---|
+| change a column-header filter | merges its comparator and value into the matching condition in Advanced Search |
+| change Advanced Search and apply the dialog | updates every matching column-header filter from the **first** condition with the same `attribute_alias`, including both comparator and value |
+| save or update a setup | stores Advanced Search; column-header filters are **not** stored separately |
+| load a setup | restores Advanced Search first, then derives matching column-header filters from its first matching conditions |
+
+Consequently, setup payloads have one source of truth for filtering. A column-header filter first
+updates Advanced Search, which is what the setup persists. Loading performs the reverse projection:
+the saved Advanced Search model is installed and matching column headers receive the comparator and
+value of the first condition for their attribute.
 
 Nested Advanced Search groups and column order are left unchanged because the current Core setup
 rules and jEasyUI DataTable personalization UI do not support them yet. The payload remains additive,
@@ -112,7 +153,7 @@ a check icon on the matching row. Applying another setup moves the marker withou
 Saving a new setup reloads the setups table once because the newly created row is not yet present in
 the client model, after which the normal load hook marks it.
 
-### Buttons
+## Dialog buttons
 
 | Button | Behavior |
 |---|---|
@@ -150,12 +191,14 @@ re-render the tab.
 
 ### Advanced search vs. column filters
 
-The column filter row and the advanced search are two views on the same conditions:
+The column filter row and Advanced Search are two views on the same conditions. Advanced Search is
+the canonical model; column filters are a compact projection for attributes represented by table
+columns:
 
 | User action | What happens |
 |---|---|
 | a column filter changes | `EuiDataTable::buildJsOnBeforeLoadAddConfiguratorData()` passes the raw rules to `buildJsSearchConditionsSetter()`, which merges them into the top-most group of the advanced search |
-| Apply in the dialog | `buildJsHeaderFiltersSet()` writes the conditions of the top-most group back into the filter row |
+| Apply in the dialog | `buildJsHeaderFiltersSet()` writes the comparator and value of the first matching condition per attribute back into the filter row |
 | Reset in the dialog | `buildJsHeaderFiltersReset()` removes all column filters |
 
 Rules of the merge:
@@ -172,8 +215,9 @@ Rules of the merge:
 
 Before serializing a request, header rules are merged into Advanced Search and the native
 `filterRules` parameter is removed. The request therefore contains each condition only once, from
-the canonical Advanced Search model. Applying a setup replaces that model and then updates matching
-column filters from the first condition for each attribute.
+the canonical Advanced Search model. Setups likewise persist only Advanced Search, never a separate
+copy of the header filters. Applying a setup replaces that model and then updates matching column
+filters, including comparator and value, from the first condition for each attribute.
 
 ## The jEasyUI extensions
 
