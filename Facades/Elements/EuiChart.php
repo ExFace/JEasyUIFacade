@@ -66,7 +66,7 @@ class EuiChart extends EuiData
         
 setTimeout(function(){
     var chartDiv = $('#{$this->getId()}');
-    chartDiv.height(chartDiv.parent().height() - chartDiv.prev().height());
+    chartDiv.height(chartDiv.parent().height() - $('#{$this->getIdOfToolbar()}').outerHeight());
     {$this->buildJsEChartsResize()};
 }, 0);
 
