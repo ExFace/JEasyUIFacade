@@ -65,6 +65,7 @@ fieldset.exface_inputgroup legend {color: #404040;}
 .datagrid-footer td {border-bottom-width: 0}
 .exf-container-filler > .datagrid > .datagrid-wrap {border-top: 0}
 .exf-data-widget.exf-data-hide-header > .panel > .panel-header {border-bottom-width: 1px;}
+.exf-data-widget.exf-chart-wrapper > .panel > .panel-header {border-bottom-width: 0;}
 .exf-data-widget.exf-data-hide-header > .panel > .panel-body-noheader {border-top-width: 1px;}
 /* Tables inside containers */
 .tabs-panels > .panel > .panel-body > .exf-data-widget:first-of-type > .panel > .panel-body-noheader,
@@ -72,7 +73,8 @@ fieldset.exface_inputgroup legend {color: #404040;}
 .easyui-dialog > .exf-data-widget:first-of-type > .panel > .panel-body-noheader,
 .easyui-dialog > .exf-data-widget:first-of-type > .panel > .panel-header {border-top-width: 0}
 /* In split with split-caption and data header */
-.panel > .panel-body.panel-filled:not(.panel-body-noheader) > .exf-data-widget:not(.exf-data-hide-header) > .panel > .panel-body {border-top-width: 0}
+.panel > .panel-body.panel-filled:not(.panel-body-noheader) > .exf-data-widget:not(.exf-data-hide-header) > .panel > .panel-body,
+.panel > .panel-body.panel-filled:not(.panel-body-noheader) > .exf-data-widget.exf-chart-wrapper.exf-data-hide-header > .panel > .panel-body-noheader {border-top-width: 0}
 
 /* IFrames */
 iframe {border: 0}
