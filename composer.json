@@ -57,7 +57,8 @@
         "npm-asset/perspective-dev--viewer-datagrid": "^5.3",
 		"npm-asset/perspective-dev--viewer-charts": "^5.3",
 		"npm-asset/ace-builds": "^1.40",
-		"npm-asset/prettier": "^3.7.0"
+        "npm-asset/prettier": "^3.7.0",
+        "npm-asset/dexie": "^2.0.4"
     },
     "suggest": {
         "bower-asset/jeasyui": "Free (GPL) version of jEasyUI up-to 1.4.3. Otherwise provide your own!"
