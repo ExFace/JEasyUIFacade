@@ -110,8 +110,10 @@ class EuiDataConfigurator extends EuiTabs
             $toolbar_style = 'display: none; height: 0;';
         }
         
-        // Responsive filters start in the header and are moved into the dialog on smartphones.
-        $filtersHtml = $configuredWidget->getHideHeader() === true ? '' : $this->getFacade()->getElement($configuratorWidget->getFilterTab())->buildHtml();
+        // Keep all-hidden filters in the collapsed header so their inputs remain available to the data getter.
+        $filtersHtml = $configuredWidget->getHideHeader() === true && $this->hasTabFilters()
+            ? ''
+            : $this->getFacade()->getElement($configuratorWidget->getFilterTab())->buildHtml();
         
         return <<<HTML
         
