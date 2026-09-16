@@ -1,6 +1,8 @@
 # jEasyUI data configurator
 
-The `EuiDataConfigurator` renders the personalization of a data widget in two places:
+The `EuiDataConfigurator` facade element is the jEasyUI implementation of the Core
+`DataConfigurator` widget model. It generates the personalization UI of a data widget in two
+places:
 
 1. the **header panel** above the data widget - the quick filters and the toolbar with the buttons,
 2. the **configurator dialog** - a tabbed jEasyUI dialog with sorting, advanced search and (if the
@@ -8,9 +10,9 @@ The `EuiDataConfigurator` renders the personalization of a data widget in two pl
 
 Everything belonging to the configurator lives in
 [`Facades/Elements/EuiDataConfigurator.php`](../../Facades/Elements/EuiDataConfigurator.php). The
-data elements only call into it: `EuiData::buildHtmlTableHeader()` renders the header and adds the
-buttons, `EuiDataTable::buildJs()` and `EuiDataElementTrait::buildJsForPanel()` emit the JS via
-`buildJsForPanelHeader()`.
+data widget facade elements only call into it: `EuiData::buildHtmlTableHeader()` generates the
+header HTML and adds the buttons, while `EuiDataTable::buildJs()` and
+`EuiDataElementTrait::buildJsForPanel()` generate the JavaScript via `buildJsForPanelHeader()`.
 
 ## The header
 
@@ -81,9 +83,10 @@ values are read on every data request - no matter whether the dialog was ever op
 
 ### Scope and entry points
 
-Widget setups are supported only for regular `EuiDataTable` elements. Other `EuiData` descendants,
-including spreadsheets, charts and maps, do not inherit the setup implementation. This keeps each
-future widget type free to implement the payload defined by its own setup prototype.
+Widget setups are supported only by the regular `EuiDataTable` facade element. Other `EuiData`
+facade element descendants, including spreadsheets, charts and maps, do not inherit the setup
+implementation. This keeps each future widget type free to implement the payload defined by its
+own setup prototype.
 
 The setups table is initialized without autoloading and refreshed whenever the configurator dialog
 opens. Its Save, Update, Apply and Delete actions call the DataTable widget functions implemented by
@@ -91,31 +94,33 @@ opens. Its Save, Update, Apply and Delete actions call the DataTable widget func
 
 ### Where the implementation lives
 
-The setup implementation is split deliberately between the facade-neutral Core model, the jEasyUI
-PHP elements and the browser-side setup manager:
+The setup implementation is split deliberately between the facade-independent Core widget and
+mutation models, the jEasyUI facade elements and the browser-side setup manager:
 
 | Layer | Source | Responsibility |
 |---|---|---|
-| Widget interface | [`iSupportWidgetSetups.php`](../../../core/Interfaces/Widgets/iSupportWidgetSetups.php) | identifies configurators that expose setups and their setups table |
-| Configurator widget | [`DataTableConfigurator.php`](../../../core/Widgets/DataTableConfigurator.php) | builds the setups tab, table, filters and Save, Update, Apply and Delete actions |
-| Core setup model | [`DataTableSetup.php`](../../../core/Mutations/Prototypes/DataTableSetup.php) and [`Mutations/MutationRules/`](../../../core/Mutations/MutationRules/) | defines and validates the facade-neutral columns, Advanced Search and sorters payload |
-| jEasyUI configurator element | [`EuiDataConfigurator.php`](../../Facades/Elements/EuiDataConfigurator.php) | renders the setups tab, refreshes its table and projects the active setup marker |
-| jEasyUI DataTable element | [`EuiDataTable.php`](../../Facades/Elements/EuiDataTable.php) | gates setup support to regular DataTables, loads the required scripts and starts auto-apply |
+| Widget interface | [`iSupportWidgetSetups.php`](../../../core/Interfaces/Widgets/iSupportWidgetSetups.php) | Identifies configurator widget models that expose setups and their setups table. |
+| Configurator widget model | [`DataTableConfigurator.php`](../../../core/Widgets/DataTableConfigurator.php) | Builds the setups tab, table, filters and Save, Update, Apply and Delete action models. |
+| Setup mutation model | [`DataTableSetup.php`](../../../core/Mutations/Prototypes/DataTableSetup.php) and [`Mutations/MutationRules/`](../../../core/Mutations/MutationRules/) | Defines and validates the facade-independent columns, Advanced Search and sorters payload. |
+| jEasyUI configurator facade element | [`EuiDataConfigurator.php`](../../Facades/Elements/EuiDataConfigurator.php) | Generates the setups tab, refreshes its table and projects the active setup marker. |
+| jEasyUI DataTable facade element | [`EuiDataTable.php`](../../Facades/Elements/EuiDataTable.php) | Gates setup support to regular DataTables, loads the required scripts and starts auto-apply. |
 | jEasyUI shared setup logic | [`EuiDataTableSetupTrait.php`](../../Facades/Elements/Traits/EuiDataTableSetupTrait.php) | emits the JavaScript for `dump_setup`, `apply_setup` and clearing the current setup |
 | jEasyUI browser state | [`exfSetupManager.js`](../../Facades/js/exfSetupManager.js) | translates between jEasyUI controls and setup JSON, applies setups and stores the active setup in IndexedDB |
 
-PHP decides whether setups are available, constructs their widgets and actions, and routes widget
-functions. JavaScript reads and writes the live configurator controls, converts sorter directions
-where necessary, persists the last applied setup and updates the client-only active marker.
+The Core widget models decide whether setups are available and construct their child widget and
+action models. The jEasyUI facade elements generate the controls and route widget functions to
+JavaScript. That JavaScript reads and writes the live configurator controls, converts sorter
+directions where necessary, persists the last applied setup and updates the client-only active
+marker.
 
 ### Shared setup model
 
 The JSON stored in a setup is a **facade-neutral model**, not a serialization of jEasyUI controls.
 It follows the Core `DataTableSetup` UXON contract and must remain usable by every facade that
 supports DataTable setups. In particular, setups created with jEasyUI must be loadable by UI5 and
-setups created with UI5 must be loadable by jEasyUI. Facade implementations may translate between
-their local control state and this shared model, but must not persist facade-specific control IDs,
-widget structures or value conventions in it.
+setups created with UI5 must be loadable by jEasyUI. Facade elements may translate between their
+framework-specific control state and this shared model, but must not persist facade-specific
+control IDs, widget structures or value conventions in it.
 
 The jEasyUI implementation therefore uses the same `DataTableSetup` UXON payload and the same local
 identity triple (`slug`, `widget_id`, `object_id`) as UI5. It currently captures and restores:
