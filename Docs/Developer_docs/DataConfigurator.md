@@ -101,7 +101,7 @@ mutation models, the jEasyUI facade elements and the browser-side setup manager:
 |---|---|---|
 | Widget interface | [`iSupportWidgetSetups.php`](../../../core/Interfaces/Widgets/iSupportWidgetSetups.php) | Identifies configurator widget models that expose setups and their setups table. |
 | Configurator widget model | [`DataTableConfigurator.php`](../../../core/Widgets/DataTableConfigurator.php) | Builds the setups tab, table, filters and Save, Update, Apply and Delete action models. |
-| Setup mutation model | [`DataTableSetup.php`](../../../core/Mutations/Prototypes/DataTableSetup.php) and [`Mutations/MutationRules/`](../../../core/Mutations/MutationRules/) | Defines and validates the facade-independent columns, Advanced Search and sorters payload. |
+| Setup mutation model | [`DataTableSetup.php`](../../../core/Mutations/Prototypes/DataTableSetup.php) and [`Mutations/MutationRules/`](../../../core/Mutations/MutationRules/) | Defines and validates the facade-independent columns, Advanced Search condition group and sorters payload. |
 | jEasyUI configurator facade element | [`EuiDataConfigurator.php`](../../Facades/Elements/EuiDataConfigurator.php) | Generates the setups tab, refreshes its table and projects the active setup marker. |
 | jEasyUI DataTable facade element | [`EuiDataTable.php`](../../Facades/Elements/EuiDataTable.php) | Gates setup support to regular DataTables, loads the required scripts and starts auto-apply. |
 | jEasyUI shared setup logic | [`EuiDataTableSetupTrait.php`](../../Facades/Elements/Traits/EuiDataTableSetupTrait.php) | emits the JavaScript for `dump_setup`, `apply_setup` and clearing the current setup |
@@ -116,20 +116,20 @@ marker.
 ### Shared setup model
 
 The JSON stored in a setup is a **facade-neutral model**, not a serialization of jEasyUI controls.
-It follows the Core `DataTableSetup` UXON contract and must remain usable by every facade that
-supports DataTable setups. In particular, setups created with jEasyUI must be loadable by UI5 and
-setups created with UI5 must be loadable by jEasyUI. Facade elements may translate between their
-framework-specific control state and this shared model, but must not persist facade-specific
-control IDs, widget structures or value conventions in it.
+It follows the Core `DataTableSetup` UXON contract and must not persist facade-specific control IDs,
+widget structures or value conventions. jEasyUI uses the nested `advanced_conditions` model; UI5
+temporarily continues to use the legacy flat `advanced_search` model until it is migrated.
 
 The jEasyUI implementation therefore uses the same `DataTableSetup` UXON payload and the same local
 identity triple (`slug`, `widget_id`, `object_id`) as UI5. It currently captures and restores:
 
 - sorting from the sorter builder;
-- the flat top-level `AND` conditions from Advanced Search;
+- one complete `advanced_conditions` ConditionGroup from Advanced Search, including its operator,
+  conditions and recursively nested groups;
 - available column visibility state, including the legacy `attribute_alias` lookup when applying.
 
-Advanced Search is the canonical filter state shared by setups and column-header filters:
+Advanced Search is the canonical filter state shared by setups and column-header filters. The
+complete group is stored using `AdvancedConditionGroupSetupRule`:
 
 | Interaction | Result |
 |---|---|
@@ -143,9 +143,8 @@ updates Advanced Search, which is what the setup persists. Loading performs the 
 the saved Advanced Search model is installed and matching column headers receive the comparator and
 value of the first condition for their attribute.
 
-Nested Advanced Search groups and column order are left unchanged because the current Core setup
-rules and jEasyUI DataTable personalization UI do not support them yet. The payload remains additive,
-so those capabilities can be added without invalidating saved setups.
+Column order is left unchanged because the current Core setup rules and jEasyUI DataTable
+personalization UI do not support it yet.
 
 The last explicitly applied setup is stored in IndexedDB and automatically restored when the table
 is initialized. Reset removes that local preference, and deleting the currently applied setup resets

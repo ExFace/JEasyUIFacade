@@ -381,12 +381,12 @@
                 var sorterBuilder = $('#' + sorterBuilderId);
                 var conditionBuilder = $('#' + conditionBuilderId);
                 var searchModel = conditionBuilder.data('exfConditionBuilder') !== undefined
-                    ? conditionBuilder.exfConditionBuilder('getModel')
+                    ? conditionBuilder.exfConditionBuilder('getConditionGroup')
                     : null;
                 var configuration = {
                     columns: [],
                     sorters: [],
-                    advanced_search: []
+                    advanced_conditions: searchModel
                 };
 
                 fields.forEach(function (field) {
@@ -413,18 +413,6 @@
                             attribute_alias: column && column._attributeAlias ? column._attributeAlias : field,
                             direction: String(directions[index] || 'asc').toLowerCase() === 'desc' ? 'Descending' : 'Ascending'
                         });
-                    });
-                }
-                if (searchModel && searchModel.operator === 'AND' && Array.isArray(searchModel.conditions)) {
-                    searchModel.conditions.forEach(function (condition) {
-                        if (condition.expression && condition.value !== '' && condition.value !== null && condition.value !== undefined) {
-                            configuration.advanced_search.push({
-                                attribute_alias: condition.expression,
-                                comparator: condition.comparator,
-                                value: condition.value,
-                                exclude: condition.exclude === true
-                            });
-                        }
                     });
                 }
                 return configuration;
@@ -466,19 +454,7 @@
                     }));
                 }
                 if (conditionBuilder.data('exfConditionBuilder') !== undefined) {
-                    conditionBuilder.exfConditionBuilder('setModel', {
-                        operator: 'AND',
-                        ignore_empty_values: true,
-                        conditions: (Array.isArray(configuration.advanced_search) ? configuration.advanced_search : []).map(function (condition) {
-                            return {
-                                expression: condition.attribute_alias,
-                                comparator: condition.comparator,
-                                value: condition.value,
-                                exclude: condition.exclude === true
-                            };
-                        }),
-                        nested_groups: []
-                    });
+                    conditionBuilder.exfConditionBuilder('setModel', configuration.advanced_conditions || null);
                 }
                 table.datagrid('resize');
             }
