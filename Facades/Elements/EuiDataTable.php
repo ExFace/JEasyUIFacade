@@ -352,14 +352,18 @@ JS;
     }
 
     /**
-     * Returns a JS expression that removes non-action columns from table rows.
+     * Removes non-action columns without allowing filtered PHP keys to change the JavaScript data type.
+     *
+     * WHY REINDEX: action column filtering can leave numeric key gaps. PHP encodes such arrays as
+     * objects, but the generated JavaScript requires an array for forEach(). Reindexing keeps edit
+     * actions working regardless of which internal table columns were filtered out.
      *
      * @param string $rowsJs
      * @return string
      */
     protected function buildJsActionRowsProjection(string $rowsJs) : string
     {
-        $actionColumnsJs = json_encode($this->getWidget()->getActionDataColumnNames());
+        $actionColumnsJs = json_encode(array_values($this->getWidget()->getActionDataColumnNames()));
 
         return <<<JS
 (function(aRows, oColumns){
