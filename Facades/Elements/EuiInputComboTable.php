@@ -491,6 +491,7 @@ JS;
     {
         $widget = $this->getWidget();
         $uidColumnName = $widget->getTable()->getUidColumn()->getDataColumnName();
+        $delim = str_replace("'", "\\'", $widget->getMultipleValuesDelimiter());
         
         if ($widget->getMultiSelect()) {
             $value_getter = <<<JS
@@ -506,7 +507,7 @@ JS;
                                     resultArray.push(exfTools.string.htmlUnescape(selectedRows[i][column]));
                                 }
                             }
-                            return resultArray.join();
+                            return resultArray.join('{$delim}');
 JS;
         } else {
             $value_getter = <<<JS
@@ -545,7 +546,7 @@ JS;
                             // nichts geladen (daher auch keine Auswahl) dann wird der gesetzte
                             // value zurueckgegeben wenn die OID-Spalte angefragt wird (wichtig
                             // fuer das Funktionieren von Filtern bei initialem Laden).
-                            return {$this->getId()}_jquery.combogrid("getValues").join();
+                            return {$this->getId()}_jquery.combogrid("getValues").join('{$delim}');
                         } else {
                             return "";
                         }
@@ -1214,7 +1215,7 @@ JS;
 
 JS;
         } else {
-            $delim = str_replace("'", "\\'", $this->getWidget()->getMultiSelectTextDelimiter());
+            $delim = str_replace("'", "\\'", $this->getWidget()->getMultipleValuesDelimiter());
             $rows = <<<JS
                             function(){
                                 var aVals = ({$this->buildJsValueGetter()}).split('{$delim}');
