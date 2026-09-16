@@ -128,6 +128,12 @@
                     table.datagrid('reload');
                 }
                 manager.quickSelect.setupsLoaded(setupsTableId);
+                if (entry && entry.setup_name) {
+                    var options = manager.quickSelect._findBySetupsTable(setupsTableId);
+                    if (options) {
+                        manager.quickSelect._setCaption(options, entry.setup_name);
+                    }
+                }
             });
         },
 
@@ -302,7 +308,7 @@
                         var item;
 
                         menu.menu('appendItem', {
-                            text: manager.quickSelect._escapeHtml(row.NAME || ''),
+                            text: manager.quickSelect._escapeHtml(manager.quickSelect._decodeHtml(row.NAME || '')),
                             iconCls: active ? 'fa fa-check' : (favorite ? 'fa fa-star' : ''),
                             onclick: function () {
                                 options.apply(row);
@@ -310,7 +316,7 @@
                         });
                         item = menu.children('.menu-item').last();
                         item
-                            .attr('title', row.DESCRIPTION || '')
+                            .attr('title', manager.quickSelect._decodeHtml(row.DESCRIPTION || ''))
                             .toggleClass('exf-setup-active', active)
                             .toggleClass('exf-setup-favorite', favorite);
                         items = [
@@ -354,8 +360,12 @@
                 var captionText = $('#' + options.captionButtonId + '_text');
 
                 if (captionText.length) {
-                    captionText.text(caption || options.defaultCaption);
+                    captionText.text(manager.quickSelect._decodeHtml(caption || options.defaultCaption));
                 }
+            },
+
+            _decodeHtml: function (value) {
+                return $('<div></div>').html(value === null || value === undefined ? '' : String(value)).text();
             },
 
             _escapeHtml: function (value) {
