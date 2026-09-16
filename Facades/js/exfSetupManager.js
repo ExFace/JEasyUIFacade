@@ -270,6 +270,29 @@
                 return result;
             },
 
+            selectSetupRow: function (setupsTableId, setupUid) {
+                var table = $('#' + setupsTableId);
+                var rows;
+                var rowIndex = -1;
+
+                if (table.length === 0 || table.data('datagrid') === undefined) {
+                    return false;
+                }
+                rows = table.datagrid('getRows') || [];
+                rows.some(function (row, index) {
+                    if (row.UID === setupUid) {
+                        rowIndex = index;
+                        return true;
+                    }
+                    return false;
+                });
+                if (rowIndex < 0) {
+                    return false;
+                }
+                table.datagrid('clearSelections').datagrid('selectRow', rowIndex);
+                return true;
+            },
+
             _createMenu: function (options, menuId) {
                 var menu = $('#' + menuId);
 

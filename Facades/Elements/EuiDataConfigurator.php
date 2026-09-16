@@ -615,14 +615,14 @@ exfSetupManager.quickSelect.register({
         {$dataEl->buildJsCallFunction(DataTable::FUNCTION_APPLY_SETUP, ['[#SETUP_UXON#]'], '{rows: [row]}')}
     },
     update: function(row) {
-        var jqTable = $('#{$setupsTableElement->getId()}');
-        jqTable.datagrid('clearSelections').datagrid('selectRow', jqTable.datagrid('getRowIndex', row));
-        {$updateSetupButtonElement->buildJsClickFunctionName()}();
+        if (exfSetupManager.quickSelect.selectSetupRow({$this->escapeString($setupsTableElement->getId())}, row.UID)) {
+            {$updateSetupButtonElement->buildJsClickFunctionName()}();
+        }
     },
     edit: function(row) {
-        var jqTable = $('#{$setupsTableElement->getId()}');
-        jqTable.datagrid('clearSelections').datagrid('selectRow', jqTable.datagrid('getRowIndex', row));
-        {$editSetupButtonElement->buildJsClickFunctionName()}();
+        if (exfSetupManager.quickSelect.selectSetupRow({$this->escapeString($setupsTableElement->getId())}, row.UID)) {
+            {$editSetupButtonElement->buildJsClickFunctionName()}();
+        }
     },
     openConfigurator: function() {
         {$this->buildJsFunctionPrefix()}ShowConfigurator(true);
