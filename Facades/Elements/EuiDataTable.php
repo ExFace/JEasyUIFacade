@@ -362,10 +362,10 @@ JS;
         $actionColumnsJs = json_encode($this->getWidget()->getActionDataColumnNames());
 
         return <<<JS
-(function(aRows, aColumns){
+(function(aRows, oColumns){
     return (aRows || []).map(function(oRow){
         var oActionRow = {};
-        aColumns.forEach(function(sColumn){
+        Object.values(oColumns).forEach(sColumn => {
             if (Object.prototype.hasOwnProperty.call(oRow, sColumn)) {
                 oActionRow[sColumn] = oRow[sColumn];
             }
