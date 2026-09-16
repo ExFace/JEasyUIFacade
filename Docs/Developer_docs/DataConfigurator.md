@@ -163,8 +163,9 @@ client-only active marker, and trigger its lazy load only once. Opening the conf
 quick-select menu therefore does not make a second setup request. Favorites are sorted first by the
 setups table model, so the configurator and both quick-select menus keep the same order. Clicking a
 setup applies it directly; hovering it opens a submenu for Apply, Update and Edit. Update and Edit
-select the shared setups-table row and invoke the existing configurator buttons, keeping their
-validation and action behavior in one place.
+resolve and select the current shared setups-table row by UID before invoking the existing
+configurator buttons, keeping their validation and action behavior in one place even if the menu
+was rendered before the table reloaded.
 
 ## Dialog buttons
 
