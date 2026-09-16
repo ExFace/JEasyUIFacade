@@ -1,6 +1,7 @@
 <?php
 namespace exface\JEasyUIFacade\Facades\Elements;
 
+use exface\Core\Actions\ResetWidget;
 use exface\Core\Interfaces\Widgets\iUseData;
 use exface\Core\Widgets\DataColumnGroup;
 use exface\Core\Exceptions\Configuration\ConfigOptionNotFoundError;
@@ -779,6 +780,16 @@ JS;
     {
         return $this->getFacade()->getConfig()->getOption('WIDGET.DATA.DEFAULT_BUTTON_ALIGNMENT');
     }
+
+    /**
+     *
+     * @param string $tableId
+     * @return string
+     */
+    protected function getIdOfHeaderFilterButton(string $tableId) : string
+    {
+        return 'headerFilterButton_' . $tableId;
+    }
     
     /**
      * Creates the HTML for the header controls: filters, sorters, buttons, etc.
@@ -788,17 +799,23 @@ JS;
     {
         $widget = $this->getWidget();
         $configuratorWidget = $widget->getConfiguratorWidget();
+        /* @var EuiDataConfigurator $configuratorEl */
         $configuratorEl = $this->getFacade()->getElement($configuratorWidget);
         
+        // Let the configurator add its button to the main toolbar.
         if (! $widget->isConfiguratorLinked()) {
-            $this->addButtonsToSearchGroup($widget->getToolbarMain()->getButtonGroupForSearchActions());
             // Add the configurator button between the header filter toggle and the collapse button
-            $configuratorEl->addButtonToShowConfigurator($widget->getToolbarMain()->getButtonGroupForSearchActions(), 0);
+            $configuratorEl->addButtonsToSearchGroup($widget->getToolbarMain()->getButtonGroupForSearchActions(), 0);
             // Add header collapse button to the toolbar - unless the filters live in the configurator dialog
             if ($configuratorWidget->getFilterTab()->countWidgetsVisible() > 0 && $widget->getHideHeader() !== true) {
                 $configuratorEl->addButtonToCollapseExpand($widget->getToolbarMain()->getButtonGroupForSearchActions(), 0, $this->buildJsResize());
             }
         }
+        
+        // Hide the caption of the reset button in the search actions group, if it exists.
+        $widget->getToolbarMain()->getButtonGroupForSearchActions()->findChild(function(Button $btn) {
+            return $btn->getAction() instanceof ResetWidget;
+        })?->setHideCaption(true);
         
         // Build the HTML for the button toolbars.
         // IMPORTANT: do it BEFORE the context menu since buttons may be moved

@@ -106,6 +106,7 @@
             var table = $('#' + setupsTableId);
 
             if (table.length === 0 || table.data('datagrid') === undefined) {
+                manager.quickSelect.refresh(setupsTableId);
                 return Promise.resolve();
             }
             return manager.dexie.getCurrentSetup(slug, widgetId, objectId).then(function (entry) {
@@ -126,7 +127,240 @@
                 if (refreshIfMissing === true && !hasActiveSetup) {
                     table.datagrid('reload');
                 }
+                manager.quickSelect.setupsLoaded(setupsTableId);
             });
+        },
+
+        quickSelect: {
+            _configs: {},
+
+            register: function (options) {
+                manager.quickSelect._configs[options.tableId] = options;
+                options.loaded = false;
+                options.loading = false;
+                options.initializeAttempts = 0;
+                setTimeout(function () {
+                    manager.quickSelect.initialize(options.tableId);
+                }, 0);
+                manager.dexie.getCurrentSetup(options.slug, options.widgetId, options.objectId).then(function (entry) {
+                    manager.quickSelect._setCaption(options, entry && entry.setup_name ? entry.setup_name : options.defaultCaption);
+                });
+            },
+
+            initialize: function (tableId) {
+                var options = manager.quickSelect._configs[tableId];
+                var table;
+                var panel;
+                var title;
+                var captionText;
+                var captionButton;
+                var configuratorButton;
+                var showCaptionMenu;
+
+                if (!options) {
+                    return;
+                }
+                table = $('#' + tableId);
+                if (table.length === 0 || table.data('datagrid') === undefined) {
+                    if (options.initializeAttempts < 20) {
+                        options.initializeAttempts += 1;
+                        setTimeout(function () {
+                            manager.quickSelect.initialize(tableId);
+                        }, 50);
+                    }
+                    return;
+                }
+                panel = table.datagrid('getPanel');
+                title = panel.panel('header').find('.panel-title');
+                if (title.length && $('#' + options.captionButtonId).length === 0) {
+                    captionText = $('<span></span>')
+                        .attr('id', options.captionButtonId + '_text')
+                        .text(options.defaultCaption);
+                    captionButton = $('<a href="javascript:void(0)"></a>')
+                        .attr('id', options.captionButtonId)
+                        .attr('aria-haspopup', 'true')
+                        .addClass('exf-setup-quickselect-caption')
+                        .append($('<span></span>').addClass('fa fa-caret-down'));
+                    title.empty().append(captionText).append(captionButton);
+                    manager.quickSelect._createMenu(options, options.captionMenuId);
+                    showCaptionMenu = function () {
+                        var button = captionButton;
+                        var offset = button.offset();
+
+                        manager.quickSelect.load(options.setupsTableId);
+                        $('#' + options.captionMenuId).menu('show', {
+                            left: offset.left,
+                            top: offset.top + button.outerHeight()
+                        });
+                    };
+                    captionButton.on('mouseenter', showCaptionMenu);
+                    captionButton.on('click', function (event) {
+                        event.preventDefault();
+                        event.stopPropagation();
+                        showCaptionMenu();
+                    });
+                }
+                configuratorButton = $('#' + options.configuratorButtonId);
+                if (configuratorButton.length && configuratorButton.data('splitbutton') === undefined) {
+                    manager.quickSelect._createMenu(options, options.configuratorMenuId);
+                    configuratorButton.removeClass('easyui-linkbutton').addClass('easyui-splitbutton').splitbutton({
+                        menu: '#' + options.configuratorMenuId
+                    });
+                }
+                manager.quickSelect.refresh(options.setupsTableId);
+            },
+
+            load: function (setupsTableId) {
+                var options = manager.quickSelect._findBySetupsTable(setupsTableId);
+                var table = $('#' + setupsTableId);
+
+                if (!options || options.loaded || options.loading || table.length === 0 || table.data('datagrid') === undefined) {
+                    return;
+                }
+                options.loading = true;
+                table.datagrid('reload');
+            },
+
+            setupsLoaded: function (setupsTableId) {
+                var options = manager.quickSelect._findBySetupsTable(setupsTableId);
+
+                if (options) {
+                    options.loaded = true;
+                    options.loading = false;
+                }
+                manager.quickSelect.refresh(setupsTableId);
+            },
+
+            refresh: function (setupsTableId) {
+                var options = manager.quickSelect._findBySetupsTable(setupsTableId);
+                var table = $('#' + setupsTableId);
+                var rows = table.length && table.data('datagrid') !== undefined ? table.datagrid('getRows') || [] : [];
+                var activeRow = null;
+
+                if (!options) {
+                    return;
+                }
+                rows.forEach(function (row) {
+                    if (row.SETUP_APPLIED) {
+                        activeRow = row;
+                    }
+                });
+                manager.quickSelect._setCaption(options, activeRow ? activeRow.NAME : options.defaultCaption);
+                manager.quickSelect._renderMenu(options, options.captionMenuId, rows);
+                manager.quickSelect._renderMenu(options, options.configuratorMenuId, rows);
+            },
+
+            _findBySetupsTable: function (setupsTableId) {
+                var result = null;
+
+                Object.keys(manager.quickSelect._configs).some(function (tableId) {
+                    var options = manager.quickSelect._configs[tableId];
+                    if (options.setupsTableId === setupsTableId) {
+                        result = options;
+                        return true;
+                    }
+                    return false;
+                });
+                return result;
+            },
+
+            _createMenu: function (options, menuId) {
+                var menu = $('#' + menuId);
+
+                if (menu.length === 0) {
+                    menu = $('<div></div>').attr('id', menuId).addClass('exf-setup-quickselect-menu').appendTo('body');
+                }
+                menu.menu({
+                    onShow: function () {
+                        manager.quickSelect.load(options.setupsTableId);
+                    }
+                });
+            },
+
+            _renderMenu: function (options, menuId, rows) {
+                var menu = $('#' + menuId);
+
+                if (menu.length === 0 || menu.data('menu') === undefined) {
+                    return;
+                }
+                menu.children('.menu-item').each(function () {
+                    menu.menu('removeItem', this);
+                });
+                menu.children('.menu-sep').remove();
+                if (menu.children('.menu-line').length === 0) {
+                    menu.prepend($('<div></div>').addClass('menu-line'));
+                }
+                if (!options.loaded) {
+                    menu.menu('appendItem', {text: options.loadingCaption, disabled: true});
+                } else if (rows.length === 0) {
+                    menu.menu('appendItem', {text: options.emptyCaption, disabled: true});
+                } else {
+                    rows.forEach(function (row) {
+                        var favorite = String(row.WIDGET_SETUP_USER__FAVORITE_FLAG) === '1';
+                        var active = !!row.SETUP_APPLIED;
+                        var items;
+                        var item;
+
+                        menu.menu('appendItem', {
+                            text: manager.quickSelect._escapeHtml(row.NAME || ''),
+                            iconCls: active ? 'fa fa-check' : (favorite ? 'fa fa-star' : ''),
+                            onclick: function () {
+                                options.apply(row);
+                            }
+                        });
+                        item = menu.children('.menu-item').last();
+                        item
+                            .attr('title', row.DESCRIPTION || '')
+                            .toggleClass('exf-setup-active', active)
+                            .toggleClass('exf-setup-favorite', favorite);
+                        items = [
+                            {text: options.applyCaption, iconCls: 'fa fa-check', onclick: options.apply},
+                            {text: options.updateCaption, iconCls: 'fa fa-refresh', onclick: options.update},
+                            {text: options.editCaption, iconCls: 'fa fa-pencil', onclick: options.edit}
+                        ];
+                        items.forEach(function (action) {
+                            if (typeof action.onclick !== 'function') {
+                                return;
+                            }
+                            menu.menu('appendItem', {
+                                parent: item[0],
+                                text: action.text,
+                                iconCls: action.iconCls,
+                                onclick: function () {
+                                    action.onclick(row);
+                                }
+                            });
+                        });
+                    });
+                }
+                menu.menu('appendItem', {separator: true});
+                menu.menu('appendItem', {
+                    text: options.openCaption,
+                    iconCls: 'fa fa-cog',
+                    onclick: options.openConfigurator
+                });
+                menu.menu('appendItem', {
+                    text: options.saveCaption,
+                    iconCls: 'fa fa-bookmark-o',
+                    onclick: options.save
+                });
+                if (menu.is(':visible')) {
+                    var offset = menu.offset();
+                    menu.menu('show', {left: offset.left, top: offset.top});
+                }
+            },
+
+            _setCaption: function (options, caption) {
+                var captionText = $('#' + options.captionButtonId + '_text');
+
+                if (captionText.length) {
+                    captionText.text(caption || options.defaultCaption);
+                }
+            },
+
+            _escapeHtml: function (value) {
+                return $('<div></div>').text(value === null || value === undefined ? '' : String(value)).html();
+            }
         },
 
         datatable: {

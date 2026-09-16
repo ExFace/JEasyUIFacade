@@ -52,7 +52,7 @@ at position `0` one after another, so the resulting order is:
 | Button | Added by | Purpose |
 |---|---|---|
 | collapse/expand | `addButtonToCollapseExpand()` | collapses the quick filter panel |
-| cog | `addButtonToShowConfigurator()` | opens the configurator dialog |
+| cog | `addButtonsToSearchGroup()` | opens the configurator dialog |
 | filter | `addButtonToToggleHeaderFilters()` (`EuiDataTable`) | toggles the datagrid filter row |
 
 The cog button is only added if there is something to configure - see `hasConfiguratorDialog()`.
@@ -157,6 +157,15 @@ The setups table's `SETUP_APPLIED` column is client-only. After every table load
 a check icon on the matching row. Applying another setup moves the marker without reloading data.
 Saving a new setup reloads the setups table once because the newly created row is not yet present in
 the client model, after which the normal load hook marks it.
+
+The setup quick-select controls in the table caption and configurator split button are rendered by
+`exfSetupManager.quickSelect`. Both menus use the rows of that same setups table, including its
+client-only active marker, and trigger its lazy load only once. Opening the configurator after a
+quick-select menu therefore does not make a second setup request. Favorites are sorted first by the
+setups table model, so the configurator and both quick-select menus keep the same order. Clicking a
+setup applies it directly; hovering it opens a submenu for Apply, Update and Edit. Update and Edit
+select the shared setups-table row and invoke the existing configurator buttons, keeping their
+validation and action behavior in one place.
 
 ## Dialog buttons
 
