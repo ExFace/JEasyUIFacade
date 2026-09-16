@@ -2,7 +2,7 @@
 .main-header-content {background-color: #6200ee;}
 .main-header-content > .logo > a {color: white}
 .main-header.layout-body {height:50px;}
-.main-content > .exf-element > .datagrid > .datagrid-wrap.panel-body {border-top-width: 1px}
+.main-content > .exf-element > .datagrid > .datagrid-wrap.panel-body-noheader {border-top-width: 1px}
 .main-content > .easyui-tabs > .tabs-header {border-top: 1px solid #dfdfdf; border-left: 1px solid #dfdfdf; border-right: 1px solid #dfdfdf}
 .main-content.layout-body {border-top: 0 !important}
 body > .layout-panel > .panel-header {background-color: transparent; padding-top: 7px; padding-bottom: 7px;}

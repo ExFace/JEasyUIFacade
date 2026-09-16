@@ -10,6 +10,7 @@ use exface\Core\Interfaces\Actions\ActionInterface;
 use exface\Core\Interfaces\Widgets\iSupportWidgetSetups;
 use exface\Core\Widgets\ButtonGroup;
 use exface\Core\Widgets\Data;
+use exface\Core\Widgets\DataTable;
 use exface\Core\Widgets\DataTableConfigurator;
 use exface\Core\Widgets\Filter;
 use exface\Core\Factories\WidgetFactory;
@@ -251,7 +252,7 @@ JS);
      * @param string $onFinishedJs
      * @return \exface\Core\Widgets\Button|NULL
      */
-    public function addButtonToShowConfigurator(ButtonGroup $buttonGroup, int $position = 0, string $onFinishedJs = '')
+    public function addButtonsToSearchGroup(ButtonGroup $buttonGroup, int $position = 0, string $onFinishedJs = '')
     {
         if ($this->hasConfiguratorDialog() === false) {
             return null;
@@ -279,45 +280,6 @@ JS);
 
 JS);
         return $configuratorButton;
-    }
-    
-    /**
-     * Adds a button that toggles the configured datagrid's header filter row.
-     *
-     * @param ButtonGroup $buttonGroup
-     * @param int $position
-     * @param string $onFinishedJs
-     * @return \exface\Core\Widgets\Button
-     */
-    public function addButtonToToggleHeaderFilters(ButtonGroup $buttonGroup, int $position = 0, string $onFinishedJs = '')
-    {
-        /** @var EuiDataTable $tableEl */
-        $tableEl = $this->getFacade()->getElement($this->getWidget()->getWidgetConfigured());
-        /** @var \exface\Core\Widgets\Button $filterButton */
-        $filterButton = WidgetFactory::createFromUxon($this->getWidget()->getPage(), new UxonObject([
-            'widget_type' => 'Button',
-            'id' => $this->getIdOfHeaderFilterButton($tableEl->getId()),
-            'action' => [
-                'alias' => 'exface.Core.CustomFacadeScript'
-            ],
-            'icon' => Icons::FILTER,
-            'caption' => $this->translate('WIDGET.DATATABLE.HEADER_FILTER_TOGGLE'),
-            'align' => 'right',
-            'hide_caption' => true
-        ]), $buttonGroup);
-        $buttonGroup->addButton($filterButton, $position);
-
-        /** @var \exface\Core\Actions\CustomFacadeScript $filterAction */
-        $filterAction = $filterButton->getAction();
-        $filterAction->setScript(<<<JS
-
-    var jqTable = $('#{$tableEl->getId()}');
-    var bVisible = jqTable.datagrid('options').showFilterBar;
-    jqTable.datagrid(bVisible ? 'hideFilterBar' : 'showFilterBar');
-    {$onFinishedJs}
-
-JS);
-        return $filterButton;
     }
     
     /**
@@ -499,16 +461,6 @@ JS;
     {
         return 'configuratorButton_' . $tableId;
     }
-
-    /**
-     *
-     * @param string $tableId
-     * @return string
-     */
-    protected function getIdOfHeaderFilterButton(string $tableId) : string
-    {
-        return 'headerFilterButton_' . $tableId;
-    }
     
     /**
      * 
@@ -612,6 +564,7 @@ HTML;
         $setupsJs = '';
         $refreshSetupsJs = '';
         $clearSetupJs = '';
+        $quickSelectJs = '';
         if ($this->hasTabSetups()) {
             /** @var Data $setupsTable */
             $setupsTable = $this->getWidget()->getSetupsTab()->getWidgetFirst();
@@ -625,11 +578,60 @@ HTML;
                 $this->escapeString($configuredWidget->getIdInScreen()) . ', ' .
                 $this->escapeString($configuredWidget->getMetaObject()->getId()) . ');');
             $setupsJs = $this->getFacade()->getElement($this->getWidget()->getSetupsTab())->buildJs();
-            $refreshSetupsJs = $setupsTableElement->buildJsRefresh();
+            $refreshSetupsJs = 'exfSetupManager.quickSelect.load(' . $this->escapeString($setupsTableElement->getId()) . ');';
             $clearSetupJs = "exfSetupManager.dexie.deleteCurrentSetup(" .
                 $this->escapeString($configuredWidget->getUiScreen()->getUrlSlug()) . ', ' .
                 $this->escapeString($configuredWidget->getIdInScreen()) . ', ' .
                 $this->escapeString($configuredWidget->getMetaObject()->getId()) . ');';
+            /** @var EuiButton $saveSetupButtonElement */
+            $saveSetupButtonElement = $this->getFacade()->getElement($this->getWidget()->getButtonToSaveSetup());
+            /** @var EuiButton $updateSetupButtonElement */
+            $updateSetupButtonElement = $this->getFacade()->getElement($this->getWidget()->getButtonToUpdateSetup());
+            /** @var EuiButton $editSetupButtonElement */
+            $editSetupButtonElement = $this->getFacade()->getElement($this->getWidget()->getButtonToEditSetup());
+            $translator = $this->getWorkbench()->getCoreApp()->getTranslator();
+            $defaultCaption = $configuredWidget->getCaption() ?: $configuredWidget->getMetaObject()->getName();
+            $quickSelectJs = <<<JS
+
+exfSetupManager.quickSelect.register({
+    tableId: {$this->escapeString($dataEl->getId())},
+    setupsTableId: {$this->escapeString($setupsTableElement->getId())},
+    configuratorButtonId: {$this->escapeString($this->getIdOfConfiguratorButton($dataEl->getId()))},
+    captionButtonId: {$this->escapeString($dataEl->getId() . '_setupQuickSelect')},
+    captionMenuId: {$this->escapeString($dataEl->getId() . '_setupQuickSelectMenu')},
+    configuratorMenuId: {$this->escapeString($dataEl->getId() . '_setupConfiguratorMenu')},
+    slug: {$this->escapeString($configuredWidget->getUiScreen()->getUrlSlug())},
+    widgetId: {$this->escapeString($configuredWidget->getIdInScreen())},
+    objectId: {$this->escapeString($configuredWidget->getMetaObject()->getId())},
+    defaultCaption: {$this->escapeString($defaultCaption)},
+    loadingCaption: '...',
+    emptyCaption: {$this->escapeString($translator->translate('WIDGET.DATA.NO_DATA_FOUND'))},
+    openCaption: {$this->escapeString($translator->translate('WIDGET.DATACONFIGURATOR.SETUPS_TAB_ALL'))},
+    saveCaption: {$this->escapeString($translator->translate('WIDGET.DATACONFIGURATOR.SETUPS_TAB_SAVE'))},
+    applyCaption: {$this->escapeString($translator->translate('WIDGET.DATACONFIGURATOR.SETUPS_TAB_APPLY'))},
+    updateCaption: {$this->escapeString($this->getWidget()->getButtonToUpdateSetup()->getCaption())},
+    editCaption: {$this->escapeString($this->getWidget()->getButtonToEditSetup()->getCaption())},
+    apply: function(row) {
+        {$dataEl->buildJsCallFunction(DataTable::FUNCTION_APPLY_SETUP, ['[#SETUP_UXON#]'], '{rows: [row]}')}
+    },
+    update: function(row) {
+        var jqTable = $('#{$setupsTableElement->getId()}');
+        jqTable.datagrid('clearSelections').datagrid('selectRow', jqTable.datagrid('getRowIndex', row));
+        {$updateSetupButtonElement->buildJsClickFunctionName()}();
+    },
+    edit: function(row) {
+        var jqTable = $('#{$setupsTableElement->getId()}');
+        jqTable.datagrid('clearSelections').datagrid('selectRow', jqTable.datagrid('getRowIndex', row));
+        {$editSetupButtonElement->buildJsClickFunctionName()}();
+    },
+    openConfigurator: function() {
+        {$this->buildJsFunctionPrefix()}ShowConfigurator(true);
+    },
+    save: function() {
+        {$saveSetupButtonElement->buildJsClickFunctionName()}();
+    }
+});
+JS;
         }
         
         return <<<JS
@@ -638,8 +640,9 @@ HTML;
 {$this->buildJsConditionBuilderInit()}
     {$setupsJs}
     {$responsiveHeaderJs}
+    {$quickSelectJs}
 
-function {$this->buildJsFunctionPrefix()}ShowConfigurator() {
+function {$this->buildJsFunctionPrefix()}ShowConfigurator(bShowSetups) {
     var jqDialog = $('#{$this->getIdOfConfiguratorDialog()}');
     var bMobile = window.matchMedia('(max-width: 600px)').matches;
     if (jqDialog.data('dialog') === undefined) {
@@ -695,6 +698,9 @@ function {$this->buildJsFunctionPrefix()}ShowConfigurator() {
         $('#{$this->getIdOfConfiguratorTabs()}').tabs({fit: true, border: false});
     }
     jqDialog.dialog('open');
+    if (bShowSetups === true) {
+        $('#{$this->getIdOfConfiguratorTabs()}').tabs('select', 0);
+    }
     if (! bMobile) {
         jqDialog.dialog('center');
     }

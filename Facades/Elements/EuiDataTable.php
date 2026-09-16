@@ -1,10 +1,14 @@
 <?php
 namespace exface\JEasyUIFacade\Facades\Elements;
 
+use exface\Core\CommonLogic\Constants\Icons;
+use exface\Core\CommonLogic\UxonObject;
 use exface\Core\DataTypes\ComparatorDataType;
+use exface\Core\Factories\WidgetFactory;
 use exface\Core\Interfaces\Actions\ActionInterface;
 use exface\Core\Facades\AbstractAjaxFacade\Elements\JqueryDataTableTrait;
 use exface\Core\Interfaces\Actions\iReadData;
+use exface\Core\Widgets\ButtonGroup;
 use exface\Core\Widgets\DataColumn;
 use exface\Core\Widgets\MenuButton;
 use exface\Core\Widgets\DataButton;
@@ -62,11 +66,15 @@ class EuiDataTable extends EuiData
             $widget->getRowGrouper()->getGroupByColumn()->setHidden(true);
         }
         
+        if ($searchGrp = $widget->getToolbarMain()->getButtonGroupForSearchActions()) {
+            $this->addButtonToToggleHeaderFilters($searchGrp, 1);
+        }
         // WORKAROUND for tables with a header panel getting too high inside a tab when that tab is 
         // selected for the first time. This can be fixed by resizing the table whenever the tab is
         // selected. However, the regular buildJsResize() slows down switching tabs as it seems to
         // get performed synchronously - that is why we wrap it in a setTimeout() here.
-        if ($widget->getConfiguratorWidget()->hasFilters() && $widget->getConfiguratorWidget()->getFilterTab()->countWidgetsVisible() > 0 && ($containerTab = $widget->getParentByClass(Tab::class)) && $containerTab->isFilledBySingleWidget()) {
+        $configurator = $widget->getConfiguratorWidget();
+        if ($configurator->hasFilters() && $configurator->getFilterTab()->countWidgetsVisible() > 0 && ($containerTab = $widget->getParentByClass(Tab::class)) && $containerTab->isFilledBySingleWidget()) {
             $tabsEl = $this->getFacade()->getElement($containerTab->getParent());
             if ($tabsEl instanceof EuiTabs) {
                 $tabsEl->addOnTabSelectScript("setTimeout(function(){ $('#{$this->getId()}').datagrid('resize') }, 0);", $containerTab);
@@ -431,15 +439,46 @@ JS;
         return $includes;
     }
 
+
+
     /**
-     * {@inheritDoc}
-     * @see \exface\JEasyUIFacade\Facades\Elements\EuiData::addButtonsToSearchGroup()
+     * Adds a button that toggles the configured datagrid's header filter row.
+     *
+     * @param ButtonGroup $buttonGroup
+     * @param int $position
+     * @param string $onFinishedJs
+     * @return \exface\Core\Widgets\Button
      */
-    protected function addButtonsToSearchGroup(\exface\Core\Widgets\ButtonGroup $buttonGroup) : void
+    public function addButtonToToggleHeaderFilters(ButtonGroup $buttonGroup, int $position = 0, string $onFinishedJs = '')
     {
-        /** @var EuiDataConfigurator $configuratorEl */
-        $configuratorEl = $this->getFacade()->getElement($this->getWidget()->getConfiguratorWidget());
-        $configuratorEl->addButtonToToggleHeaderFilters($buttonGroup, 0, $this->buildJsResize());
+        $configurator = $this->getWidget()->getConfiguratorWidget();
+        $configuratorEl = $this->getFacade()->getElement($configurator);
+        
+        /** @var \exface\Core\Widgets\Button $filterButton */
+        $filterButton = WidgetFactory::createFromUxon($configurator->getPage(), new UxonObject([
+            'widget_type' => 'Button',
+            'id' => $this->getIdOfHeaderFilterButton($this->getId()),
+            'action' => [
+                'alias' => 'exface.Core.CustomFacadeScript'
+            ],
+            'icon' => Icons::FILTER,
+            'caption' => $this->translate('WIDGET.DATATABLE.HEADER_FILTER_TOGGLE'),
+            'align' => 'right',
+            'hide_caption' => true
+        ]), $buttonGroup);
+        $buttonGroup->addButton($filterButton, $position);
+
+        /** @var \exface\Core\Actions\CustomFacadeScript $filterAction */
+        $filterAction = $filterButton->getAction();
+        $filterAction->setScript(<<<JS
+
+    var jqTable = $('#{$this->getId()}');
+    var bVisible = jqTable.datagrid('options').showFilterBar;
+    jqTable.datagrid(bVisible ? 'hideFilterBar' : 'showFilterBar');
+    {$onFinishedJs}
+
+JS);
+        return $filterButton;
     }
 
     /**
@@ -625,7 +664,10 @@ JS;
         
         $onChangeScript = $this->buildJsOnChangeScript('row', 'index');
         $grid_head .= ($this->getOnChangeScript() ? ", onClickRow: function(index, row){{$onChangeScript}}, onSelect: function(index, row){{$onChangeScript}}" : '');
-        $grid_head .= ($widget->getCaption() ? ', title: "' . str_replace('"', '\"', $widget->getCaption()) . '"' : '');
+        $configurator = $widget->getConfiguratorWidget();
+        $showSetupCaption = ! $widget->getHideCaption() && $configurator instanceof iSupportWidgetSetups && $configurator->hasSetups();
+        $caption = $widget->getCaption() ?: $widget->getMetaObject()->getName();
+        $grid_head .= (! $widget->getHideCaption() && ($widget->getCaption() || $showSetupCaption) ? ', title: "' . str_replace('"', '\"', $caption) . '"' : '');
         
         // TODO emptyMsg removed on purpose - the onLoadSuccess handler above shows context-aware messages
         // (empty result vs. invalid filters) via the same .datagrid-empty node. The only case not covered
