@@ -743,7 +743,7 @@ JS;
                 $menu_item .= '<div><span>' . $button->getCaption() . '</span><div>' . $this->getFacade()->getElement($button)->buildHtmlMenuItems(). '</div></div>';
             }
         } else {
-            $menu_item .= $this->getFacade()->getElement($button)->buildHtmlButton();
+            $menu_item .= $this->getFacade()->getElement($button)->buildHtmlButton(true);
         }
         $menu_item = str_replace(['<a id="', '</a>', 'easyui-linkbutton', ' href="#"'], ['<div id="' . $this->getId() . '_', '</div>', '', ''], $menu_item);
         return $menu_item;

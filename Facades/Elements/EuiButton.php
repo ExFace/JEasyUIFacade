@@ -100,9 +100,10 @@ JS;
 
     /**
      * 
+        * @param bool $forceCaption
      * @return string
      */
-    public function buildHtmlButton()
+    public function buildHtmlButton(bool $forceCaption = false)
     {
         $widget = $this->getWidget();
         
@@ -138,9 +139,10 @@ JS;
             }
         }
 
-        $output = '
+                $caption = $forceCaption ? $widget->getCaption() : $this->getCaption();
+                $output = '
 				<a id="' . $this->getId() . '" title="' . $this->buildHintText($widget->getHint()) . '" href="#" class="easyui-' . $this->getElementType() . ' ' . $cssClass . '" data-options="' . $this->buildJsDataOptions() . '" style="' . $style . '" onclick="' . $this->buildJsFunctionPrefix() . 'click();">
-                    ' . $prefix . $this->getCaption() . '
+                                        ' . $prefix . $caption . '
 				</a>';
         return $output;
     }
