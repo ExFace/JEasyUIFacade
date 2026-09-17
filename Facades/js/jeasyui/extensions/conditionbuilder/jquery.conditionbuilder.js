@@ -469,6 +469,7 @@
 				var state = getState(this);
 				state.group = normalizeGroup(state.options, oGroup);
 				render(this);
+				fireChange(this);
 			});
 		},
 
