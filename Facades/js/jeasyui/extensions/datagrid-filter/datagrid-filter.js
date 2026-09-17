@@ -513,7 +513,7 @@
 		var name = getPluginName(target);
 		var opts = $(target)[name]('options');
 		var menu = input.length ? input[0].menu : null;
-		var operator, item;
+		var operator, item, button;
 		if (!menu){
 			return;
 		}
@@ -522,6 +522,12 @@
 		operator = opts.operators[op];
 		if (!operator){
 			return;
+		}
+		button = menu.menu('options').alignTo;
+		if (operator.symbol !== undefined){
+			button.removeClass(opts.filterBtnIconCls).text(operator.symbol);
+		} else {
+			button.addClass(opts.filterBtnIconCls).html('&nbsp;');
 		}
 		item = menu.menu('findItem', operator.text);
 		if (item){
@@ -565,7 +571,7 @@
 			if (value != ''){
 				addFilterRule(target, {
 					field: field,
-					op: rule ? rule.op : filterOpts.defaultFilterOperator || opts.defaultFilterOperator,
+					op: input[0].filterOperator || (rule ? rule.op : filterOpts.defaultFilterOperator || opts.defaultFilterOperator),
 					value: value
 				});
 			} else if (rule){

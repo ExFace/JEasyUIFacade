@@ -219,7 +219,8 @@ re-render the tab.
 
 The column filter row and Advanced Search are two views on the same conditions. Advanced Search is
 the canonical model; column filters are a compact projection for attributes represented by table
-columns:
+columns. Each column filter's comparator button shows the short symbol of its current comparator
+and opens the full comparator menu when clicked:
 
 | User action | What happens |
 |---|---|

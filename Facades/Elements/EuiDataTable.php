@@ -510,6 +510,7 @@ JS);
             $operators[$comparator] = [
                 'text' => $translator->translate('GLOBAL.COMPARATOR.' . $constant . '_NAME'),
                 'hint' => $translator->translate('GLOBAL.COMPARATOR.' . $constant . '_HINT'),
+                'symbol' => $comparator,
             ];
         }
 
