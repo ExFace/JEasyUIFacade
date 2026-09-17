@@ -364,6 +364,11 @@
                 }
                 menu.menu('appendItem', {separator: true});
                 menu.menu('appendItem', {
+                    text: options.clearCaption,
+                    iconCls: options.clearIconCls,
+                    onclick: options.clear
+                });
+                menu.menu('appendItem', {
                     text: options.openCaption,
                     iconCls: 'fa fa-cog',
                     onclick: options.openConfigurator

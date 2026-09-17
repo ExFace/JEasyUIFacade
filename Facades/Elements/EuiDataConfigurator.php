@@ -602,7 +602,13 @@ HTML;
             $clearSetupJs = "exfSetupManager.dexie.deleteCurrentSetup(" .
                 $this->escapeString($configuredWidget->getUiScreen()->getUrlSlug()) . ', ' .
                 $this->escapeString($configuredWidget->getIdInScreen()) . ', ' .
-                $this->escapeString($configuredWidget->getMetaObject()->getId()) . ');';
+                $this->escapeString($configuredWidget->getMetaObject()->getId()) . ').then(function(){' .
+                'exfSetupManager.markCurrentSetupAsActive(' .
+                $this->escapeString($setupsTableElement->getId()) . ', ' .
+                $this->escapeString($configuredWidget->getUiScreen()->getUrlSlug()) . ', ' .
+                $this->escapeString($configuredWidget->getIdInScreen()) . ', ' .
+                $this->escapeString($configuredWidget->getMetaObject()->getId()) . ');' .
+                '});';
             /** @var EuiButton $saveSetupButtonElement */
             $saveSetupButtonElement = $this->getFacade()->getElement($this->getWidget()->getButtonToSaveSetup());
             /** @var EuiButton $updateSetupButtonElement */
@@ -626,6 +632,8 @@ exfSetupManager.quickSelect.register({
     defaultCaption: {$this->escapeString($defaultCaption)},
     loadingCaption: '...',
     emptyCaption: {$this->escapeString($translator->translate('WIDGET.DATA.NO_DATA_FOUND'))},
+    clearCaption: {$this->escapeString($translator->translate('WIDGET.DATACONFIGURATOR.SETUPS_TAB_CLEAR'))},
+    clearIconCls: '{$this->buildCssIconClass(Icons::UNDO)}',
     openCaption: {$this->escapeString($translator->translate('WIDGET.DATACONFIGURATOR.SETUPS_TAB_ALL'))},
     saveCaption: {$this->escapeString($translator->translate('WIDGET.DATACONFIGURATOR.SETUPS_TAB_SAVE'))},
     applyCaption: {$this->escapeString($translator->translate('WIDGET.DATACONFIGURATOR.SETUPS_TAB_APPLY'))},
@@ -643,6 +651,12 @@ exfSetupManager.quickSelect.register({
         if (exfSetupManager.quickSelect.selectSetupRow({$this->escapeString($setupsTableElement->getId())}, row.UID)) {
             {$editSetupButtonElement->buildJsClickFunctionName()}();
         }
+    },
+    clear: function() {
+        {$clearHeaderSortersJs}
+        {$clearHeaderFiltersJs}
+        {$clearSetupJs}
+        {$this->buildJsResetter()}
     },
     openConfigurator: function() {
         {$this->buildJsFunctionPrefix()}ShowConfigurator(true);
