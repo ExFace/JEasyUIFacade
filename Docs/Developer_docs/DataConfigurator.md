@@ -176,7 +176,8 @@ setups table model, so the configurator and both quick-select menus keep the sam
 setup applies it directly; hovering it opens a submenu for Apply, Update and Edit. Update and Edit
 resolve and select the current shared setups-table row by UID before invoking the existing
 configurator buttons, keeping their validation and action behavior in one place even if the menu
-was rendered before the table reloaded.
+was rendered before the table reloaded. Clear setup restores the widget's original configuration,
+removes the locally remembered setup and reloads the widget data.
 
 ## Dialog buttons
 
