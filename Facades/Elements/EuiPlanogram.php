@@ -273,7 +273,7 @@ JS;
         $context_menu_html = '';
         if ($widget->hasButtons()) {
             foreach ($widget->getToolbarMain()->getButtonGroupFirst()->getButtons() as $button) {
-                $context_menu_html .= str_replace(['<a id="', '</a>', 'easyui-linkbutton'], ['<div id="' . $this->getId() . '_', '</div>', ''], $this->getFacade()->getElement($button)->buildHtmlButton());
+                $context_menu_html .= str_replace(['<a id="', '</a>', 'easyui-linkbutton'], ['<div id="' . $this->getId() . '_', '</div>', ''], $this->getFacade()->getElement($button)->buildHtmlButton(true));
             }
             
             foreach ($widget->getToolbars() as $toolbar){
@@ -281,7 +281,7 @@ JS;
                     if ($btn_group !== $widget->getToolbarMain()->getButtonGroupFirst() && $btn_group->hasButtons()){
                         $context_menu_html .= '<div class="menu-sep"></div>';
                         foreach ($btn_group->getButtons() as $button){
-                            $context_menu_html .= str_replace(['<a id="', '</a>', 'easyui-linkbutton'], ['<div id="' . $this->getId() . '_', '</div>', ''], $this->getFacade()->getElement($button)->buildHtmlButton());
+                            $context_menu_html .= str_replace(['<a id="', '</a>', 'easyui-linkbutton'], ['<div id="' . $this->getId() . '_', '</div>', ''], $this->getFacade()->getElement($button)->buildHtmlButton(true));
                         }
                     }
                 }
