@@ -262,6 +262,7 @@
 				var state = getState(this);
 				state.sorters = normalizeSorters(state.options, aSorters);
 				render(this);
+				fireChange(this);
 			});
 		},
 

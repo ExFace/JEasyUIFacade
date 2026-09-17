@@ -434,6 +434,26 @@ JS;
     }
 
     /**
+     * Returns the HTML ID of the sorting tab.
+     *
+     * @return string
+     */
+    protected function getIdOfSortersTab() : string
+    {
+        return $this->getIdOfConfiguratorTabs() . '_sorters';
+    }
+
+    /**
+     * Returns the HTML ID of the advanced search tab.
+     *
+     * @return string
+     */
+    protected function getIdOfAdvancedSearchTab() : string
+    {
+        return $this->getIdOfConfiguratorTabs() . '_advanced_search';
+    }
+
+    /**
      *
      * @return string
      */
@@ -513,7 +533,7 @@ HTML;
             $tab = $widget->getSorterTab();
             $tabsHtml .= <<<HTML
 
-                <div title="{$this->escapeString($tab->getCaption(), false, true)}" data-options="iconCls: '{$this->buildCssIconClass(Icons::SORT)}'" style="padding: 10px; overflow: auto;">
+                <div id="{$this->getIdOfSortersTab()}" title="{$this->escapeString($tab->getCaption(), false, true)}" data-options="iconCls: '{$this->buildCssIconClass(Icons::SORT)}'" style="padding: 10px; overflow: auto;">
                     <div id="{$this->getIdOfSorterBuilder()}"></div>
                 </div>
 HTML;
@@ -522,7 +542,7 @@ HTML;
         if ($this->hasTabAdvancedSearch()) {
             $tabsHtml .= <<<HTML
 
-                <div title="{$this->escapeString($this->translate('WIDGET.DATACONFIGURATOR.ADVANCED_SEARCH_TAB_CAPTION'), false, true)}" data-options="iconCls: '{$this->buildCssIconClass(Icons::SEARCH)}'" style="padding: 10px; overflow: auto;">
+                <div id="{$this->getIdOfAdvancedSearchTab()}" title="{$this->escapeString($this->translate('WIDGET.DATACONFIGURATOR.ADVANCED_SEARCH_TAB_CAPTION'), false, true)}" data-options="iconCls: '{$this->buildCssIconClass(Icons::SEARCH)}'" style="padding: 10px; overflow: auto;">
                     <div id="{$this->getIdOfConditionBuilder()}"></div>
                 </div>
 HTML;
@@ -636,8 +656,10 @@ JS;
         
         return <<<JS
 
+    {$this->buildJsConfiguratorBadgeFunctions()}
 {$this->buildJsSorterBuilderInit()}
 {$this->buildJsConditionBuilderInit()}
+    {$this->buildJsFunctionPrefix()}UpdateConfiguratorBadges();
     {$setupsJs}
     {$responsiveHeaderJs}
     {$quickSelectJs}
@@ -696,6 +718,7 @@ function {$this->buildJsFunctionPrefix()}ShowConfigurator(bShowSetups) {
         // The `cls` option cannot be used here because easyui overrides it with `window` for every window
         jqDialog.dialog('panel').addClass('exf-data-configurator-dialog');
         $('#{$this->getIdOfConfiguratorTabs()}').tabs({fit: true, border: false});
+        {$this->buildJsFunctionPrefix()}UpdateConfiguratorBadges();
     }
     jqDialog.dialog('open');
     if (bShowSetups === true) {
@@ -704,6 +727,52 @@ function {$this->buildJsFunctionPrefix()}ShowConfigurator(bShowSetups) {
     if (! bMobile) {
         jqDialog.dialog('center');
     }
+}
+
+JS;
+    }
+
+    /**
+     * Builds a reusable registry that displays tab counters and their sum on the configurator button.
+     *
+     * @return string
+     */
+    protected function buildJsConfiguratorBadgeFunctions() : string
+    {
+        $buttonId = $this->getIdOfConfiguratorButton($this->getFacade()->getElement($this->getWidget()->getWidgetConfigured())->getId());
+
+        return <<<JS
+
+var {$this->buildJsFunctionPrefix()}ConfiguratorBadges = [];
+
+function {$this->buildJsFunctionPrefix()}RegisterConfiguratorBadge(sTabId, fnCount) {
+    {$this->buildJsFunctionPrefix()}ConfiguratorBadges.push({tabId: sTabId, count: fnCount});
+}
+
+function {$this->buildJsFunctionPrefix()}UpdateConfiguratorBadges() {
+    var iTotal = 0;
+    {$this->buildJsFunctionPrefix()}ConfiguratorBadges.forEach(function(oBadge){
+        var iCount = Math.max(0, Number(oBadge.count()) || 0);
+        var jqTab = $('#' + oBadge.tabId);
+        var oTabOptions = jqTab.data('panel') !== undefined ? jqTab.panel('options') : null;
+        var jqBadge;
+        iTotal += iCount;
+        if (oTabOptions === null || oTabOptions.tab === undefined) {
+            return;
+        }
+        jqBadge = oTabOptions.tab.find('.exf-tab-badge');
+        if (jqBadge.length === 0) {
+            jqBadge = $('<span class="exf-tab-badge"></span>').appendTo(oTabOptions.tab.find('.tabs-title'));
+        }
+        jqBadge.text(iCount);
+    });
+    (function(jqButton){
+        var jqBadge = jqButton.find('.exf-button-badge');
+        if (jqBadge.length === 0) {
+            jqBadge = $('<span class="exf-button-badge"></span>').appendTo(jqButton.find('.l-btn-left').first());
+        }
+        jqBadge.text(iTotal).toggle(iTotal > 0);
+    })($('#{$buttonId}'));
 }
 
 JS;
@@ -790,7 +859,11 @@ $('#{$this->getIdOfSorterBuilder()}').exfSorterBuilder({
     attributes: {$this->encodeJson($attributes)},
     sorters: {$this->buildJsonForInitialSorters()},
     directions: {$this->encodeJson($directions)},
-    i18n: {$this->encodeJson($i18n)}
+    i18n: {$this->encodeJson($i18n)},
+    onChange: {$this->buildJsFunctionPrefix()}UpdateConfiguratorBadges
+});
+{$this->buildJsFunctionPrefix()}RegisterConfiguratorBadge('{$this->getIdOfSortersTab()}', function(){
+    return $('#{$this->getIdOfSorterBuilder()}').exfSorterBuilder('getSorters').length;
 });
 
 JS;
@@ -839,7 +912,23 @@ $('#{$this->getIdOfConditionBuilder()}').exfConditionBuilder({
     parsers: {
         {$this->implodeJs($parsers)}
     },
-    i18n: {$this->encodeJson($i18n)}
+    i18n: {$this->encodeJson($i18n)},
+    onChange: {$this->buildJsFunctionPrefix()}UpdateConfiguratorBadges
+});
+{$this->buildJsFunctionPrefix()}RegisterConfiguratorBadge('{$this->getIdOfAdvancedSearchTab()}', function(){
+    var fnCount = function(oGroup){
+        var iCount = 0;
+        (oGroup.conditions || []).forEach(function(oCondition){
+            if (oCondition.value !== null && oCondition.value !== '') {
+                iCount++;
+            }
+        });
+        (oGroup.nested_groups || []).forEach(function(oNested){
+            iCount += fnCount(oNested);
+        });
+        return iCount;
+    };
+    return fnCount($('#{$this->getIdOfConditionBuilder()}').exfConditionBuilder('getModel'));
 });
 
 JS;

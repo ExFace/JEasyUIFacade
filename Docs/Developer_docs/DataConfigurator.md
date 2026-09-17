@@ -79,6 +79,17 @@ values are read on every data request - no matter whether the dialog was ever op
 | Advanced search | the widget has filterable columns or filters | `$.fn.exfConditionBuilder` |
 | Setups | `DataTableConfigurator::hasSetups()` for a regular `EuiDataTable` | Core-provided setups table |
 
+### Counter badges
+
+Badges on buttons and tab headers draw attention of the user to existing settings in the configurator.
+
+- Sorting tab counts valid sorters
+- "Advanced Search" tab recursively counts conditions with a non-empty value across every nested
+group
+- The cog button in the toolbar of the data widget shows the sum of all tab counters - but only when it is greater than zero.
+
+Badge sources register through `{prefix}RegisterConfiguratorBadge(tabId, countCallback)`, so future configurator tabs can participate in the same aggregate without changing the updater.
+
 ## Widget setups
 
 ### Scope and entry points
@@ -283,6 +294,8 @@ matters, every row can be moved up and down.
   control before a re-render - see `destroyControls()`.
 - Options are merged with a **shallow** `$.extend()` on purpose: a deep extend would merge the
   default arrays (comparators, operators, directions) into the passed ones item by item.
+- The optional `onChange` callback fires for user edits and programmatic `setModel()` or
+  `setSorters()` calls, including setup application and synchronization with table header controls.
 - All controls have explicit pixel widths, so they can be initialized inside the closed dialog.
 
 ## Which fields are offered
