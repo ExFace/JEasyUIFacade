@@ -320,15 +320,14 @@
 				function _doFilter(){
 					var rule = $(target)[name]('getFilterRule', field);
 					var value = input.val();
+					var op = input[0].filterOperator || (rule ? rule.op : (filterOpts ? filterOpts.defaultFilterOperator||opts.defaultFilterOperator : opts.defaultFilterOperator));
 					if (filterOpts.options.prompt && filterOpts.options.prompt==value){
 						value = '';
 					}
 					if (value != ''){
-						if ((rule && rule.value!=value) || !rule){
-							var op = rule ? rule.op : (filterOpts ? filterOpts.defaultFilterOperator||opts.defaultFilterOperator : opts.defaultFilterOperator);
+						if ((rule && (rule.value!=value || rule.op!=op)) || !rule){
 							$(target)[name]('addFilterRule', {
 								field: field,
-								// op: opts.defaultFilterOperator,
 								op: op,
 								value: value
 							});
@@ -594,6 +593,7 @@
 		var input = getFilterComponent(target, param.field);
 		if (input.length){
 			if (param.op != 'nofilter'){
+				input[0].filterOperator = param.op;
 				var value = input.val();
 				if (input.data('textbox')){
 					value = input.textbox('getText');
@@ -626,9 +626,11 @@
 			for(var i=0; i<fields.length; i++){
 				var input = getFilterComponent(target, fields[i]);
 				if (input.length){
+					var op = getDefaultFilterOperator(target, input);
 					input[0].filter.setValue(input, '');
 					// Keep the menu showing, which operator a new value would be filtered with
-					markFilterOperator(target, input, getDefaultFilterOperator(target, input));
+					input[0].filterOperator = op;
+					markFilterOperator(target, input, op);
 				}
 			}
 		}
@@ -1054,19 +1056,13 @@
 					var td = btn.closest('td[field]');
 					var field = td.attr('field');
 					var input = td.find('.datagrid-filter');
-					var value = input[0].filter.getValue(input);
 					
 					if (opts.onClickMenu.call(target, item, btn, field) == false){
 						return;
 					}
-					
-					addFilterRule(target, {
-						field: field,
-						op: item.name,
-						value: value
-					});
-					
-					doFilter(target);
+
+					input[0].filterOperator = item.name;
+					markFilterOperator(target, input, item.name);
 				}
 			});
 
