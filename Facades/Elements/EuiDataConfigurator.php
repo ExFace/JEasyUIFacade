@@ -382,7 +382,7 @@ JS;
         if ($this->getWidget()->isDisabled() === true) {
             return false;
         }
-        return empty($this->getSearchableFields()) === false;
+        return empty($this->getSearchableAttributes()) === false;
     }
 
     /**
@@ -905,7 +905,7 @@ JS;
         
         $fields = [];
         $parsers = [];
-        foreach ($this->getSearchableFields() as $field) {
+        foreach ($this->getSearchableAttributes() as $field) {
             $fields[] = ['expression' => $field['expression'], 'caption' => $field['caption']];
             $formatter = $this->getFacade()->getDataTypeFormatter($field['data_type']);
             $parsers[] = $this->encodeJson($field['expression']) . ': function(mVal, sComparator){ return ' . $formatter->buildJsFilterParser('mVal', 'sComparator') . '; }';
@@ -1195,33 +1195,13 @@ JS;
         if ($this->sortableAttributes !== null) {
             return $this->sortableAttributes;
         }
-        
-        $dataWidget = $this->getWidget()->getDataWidget();
+
         $attrs = [];
-        $captions = [];
-        
-        foreach ($dataWidget->getColumns() as $col) {
-            if (! $col->isSortable() || ! $col->isBoundToAttribute()) {
-                continue;
-            }
-            $captions[$col->getAttributeAlias()] = $col->getCaption();
-        }
-        // Keep the sorters of the widget first as they are the ones currently in effect
-        foreach ($dataWidget->getSorters() as $sorter) {
-            $alias = $sorter->getProperty('attribute_alias');
-            if (array_key_exists($alias, $attrs)) {
-                continue;
-            }
-            $attrs[$alias] = $captions[$alias] ?? $this->getAttributeCaption($alias);
-        }
-        foreach ($captions as $alias => $caption) {
-            if (! array_key_exists($alias, $attrs)) {
-                $attrs[$alias] = $caption;
-            }
+        foreach ($this->getWidget()->getSortableAttributes() as $title => $alias) {
+            $attrs[$alias] = $title;
         }
         
         $this->sortableAttributes = $attrs;
-        
         return $this->sortableAttributes;
     }
     
@@ -1234,73 +1214,23 @@ JS;
      * 
      * @return array[]
      */
-    protected function getSearchableFields() : array
+    protected function getSearchableAttributes() : array
     {
         if ($this->searchableFields !== null) {
             return $this->searchableFields;
         }
-        
-        $widget = $this->getWidget();
-        $fields = [];
-        $aliases = [];
-        
-        foreach ($widget->getDataWidget()->getColumns() as $col) {
-            if (! $col->isFilterable() || ! $col->isBoundToAttribute()) {
-                continue;
-            }
-            if ($col->isHidden() && ! $col->getAttribute()->isUidForObject()) {
-                continue;
-            }
-            if (in_array($col->getAttributeAlias(), $aliases)) {
-                continue;
-            }
-            $aliases[] = $col->getAttributeAlias();
-            // Use captions as keys to avoid duplicates - the same caption twice is useless to the user
-            $fields[$col->getCaption()] = [
-                'expression' => $col->getAttributeAlias(),
-                'caption' => $col->getCaption(),
-                'data_type' => $col->getDataType()
-            ];
-        }
-        
-        foreach ($widget->getFilters() as $filter) {
-            if (! ($filter instanceof Filter)) {
-                continue;
-            }
-            $attr = $filter->getAttribute();
-            switch (true) {
-                case $attr === null:
-                case $filter->isHidden() === true:
-                case array_key_exists($filter->getCaption(), $fields):
-                case in_array($filter->getAttributeAlias(), $aliases):
-                    continue 2;
-            }
-            
-            // Relation filters are rendered as InputComboTable, so searching over them requires the
-            // label of the related object. This will not work on aggregations though.
-            if ($attr->isRelation() && ! DataAggregation::hasAggregation($filter->getAttributeAlias())) {
-                $rightObj = $attr->getRelation()->getRightObject();
-                if (! $rightObj->hasLabelAttribute()) {
-                    continue;
-                }
-                $expression = RelationPath::join($attr->getAliasWithRelationPath(), $rightObj->getLabelAttributeAlias());
-                $dataType = $rightObj->getLabelAttribute()->getDataType();
-            } else {
-                $expression = $filter->getAttributeAlias();
-                $dataType = $attr->getDataType();
-            }
-            
-            $aliases[] = $expression;
-            $fields[$filter->getCaption()] = [
-                'expression' => $expression,
-                'caption' => $filter->getCaption(),
-                'data_type' => $dataType
+
+        $obj = $this->getWidget()->getDataWidget()->getMetaObject();
+        foreach ($this->getWidget()->getFilterableAttributes() as $title => $alias) {
+            $fields[$title] = [
+                'expression' => $alias,
+                'caption' => $title,
+                'data_type' => $obj->getAttribute($alias)->getDataType()
             ];
         }
         
         ksort($fields);
         $this->searchableFields = array_values($fields);
-        
         return $this->searchableFields;
     }
     
