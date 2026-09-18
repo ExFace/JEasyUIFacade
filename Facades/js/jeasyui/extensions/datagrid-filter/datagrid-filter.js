@@ -1067,6 +1067,11 @@
 						return;
 					}
 
+					if (item.name == 'nofilter'){
+						$(target)[name]('removeFilterRule', field);
+						$(target)[name]('doFilter');
+						return;
+					}
 					input[0].filterOperator = item.name;
 					markFilterOperator(target, input, item.name);
 				}
