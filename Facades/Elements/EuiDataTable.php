@@ -1142,6 +1142,7 @@ JS;
     
     protected function buildJsOnBeforeLoadAddConfiguratorData(string $js_var_param = 'param') : string
     {
+        /** @var EuiDataConfigurator $configuratorEl */
         $configuratorEl = $this->getFacade()->getElement($this->getWidget()->getConfiguratorWidget());
         $parentJs = parent::buildJsOnBeforeLoadAddConfiguratorData($js_var_param);
 
@@ -1179,6 +1180,8 @@ JS;
                         delete {$js_var_param}.sort;
                         delete {$js_var_param}.order;
                     }
+
+                    {$configuratorEl->buildJsConfiguratorBadgesUpdate()}
 
                     {$parentJs}
 

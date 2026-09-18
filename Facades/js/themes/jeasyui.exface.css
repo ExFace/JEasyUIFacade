@@ -124,7 +124,9 @@ div.messager-body{overflow-y: auto;}
 /* Data configurator dialog */
 .exf-data-configurator-dialog .dialog-button:not(.messager-button) {text-align: right !important;}
 .exf-tab-badge {display: inline-block; min-width: 16px; height: 16px; margin-left: 5px; padding: 0 4px; border-radius: 8px; background: #d6dbe0; color: #303840; font-size: 11px; line-height: 16px; text-align: center; box-sizing: border-box;}
-.exf-button-badge {position: absolute; top: 0; left: 12px; min-width: 12px; height: 12px; padding: 0 3px; border-radius: 6px; background: #e1e1e1; color: #6200ee; font-size: 9px; font-weight: bold; line-height: 12px; text-align: center; box-sizing: border-box; z-index: 1;}
+/* Rendered from an attribute because easyui rebuilds the inner markup of its buttons */
+.l-btn[data-exf-badge] {position: relative;}
+.l-btn[data-exf-badge]::after {content: attr(data-exf-badge); position: absolute; top: 0; left: 12px; min-width: 12px; height: 12px; padding: 0 3px; border-radius: 6px; background: #e1e1e1; color: #6200ee; font-size: 9px; font-weight: bold; line-height: 12px; text-align: center; box-sizing: border-box; z-index: 1;}
 
 /* Dialog */
 .exf-dialog-header {background-color: #daeef5 !important;}

@@ -765,6 +765,7 @@ function {$this->buildJsFunctionPrefix()}RegisterConfiguratorBadge(sTabId, fnCou
 
 function {$this->buildJsFunctionPrefix()}UpdateConfiguratorBadges() {
     var iTotal = 0;
+    var jqButton = $('#{$buttonId}');
     {$this->buildJsFunctionPrefix()}ConfiguratorBadges.forEach(function(oBadge){
         var iCount = Math.max(0, Number(oBadge.count()) || 0);
         var jqTab = $('#' + oBadge.tabId);
@@ -780,16 +781,25 @@ function {$this->buildJsFunctionPrefix()}UpdateConfiguratorBadges() {
         }
         jqBadge.text(iCount);
     });
-    (function(jqButton){
-        var jqBadge = jqButton.find('.exf-button-badge');
-        if (jqBadge.length === 0) {
-            jqBadge = $('<span class="exf-button-badge"></span>').appendTo(jqButton.find('.l-btn-left').first());
-        }
-        jqBadge.text(iTotal).toggle(iTotal > 0);
-    })($('#{$buttonId}'));
+    // An attribute survives easyui rebuilding the inner markup of the button
+    if (iTotal > 0) {
+        jqButton.attr('data-exf-badge', iTotal);
+    } else {
+        jqButton.removeAttr('data-exf-badge');
+    }
 }
 
 JS;
+    }
+
+    /**
+     * Refreshes the configurator tab and button badges.
+     *
+     * @return string
+     */
+    public function buildJsConfiguratorBadgesUpdate() : string
+    {
+        return $this->hasConfiguratorDialog() ? $this->buildJsFunctionPrefix() . 'UpdateConfiguratorBadges();' : '';
     }
 
     /**
