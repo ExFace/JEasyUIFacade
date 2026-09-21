@@ -78,6 +78,43 @@ class EuiInputNumber extends EuiInput
     /**
      * 
      * {@inheritDoc}
+     * @see \exface\Core\Facades\AbstractAjaxFacade\Elements\AbstractJqueryElement::buildJsCallFunction($functionName, $parameters)
+     */
+    public function buildJsCallFunction(string $functionName = null, array $parameters = [], ?string $jsRequestData = null) : string
+    {
+        switch (true) {
+            case $functionName === InputNumber::FUNCTION_ADD:
+                return $this->buildJsCallFunctionAddSubtract($parameters);
+        }
+        return parent::buildJsCallFunction($functionName, $parameters, $jsRequestData);
+    }
+    
+    /**
+     * Adds (or subtracts) a number to the current value of the input.
+     * 
+     * @param array $parameters
+     * @return string
+     */
+    protected function buildJsCallFunctionAddSubtract(array $parameters = []) : string
+    {
+        $formatter = $this->getDatatypeFormatter();
+        return <<<JS
+(function(nStep){
+    var sVal = {$this->buildJsValueGetter()};
+    var nVal = {$formatter->buildJsFormatParser('sVal')};
+    if (nVal === null || nVal === undefined || isNaN(nVal)) {
+        nVal = 0;
+    }
+    var nNew = nVal + nStep;
+    {$this->buildJsValueSetter($formatter->buildJsFormatter('nNew'))};
+})(parseFloat('{$parameters[0]}'));
+
+JS;
+    }
+    
+    /**
+     * 
+     * {@inheritDoc}
      * @see \exface\Core\Facades\AbstractAjaxFacade\Elements\AbstractJqueryElement::buildHtmlHeadTags()
      */
     public function buildHtmlHeadTags()

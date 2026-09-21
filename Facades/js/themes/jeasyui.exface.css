@@ -54,6 +54,10 @@ ul.nav_menu li.active a.current {color: white; background: #6caef5}
 .exf-btn-group {display: inline-block}
 .exf-data-toolbar, .panel-footer.datatable-toolbar {border-width: 0;}
 .exf-data-header {padding: 0; border-width: 0}
+.exf-setup-quickselect-caption {color: inherit; display: inline-block; margin-left: 4px; text-align: center; text-decoration: none; width: 12px;}
+.exf-setup-quickselect-caption:hover {color: inherit; text-decoration: none;}
+.exf-setup-quickselect-menu .menu-item.exf-setup-active {font-weight: bold;}
+.exf-setup-quickselect-menu .menu-item.exf-setup-active.exf-setup-favorite::after {content: "\f005"; float: right; font-family: FontAwesome; margin: 4px 8px 0 18px;}
 .exf-data-header > div:first-of-type > .grid {padding-top: 4px;}
 .exf-data-header.panel-body {background: #f5f5f5;}
 .dialog-button .exf-toolbar {padding: 0;}
@@ -116,6 +120,13 @@ div.messager-body{overflow-y: auto;}
 .messager-icon + div {margin-left: 42px;}
 .window .window-header .panel-with-icon {padding-left: 21px !important;}
 .dialog-button:not(.messager-button) {min-height: 26px; text-align: left !important}
+
+/* Data configurator dialog */
+.exf-data-configurator-dialog .dialog-button:not(.messager-button) {text-align: right !important;}
+.exf-tab-badge {display: inline-block; min-width: 16px; height: 16px; margin-left: 5px; padding: 0 4px; border-radius: 8px; background: #d6dbe0; color: #303840; font-size: 11px; line-height: 16px; text-align: center; box-sizing: border-box;}
+/* Rendered from an attribute because easyui rebuilds the inner markup of its buttons */
+.l-btn[data-exf-badge] {position: relative;}
+.l-btn[data-exf-badge]::after {content: attr(data-exf-badge); position: absolute; top: 0; left: 12px; min-width: 12px; height: 12px; padding: 0 3px; border-radius: 6px; background: #e1e1e1; color: #6200ee; font-size: 9px; font-weight: bold; line-height: 12px; text-align: center; box-sizing: border-box; z-index: 1;}
 
 /* Dialog */
 .exf-dialog-header {background-color: #daeef5 !important;}
@@ -256,6 +267,11 @@ table.jexcel > tbody > tr > td.jexcel_dropdown {
     position: relative; 
 }
 
+/* add padding to dropdown cells, to avoid overlap with text and dropdown arrow */
+table.jexcel > tbody > tr > td.jexcel_dropdown {
+    padding-right: 35px;
+}
+
 table.jexcel > tbody > tr > td.jexcel_dropdown::after  {
     content: '';
     position: absolute;
@@ -271,9 +287,15 @@ table.jexcel > tbody > tr > td.jexcel_dropdown.exf-dropdown-hitbox-hover:not(.re
     background-color: rgba(0, 0, 0, 0.05);  
 }
 
-/* flip arrow when dropdown is open */
+/* Keep padding so text does not overlap the arrow */
 table.jexcel .jdropdown-default.jdropdown-focus .jdropdown-header {
+    padding-right: 35px;
     background-color: transparent;
+    background-image: none;
+}
+
+/* flip the cell arrow when the dropdown is open */
+table.jexcel > tbody > tr > td.jexcel_dropdown:has(.jdropdown-focus) {
     background-image: url("data:image/svg+xml,%0A%3Csvg xmlns='http://www.w3.org/2000/svg' width='24' height='24' viewBox='0 0 24 24'%3E%3Cpath fill='none' d='M0 0h24v24H0V0z'/%3E%3Cpath d='M7 10l5 5 5-5H7z' fill='gray' transform='rotate(180 12 12)'/%3E%3C/svg%3E");
 }
 
@@ -291,6 +313,10 @@ table.jexcel > thead .jdropdown{
     hyphens: auto;
     padding-top: 4px !important;
 }
+
+/* if auto column width is enabled, use auto table layout to allow columns to grow with content. */
+.exf-auto-column-width table.jexcel { table-layout: auto; }
+.exf-auto-column-width table.jexcel > thead > tr > td.jexcel_selectall { min-width: 2.5rem; }
 
 /* contetx menu indicator above first cell in top left corner */
 table.jexcel > thead > tr > td.jexcel_selectall:hover {
@@ -329,6 +355,41 @@ table.jexcel > tbody > tr > td.readonly {
 table.jexcel > tbody > tr > td.readonly {
     color: rgb(73, 73, 73);
     cursor: not-allowed;
+}
+
+/* adjustments to allow opening dropdowns with single click */
+table.jexcel > tbody > tr > td.jexcel_dropdown {
+    position: relative; 
+}
+
+table.jexcel > tbody > tr > td.jexcel_dropdown .dropdown-open  {
+    position: absolute;
+    right: 0px; 
+    top: 0;
+    width: 35px; 
+    height: 100%;
+    aria-hidden: true; 
+}
+
+/* mark hitbox on hover */
+table.jexcel > tbody > tr > td.jexcel_dropdown:not(.readonly) .dropdown-open:hover  {
+    cursor: pointer;
+    background-color: rgba(0, 0, 0, 0.05);  
+}
+
+/* flip arrow when dropdown is open */
+table.jexcel .jdropdown-default.jdropdown-focus .jdropdown-header {
+    background-image: url("data:image/svg+xml,%0A%3Csvg xmlns='http://www.w3.org/2000/svg' width='24' height='24' viewBox='0 0 24 24'%3E%3Cpath fill='none' d='M0 0h24v24H0V0z'/%3E%3Cpath d='M7 10l5 5 5-5H7z' fill='gray' transform='rotate(180 12 12)'/%3E%3C/svg%3E");
+}
+
+/* if wrapping is enabled for captions, hypenate and break lines */
+.exf-wrap-captions table.jexcel > thead > tr > td {
+    overflow: visible;
+    overflow-wrap: normal;
+    white-space: normal;
+    vertical-align: text-top;
+    hyphens: auto;
+    padding-top: 4px !important;
 }
 
 /* DataImporter */

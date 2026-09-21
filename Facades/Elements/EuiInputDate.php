@@ -194,7 +194,7 @@ JS;
             var jqself = $("#{$this->getId()}");
             if (jqself.data("{$this->getElementType()}") === undefined) {
                 return {$initialValue};
-            } else if(! jqself.{$this->getElementType()}("getText")) {
+            } else if(! jqself.combo("getText")) {
                 jqself.data("_internalValue", "");
             }
             return jqself.data("_internalValue");

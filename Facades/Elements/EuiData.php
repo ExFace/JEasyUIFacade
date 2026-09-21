@@ -1,6 +1,7 @@
 <?php
 namespace exface\JEasyUIFacade\Facades\Elements;
 
+use exface\Core\Actions\ResetWidget;
 use exface\Core\Interfaces\Widgets\iUseData;
 use exface\Core\Widgets\DataColumnGroup;
 use exface\Core\Exceptions\Configuration\ConfigOptionNotFoundError;
@@ -742,7 +743,7 @@ JS;
                 $menu_item .= '<div><span>' . $button->getCaption() . '</span><div>' . $this->getFacade()->getElement($button)->buildHtmlMenuItems(). '</div></div>';
             }
         } else {
-            $menu_item .= $this->getFacade()->getElement($button)->buildHtmlButton();
+            $menu_item .= $this->getFacade()->getElement($button)->buildHtmlButton(true);
         }
         $menu_item = str_replace(['<a id="', '</a>', 'easyui-linkbutton', ' href="#"'], ['<div id="' . $this->getId() . '_', '</div>', '', ''], $menu_item);
         return $menu_item;
@@ -779,6 +780,16 @@ JS;
     {
         return $this->getFacade()->getConfig()->getOption('WIDGET.DATA.DEFAULT_BUTTON_ALIGNMENT');
     }
+
+    /**
+     *
+     * @param string $tableId
+     * @return string
+     */
+    protected function getIdOfHeaderFilterButton(string $tableId) : string
+    {
+        return 'headerFilterButton_' . $tableId;
+    }
     
     /**
      * Creates the HTML for the header controls: filters, sorters, buttons, etc.
@@ -788,14 +799,23 @@ JS;
     {
         $widget = $this->getWidget();
         $configuratorWidget = $widget->getConfiguratorWidget();
+        /* @var EuiDataConfigurator $configuratorEl */
         $configuratorEl = $this->getFacade()->getElement($configuratorWidget);
         
+        // Let the configurator add its button to the main toolbar.
         if (! $widget->isConfiguratorLinked()) {
-            // Add header collapse button to the toolbar
-            if ($configuratorWidget->getFilterTab()->countWidgetsVisible() > 0) {
+            // Add the configurator button between the header filter toggle and the collapse button
+            $configuratorEl->addButtonsToSearchGroup($widget->getToolbarMain()->getButtonGroupForSearchActions(), 0);
+            // Add header collapse button to the toolbar - unless the filters live in the configurator dialog
+            if ($configuratorWidget->getFilterTab()->countWidgetsVisible() > 0 && $widget->getHideHeader() !== true) {
                 $configuratorEl->addButtonToCollapseExpand($widget->getToolbarMain()->getButtonGroupForSearchActions(), 0, $this->buildJsResize());
             }
         }
+        
+        // Hide the caption of the reset button in the search actions group, if it exists.
+        $widget->getToolbarMain()->getButtonGroupForSearchActions()->findChild(function(Button $btn) {
+            return $btn->getAction() instanceof ResetWidget;
+        })?->setHideCaption(true);
         
         // Build the HTML for the button toolbars.
         // IMPORTANT: do it BEFORE the context menu since buttons may be moved
@@ -822,6 +842,47 @@ JS;
         {$context_menu_html}
 
 HTML;
+    }
+
+    /**
+     * Adds facade-specific controls to the table header toolbar.
+     *
+     * @param ButtonGroup $buttonGroup
+     * @return void
+     */
+    protected function addButtonsToSearchGroup(ButtonGroup $buttonGroup) : void
+    {
+    }
+    
+    /**
+     * Returns JS to remove the sorting the user applied via column headers - empty if not applicable.
+     * 
+     * @return string
+     */
+    public function buildJsHeaderSortersReset() : string
+    {
+        return '';
+    }
+    
+    /**
+     * Returns JS to replace the column filters with an array of `{expression, comparator, value}` - empty if not applicable.
+     * 
+     * @param string $aConditionsJs
+     * @return string
+     */
+    public function buildJsHeaderFiltersSet(string $aConditionsJs) : string
+    {
+        return '';
+    }
+    
+    /**
+     * Returns JS to remove all column filters - empty if not applicable.
+     * 
+     * @return string
+     */
+    public function buildJsHeaderFiltersReset() : string
+    {
+        return '';
     }
     
     /**
@@ -1024,7 +1085,7 @@ JS;
                 try {
                     if (! {$configurator_element->buildJsValidator()}) {
                         {$this->buildJsDataResetter()}
-                        {$this->buildJsAutoloadDisabledMessageShow()}
+                        {$this->buildJsAutoloadDisabledMessageShow($this->getWidget()->getEmptyTextIfInvalidFilters())}
                         return false;
                     }
                 } catch (e) {
@@ -1032,6 +1093,7 @@ JS;
                 }
                 {$this->buildJsAutoloadDisabledMessageHide()}
                 {$paramJs}['data'] = {$configurator_element->buildJsDataGetter()};
+                {$configurator_element->buildJsOnBeforeLoadAddSorters($paramJs)}
                 
 JS;
     }

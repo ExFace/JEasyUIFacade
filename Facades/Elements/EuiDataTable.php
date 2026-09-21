@@ -1,17 +1,24 @@
 <?php
 namespace exface\JEasyUIFacade\Facades\Elements;
 
+use exface\Core\CommonLogic\Constants\Icons;
+use exface\Core\CommonLogic\UxonObject;
+use exface\Core\DataTypes\ComparatorDataType;
+use exface\Core\Factories\WidgetFactory;
 use exface\Core\Interfaces\Actions\ActionInterface;
 use exface\Core\Facades\AbstractAjaxFacade\Elements\JqueryDataTableTrait;
 use exface\Core\Interfaces\Actions\iReadData;
+use exface\Core\Widgets\ButtonGroup;
 use exface\Core\Widgets\DataColumn;
 use exface\Core\Widgets\MenuButton;
 use exface\Core\Widgets\DataButton;
 use exface\Core\Exceptions\Facades\FacadeOutputError;
 use exface\Core\Exceptions\Widgets\WidgetLogicError;
 use exface\Core\Interfaces\Widgets\iContainOtherWidgets;
+use exface\Core\Interfaces\Widgets\iSupportWidgetSetups;
 use exface\Core\Widgets\Tab;
 use exface\Core\Widgets\Parts\DataRowGrouper;
+use exface\JEasyUIFacade\Facades\Elements\Traits\EuiDataTableSetupTrait;
 
 /**
  *
@@ -23,6 +30,7 @@ use exface\Core\Widgets\Parts\DataRowGrouper;
 class EuiDataTable extends EuiData
 {
     use JqueryDataTableTrait;
+    use EuiDataTableSetupTrait;
     
     private $collapseConfiguratorButton = null;
 
@@ -58,11 +66,15 @@ class EuiDataTable extends EuiData
             $widget->getRowGrouper()->getGroupByColumn()->setHidden(true);
         }
         
+        if ($searchGrp = $widget->getToolbarMain()->getButtonGroupForSearchActions()) {
+            $this->addButtonToToggleHeaderFilters($searchGrp, 1);
+        }
         // WORKAROUND for tables with a header panel getting too high inside a tab when that tab is 
         // selected for the first time. This can be fixed by resizing the table whenever the tab is
         // selected. However, the regular buildJsResize() slows down switching tabs as it seems to
         // get performed synchronously - that is why we wrap it in a setTimeout() here.
-        if ($widget->getConfiguratorWidget()->hasFilters() && $widget->getConfiguratorWidget()->getFilterTab()->countWidgetsVisible() > 0 && ($containerTab = $widget->getParentByClass(Tab::class)) && $containerTab->isFilledBySingleWidget()) {
+        $configurator = $widget->getConfiguratorWidget();
+        if ($configurator->hasFilters() && $configurator->getFilterTab()->countWidgetsVisible() > 0 && ($containerTab = $widget->getParentByClass(Tab::class)) && $containerTab->isFilledBySingleWidget()) {
             $tabsEl = $this->getFacade()->getElement($containerTab->getParent());
             if ($tabsEl instanceof EuiTabs) {
                 $tabsEl->addOnTabSelectScript("setTimeout(function(){ $('#{$this->getId()}').datagrid('resize') }, 0);", $containerTab);
@@ -173,10 +185,13 @@ $(setTimeout(function(){
     // Init the table
     $('#{$this->getId()}').data('_prevExpanded', []);
     $("#{$this->getId()}").{$this->getElementType()}({ {$grid_head} });
+    {$this->buildJsHeaderFilterInit()}
 
     {$this->buildJsInitPager()}
 
     {$this->buildJsContextMenu()}
+
+    {$this->buildJsSetupAutoApply()}
 
 }, 0));
 
@@ -310,6 +325,7 @@ JS;
                         if ($relAlias === null || $relAlias === '') {
                             throw new WidgetLogicError($widget, 'Cannot use editable table with object "' . $widget->getMetaObject()->getName() . '" (alias ' . $widget->getMetaObject()->getAliasWithNamespace() . ') as input widget for action "' . $action->getName() . '" with object "' . $dataObj->getName() . '" (alias ' . $dataObj->getAliasWithNamespace() . '): no forward relation could be found from action object to widget object!', '7B7KU9Q');
                         }
+                        $nestedRowsJs = $this->buildJsActionRowsProjection($this->buildJsFunctionPrefix() . 'getDataRows()');
                         return <<<JS
         
             {
@@ -318,7 +334,7 @@ JS;
                     {
                         '{$relAlias}': {
                             oId: '{$widget->getMetaObject()->getId()}', 
-                            rows: {$this->buildJsFunctionPrefix()}getDataRows()
+                            rows: {$nestedRowsJs}
                         }
                     }
                 ]
@@ -329,7 +345,39 @@ JS;
             default:
                 $rows = "$('#" . $this->getId() . "')." . $this->getElementType() . "('getSelections')";
         }
+        if ($action !== null && $rows !== '') {
+            $rows = $this->buildJsActionRowsProjection($rows);
+        }
         return "{oId: '" . $widget->getMetaObject()->getId() . "'" . ($rows ? ", rows: " . $rows : '') . ($filters ? ", filters: " . $filters : "") . "}";
+    }
+
+    /**
+     * Removes non-action columns without allowing filtered PHP keys to change the JavaScript data type.
+     *
+     * WHY REINDEX: action column filtering can leave numeric key gaps. PHP encodes such arrays as
+     * objects, but the generated JavaScript requires an array for forEach(). Reindexing keeps edit
+     * actions working regardless of which internal table columns were filtered out.
+     *
+     * @param string $rowsJs
+     * @return string
+     */
+    protected function buildJsActionRowsProjection(string $rowsJs) : string
+    {
+        $actionColumnsJs = json_encode(array_values($this->getWidget()->getActionDataColumnNames()));
+
+        return <<<JS
+(function(aRows, oColumns){
+    return (aRows || []).map(function(oRow){
+        var oActionRow = {};
+        Object.values(oColumns).forEach(sColumn => {
+            if (Object.prototype.hasOwnProperty.call(oRow, sColumn)) {
+                oActionRow[sColumn] = oRow[sColumn];
+            }
+        });
+        return oActionRow;
+    });
+})({$rowsJs}, {$actionColumnsJs})
+JS;
     }
 
     /**
@@ -344,6 +392,33 @@ JS;
     }
 
     /**
+     * {@inheritDoc}
+     * @see \exface\Core\Facades\AbstractAjaxFacade\Elements\JqueryDataTableTrait::buildJsResetter()
+     */
+    public function buildJsResetter() : string
+    {
+        $configuratorElement = $this->getFacade()->getElement($this->getWidget()->getConfiguratorWidget());
+        return $this->buildJsDataResetter()
+            . "; $('#{$this->getId()}').{$this->getElementType()}('removeFilterRule');"
+            . '; try {' . $configuratorElement->buildJsResetter()
+            . '} finally {' . $this->buildJsRefresh() . ';}';
+    }
+
+    /**
+     * {@inheritDoc}
+     * @see \exface\Core\Facades\AbstractAjaxFacade\Elements\AbstractJqueryElement::buildJsCallFunction()
+     */
+    public function buildJsCallFunction(string $functionName = null, array $parameters = [], ?string $jsRequestData = null) : string
+    {
+        $setupFunctionJs = $this->buildJsCallFunctionForSetup($functionName, $parameters, $jsRequestData);
+        if ($setupFunctionJs !== null) {
+            return $setupFunctionJs;
+        }
+
+        return parent::buildJsCallFunction($functionName, $parameters, $jsRequestData);
+    }
+
+    /**
      * 
      * {@inheritDoc}
      * @see \exface\JEasyUIFacade\Facades\Elements\EuiData::buildHtmlHeadTags()
@@ -351,12 +426,13 @@ JS;
     public function buildHtmlHeadTags()
     {
         $facade = $this->getFacade();
-        
-        // Disable setups for the table as they are not supported by jEasyUI anyway. This will save us some
-        // performance.
-        $this->getWidget()->setConfiguratorSetupsEnabled(false);
-        
         $includes = parent::buildHtmlHeadTags();
+        $includes[] = '<script type="text/javascript" src="' . $facade->buildUrlToVendorFile('exface/jeasyuifacade/Facades/js/jeasyui/extensions/datagrid-filter/datagrid-filter.js') . '"></script>';
+        $configurator = $this->getWidget()->getConfiguratorWidget();
+        if ($configurator instanceof iSupportWidgetSetups && $configurator->hasSetups()) {
+            $includes[] = '<script type="text/javascript" src="' . $facade->buildUrlToVendorFile('npm-asset/dexie/dist/dexie.min.js') . '"></script>';
+            $includes[] = '<script type="text/javascript" src="' . $facade->buildUrlToVendorFile('exface/jeasyuifacade/Facades/js/exfSetupManager.js') . '"></script>';
+        }
         // Row details view
         if ($this->getWidget()->hasRowDetails()) {
             $includes[] = '<script type="text/javascript" src="' . $facade->buildUrlToSource('LIBS.JEASYUI.EXTENSIONS.DATAGRID_DETAILVIEW') . '"></script>';
@@ -365,6 +441,119 @@ JS;
             $includes[] = '<script type="text/javascript" src="' . $facade->buildUrlToSource('LIBS.JEASYUI.EXTENSIONS.DATAGRID_GROUPVIEW') . '"></script>';
         }
         return $includes;
+    }
+
+
+
+    /**
+     * Adds a button that toggles the configured datagrid's header filter row.
+     *
+     * @param ButtonGroup $buttonGroup
+     * @param int $position
+     * @param string $onFinishedJs
+     * @return \exface\Core\Widgets\Button
+     */
+    public function addButtonToToggleHeaderFilters(ButtonGroup $buttonGroup, int $position = 0, string $onFinishedJs = '')
+    {
+        $configurator = $this->getWidget()->getConfiguratorWidget();
+        $configuratorEl = $this->getFacade()->getElement($configurator);
+        
+        /** @var \exface\Core\Widgets\Button $filterButton */
+        $filterButton = WidgetFactory::createFromUxon($configurator->getPage(), new UxonObject([
+            'widget_type' => 'Button',
+            'id' => $this->getIdOfHeaderFilterButton($this->getId()),
+            'action' => [
+                'alias' => 'exface.Core.CustomFacadeScript'
+            ],
+            'icon' => Icons::FILTER,
+            'caption' => $this->translate('WIDGET.DATATABLE.HEADER_FILTER_TOGGLE'),
+            'align' => 'right',
+            'hide_caption' => true
+        ]), $buttonGroup);
+        $buttonGroup->addButton($filterButton, $position);
+
+        /** @var \exface\Core\Actions\CustomFacadeScript $filterAction */
+        $filterAction = $filterButton->getAction();
+        $filterAction->setScript(<<<JS
+
+    var jqTable = $('#{$this->getId()}');
+    var bVisible = jqTable.datagrid('options').showFilterBar;
+    jqTable.datagrid(bVisible ? 'hideFilterBar' : 'showFilterBar');
+    {$onFinishedJs}
+
+JS);
+        return $filterButton;
+    }
+
+    /**
+     * Builds the hidden header filter row and its canonical comparator menu.
+     *
+     * @return string
+     */
+    protected function buildJsHeaderFilterInit() : string
+    {
+        $translator = $this->getWorkbench()->getCoreApp()->getTranslator();
+        $operators = [];
+        foreach ([
+            'IS' => ComparatorDataType::IS,
+            'IS_NOT' => ComparatorDataType::IS_NOT,
+            'EQUALS' => ComparatorDataType::EQUALS,
+            'EQUALS_NOT' => ComparatorDataType::EQUALS_NOT,
+            'LESS_THAN' => ComparatorDataType::LESS_THAN,
+            'LESS_THAN_OR_EQUALS' => ComparatorDataType::LESS_THAN_OR_EQUALS,
+            'GREATER_THAN' => ComparatorDataType::GREATER_THAN,
+            'GREATER_THAN_OR_EQUALS' => ComparatorDataType::GREATER_THAN_OR_EQUALS,
+            'IN' => ComparatorDataType::IN,
+            'NOT_IN' => ComparatorDataType::NOT_IN,
+            'BETWEEN' => ComparatorDataType::BETWEEN,
+        ] as $constant => $comparator) {
+            $operators[$comparator] = [
+                'text' => $translator->translate('GLOBAL.COMPARATOR.' . $constant . '_NAME'),
+                'hint' => $translator->translate('GLOBAL.COMPARATOR.' . $constant . '_HINT'),
+                'symbol' => $comparator,
+            ];
+        }
+
+        $filters = [];
+        foreach ($this->getWidget()->getColumns() as $col) {
+            if (! $col->isFilterable() || ! $col->isBoundToAttribute()) {
+                $filters[] = [
+                    'field' => $col->getDataColumnName(),
+                    'type' => 'label',
+                    'options' => new \stdClass(),
+                ];
+                continue;
+            }
+            $filters[] = [
+                'field' => $col->getDataColumnName(),
+                'type' => 'text',
+                'op' => array_keys($operators),
+                'defaultFilterOperator' => ComparatorDataType::IS,
+                'options' => new \stdClass(),
+            ];
+        }
+
+        $operatorsJs = json_encode($operators, JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES);
+        $filtersJs = json_encode($filters, JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES);
+
+        return <<<JS
+
+    (function(jqTable){
+        var oOptions = jqTable.{$this->getElementType()}('options');
+        var oOperators = {$operatorsJs};
+        oOperators.nofilter = oOptions.operators.nofilter;
+        oOptions.operators = oOperators;
+        oOptions.filterBtnIconCls = 'fa fa-filter';
+        oOptions.filterMenuIconCls = 'fa fa-check';
+        oOptions.filterBtnPosition = 'left';
+        oOptions.filterDelay = 0;
+        oOptions.remoteFilter = true;
+        oOptions.clientPaging = false;
+        oOptions.showFilterBar = false;
+        jqTable.datagrid('options').showFilterBar = false;
+        jqTable.datagrid('enableFilter', {$filtersJs});
+    })($('#{$this->getId()}'));
+JS;
     }
 
     /**
@@ -421,6 +610,7 @@ JS;
     public function buildJsInitOptionsHead()
     {
         $widget = $this->getWidget();
+        $configurator_element = $this->getFacade()->getElement($widget->getConfiguratorWidget());
         $this->registerPaginationFixer();
         
         // Add single-result action to onLoadSuccess
@@ -457,7 +647,13 @@ JS;
         $emptyResultJs = <<<JS
         
                         if (data && data.rows && data.rows.length === 0 && data.total != undefined) {
-                            {$this->buildJsAutoloadDisabledMessageShow($this->getWidget()->getEmptyText())}
+                            if (! {$configurator_element->buildJsValidator()}) {
+                                // Message if any required filters are invalid.
+                                {$this->buildJsAutoloadDisabledMessageShow($widget->getEmptyTextIfInvalidFilters())}
+                            } else {
+                                // Message if result was just empty.
+                                {$this->buildJsAutoloadDisabledMessageShow($widget->getEmptyText())}
+                            }
                         } else {
                             {$this->buildJsAutoloadDisabledMessageHide()};
                         }
@@ -473,8 +669,17 @@ JS;
         
         $onChangeScript = $this->buildJsOnChangeScript('row', 'index');
         $grid_head .= ($this->getOnChangeScript() ? ", onClickRow: function(index, row){{$onChangeScript}}, onSelect: function(index, row){{$onChangeScript}}" : '');
-        $grid_head .= ($widget->getCaption() ? ', title: "' . str_replace('"', '\"', $widget->getCaption()) . '"' : '');
-        $grid_head .= ', emptyMsg : ' . json_encode($widget->getEmptyText());
+        $configurator = $widget->getConfiguratorWidget();
+        $showSetupCaption = ! $widget->getHideCaption() && $configurator instanceof iSupportWidgetSetups && $configurator->hasSetups();
+        $caption = $widget->getCaption() ?: $widget->getMetaObject()->getName();
+        $grid_head .= (! $widget->getHideCaption() && ($widget->getCaption() || $showSetupCaption) ? ', title: "' . str_replace('"', '\"', $caption) . '"' : '');
+        
+        // TODO emptyMsg removed on purpose - the onLoadSuccess handler above shows context-aware messages
+        // (empty result vs. invalid filters) via the same .datagrid-empty node. The only case not covered
+        // is a purely client-side empty state without a load event (e.g. all rows removed in an editable
+        // grid) - hook buildJsAutoloadDisabledMessageShow()/...Hide() into those client events instead.
+        
+        //$grid_head .= ', emptyMsg : ' . json_encode($widget->getEmptyText());
         
         return $grid_head;
     }
@@ -700,6 +905,9 @@ JS;
         $changes_col_array = array();
         $this->addOnLoadSuccess($this->buildJsEditModeEnabler());
         // add data and changes getter if the grid is editable
+        // TODO editable grids can end up empty via client-side row removal (no load event fires), so the
+        // onLoadSuccess empty-message handler never runs. Call buildJsAutoloadDisabledMessageShow()/...Hide()
+        // from the row-delete/insert handlers here to keep the empty message in sync in those cases.
         $output .= <<<JS
 
 						function {$this->buildJsFunctionPrefix()}getDataRows(){
@@ -934,20 +1142,152 @@ JS;
     
     protected function buildJsOnBeforeLoadAddConfiguratorData(string $js_var_param = 'param') : string
     {
-        return parent::buildJsOnBeforeLoadAddConfiguratorData($js_var_param) . <<<JS
+        /** @var EuiDataConfigurator $configuratorEl */
+        $configuratorEl = $this->getFacade()->getElement($this->getWidget()->getConfiguratorWidget());
+        $parentJs = parent::buildJsOnBeforeLoadAddConfiguratorData($js_var_param);
 
-                    // Enrich sorting options
+        return <<<JS
+
+                    // Header filters are remote controls for the advanced search model.
+                    var aHeaderFilterRules = jqself.{$this->getElementType()}('options').filterRules || [];
+                    var aHeaderConditions = [];
+                    aHeaderFilterRules.forEach(function(oRule){
+                        var oColumn = jqself.{$this->getElementType()}('getColumnOption', oRule.field);
+                        if (oColumn && oColumn._attributeAlias) {
+                            aHeaderConditions.push({
+                                expression: oColumn._attributeAlias,
+                                comparator: oRule.op,
+                                value: oRule.value
+                            });
+                        }
+                    });
+                    {$configuratorEl->buildJsSearchConditionsSetter('aHeaderConditions', $this->buildJsonForFilterableColumnAliases())}
+                    delete {$js_var_param}.filterRules;
+
+                    // Header sorters are remote controls for the configurator sorting model.
                     if ({$js_var_param}.sort !== undefined) {
                         var sortNames = {$js_var_param}.sort.split(',');
+                        var sortOrders = String({$js_var_param}.order || '').split(',');
                         var sortAttrs = [];
+                        var aHeaderSorters = [];
                         for (var i=0; i<sortNames.length; i++) {
                             colOpts = jqself.{$this->getElementType()}('getColumnOption', sortNames[i]);
                             sortAttrs.push(colOpts !== null ? colOpts['_attributeAlias'] : sortNames[i]);
+                            aHeaderSorters.push({attribute_alias: sortAttrs[i], direction: (sortOrders[i] || 'asc').toUpperCase()});
                         }
                         {$js_var_param}.sortAttr = sortAttrs.join(',');
+                        {$configuratorEl->buildJsSortersSetter('aHeaderSorters')}
+                        delete {$js_var_param}.sort;
+                        delete {$js_var_param}.order;
                     }
 
+                    {$configuratorEl->buildJsConfiguratorBadgesUpdate()}
+
+                    {$parentJs}
+
 JS;
+    }
+    
+    /**
+     * 
+     * {@inheritDoc}
+     * @see \exface\JEasyUIFacade\Facades\Elements\EuiData::buildJsHeaderSortersReset()
+     */
+    public function buildJsHeaderSortersReset() : string
+    {
+        return <<<JS
+
+                (function(){
+                    var jqSelf = $('#{$this->getId()}');
+                    // Removing `sortName` also removes the `sort` parameter from the next request
+                    jqSelf.{$this->getElementType()}('options').sortName = null;
+                    jqSelf.{$this->getElementType()}('getPanel').find('.datagrid-header div.datagrid-cell').removeClass('datagrid-sort-asc datagrid-sort-desc');
+                })();
+
+JS;
+    }
+    
+    /**
+     * 
+     * {@inheritDoc}
+     * @see \exface\JEasyUIFacade\Facades\Elements\EuiData::buildJsHeaderFiltersSet()
+     */
+    public function buildJsHeaderFiltersSet(string $aConditionsJs) : string
+    {
+        return <<<JS
+
+                (function(aConditions){
+                    var jqSelf = $('#{$this->getId()}');
+                    var oFields = {$this->buildJsonForFilterableColumnFields()};
+                    var aRules = (jqSelf.{$this->getElementType()}('options').filterRules || []).slice();
+                    var aSetFields = [];
+                    aConditions.forEach(function(oCondition){
+                        var sField = oFields[oCondition.expression];
+                        // Only the first condition per column can be shown in the filter row
+                        if (sField === undefined || aSetFields.indexOf(sField) !== -1) {
+                            return;
+                        }
+                        if (oCondition.value === null || oCondition.value === undefined || String(oCondition.value) === '') {
+                            return;
+                        }
+                        aSetFields.push(sField);
+                        jqSelf.{$this->getElementType()}('addFilterRule', {
+                            field: sField,
+                            op: oCondition.comparator,
+                            value: oCondition.value
+                        });
+                    });
+                    aRules.forEach(function(oRule){
+                        if (aSetFields.indexOf(oRule.field) === -1) {
+                            jqSelf.{$this->getElementType()}('removeFilterRule', oRule.field);
+                        }
+                    });
+                })({$aConditionsJs});
+
+JS;
+    }
+    
+    /**
+     * 
+     * {@inheritDoc}
+     * @see \exface\JEasyUIFacade\Facades\Elements\EuiData::buildJsHeaderFiltersReset()
+     */
+    public function buildJsHeaderFiltersReset() : string
+    {
+        return "$('#{$this->getId()}').{$this->getElementType()}('removeFilterRule');";
+    }
+    
+    /**
+     * Returns a JSON array with the attribute aliases of all columns, that have a column filter
+     * 
+     * @return string
+     */
+    protected function buildJsonForFilterableColumnAliases() : string
+    {
+        return json_encode(array_keys(json_decode($this->buildJsonForFilterableColumnFields(), true)), JSON_UNESCAPED_UNICODE);
+    }
+    
+    /**
+     * Returns a JSON object with attribute aliases for keys and the corresponding column names for values
+     * 
+     * If multiple columns show the same attribute, the first one wins - just like when syncing the
+     * advanced search with the column filters.
+     * 
+     * @return string
+     */
+    protected function buildJsonForFilterableColumnFields() : string
+    {
+        $fields = [];
+        foreach ($this->getWidget()->getColumns() as $col) {
+            if (! $col->isFilterable() || ! $col->isBoundToAttribute()) {
+                continue;
+            }
+            if (array_key_exists($col->getAttributeAlias(), $fields)) {
+                continue;
+            }
+            $fields[$col->getAttributeAlias()] = $col->getDataColumnName();
+        }
+        return json_encode($fields, JSON_UNESCAPED_UNICODE | JSON_FORCE_OBJECT);
     }
     
     protected function buildJsEuiSetHeigthMax(iContainOtherWidgets $containerWidget, string $onChangeHeightJs = '') : string

@@ -5,6 +5,7 @@ use exface\Core\Widgets\Tabs;
 use exface\Core\DataTypes\BooleanDataType;
 use exface\Core\Exceptions\Facades\FacadeRuntimeError;
 use exface\Core\Interfaces\Widgets\iLayoutWidgets;
+use exface\Core\Widgets\Form;
 
 /**
  *
@@ -67,6 +68,29 @@ class EuiLoginPrompt extends EuiContainer
 
 HTML;
         return $output;
+    }
+    
+    /**
+     * 
+     * {@inheritDoc}
+     * @see \exface\JEasyUIFacade\Facades\Elements\EuiContainer::buildJs()
+     */
+    public function buildJs()
+    {
+        $js = parent::buildJs();
+        
+        // Give keyboard focus to the first visible input (e.g. the "User Name" field) of the
+        // first login form once the prompt has rendered, so the user can start typing right away.
+        // The selector mirrors EuiDialog: `.exf-input input` is the original (hidden) input that
+        // easyui replaces, its next sibling holds the rendered textbox with the visible input.
+        $forms = $this->getWidget()->getWidgets();
+        $firstForm = $forms[0] ?? null;
+        $autofocus = ! ($firstForm instanceof Form) || $firstForm->getAutofocusFirstInput() === true;
+        if ($autofocus) {
+            $js .= "\nsetTimeout(function(){ $('#{$this->getId()} .exf-input input').first().next().find('input').focus(); }, 100);";
+        }
+        
+        return $js;
     }
     
     public function buildHtmlForWidgets()

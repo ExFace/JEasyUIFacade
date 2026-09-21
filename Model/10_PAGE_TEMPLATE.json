@@ -58,13 +58,13 @@
             "APP": "0x11e6c930ff1f486693cce4b318306b9a",
             "NAME": "Desktop jEasyUI metro blue",
             "DESCRIPTION": "Desktop template in metro UI style with blue colors",
-            "FACADE": "exface/jeasyuifacade/Facades/JEasyUIFacade.php",
+            "FACADE": "exface/JEasyUIFacade/Facades/JEasyUIFacade.php",
             "FACADE_UXON": {
                 "theme_class": "metro",
                 "theme_css": [
-                    "exface/jeasyuifacade/Facades/js/themes/metro-blue/easyui.css",
-                    "exface/jeasyuifacade/Facades/js/themes/jeasyui.exface.css",
-                    "exface/jeasyuifacade/Facades/js/themes/jeasyui-metro-blue.exface.css"
+                    "exface/JEasyUIFacade/Facades/js/themes/metro-blue/easyui.css",
+                    "exface/JEasyUIFacade/Facades/js/themes/jeasyui.exface.css",
+                    "exface/JEasyUIFacade/Facades/js/themes/jeasyui-metro-blue.exface.css"
                 ]
             }
         },
@@ -78,13 +78,13 @@
             "APP": "0x11e6c930ff1f486693cce4b318306b9a",
             "NAME": "Desktop jEasyUI material",
             "DESCRIPTION": "Desktop template in material UI style with default (blue) colors",
-            "FACADE": "exface/jeasyuifacade/Facades/JEasyUIFacade.php",
+            "FACADE": "exface/JEasyUIFacade/Facades/JEasyUIFacade.php",
             "FACADE_UXON": {
                 "theme_class": "material",
                 "theme_css": [
-                    "exface/jeasyuifacade/Facades/js/themes/material/easyui.css",
-                    "exface/jeasyuifacade/Facades/js/themes/jeasyui.exface.css",
-                    "exface/jeasyuifacade/Facades/js/themes/jeasyui-material.exface.css"
+                    "exface/JEasyUIFacade/Facades/js/themes/material/easyui.css",
+                    "exface/JEasyUIFacade/Facades/js/themes/jeasyui.exface.css",
+                    "exface/JEasyUIFacade/Facades/js/themes/jeasyui-material.exface.css"
                 ]
             }
         },
@@ -98,14 +98,14 @@
             "APP": "0x11e6c930ff1f486693cce4b318306b9a",
             "NAME": "Desktop jEasyUI material light",
             "DESCRIPTION": "Desktop template in material UI style with lighter colors",
-            "FACADE": "exface/jeasyuifacade/Facades/JEasyUIFacade.php",
+            "FACADE": "exface/JEasyUIFacade/Facades/JEasyUIFacade.php",
             "FACADE_UXON": {
                 "theme_class": "material-light",
                 "theme_css": [
-                    "exface/jeasyuifacade/Facades/js/themes/material-light/easyui.css",
-                    "exface/jeasyuifacade/Facades/js/themes/jeasyui.exface.css",
-                    "exface/jeasyuifacade/Facades/js/themes/jeasyui-material.exface.css",
-                    "exface/jeasyuifacade/Facades/js/themes/jeasyui-material-light.exface.css"
+                    "exface/JEasyUIFacade/Facades/js/themes/material-light/easyui.css",
+                    "exface/JEasyUIFacade/Facades/js/themes/jeasyui.exface.css",
+                    "exface/JEasyUIFacade/Facades/js/themes/jeasyui-material.exface.css",
+                    "exface/JEasyUIFacade/Facades/js/themes/jeasyui-material-light.exface.css"
                 ]
             }
         },
@@ -119,15 +119,15 @@
             "APP": "0x11e6c930ff1f486693cce4b318306b9a",
             "NAME": "Desktop jEasyUI material grey",
             "DESCRIPTION": "Desktop template in material UI style with gray colors",
-            "FACADE": "exface/jeasyuifacade/Facades/JEasyUIFacade.php",
+            "FACADE": "exface/JEasyUIFacade/Facades/JEasyUIFacade.php",
             "FACADE_UXON": {
                 "theme_class": "material",
                 "theme_header_color": "#546E7A",
                 "theme_emphasis_color": "#546E7A",
                 "theme_css": [
-                    "exface/jeasyuifacade/Facades/js/themes/material/easyui.css",
-                    "exface/jeasyuifacade/Facades/js/themes/jeasyui.exface.css",
-                    "exface/jeasyuifacade/Facades/js/themes/jeasyui-material.exface.css"
+                    "exface/JEasyUIFacade/Facades/js/themes/material/easyui.css",
+                    "exface/JEasyUIFacade/Facades/js/themes/jeasyui.exface.css",
+                    "exface/JEasyUIFacade/Facades/js/themes/jeasyui-material.exface.css"
                 ]
             }
         },
@@ -141,16 +141,16 @@
             "APP": "0x11e6c930ff1f486693cce4b318306b9a",
             "NAME": "Desktop jEasyUI material purple",
             "DESCRIPTION": "Desktop template in material UI style with purple colors",
-            "FACADE": "exface/jeasyuifacade/Facades/JEasyUIFacade.php",
+            "FACADE": "exface/JEasyUIFacade/Facades/JEasyUIFacade.php",
             "FACADE_UXON": {
                 "theme_class": "material",
                 "theme_header_color": "#6A1B9A",
                 "theme_emphasis_color": "#6A1B9A",
                 "theme_link_color": "#4A148C",
                 "theme_css": [
-                    "exface/jeasyuifacade/Facades/js/themes/material/easyui.css",
-                    "exface/jeasyuifacade/Facades/js/themes/jeasyui.exface.css",
-                    "exface/jeasyuifacade/Facades/js/themes/jeasyui-material.exface.css"
+                    "exface/JEasyUIFacade/Facades/js/themes/material/easyui.css",
+                    "exface/JEasyUIFacade/Facades/js/themes/jeasyui.exface.css",
+                    "exface/JEasyUIFacade/Facades/js/themes/jeasyui-material.exface.css"
                 ]
             }
         },
@@ -164,16 +164,16 @@
             "APP": "0x11e6c930ff1f486693cce4b318306b9a",
             "NAME": "Desktop jEasyUI material red",
             "DESCRIPTION": "Desktop template in material UI style with red colors",
-            "FACADE": "exface/jeasyuifacade/Facades/JEasyUIFacade.php",
+            "FACADE": "exface/JEasyUIFacade/Facades/JEasyUIFacade.php",
             "FACADE_UXON": {
                 "theme_class": "material",
                 "theme_header_color": "#BF360C",
                 "theme_emphasis_color": "#BF360C",
                 "theme_link_color": "#3E2723",
                 "theme_css": [
-                    "exface/jeasyuifacade/Facades/js/themes/material/easyui.css",
-                    "exface/jeasyuifacade/Facades/js/themes/jeasyui.exface.css",
-                    "exface/jeasyuifacade/Facades/js/themes/jeasyui-material.exface.css"
+                    "exface/JEasyUIFacade/Facades/js/themes/material/easyui.css",
+                    "exface/JEasyUIFacade/Facades/js/themes/jeasyui.exface.css",
+                    "exface/JEasyUIFacade/Facades/js/themes/jeasyui-material.exface.css"
                 ]
             }
         }

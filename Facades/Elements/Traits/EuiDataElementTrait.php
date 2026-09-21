@@ -189,7 +189,7 @@ JS;
                         method: "POST",
                         {$headers}
                         data: function(){
-                            return $.extend(true, {
+                            var oLoadParams = $.extend(true, {
                                 resource: "{$dataWidget->getPage()->getAliasWithNamespace()}", 
                                 element: "{$dataWidget->getId()}",
                                 object: "{$dataWidget->getMetaObject()->getId()}",
@@ -197,6 +197,8 @@ JS;
                                 {$url_params}
                                 data: {$configurator_element->buildJsDataGetter()}
                             }, ({$oParamsJs} || {}));
+                            {$configurator_element->buildJsOnBeforeLoadAddSorters('oLoadParams')}
+                            return oLoadParams;
                         }(),
 						success: function(data){
                             var jqSelf = $('#{$this->getId()}');
