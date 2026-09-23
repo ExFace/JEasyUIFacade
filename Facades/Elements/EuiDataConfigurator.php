@@ -337,7 +337,7 @@ JS;
         if (null !== $hideToolbar = $dataWidget->getHideHeaderToolbar()) {
             return ! $hideToolbar;
         }
-        return ! ($dataWidget->getHideHeader() === true && $dataWidget->getHideCaption() === true);
+        return $dataWidget->getHideHeader() !== true;
     }
     
     /**

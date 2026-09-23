@@ -27,22 +27,21 @@ toolbars of the data widget:
 <div id="..._dialog">                            <!-- configurator dialog, hidden -->
 ```
 
-### Visibility of the header and the toolbar
+### Visibility of header, caption and the main toolbar
 
-| Model | Filters | Toolbar with buttons |
+The UXON property `hide_header:true` hides the entire header including the toolbar and caption unless they are controlled explicitly via `hide_caption` and `hide_header_toolbar`. 
+
+| Model | Filters | Toolbar with buttons | Caption |
 |---|---|---|
-| default, desktop | visible | visible |
-| default, smartphone (up to 600px) | in the configurator dialog | visible |
-| `hide_header: false` | visible on every screen size | visible |
-| `hide_header: true` | in the configurator dialog | visible |
-| `hide_header: true` + `hide_caption: true` | in the configurator dialog | hidden |
-| `hide_header_toolbar: false` | as above | always visible |
-| `hide_header_toolbar: true` | as above | always hidden |
-
-`hide_header_toolbar` works exactly like in the UI5 facade
-(`UI5DataElementTrait::hasToolbarTop()`): an explicit value always wins, otherwise the toolbar is
-only hidden if the header *and* the caption are hidden. Without this the cog button opening the
-configurator would be unreachable on widgets with `hide_header: true`.
+| default, desktop | visible | visible | visible |
+| default, smartphone (up to 600px) | in the configurator dialog | visible | visible |
+| `hide_header: false` | visible on every screen size | visible | visible |
+| `hide_header: true` | in the configurator dialog | hidden | hidden |
+| `hide_header_toolbar: false` | as above | always visible | hidden |
+| `hide_header_toolbar: true` | as above | always hidden | hidden |
+| `hide_caption:true` | as above | as above | hidden |
+| `hide_caption:false` | as above | as above | visible |
+| `hide_header: true, hide_header_toolbar: false` | in the configurator dialog | visible |
 
 ## Buttons in the header
 
