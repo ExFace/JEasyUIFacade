@@ -11,10 +11,15 @@ class EuiDataSpreadSheet extends EuiData
     }
     use JExcelTrait;
     
+    /**
+     * {@inheritDoc}
+     * @see \exface\JEasyUIFacade\Facades\Elements\Traits\EuiDataElementTrait::init()
+     */
     protected function init()
     {
         $this->initViaTrait();
         $this->registerReferencesAtLinkedElements();
+        $this->registerConditionalPropertiesOfColumns();
         $this->addOnLoadSuccess($this->buildJsFooterRefresh('data', 'jqSelf'));
     }
 
