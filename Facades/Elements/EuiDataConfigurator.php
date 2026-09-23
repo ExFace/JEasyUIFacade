@@ -1221,6 +1221,7 @@ JS;
         }
 
         $obj = $this->getWidget()->getDataWidget()->getMetaObject();
+        $fields = [];
         foreach ($this->getWidget()->getFilterableAttributes() as $title => $alias) {
             $fields[$title] = [
                 'expression' => $alias,
