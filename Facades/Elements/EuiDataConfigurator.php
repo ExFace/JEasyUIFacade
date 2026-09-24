@@ -576,7 +576,18 @@ HTML;
         }
         
         $dataEl = $this->getFacade()->getElement($this->getWidget()->getWidgetConfigured());
-        $layoutFiltersJs = $this->hasTabFilters() ? $this->getFacade()->getElement($this->getWidget()->getFilterTab())->buildJsLayouter() : '';
+        /** @var EuiTab|null $filterTabEl */
+        $filterTabEl = $this->hasTabFilters() ? $this->getFacade()->getElement($this->getWidget()->getFilterTab()) : null;
+        $layoutFiltersJs = $filterTabEl ? $filterTabEl->buildJsLayouter() : '';
+        $layoutFiltersOnSelectJs = $this->hasTabFilters() ? <<<JS
+, onSelect: function(title, index) {
+    if ($(this).tabs('getTab', index).attr('id') === '{$this->getIdOfFiltersTab()}') {
+        setTimeout(function(){
+            {$layoutFiltersJs}
+        }, 0);
+    }
+}
+JS : '';
         $clearHeaderSortersJs = ($dataEl instanceof EuiData && $this->hasTabSorters()) ? $dataEl->buildJsHeaderSortersReset() : '';
         $syncHeaderFiltersJs = ($dataEl instanceof EuiData && $this->hasTabAdvancedSearch()) ? $dataEl->buildJsHeaderFiltersSet($this->buildJsSearchConditionsGetter()) : '';
         $clearHeaderFiltersJs = ($dataEl instanceof EuiData && $this->hasTabAdvancedSearch()) ? $dataEl->buildJsHeaderFiltersReset() : '';
@@ -724,14 +735,16 @@ function {$this->buildJsFunctionPrefix()}ShowConfigurator(bShowSetups) {
                 if (bMobile) {
                     jqDialog.dialog('maximize');
                 }
-                $('#{$this->getIdOfConfiguratorTabs()}').tabs('resize');
-                {$layoutFiltersJs}
+                setTimeout(function(){
+                    $('#{$this->getIdOfConfiguratorTabs()}').tabs('resize');
+                    {$layoutFiltersJs}
+                }, 0);
                 {$refreshSetupsJs}
             }
         });
         // The `cls` option cannot be used here because easyui overrides it with `window` for every window
         jqDialog.dialog('panel').addClass('exf-data-configurator-dialog');
-        $('#{$this->getIdOfConfiguratorTabs()}').tabs({fit: true, border: false});
+        $('#{$this->getIdOfConfiguratorTabs()}').tabs({fit: true, border: false{$layoutFiltersOnSelectJs}});
         {$this->buildJsFunctionPrefix()}UpdateConfiguratorBadges();
     }
     jqDialog.dialog('open');
