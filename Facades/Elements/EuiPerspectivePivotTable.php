@@ -12,6 +12,8 @@ use exface\Core\Facades\AbstractAjaxFacade\Elements\PerspectiveTrait;
 /**
  * Renders PivotTable widgets with Perspective.
  *
+ * @method PivotTable getWidget()
+ *
  * @author andrej.kabachnik
  *
  */
@@ -28,6 +30,7 @@ class EuiPerspectivePivotTable extends EuiData
      */
     public function buildHtml()
     {
+        $this->addPerspectiveFeatureButtons($this->getWidget()->getToolbarMain()->getButtonGroupForSearchActions());
         return $this->buildHtmlPanelWrapper($this->buildHtmlPerspective());
     }
 
@@ -80,7 +83,15 @@ JS;
      */
     protected function buildJsResize() : string
     {
-        return $this->buildJsResizeInnerWidget() . "if (typeof document.getElementById('{$this->getId()}')?.resize === 'function') { document.getElementById('{$this->getId()}').resize(); }";
+        return $this->buildJsResizeInnerWidget() . <<<JS
+        (function() {
+            const domElement = document.getElementById('{$this->getId()}');
+            const domViewer = domElement?.matches('perspective-viewer') ? domElement : domElement?.querySelector('perspective-viewer');
+            if (typeof domViewer?.resize === 'function') {
+                domViewer.resize();
+            }
+        })();
+JS;
     }
 
     /**
