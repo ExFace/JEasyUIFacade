@@ -36,6 +36,14 @@
         ]
     },
     {
+        "name": "npm-asset/jspreadsheet--formula",
+        "license_used": "MIT"
+    },
+    {
+        "name": "npm-asset/jspreadsheet-ce",
+        "license_used": "MIT"
+    },
+    {
         "name": "npm-asset/jspreadsheet--autowidth",
         "version": "2.6.1",
         "description": "Plugins and Editors for JSpreadsheet",
