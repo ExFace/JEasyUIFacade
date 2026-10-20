@@ -161,10 +161,12 @@ div.messager-body{overflow-y: auto;}
 .exf-control .jsoneditor .jsoneditor-contextmenu-root {position: fixed; z-index: 1;}
 
 /* Markdown */
-.markdown-body {font-size: 14px !important;}
+/* github-markdown-css 5.x paints .markdown-body white - keep the background of the surrounding panel */
+.markdown-body {font-size: 14px !important; background-color: transparent;}
 .easyui-dialog > .markdown-body {padding: 20px 10px 10px 10px}
 .exf-markdown.markdown-body table > thead > tr {background-color: #f2f2f2;}
-.exf-markdown.markdown-body table {display: table;}
+/* github-markdown-css 5.x sizes tables to their content (width: max-content) - keep them full width */
+.exf-markdown.markdown-body table {display: table; width: 100%;}
 
 /* jQuery FileUpload */
 .fileupload-files{margin-top: 10px;}
