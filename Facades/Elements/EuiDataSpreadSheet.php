@@ -3,6 +3,7 @@ namespace exface\JEasyUIFacade\Facades\Elements;
 
 use exface\JEasyUIFacade\Facades\Elements\Traits\EuiDataElementTrait;
 use exface\Core\Facades\AbstractAjaxFacade\Elements\JExcelTrait;
+use exface\Core\Widgets\DataColumn;
 
 class EuiDataSpreadSheet extends EuiData
 {    
@@ -10,6 +11,30 @@ class EuiDataSpreadSheet extends EuiData
         init as initViaTrait;
     }
     use JExcelTrait;
+
+    /**
+     * Keep display cells aligned with EasyUI grid rows, including taller wrapped rows.
+     * Paint filled indicators on the cell, without changing stored values or editors.
+     */
+    protected function buildJsJExcelDisplayStyler(DataColumn $column) : string
+    {
+        return <<<'JS'
+        (function(domDisplay, oDisplay, sColor, domCell) {
+            domDisplay.style.minHeight = '';
+            var bFilled = oDisplay.type === 'color' && (oDisplay.fill || oDisplay.colorOnly) && sColor !== 'transparent';
+            domCell.classList.toggle('exf-spreadsheet-color-filled', bFilled);
+            if (bFilled) {
+                domCell.style.setProperty('--exf-spreadsheet-display-background', sColor);
+                domDisplay.style.backgroundColor = 'transparent';
+                if (!oDisplay.colorOnly && !domCell.classList.contains('exf-spreadsheet-invalid')) {
+                    domDisplay.style.color = exfColorTools.pickTextColorForBackgroundColor(sColor, oDisplay.textColorPreference);
+                }
+            } else {
+                domCell.style.removeProperty('--exf-spreadsheet-display-background');
+            }
+        })
+JS;
+    }
     
     /**
      * {@inheritDoc}
@@ -83,6 +108,12 @@ JS;
     public function buildCssElementClass()
     {
         return parent::buildCssElementClass() . ' exf-spreadsheet';
+    }
+
+    public function buildCssWidgetClass() : string
+    {
+        // JExcelTrait builds its root with widget classes, not element classes.
+        return parent::buildCssWidgetClass() . ' exf-spreadsheet';
     }
     
     /**

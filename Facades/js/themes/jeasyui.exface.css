@@ -243,13 +243,24 @@ pre.sf-dump .sf-dump-private, pre.sf-dump .sf-dump-public, pre.sf-dump .sf-dump-
 .jexcel>thead>tr>td {text-align: left !important; padding: 0 4px !important;}
 .jexcel td {overflow: hidden; text-overflow: ellipsis;}
 .jexcel>tbody>tr {height: 25px;}
-.exf-spreadsheet {overflow: visible;}
+.exf-spreadsheet {overflow: visible; --exf-spreadsheet-display-background: transparent;}
 .panel:has(.exf-spreadsheet) {overflow: visible;}
 .exf-grid-item:has(.exf-spreadsheet) {overflow: visible;}
 .exf-spreadsheet-change {position: relative}
 .exf-spreadsheet-change::before {content: "◤"; color: #89919a; font-size: 12px; position: absolute; left: 0; top: 0; margin-left: -2px; margin-top: -3px}
 .exf-spreadsheet-invalid {background-color: #ffebeb;}
 .exf-spreadsheet-invalid::before {color: #b00;}
+/* Match datagrid gutters and line height without increasing the minimum spreadsheet row height. */
+.exf-spreadsheet table.jexcel > tbody > tr > td:has(> .exf-spreadsheet-display) {padding: 2px 4px;}
+.exf-spreadsheet table.jexcel > tbody > tr > td.readonly:has(> .exf-spreadsheet-display) {border-bottom: 1px solid #dfdfdf;}
+.exf-spreadsheet .exf-spreadsheet-display {min-height: 18px; line-height: 18px; padding: 0 3px;}
+/* Override the shared renderer's inline border defaults only in JEasyUI spreadsheets. */
+.exf-spreadsheet .exf-spreadsheet-progress {min-height: 20px; border-color: #ccc !important; border-radius: 0 !important;}
+.exf-spreadsheet table.jexcel > tbody > tr > td.exf-spreadsheet-color-filled:not(.exf-spreadsheet-invalid) {
+    background-color: var(--exf-spreadsheet-display-background);
+    background-image: none;
+}
+.exf-spreadsheet table.jexcel > tbody > tr > td.exf-spreadsheet-invalid {background-color: #ffebeb;}
 .jdropdown-searchbar > .jdropdown-container-header {height: 42px !important; max-height: 42px !important}
 table.jexcel > thead > tr > td {border-top-color: rgb(140, 140, 140); border-left-color: rgb(140, 140, 140); background-color: #dcdcdc;}
 table.jexcel > tbody > tr > td.jexcel_row {background-color: #dcdcdc; border-top-color: rgb(140, 140, 140); border-left-color: rgb(140, 140, 140);}
