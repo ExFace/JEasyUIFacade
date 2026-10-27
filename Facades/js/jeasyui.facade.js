@@ -354,6 +354,233 @@ $.extend($.fn.combo.methods, {
     },
 });
 
+/**
+ * EasyUI requires a Date even when the facade parser rejects an empty or invalid value.
+ * Keep that calendar placeholder separate from the field's text and internal value.
+ */
+function jeasyui_datetimebox_options(options, invalidMessage) {
+    var parser = options.parser;
+    var formatter = options.formatter;
+    var onHidePanel = options.onHidePanel;
+    var onSelect = options.onSelect || $.fn.datetimebox.defaults.onSelect;
+    var onShowPanel = options.onShowPanel || $.fn.datetimebox.defaults.onShowPanel;
+    var keyHandler = $.fn.datetimebox.defaults.keyHandler;
+    function isPlaceholder(date) {
+        return date && Object.prototype.hasOwnProperty.call(date, '_exfUnparsedValue');
+    }
+    function canCommit(target) {
+        var input = $(target);
+        var date = input.datetimebox('calendar').calendar('options').current;
+        var selected = input.data('_exfDateTimeSelected');
+        var text = input.datetimebox('getText');
+        return date && !isPlaceholder(date) && (
+            (selected && selected.text === text) || parser.call(target, text)
+        );
+    }
+    return $.extend({}, options, {
+        exfNullableDateTime: true,
+        parser: function(value) {
+            var date = parser.call(this, value);
+            if (date) {
+                return date;
+            }
+            date = new Date();
+            date._exfUnparsedValue = value == null ? '' : value;
+            return date;
+        },
+        formatter: function(date) {
+            return isPlaceholder(date) ? date._exfUnparsedValue : formatter.call(this, date);
+        },
+        onShowPanel: function() {
+            $(this).removeData('_exfDateTimeSelected');
+            onShowPanel.call(this);
+        },
+        onSelect: function(date) {
+            $(this).data('_exfDateTimeSelected', {text: $(this).datetimebox('getText')});
+            onSelect.call(this, date);
+        },
+        onHidePanel: function() {
+            var commit = canCommit(this);
+            $(this).removeData('_exfDateTimeSelected');
+            if (commit) {
+                onHidePanel.call(this);
+            }
+        },
+        keyHandler: $.extend({}, keyHandler, {
+            enter: function(event) {
+                if (canCommit(this)) {
+                    keyHandler.enter.call(this, event);
+                }
+            },
+            query: function(value, event) {
+                $(this).removeData('_exfDateTimeSelected');
+                keyHandler.query.call(this, value, event);
+            }
+        }),
+        // Datagrid editors have no widget ID. Validate their own text, not an ID selector.
+        validType: {exfDateTime: [parser]},
+        invalidMessage: invalidMessage
+    });
+}
+
+$.extend($.fn.validatebox.defaults.rules, {
+    exfDateTime: {
+        validator: function(value, param) {
+            return !!param[0].call(this, value);
+        },
+        message: ''
+    }
+});
+
+(function(editor) {
+    var setValue = editor.setValue;
+    var getValue = editor.getValue;
+    editor.setValue = function(target, value) {
+        setValue.call(this, target, value);
+        if ($(target).data('datetimebox') && $(target).datetimebox('options').exfNullableDateTime) {
+            $(target).data('_exfDateTimeInitialValue', {
+                value: value,
+                formatted: getValue.call(this, target)
+            });
+        }
+    };
+    editor.getValue = function(target) {
+        var value = getValue.call(this, target);
+        var initial = $(target).data('_exfDateTimeInitialValue');
+        // Opening an editor must not turn null into '' or mark formatted dates as changed.
+        return initial && value === initial.formatted ? initial.value : value;
+    };
+})($.fn.datagrid.defaults.editors.datetimebox);
+
+(function(editor) {
+    var setValue = editor.setValue;
+    var getValue = editor.getValue;
+    editor.setValue = function(target, value) {
+        var isFacadeSelect = $(target).data('combobox') && $(target).combobox('options').exfInputSelect;
+        // EasyUI otherwise matches numeric zero to the empty option through loose equality.
+        setValue.call(this, target, isFacadeSelect && typeof value === 'number' ? String(value) : value);
+        if (isFacadeSelect) {
+            $(target).data('_exfInputSelectInitialValue', {
+                value: value,
+                selected: getValue.call(this, target)
+            });
+        }
+    };
+    editor.getValue = function(target) {
+        var value = getValue.call(this, target);
+        var initial = $(target).data('_exfInputSelectInitialValue');
+        // Native combobox values are strings; preserve unchanged numeric enum keys and nulls.
+        return initial && value === initial.selected ? initial.value : value;
+    };
+})($.fn.datagrid.defaults.editors.combobox);
+
+/**
+ * Yield between small groups of native beginEdit calls without changing which rows are editable.
+ * A superseded load must not resume its remaining onLoadSuccess handlers.
+ */
+async function jeasyui_datagrid_begin_edit_all(jqTable, isEditable) {
+    var state = jqTable.data('datagrid');
+    var rows = jqTable.datagrid('getRows');
+    var panel = jqTable.datagrid('getPanel');
+    var previous = jqTable.data('_exfEditInitialization');
+    var editors = previous && state.options.editors === previous.sizedEditors
+        ? previous.editors : state.options.editors;
+    var sizedEditors = $.extend({}, editors);
+    var resized = [];
+    // Native beginEdit revisits every open editor. These built-in editors need no
+    // repeated resize at the same width while the grid is locked for initialization.
+    ['textbox', 'numberbox', 'combobox', 'datetimebox'].forEach(function(type) {
+        var editor = editors[type];
+        if (editor !== $.fn.datagrid.defaults.editors[type] || !editor || !editor.resize) {
+            return;
+        }
+        var widths = new WeakMap();
+        var sized = $.extend({}, editor, {
+            resize: function(target, width) {
+                if (!widths.has(target) || widths.get(target) !== width) {
+                    editor.resize.call(this, target, width);
+                    widths.set(target, width);
+                }
+            }
+        });
+        sizedEditors[type] = sized;
+        resized.push({sized: sized, resize: editor.resize});
+    });
+    var initialization = {
+        wasInert: previous ? previous.wasInert : Boolean(panel.prop('inert')),
+        completed: 0,
+        total: rows.length,
+        editors: editors,
+        sizedEditors: sizedEditors
+    };
+    jqTable.data('_exfEditInitialization', initialization);
+    state.options.editors = sizedEditors;
+    panel.prop('inert', true).addClass('exf-edit-initializing');
+
+    // Keep the mask inside the view: loaded() removes panel-level masks, and
+    // native layout subtracts other panel children from the available row height.
+    var overlay = $('<div class="exf-edit-initialization"></div>')
+        .css({position: 'absolute', left: 0, top: 0, width: '100%', height: '100%'})
+        .appendTo(panel.children('.datagrid-view'));
+    $('<div class="datagrid-mask"></div>').css('display', 'block').appendTo(overlay);
+    var message = $('<div class="datagrid-mask-msg" role="status"></div>')
+        .html(state.options.loadMsg || '')
+        .css({
+            display: 'block',
+            boxSizing: 'content-box',
+            height: 'auto',
+            lineHeight: '20px',
+            padding: '8px 12px 8px 30px',
+            whiteSpace: 'nowrap',
+            margin: 0,
+            left: '50%',
+            top: '50%',
+            transform: 'translate(-50%, -50%)'
+        })
+        .appendTo(overlay);
+    message.append(document.createTextNode(' '));
+    var progress = $('<span></span>').text('0 / ' + rows.length).appendTo(message);
+    function isCurrent() {
+        return jqTable.data('datagrid') === state
+            && jqTable.data('_exfEditInitialization') === initialization
+            && jqTable.datagrid('getRows') === rows;
+    }
+    try {
+        var index = 0;
+        while (index < rows.length) {
+            await new Promise(function(resolve) { setTimeout(resolve, 0); });
+            if (!isCurrent()) {
+                return false;
+            }
+            var start = performance.now();
+            var count = 0;
+            do {
+                if (!isCurrent()) {
+                    return false;
+                }
+                if (!isEditable || isEditable(rows[index])) {
+                    jqTable.datagrid('beginEdit', index);
+                }
+                index++;
+                count++;
+            } while (index < rows.length && count < 5 && performance.now() - start < 8);
+            initialization.completed = index;
+            progress.text(index + ' / ' + rows.length);
+        }
+        return isCurrent();
+    } finally {
+        resized.forEach(function(editor) { editor.sized.resize = editor.resize; });
+        if (state.options.editors === sizedEditors) {
+            state.options.editors = editors;
+        }
+        overlay.remove();
+        if (jqTable.data('_exfEditInitialization') === initialization) {
+            panel.prop('inert', initialization.wasInert).removeClass('exf-edit-initializing');
+            jqTable.removeData('_exfEditInitialization');
+        }
+    }
+}
+
 function jeasyui_wait_for_element(jqEl, type, callback, interval = 50, timeout = 1000) {
     const start = Date.now();
     (function check() {

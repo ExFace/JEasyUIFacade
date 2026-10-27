@@ -129,10 +129,17 @@ JS;
     public function buildJsDataOptions()
     {
         $parentOptions = parent::buildJsDataOptions();
+        $selectableOptions = [];
+        foreach ($this->getWidget()->getSelectableOptions() as $value => $text) {
+            $selectableOptions[] = ['value' => (string) $value, 'text' => $text];
+        }
+        $dataJs = json_encode($selectableOptions, JSON_HEX_TAG | JSON_HEX_AMP | JSON_HEX_APOS | JSON_HEX_QUOT | JSON_THROW_ON_ERROR);
 
         $options = ($parentOptions ? $parentOptions . ',' : '') . <<<JS
         
-            panelHeight: 'auto'
+            panelHeight: 'auto',
+            exfInputSelect: true,
+            data: {$dataJs}
             {$this->buildJsOptionFormatter()}
             {$this->buildJsOptionMultiple()}
             {$this->buildJsOptionHeight()}

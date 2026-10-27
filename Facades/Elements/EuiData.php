@@ -237,11 +237,12 @@ class EuiData extends EuiAbstractElement
         return $this->getWidget()->isPaged() || $this->getWidget()->getHideFooter() === false;
     }
     
-    protected function buildJsOnLoadSuccessOption() : string
+    protected function buildJsOnLoadSuccessOption(bool $async = false) : string
     {
+        $asyncJs = $async ? 'async ' : '';
         return <<<JS
 
-, onLoadSuccess: function(data) {
+, onLoadSuccess: {$asyncJs}function(data) {
                     var jqSelf = $(this);
                     
                     {$this->buildJsonOnLoadSuccessSelectionFix('jqSelf')}
@@ -920,7 +921,9 @@ HTML;
         $formatter_js = '';
         $cellTpl = $this->getFacade()->getElement($cellWidget);
         if (($cellTpl instanceof JsValueDecoratingInterface) && $cellTpl->hasDecorator()) {
-            $formatter_js = $cellTpl->buildJsValueDecorator($js_var_value);
+            $formatter_js = $cellTpl instanceof EuiColorIndicator
+                ? $cellTpl->buildJsValueDecorator($js_var_value, $js_var_row)
+                : $cellTpl->buildJsValueDecorator($js_var_value);
         }
         
         // Formatter option
