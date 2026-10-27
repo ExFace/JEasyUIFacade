@@ -365,7 +365,12 @@ JS;
         $header_rows_frozen = array();
         $full_height_column_groups = array();
         if ($this->getWidget()->getMultiSelect()) {
-            $header_rows[0][0] = '{field: "ck", checkbox: true}';
+            if ($frozenColumns > 0) {
+                // add checkbox for multiselect first, otherwise its placed after the frozen cols 
+                $header_rows_frozen[0][0] = '{field: "ck", checkbox: true}';
+            } else {
+                $header_rows[0][0] = '{field: "ck", checkbox: true}';
+            }
         }
         /* @var $column_group \exface\Core\Widgets\DataColumnGroup */
         // Set the rowspan for column groups with a caption and remember those without a caption to set the colspan later
@@ -380,7 +385,12 @@ JS;
                 $this->setColumnHeaderRowspan($column_group, 2);
             }
             if ($this->getWidget()->getMultiSelect()) {
-                $header_rows[0][0] = '{field: "ck", checkbox: true, rowspan: 2}';
+                if ($frozenColumns > 0) {
+                    // add checkbox for multiselect first, otherwise its placed after the frozen cols 
+                    $header_rows_frozen[0][0] = '{field: "ck", checkbox: true, rowspan: 2}';
+                } else {
+                    $header_rows[0][0] = '{field: "ck", checkbox: true, rowspan: 2}';
+                }
             }
         }
         // Now loop through all column groups again and built the header definition
