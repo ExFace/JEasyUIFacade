@@ -19,6 +19,12 @@ class EuiInputDateTime extends EuiInputDate
         return 'datetimebox';
     }
 
+    protected function buildJsDataOptions()
+    {
+        return '...jeasyui_datetimebox_options({' . parent::buildJsDataOptions() . '}, '
+            . $this->escapeString($this->translate('MESSAGE.INVALID.INPUTDATE')) . ')';
+    }
+
     /**
      * {@inheritDoc}
      * @see \exface\JEasyUIFacade\Facades\Elements\EuiInputDate::buildJsValueSetterMethod()

@@ -49,9 +49,12 @@ class EuiDataMatrix extends EuiDataTable
         foreach ($widget->getColumns() as $col) {
             $cellElem = $this->getFacade()->getElement($col->getCellWidget());
             $colKey = $col->getDataColumnName() ? $col->getDataColumnName() : $col->getId();
+            $decoratorJs = $cellElem instanceof EuiColorIndicator
+                ? $cellElem->buildJsValueDecorator('value', 'oRow')
+                : $cellElem->buildJsValueDecorator('value');
             $colModelsFacadePropsJs .= "
     oColModels['$colKey'].fnEuiStyler = {$this->buildJsInitOptionsColumnStyler($col, 'value', 'oRow', 'iRowIdx', 'null')}; 
-    oColModels['$colKey'].fnFormatter = function(value){return {$cellElem->buildJsValueDecorator('value')} }; ";
+    oColModels['$colKey'].fnFormatter = function(value, oRow){return {$decoratorJs} }; ";
     
         }
         
@@ -219,12 +222,11 @@ JS;
         }
         $editable_transposed_cols = json_encode($editable_transposed_cols);
         return <<<JS
-					var rows = $(this).{$this->getElementType()}("getRows");
-					for (var i=0; i<rows.length; i++){
-						if ({$editable_transposed_cols}.indexOf(rows[i]._subRowIndex) > -1){
-							$(this).{$this->getElementType()}("beginEdit", i);
-						}
-					}
+                    if (!await jeasyui_datagrid_begin_edit_all($(this), function(row) {
+                        return {$editable_transposed_cols}.indexOf(row._subRowIndex) > -1;
+                    })) {
+                        return;
+                    }
 JS;
     }
 }

@@ -205,11 +205,17 @@ JS;
     public function buildJsEditModeEnabler()
     {
         return '
-					var rows = $(this).' . $this->getElementType() . '("getRows");
-					for (var i=0; i<rows.length; i++){
-						$(this).' . $this->getElementType() . '("beginEdit", i);
-					}
-				';
+                    if (!await jeasyui_datagrid_begin_edit_all($(this))) {
+                        return;
+                    }
+                ';
+    }
+
+    protected function buildJsOnLoadSuccessOption(bool $async = false) : string
+    {
+        return parent::buildJsOnLoadSuccessOption(
+            $async || ($this->isEditable() && $this->getElementType() === 'datagrid')
+        );
     }
 
     /**
