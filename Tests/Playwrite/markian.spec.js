@@ -1,4 +1,6 @@
 const {test, expect} = require(process.env.PLAYWRIGHT_MODULE || '@playwright/test');
+const {readFileSync} = require('node:fs');
+const {join} = require('node:path');
 
 test.beforeEach(async ({page}) => {
     await page.goto('/exface/jeasyuifacade/Tests/Playwrite/markian.html');
@@ -67,6 +69,62 @@ test('disabling image insertion preserves default menus and custom nested toolba
     await expect(toolbar).toContainText('Host copy');
     await expect(toolbar.locator('[data-command="image"]')).toHaveCount(0);
 });
+
+for (const template of [
+    {name: 'metro blue', theme: 'metro-blue', emphasis: '', focus: 'rgb(161, 196, 207)'},
+    {name: 'material', theme: 'material', emphasis: '', focus: 'rgb(98, 0, 238)'},
+    {name: 'material light', theme: 'material-light', emphasis: '', focus: 'rgb(98, 0, 238)'},
+    {name: 'material grey', theme: 'material', emphasis: '#546E7A', focus: 'rgb(84, 110, 122)'},
+    {name: 'material purple', theme: 'material', emphasis: '#6A1B9A', focus: 'rgb(106, 27, 154)'},
+    {name: 'material red', theme: 'material', emphasis: '#BF360C', focus: 'rgb(191, 54, 12)'}
+]) {
+    test(`page template ${template.name} shares left-border focus across Markdown and text inputs`, async ({page}) => {
+        const themeRoot = '/exface/jeasyuifacade/Facades/js/themes/';
+        await page.addStyleTag({url: themeRoot + template.theme + '/easyui.css'});
+        await page.addStyleTag({url: themeRoot + 'jeasyui.exface.css'});
+        await page.addStyleTag({url: themeRoot + 'jeasyui-' + (template.theme === 'metro-blue' ? 'metro-blue' : 'material') + '.exface.css'});
+        if (template.theme === 'material-light') {
+            await page.addStyleTag({url: themeRoot + 'jeasyui-material-light.exface.css'});
+        }
+        const source = readFileSync(join(__dirname, '../../Facades/Templates/EuiDefaultTemplate.html'), 'utf8');
+        const emphasisCss = await page.evaluate(({source, emphasis}) => {
+            const parsed = new DOMParser().parseFromString(source, 'text/html');
+            return parsed.querySelector('style').textContent.replaceAll('[#~facade:theme_emphasis_color#]', emphasis);
+        }, {source, emphasis: template.emphasis});
+        await page.addStyleTag({content: emphasisCss});
+        await page.evaluate(() => {
+            document.getElementById('editor').classList.add('exf-input-markdown');
+            const wrapper = document.createElement('div');
+            wrapper.className = 'exf-input exf-inputtext';
+            wrapper.style.height = '70px';
+            const textarea = document.createElement('textarea');
+            textarea.value = 'Plain text';
+            wrapper.append(textarea);
+            document.getElementById('editor').before(wrapper);
+        });
+        const markdown = page.locator('#editor .markian');
+        const text = page.locator('.exf-inputtext textarea');
+        for (const width of [1100, 390]) {
+            await page.setViewportSize({width, height: 850});
+            for (const [control, target, other] of [[markdown, markdown.locator('.ProseMirror'), text], [text, text, markdown.locator('.ProseMirror')]]) {
+                await other.click();
+                const before = await control.evaluate(element => {
+                    const style = getComputedStyle(element);
+                    return {top: style.borderTopColor, right: style.borderRightColor, bottom: style.borderBottomColor, left: style.borderLeftColor, width: element.offsetWidth, height: element.offsetHeight};
+                });
+                await target.click();
+                await expect(control).toHaveCSS('border-radius', '0px');
+                await expect(control).toHaveCSS('border-left-color', template.focus);
+                await expect(control).toHaveCSS('border-top-color', before.top);
+                await expect(control).toHaveCSS('border-right-color', before.right);
+                await expect(control).toHaveCSS('border-bottom-color', before.bottom);
+                expect(await control.evaluate(element => ({width: element.offsetWidth, height: element.offsetHeight}))).toEqual({width: before.width, height: before.height});
+                await other.click();
+                await expect(control).toHaveCSS('border-left-color', before.left);
+            }
+        }
+    });
+}
 
 test('jEasyUI themes scope dropdown and image link search popup styling', async ({page}) => {
     await page.addStyleTag({url: '/exface/jeasyuifacade/Facades/js/themes/jeasyui.exface.css'});
