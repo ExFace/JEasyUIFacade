@@ -24,6 +24,8 @@ Install the declared `axenox/markian` Composer dependency alongside a Core conta
 
 The shared jEasyUI theme scopes Markian toolbar sizing to `.exf-input-markdown .markian`: a 36px toolbar with 26px-high buttons matches table action toolbars. It uses Markian's toolbar CSS variables without changing menus or styling other hosts.
 
+On phone viewports up to 600px, jEasyUI Markdown fullscreen uses the entire visual viewport without Markian's desktop 12px inset. Markian still owns viewport resize/scroll tracking, including keyboard-induced height and position changes, and restores the embedded editor on exit. Desktop fullscreen retains the original inset. Simulated keyboard viewport checks do not establish real-device keyboard conformance.
+
 Dropdowns and the image, link and search popups use the same scoped theme: native 12px typography, compact fields and buttons, menu hover states and keyboard focus. The Material theme supplies its accent colors and underlined inputs through shared theme variables. Popup positioning, keyboard navigation and lifecycle remain owned by Markian; editors outside jEasyUI Markdown inputs retain their original styling.
 
 The additive Core trait supplies safe source encoding, value access, replacement/reset and asset declarations. The Core browser bridge keeps a stable facade root around Markian's inner mount. It queues pre-readiness prefill and disabled updates, suppresses host-load change echoes, reads complete active drafts, and treats identical projected values as no-ops. A different host value explicitly discards pending drafts and resets history: only use it for an intentional record load/reset. Failed visual imports leave the old value intact and report an error.
@@ -108,6 +110,8 @@ Displays retain the original GitHub light stylesheet selected by `LIBS.MARKDOWN.
 Raw HTML previously accepted by the server converter can be omitted from sanitized output. General HTML stencils, front-matter presentation, dynamic `base_url_attribute_alias` updates and `html_template` wrapping have not been accepted for this integration. Consumers relying on these behaviors need compatibility work; there is no legacy display switch. This integration does not change or secure other server-rendered Markdown paths such as DocsFacade.
 
 ## Verification
+
+Phone dialogs use full-width direct grid items, including nested widget groups, without changing compact inline groups or desktop columns. Header/body wrappers share a bounded flex layout so tabs receive only the height remaining below the header. Dialog toolbar wrappers contain floated button groups, allowing the footer measurement to reserve all wrapped rows rather than clipping Save/Close below the viewport. The focused browser regressions cover 320px/390px phones, desktop columns, header/tab bounds, wrapped buttons, and simulated fullscreen keyboard viewport changes. The ticket editor was also checked without saving a record.
 
 The browser fixture exercises the Core bridge against installed packaged assets. Real New/Edit message dialogs additionally verified AJAX startup, visual/source editing, description loading, disabled/enabled transitions, clearing, explicit content CSS and attribute-safe dialog destruction/reopening. Repeated AJAX evaluation of the editor bundle registers Mermaid per factory, not just once per page. These checks do not replace the remaining validation, fullscreen/iframe and mixed-facade acceptance gates or the missing library prerequisites. No records were saved or deleted.
 
