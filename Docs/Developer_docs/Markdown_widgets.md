@@ -10,6 +10,8 @@ jEasyUI uses Markian directly for Markdown inputs and displays. There is no back
 | `LIBS.MARKDOWN.CSS` | `npm-asset/github-markdown-css/github-markdown-light.css` | Original display-widget content stylesheet, passed to the viewer. |
 | `LIBS.MARKIAN.VIEWER.JS` / `.CSS` | `axenox/markian/dist/markian-viewer.min.js` / `markian-viewer.css` | Independent rendering-only assets. |
 | `LIBS.MARKIAN.BRIDGE.JS` | `exface/core/Facades/AbstractAjaxFacade/js/markian/MarkianAdapter.js` | JavaScript adapter for host lifecycle and value bindings. |
+| `LIBS.MARKIAN.CODE.JS` / `.CSS` | `axenox/markian/dist/extensions/code.min.js` / `code.css` | Inputs activate Code editing; displays reuse the exported grammar catalogue/loader and syntax colors without activating editing controls. |
+| `LIBS.MARKIAN.CODE.LANGUAGES` | `axenox/markian/dist/extensions/languages/` | Explicit lazy grammar base, resolved through the facade asset resolver for AJAX-evaluated scripts. |
 | `LIBS.MARKIAN.MERMAID.JS` / `.CSS` | `axenox/markian/dist/extensions/mermaid.min.js` / `mermaid.css` | Optional editing extension. |
 | `LIBS.MARKIAN.VIEWER_MERMAID.JS` / `.CSS` | `axenox/markian/dist/extensions/viewer-mermaid.min.js` / `viewer-mermaid.css` | Optional rendering-only adapter. |
 | `LIBS.MERMAID.JS` | Core Mermaid script URL | Passed as the Mermaid `source` string; no duplicated version setting is needed. |
@@ -29,6 +31,31 @@ The additive Core trait supplies safe source encoding, value access, replacement
 Inputs retain jEasyUI live references, conditional disabled/required settings and framework data-type validation. Validation sets `aria-invalid` and its message on the Markian root. Disabled/read-only inputs remain editors with selection, search, copying and navigation. Runtime enabling does not discard drafts. Layout changes remeasure the visible editor through `ResizeObserver`; dialog destruction and DOM removal dispose owned instances and observers.
 
 `allow_images: false` removes only the `image` toolbar item through Markian's recursive toolbar registry API, preserving default and custom menus, and rejects raster paste/drop callbacks. Existing image source is preserved, not regex-stripped. This pilot does **not** prevent manually entered image Markdown in Source or pasted textual Markdown; strict source-level image permission enforcement remains a W9 gate. It is not a server authorization boundary.
+
+## Code Highlighting
+
+`InputCode`, `InputMarkdown`, `Markdown`, and `DisplayMarkdown` accept the same `code_formatter` widget part. The configuration remains independent of the editor library: `EuiInputCode` translates it to Ace modes and formatters; Core's `MarkianTrait` and `MarkianAdapter` translate it into the Markian Code extension for inputs and sanitized fence renderers for displays. Markdown widgets never load Ace.
+
+```json
+{
+	"code_formatter": {
+		"colorize": true,
+		"language": "javascript",
+		"prettify": false
+	}
+}
+```
+
+| Widget setting | InputCode (Ace) | Markdown widgets (Markian) |
+| --- | --- | --- |
+| `colorize` (default `true`) | Select the configured syntax mode; `false` uses plain text. | Enable grammar highlighting; `false` uses an empty language catalogue and retains plain source. |
+| `language` (optional) | Overrides the widget's `language` for highlighting; otherwise uses the widget language. | Limits the catalogue to this language, including its aliases. Omit it to highlight each fence according to its own language. It never replaces a fence's language. |
+| `prettify` (default `true`) | Use the configured formatter when supported. | Accepted for configuration compatibility but not applied; Markdown source is never automatically reformatted. |
+| `dialect` (optional) | Select the SQL formatting dialect. | Accepted for configuration compatibility but not applied; highlighting uses the SQL grammar. |
+
+Markian's bundled catalogue contains JavaScript/`js`, TypeScript/`ts`, JSON, CSS, HTML/`xml`, PHP, SQL, Python/`py`, and YAML/`yml`. Ace supports a larger catalogue; an unsupported Markian language retains plain source. To support mixed-language Markdown, omit `code_formatter.language`. No Markdown configuration is required for the default catalogue. Syntax colors come from Markian's own stylesheet, not the Ace theme. Display highlighting retains plain source on load/render failure and skips highlighting beyond 100,000 characters or 5,000 lines per fence.
+
+Code JS/CSS are loaded for inputs and displays. Individual grammars load only when needed, using the explicitly resolved language base and its asset-version query. Inputs register Code per Markian factory, preserving it when adding Mermaid and after AJAX re-evaluates the editor bundle. Displays use the same loader without registering an editor factory or loading the editor bundle. Their renderers construct text nodes and syntax spans, validate source offsets and token classes, honor cancellation, and leave final HTML sanitization to the viewer. Mermaid renderers are merged with code renderers rather than replacing them. Source, history, and dirty state are unaffected by highlighting.
 
 ## Mentions
 

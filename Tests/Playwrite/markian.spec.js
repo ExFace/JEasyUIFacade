@@ -7,6 +7,104 @@ test.beforeEach(async ({page}) => {
     await page.evaluate(() => Promise.all([editor.ready, viewer.ready]));
 });
 
+test('shared code formatter settings use Markian highlighting alongside Mermaid', async ({page}) => {
+    await page.addScriptTag({url: '/axenox/markian/dist/extensions/code.min.js'});
+    await page.addScriptTag({url: '/axenox/markian/dist/extensions/mermaid.min.js'});
+    await page.addStyleTag({url: '/axenox/markian/dist/extensions/code.css'});
+    const requests = [];
+    page.on('request', request => requests.push(request.url()));
+    const markdown = '```js\nconst value = "ready";\n```\n\n```json\n{"ready": true}\n```';
+    await page.evaluate(async markdown => {
+        editor.destroy();
+        const config = MarkianAdapter.buildCodeConfig({language: 'JS', colorize: true, languageBase: '/axenox/markian/dist/extensions/languages/?v=fixture'});
+        window.codeConfig = config;
+        window.editor = MarkianAdapter.mount(document.getElementById('editor'), {
+            markdown, extensions: {code: {enabled: true, config}}
+        }, false, '/exface/core/Facades/AbstractAjaxFacade/js/mermaid/mermaid.min.js');
+        await editor.ready;
+    }, markdown);
+    await expect(page.locator('#editor .tok-keyword').first()).toHaveText('const');
+    expect(await page.evaluate(() => codeConfig.languages.map(language => language.id))).toEqual(['javascript']);
+    expect(await page.evaluate(() => editor.instance.options.extensions.mermaid.enabled)).toBe(true);
+    expect(await page.evaluate(() => editor.get())).toBe(markdown);
+    expect(requests.some(url => url.includes('/languages/javascript.min.js?v=fixture'))).toBe(true);
+    expect(requests.some(url => url.includes('/languages/json.min.js'))).toBe(false);
+    expect(requests.some(url => url.includes('ace-builds'))).toBe(false);
+
+    await page.evaluate(async markdown => {
+        editor.destroy();
+        const config = MarkianAdapter.buildCodeConfig({colorize: false, languageBase: '/axenox/markian/dist/extensions/languages/'});
+        window.editor = MarkianAdapter.mount(document.getElementById('editor'), {
+            markdown, extensions: {code: {enabled: true, config}}
+        }, false);
+        await editor.ready;
+    }, markdown);
+    await expect(page.locator('#editor .tok-keyword')).toHaveCount(0);
+    expect(await page.evaluate(() => editor.get())).toBe(markdown);
+    expect(await page.evaluate(() => MarkianAdapter.buildCodeConfig({colorize: true}).languages)).toBeUndefined();
+    expect(await page.evaluate(() => MarkianAdapter.buildCodeConfig({colorize: true, language: 'unsupported'}).languages)).toEqual([]);
+
+    await page.evaluate(() => editor.destroy());
+    await page.addScriptTag({url: '/axenox/markian/dist/markian.min.js'});
+    await page.evaluate(async markdown => {
+        const config = MarkianAdapter.buildCodeConfig({language: 'js', colorize: true, languageBase: '/axenox/markian/dist/extensions/languages/'});
+        window.editor = MarkianAdapter.mount(document.getElementById('editor'), {
+            markdown, extensions: {code: {enabled: true, config}}
+        }, false);
+        await editor.ready;
+    }, markdown);
+    await expect(page.locator('#editor .tok-keyword').first()).toHaveText('const');
+    await expect(page.locator('#editor')).not.toHaveAttribute('data-markian-error');
+});
+
+test('Markdown display highlights mixed fences without an editor and retains viewer safety', async ({page}) => {
+    await page.goto('/axenox/markian/Examples/index.html');
+    const requests = [];
+    page.on('request', request => requests.push(request.url()));
+    await page.addScriptTag({url: '/axenox/markian/dist/markian-viewer.min.js'});
+    await page.addScriptTag({url: '/axenox/markian/dist/extensions/code.min.js'});
+    await page.addScriptTag({url: '/axenox/markian/dist/extensions/viewer-mermaid.min.js'});
+    await page.addScriptTag({url: '/exface/core/Facades/AbstractAjaxFacade/js/markian/MarkianAdapter.js'});
+    await page.addStyleTag({url: '/axenox/markian/dist/markian-viewer.css'});
+    await page.addStyleTag({url: '/axenox/markian/dist/extensions/code.css'});
+    const markdown = '```js\nconst html = "<img src=bad-image>";\n```\n\n```json\n{"ready": true}\n```\n\n```unknown\nliteral source\n```\n\n```mermaid\nflowchart LR\n A[Start] --> B[Finish]\n```';
+    await page.evaluate(async markdown => {
+        const host = document.createElement('div');
+        host.id = 'code-display';
+        document.body.replaceChildren(host);
+        const renderers = MarkianAdapter.buildCodeRenderers(document, {
+            colorize: true, languageBase: '/axenox/markian/dist/extensions/languages/?v=display'
+        });
+        window.display = MarkianAdapter.mount(host, {markdown, renderers}, true,
+            '/exface/core/Facades/AbstractAjaxFacade/js/mermaid/mermaid.min.js');
+        await display.ready;
+    }, markdown);
+    const viewer = page.locator('#code-display');
+    await expect(viewer.locator('.tok-keyword').first()).toHaveText('const');
+    await expect(viewer.locator('.tok-attr')).toHaveText('"ready"');
+    await expect(viewer.locator('.language-js')).toHaveText('const html = "<img src=bad-image>";');
+    await expect(viewer.locator('.language-unknown')).toHaveText('literal source');
+    await expect(viewer.locator('img, .markian-toolbar, .cm-editor')).toHaveCount(0);
+    expect(await page.evaluate(() => typeof Markian)).toBe('undefined');
+    expect(await page.evaluate(() => display.get())).toBe(markdown);
+    await expect(viewer.locator('svg')).toHaveCount(1);
+    expect(requests.some(url => url.includes('javascript.min.js?v=display'))).toBe(true);
+    expect(requests.some(url => url.includes('json.min.js?v=display'))).toBe(true);
+    expect(requests.some(url => url.includes('bad-image') || url.includes('/dist/markian.min.js') || url.includes('ace-builds'))).toBe(false);
+    await page.evaluate(() => display.instance.setTheme('dark'));
+    await expect(viewer.locator('.tok-keyword').first()).toHaveCSS('color', 'rgb(221, 160, 221)');
+
+    await page.evaluate(async markdown => {
+        display.destroy();
+        window.display = MarkianAdapter.mount(document.getElementById('code-display'), {
+            markdown, renderers: MarkianAdapter.buildCodeRenderers(document, {colorize: false})
+        }, true);
+        await display.ready;
+    }, markdown);
+    await expect(viewer.locator('[class*=tok-]')).toHaveCount(0);
+    expect(await page.evaluate(() => display.get())).toBe(markdown);
+});
+
 test('mention bridge sends bounded filtered requests and preserves plain insertion and activation', async ({page}) => {
     await page.addScriptTag({url: '/bower-asset/jquery/dist/jquery.min.js'});
     const requests = [];
