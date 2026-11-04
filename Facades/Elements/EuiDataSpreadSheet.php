@@ -4,6 +4,9 @@ namespace exface\JEasyUIFacade\Facades\Elements;
 use exface\JEasyUIFacade\Facades\Elements\Traits\EuiDataElementTrait;
 use exface\Core\Facades\AbstractAjaxFacade\Elements\JExcelTrait;
 
+/**
+ * Renders editable spreadsheets with widget-local loading feedback.
+ */
 class EuiDataSpreadSheet extends EuiData
 {    
     use EuiDataElementTrait {
@@ -83,6 +86,30 @@ JS;
     public function buildCssElementClass()
     {
         return parent::buildCssElementClass() . ' exf-spreadsheet';
+    }
+
+    /**
+     * Show a loading mask over this spreadsheet without opening global progress UI.
+     *
+     * {@inheritDoc}
+     * @see \exface\JEasyUIFacade\Facades\Elements\EuiAbstractElement::buildJsBusyIconShow()
+     */
+    public function buildJsBusyIconShow() : string
+    {
+        return $this->buildJsBusyIconHide() . <<<JS
+            $('#{$this->getId()}_wrapper').prepend('<div class="exf-spreadsheet-loading"><div class="datagrid-mask"></div><div class="datagrid-mask-msg"></div></div>');
+JS;
+    }
+
+    /**
+     * Remove only this spreadsheet's loading mask.
+     *
+     * {@inheritDoc}
+     * @see \exface\JEasyUIFacade\Facades\Elements\EuiAbstractElement::buildJsBusyIconHide()
+     */
+    public function buildJsBusyIconHide() : string
+    {
+        return "$('#{$this->getId()}_wrapper > .exf-spreadsheet-loading').remove();";
     }
     
     /**

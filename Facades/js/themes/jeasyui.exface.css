@@ -362,6 +362,10 @@ pre.sf-dump .sf-dump-private, pre.sf-dump .sf-dump-public, pre.sf-dump .sf-dump-
 .jexcel td {overflow: hidden; text-overflow: ellipsis;}
 .jexcel>tbody>tr {height: 25px;}
 .exf-spreadsheet {overflow: visible;}
+.exf-spreadsheet > .panel > .panel-body {position: relative;}
+.exf-spreadsheet-loading {position: absolute; inset: 0; z-index: 100;}
+.exf-spreadsheet-loading > .datagrid-mask {display: block; opacity: .5;}
+.exf-spreadsheet-loading > .datagrid-mask-msg {display: block; top: 50%; left: 50%; height: 16px; margin: 0; transform: translate(-50%, -50%); background-position: 9px center;}
 .panel:has(.exf-spreadsheet) {overflow: visible;}
 .exf-grid-item:has(.exf-spreadsheet) {overflow: visible;}
 .exf-spreadsheet-change {position: relative}
