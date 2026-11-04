@@ -1,6 +1,7 @@
 <?php
 namespace exface\JEasyUIFacade;
 
+use exface\Core\CommonLogic\AppInstallers\AppDocsInstaller;
 use exface\Core\Interfaces\InstallerInterface;
 use exface\Core\Facades\AbstractHttpFacade\HttpFacadeInstaller;
 use exface\Core\CommonLogic\Model\App;
@@ -28,6 +29,10 @@ class JEasyUIFacadeApp extends App
         
         // ServiceWorker installer
         $installer->addInstaller(ServiceWorkerInstaller::fromConfig($this->getSelector(), $this->getConfig()));
+
+        // Docs installer
+        $docsInstaller = new AppDocsInstaller($this->getSelector());
+        $installer->addInstaller($docsInstaller);
         
         return $installer;
     }
