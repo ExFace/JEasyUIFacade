@@ -63,7 +63,7 @@ ul.nav_menu li.active a.current {color: white; background: #6caef5}
 .dialog-button .exf-toolbar {padding: 0; display: flow-root;}
 
 /* Inputs */
-.exf-inputtext, .exf-input-markdown {--exf-input-focus-color: #0e2d5f;}
+.exf-inputtext, .exf-input-markdown, .exf-commentsfeed {--exf-input-focus-color: #0e2d5f;}
 .exf-inputtext textarea {border-radius: 0;}
 .exf-input-markdown .markian:focus-within {border-color: var(--markian-line);}
 .exf-input-markdown .markian:focus-within,
@@ -126,6 +126,20 @@ div.messager-body{overflow-y: auto;}
 .messager-icon + div {margin-left: 42px;}
 .window .window-header .panel-with-icon {padding-left: 21px !important;}
 .dialog-button:not(.messager-button) {min-height: 26px; text-align: left !important}
+
+/* Comments */
+.exf-commentsfeed .jquery-comments ul.main li.comment .actions > button.edit {font-weight: normal;}
+.exf-commentsfeed .jquery-comments .textarea:focus {border-color: var(--exf-input-focus-color);}
+.exf-commentsfeed .jquery-comments .textarea-wrapper:has(> .textarea:focus)::before {border-top-color: var(--exf-input-focus-color); border-right-color: var(--exf-input-focus-color);}
+.exf-commentsfeed .jquery-comments > .commenting-field.main {padding: 12px;}
+.exf-commentsfeed .jquery-comments > .commenting-field.main > .profile-picture {opacity: .5;}
+.exf-commentsfeed .jquery-comments > .commenting-field.main.exf-commentsfeed-expanded > .profile-picture {display: none;}
+.exf-commentsfeed .jquery-comments .control-row > a.l-btn {float: right; margin-top: .4em;}
+.exf-commentsfeed .jquery-comments .control-row > a.l-btn:not(:first-child) {margin-right: .5em;}
+.exf-commentsfeed-no-avatars .jquery-comments ul.main .profile-picture {display: none;}
+.exf-commentsfeed-no-avatars .jquery-comments ul.main .textarea-wrapper {padding-left: 0;}
+.exf-commentsfeed-no-avatars .jquery-comments ul.main .textarea-wrapper::before,
+.exf-commentsfeed-no-avatars .jquery-comments ul.main .textarea-wrapper::after {display: none;}
 
 /* Data configurator dialog */
 .exf-data-configurator-dialog .dialog-button:not(.messager-button) {text-align: right !important;}

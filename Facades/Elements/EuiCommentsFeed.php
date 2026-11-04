@@ -1,11 +1,11 @@
 <?php
 namespace exface\JEasyUIFacade\Facades\Elements;
 
-use exface\Core\CommonLogic\Constants\Icons;
-use exface\Core\CommonLogic\UxonObject;
+use exface\Core\CommonLogic\WidgetDimension;
 use exface\Core\Facades\AbstractAjaxFacade\Elements\JsUploaderTrait;
 use exface\Core\Interfaces\Actions\ActionInterface;
 use exface\Core\Widgets\DataButton;
+use exface\Core\Widgets\Filter;
 use exface\Core\Widgets\Parts\Uploader;
 use exface\Core\DataTypes\DateTimeDataType;
 use exface\Core\Factories\DataTypeFactory;
@@ -14,6 +14,11 @@ use exface\JEasyUIFacade\Facades\Elements\Traits\EuiDataElementTrait;
 
 /**
  * Uses jQuery Comments by Viima to implement the CommentsFeed widget
+ * 
+ * The feed occupies one layout column unless a width is specified. Comments are saved
+ * immediately through the widget's actions. A relation filter targeting the parent record
+ * supplies the parent key for new comments; commenting stays disabled while that key is empty.
+ * Attachments, replies, mentions and voting are not supported.
  * 
  * @link https://viima.github.io/jquery-comments/
  * 
@@ -24,8 +29,28 @@ use exface\JEasyUIFacade\Facades\Elements\Traits\EuiDataElementTrait;
 class EuiCommentsFeed extends EuiData
 {    
     use JsUploaderTrait;
-    use EuiDataElementTrait;
+    use EuiDataElementTrait {
+        init as protected initDataElement;
+    }
+
+    /**
+     * Register internal actions before the configurator adds buttons to their toolbars.
+     *
+     * {@inheritDoc}
+     * @see EuiData::init()
+     */
+    protected function init()
+    {
+        $this->getWidget()->getButtonCreate();
+        $this->getWidget()->getButtonEdit();
+        $this->getWidget()->getButtonDelete();
+        $this->initDataElement();
+    }
     
+    /**
+     * {@inheritDoc}
+     * @see EuiData::buildHtmlHeadTags()
+     */
     public function buildHtmlHeadTags()
     {
         $headers = array_merge(parent::buildHtmlHeadTags(), $this->buildHtmlHeadTagsForComments());
@@ -33,41 +58,70 @@ class EuiCommentsFeed extends EuiData
         return $headers;
     }
 
+    /**
+     * Load the local plugin assets; disabled mention support needs no textcomplete dependency.
+     *
+     * @return string[]
+     */
     protected function buildHtmlHeadTagsForComments() : array
     {
         return [
-            '<script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/jquery.textcomplete/1.8.0/jquery.textcomplete.js"></script>',
             '<script type="text/javascript" src="vendor/bower-asset/jquery-comments/js/jquery-comments.js"></script>',
             '<link rel="stylesheet" type="text/css" href="vendor/bower-asset/jquery-comments/css/jquery-comments.css">'
         ];
     }
 
+    /**
+     * {@inheritDoc}
+     * @see EuiData::buildHtml()
+     */
     public function buildHtml()
     {
-        $chart_panel_options = "title: '{$this->getCaption()}'";
-        $gridItemClass = $this->getMasonryItemClass() . ' exf-commentsfeed exf-data-widget';
+        $this->addElementCssClass('exf-commentsfeed' . ($this->getWidget()->hasCommentAvatarUrlColumn() ? '' : ' exf-commentsfeed-no-avatars'));
+        $fitJs = $this->getHeight() === 'auto' ? 'false' : 'true';
+        $classes = $this->buildCssElementClass() . ' ' . $this->getMasonryItemClass();
         if ($this->getWidget()->getHideHeader()) {
-            $gridItemClass .= ' exf-data-hide-header';
+            $classes .= ' exf-data-hide-header';
         }
-        $panel = <<<HTML
+        $title = $this->escapeString($this->getCaption(), false, true);
+        return <<<HTML
 
-        <div class="exf-grid-item {$gridItemClass}" style="width:{$this->getWidth()};min-width:{$this->getMinWidth()};padding:{$this->getPadding()};box-sizing:border-box;">
-    
-    	   {$this->buildHtmlComments()}
-        </div>
-
+<div class="exf-grid-item exf-data-widget {$classes}" style="width:{$this->getWidth()};min-width:{$this->getMinWidth()};height:{$this->getHeight()};padding:{$this->getPadding()};box-sizing:border-box;">
+    <div class="easyui-panel" id="{$this->getId()}_wrapper" style="height:auto" data-options="fit:{$fitJs}, width:'100%', title:'{$title}', onResize:function(){ {$this->getOnResizeScript()} }">
+        {$this->buildHtmlTableHeader()}
+        {$this->buildHtmlComments()}
+    </div>
+</div>
 HTML;
-    
-        return $panel;
     }
 
+    /**
+     * Use one layout column by default, while respecting an explicit width.
+     *
+     * {@inheritDoc}
+     * @see EuiAbstractElement::getWidth()
+     */
+    public function getWidth(?WidgetDimension $width = null)
+    {
+        $width = $width ?? $this->getWidget()->getWidth();
+        return parent::getWidth($width->isUndefined() ? new WidgetDimension($this->getWorkbench(), '1') : $width);
+    }
+
+    /**
+     * Build the scrollable host for the comments plugin.
+     */
     protected function buildHtmlComments() : string
     {
-        return "<div id=\"{$this->getId()}\"></div>";
+        return "<div id=\"{$this->getId()}\" style=\"overflow:auto\"></div>";
     }
 
-    function buildJs()
+    /**
+     * {@inheritDoc}
+     * @see EuiData::buildJs()
+     */
+    public function buildJs()
     {
+        $this->registerCommentActionCallbacks();
         return <<<JS
 
     {$this->buildJsForPanel()}
@@ -76,51 +130,36 @@ HTML;
         {$this->buildJsCommentsInit()}
     }
     
-    {$this->buildJsDataLoadFunction()}
-
     {$this->buildJsFunctionPrefix()}_init();
-
-    {$this->buildJsButtons()}
 
 JS;
     }
 
+    /**
+     * Initialize field mappings and route comment operations through the hidden DataButtons.
+     */
     protected function buildJsCommentsInit() : string
     {
         $btnCreateEl = $this->getFacade()->getElement($this->getWidget()->getButtonCreate());
-        $btnCreateEl->addOnErrorScript("$('#{$this->getId()}')[0].errorCallback()");
-
-        
         $btnEditEl = $this->getFacade()->getElement($this->getWidget()->getButtonEdit());
-        $btnEditEl->addOnErrorScript("$('#{$this->getId()}')[0].errorCallback()");
-
         $btnDeleteEl = $this->getFacade()->getElement($this->getWidget()->getButtonDelete());
-        $btnDeleteEl->addOnErrorScript("$('#{$this->getId()}')[0].errorCallback()");
+        $avatarMappingJs = $this->getWidget()->hasCommentAvatarUrlColumn()
+            ? 'profilePictureURL: ' . $this->escapeString($this->getWidget()->getCommentAvatarUrlColumn()->getDataColumnName()) . ','
+            : '';
         
         // Include system columns for update/delete
         $systemColsJs = '';
         foreach ($this->getWidget()->getColumns() as $col) {
             if ($col->isBoundToAttribute() && $col->getAttribute()->getRelationPath()->isEmpty() && $col->getAttribute()->isSystem()) {
-                $systemColsJs .= "{$col->getDataColumnName()}: data.{$col->getDataColumnName()},";
+                $name = json_encode($col->getDataColumnName());
+                $systemColsJs .= "oDataRow[{$name}] = oOriginal[{$name}];\n";
             }
         } 
         $dateFormatJs = $this->escapeString($this->getWorkbench()->getCoreApp()->getTranslator()->translate('LOCALIZATION.DATE.DATETIME_FORMAT'), true, false);
         return <<<JS
 
             $(function() {
-				var saveComment = function(data) {
-
-					// Convert pings to human readable format -->
-					// $(Object.keys(data.pings)).each(function(index, userId) {
-					//     var fullname = data.pings[userId];
-					//     var pingText = '@' + fullname;
-					//     data.content = data.content.replace(new RegExp('@' + userId, 'g'), pingText);
-					// });
-
-					return data;
-				}
 				$('#{$this->getId()}').comments({
-					profilePictureURL: 'https://viima-app.s3.amazonaws.com/media/public/defaults/user-icon.png',
 					currentUserId: '{$this->getWorkbench()->getSecurity()->getAuthenticatedUser()->getUid()}',
 					roundProfilePictures: true,
 					textareaRows: 1,
@@ -138,12 +177,12 @@ JS;
 									content: '{$this->getWidget()->getCommentContentColumn()->getDataColumnName()}',
 									creator: '{$this->getWidget()->getCommentAuthorIdColumn()->getDataColumnName()}',
 									fullname: '{$this->getWidget()->getCommentAuthorColumn()->getDataColumnName()}',
-								    createdByCurrentUser: '{$this->getWidget()->getIsCurrentUserAuthor()->getDataColumnName()}',
+								    createdByCurrentUser: '{$this->getWidget()->getCommentAuthorIsCurrentUserColumn()->getDataColumnName()}',
                                     dbModified: '{$this->getWidget()->getCommentEditedDateColumn()->getDataColumnName()}',
 									//parent: 'parent',
 									//attachments: 'attachments',
 									//pings: 'pings',
-									//profilePictureURL: 'profile_picture_url',
+                                    {$avatarMappingJs}
 									//isNew: 'is_new',
 									//createdByAdmin: 'created_by_admin',
 									//upvoteCount: 'upvote_count',
@@ -152,16 +191,19 @@ JS;
                     timeFormatter: function(time) {
                         return exfTools.date.format(time, {$dateFormatJs})
                     },
-					searchUsers: function(term, success, error) {
-					    setTimeout(function() {
-					        success(usersArray.filter(function(user) {
-					            var containsSearchTerm = user.fullname.toLowerCase().indexOf(term.toLowerCase()) != -1;
-					            var isNotSelf = user.id != 1;
-					            return containsSearchTerm && isNotSelf;
-					        }),
-                            error());
-					    }, 500);
-					},
+                    refresh: function() {
+                        $('#{$this->getId()} .actions > button.edit').each(function() {
+                            var jqButton = $(this);
+                            if (!jqButton.children('.l-btn').length) {
+                                var sLabel = jqButton.html();
+                                // Keep the plugin's native button and click handling around the template control.
+                                $('<span>').appendTo(jqButton.empty()).linkbutton({
+                                    text: sLabel,
+                                    plain: true
+                                });
+                            }
+                        });
+                    },
 					getComments: function(success, error) {
                         var oParams={};
 						{$this->buildJsDataLoadFunctionBody('oParams')};
@@ -171,38 +213,113 @@ JS;
                             {$this->getWidget()->getCommentContentColumn()->getDataColumnName()} : data.{$this->getWidget()->getCommentContentColumn()->getDataColumnName()},
                         };
                         $('#{$this->getId()}').data('_exfInput', oDataRow);
-                        $('#{$this->getId()}')[0].errorCallback = error;
+                        $('#{$this->getId()}').data('_exfError', error);
+                        $('#{$this->getId()}').data('_exfBusyButton', $('#{$this->getId()} .commenting-field.main .send'));
                         {$btnCreateEl->buildJsClickFunctionName()}();
 					},
 					putComment: function(data, success, error) {
+                        var oOriginal = ($('#{$this->getId()}').data('_exfData').rows || []).find(function(oRow) {
+                            return oRow['{$this->getWidget()->getCommentIdColumn()->getDataColumnName()}'] === data['{$this->getWidget()->getCommentIdColumn()->getDataColumnName()}'];
+                        });
 						var oDataRow = {
-                            {$systemColsJs}
+                            '{$this->getWidget()->getCommentIdColumn()->getDataColumnName()}': data['{$this->getWidget()->getCommentIdColumn()->getDataColumnName()}'],
                             {$this->getWidget()->getCommentContentColumn()->getDataColumnName()} : data.{$this->getWidget()->getCommentContentColumn()->getDataColumnName()},
                         };
+                        {$systemColsJs}
                         $('#{$this->getId()}').data('_exfInput', oDataRow);
-                        $('#{$this->getId()}')[0].errorCallback = error;
+                        $('#{$this->getId()}').data('_exfError', error);
+                        $('#{$this->getId()}').data('_exfBusyButton', $('#{$this->getId()} .comment').filter(function() {
+                            return $(this).attr('data-id') === String(data['{$this->getWidget()->getCommentIdColumn()->getDataColumnName()}']);
+                        }).find('.update'));
                         {$btnEditEl->buildJsClickFunctionName()}();
 					},
 					deleteComment: function(data, success, error) {
-                        $('#{$this->getId()}').data('_exfInput', data);
-                        $('#{$this->getId()}')[0].errorCallback = error;
+                        var oOriginal = ($('#{$this->getId()}').data('_exfData').rows || []).find(function(oRow) {
+                            return oRow['{$this->getWidget()->getCommentIdColumn()->getDataColumnName()}'] === data['{$this->getWidget()->getCommentIdColumn()->getDataColumnName()}'];
+                        });
+                        var oDataRow = {
+                            '{$this->getWidget()->getCommentIdColumn()->getDataColumnName()}': data['{$this->getWidget()->getCommentIdColumn()->getDataColumnName()}']
+                        };
+                        {$systemColsJs}
+                        $('#{$this->getId()}').data('_exfInput', oDataRow);
+                        $('#{$this->getId()}').data('_exfError', error);
+                        $('#{$this->getId()}').data('_exfBusyButton', $('#{$this->getId()} .comment').filter(function() {
+                            return $(this).attr('data-id') === String(data['{$this->getWidget()->getCommentIdColumn()->getDataColumnName()}']);
+                        }).find('.delete'));
+                        // Reset while confirming; the action restores the spinner only after confirmation.
+                        error();
                         {$btnDeleteEl->buildJsClickFunctionName()}();
 					},
-					upvoteComment: function(data, success, error) {
-						setTimeout(function() {
-							success(data);
-						}, 500);
-					},
-					validateAttachments: function(attachments, callback) {
-						setTimeout(function() {
-							callback(attachments);
-						}, 500);
-					},
 				});
+                // Track the plugin's composer layout and use template buttons for its action controls.
+                $('#{$this->getId()}')
+                    .on('focusin.exfCommentsFeed focusout.exfCommentsFeed', '.actions > button.edit', function(oEvent) {
+                        $(this).children('.l-btn').toggleClass('l-btn-focus', oEvent.type === 'focusin');
+                    })
+                    .on('click.exfCommentsFeed', '.commenting-field.main .textarea, .commenting-field.main .close', function() {
+                        var jqField = $(this).closest('.commenting-field');
+                        var bExpanded = jqField.find('.control-row').is(':visible');
+                        if (jqField.hasClass('exf-commentsfeed-expanded') === bExpanded) {
+                            return;
+                        }
+                        var domTextarea = jqField.find('.textarea')[0];
+                        var oSelection = window.getSelection();
+                        var oRange = bExpanded && document.activeElement === domTextarea
+                            && oSelection && oSelection.rangeCount && domTextarea.contains(oSelection.anchorNode)
+                            ? oSelection.getRangeAt(0).cloneRange() : null;
+                        jqField.toggleClass('exf-commentsfeed-expanded', bExpanded);
+                        // Keep the caret inside the input when hiding the avatar changes its bounds.
+                        if (oRange !== null) {
+                            oSelection.removeAllRanges();
+                            oSelection.addRange(oRange);
+                        } else if (bExpanded && document.activeElement === domTextarea && oSelection) {
+                            oSelection.collapse(domTextarea, domTextarea.childNodes.length);
+                        }
+                    })
+                    .on('focusin.exfCommentsFeed change.exfCommentsFeed', '.commenting-field', function() {
+                        $(this).find('.control-row > .save, .control-row > .delete').each(function() {
+                            var jqButton = $(this);
+                            if (!jqButton.data('linkbutton')) {
+                                var sLabel = jqButton.html();
+                                // URL-less links avoid the plugin's link colors and span-specific button styles.
+                                var jqLink = $('<a>', {
+                                    role: 'button',
+                                    'class': jqButton.attr('class')
+                                });
+                                jqButton.replaceWith(jqLink);
+                                jqButton = jqLink.removeClass('highlight-background').linkbutton({
+                                    text: sLabel,
+                                    plain: jqLink.hasClass('delete')
+                                });
+                                // The plugin restores this markup after showing its inline spinner.
+                                jqButton.data('original-content', jqButton.html());
+                            }
+                            var bEnabled = jqButton.hasClass('enabled');
+                            jqButton.linkbutton(bEnabled ? 'enable' : 'disable').attr({
+                                tabindex: 0,
+                                'aria-disabled': String(!bEnabled)
+                            });
+                        });
+                    })
+                    .on('keydown.exfCommentsFeed', '.commenting-field .control-row > .save, .commenting-field .control-row > .delete', function(oEvent) {
+                        if (oEvent.key !== 'Enter' && oEvent.key !== ' ') {
+                            return;
+                        }
+                        oEvent.preventDefault();
+                        oEvent.stopPropagation();
+                        if ($(this).hasClass('enabled')) {
+                            $(this).trigger('click');
+                        }
+                    });
 			});
 JS;
     }
     
+    /**
+     * The plugin's getComments callback handles rendering instead of the generic loader.
+     *
+     * @see EuiDataElementTrait::buildJsDataLoaderOnLoaded()
+     */
     protected function buildJsDataLoaderOnLoaded(string $dataJs) : string
     {
         return '';
@@ -215,13 +332,19 @@ JS;
     public function buildJsDataLoadFunctionBody(string $oParamsJs = 'oParams', string $successJs = 'success', string $errorJs = 'error') : string
     {
         $widget = $this->getWidget();
+        $linkedFiltersValidJs = [];
+        foreach ($this->getParentRelationFilters() as $filter) {
+            $valueJs = $this->getFacade()->getElement($filter)->buildJsValueGetter();
+            $linkedFiltersValidJs[] = "(function(mValue){ return mValue !== undefined && mValue !== null && mValue !== ''; })({$valueJs})";
+        }
+        $linkedFiltersValidJs = implode(' && ', $linkedFiltersValidJs) ?: 'true';
+        $headersJs = empty($this->getAjaxHeaders()) ? '' : 'headers: ' . json_encode($this->getAjaxHeaders()) . ',';
+        $saveParentHint = $this->getFacade()->getApp()->getTranslator()->translate('WIDGET.COMMENTSFEED.SAVE_PARENT');
         
         return <<<JS
 
-    // Don't load if already loading    
-        if ($('#{$this->getId()}').data('_loading')) return;	
-        
-        $('#{$this->getId()}').data('_loading', 1);
+        var jqComments = $('#{$this->getId()}');
+        if (jqComments.data('_loading')) return;
 
         var param = {
             action: '{$widget->getLazyLoadingActionAlias()}',
@@ -233,69 +356,77 @@ JS;
         var checkOnBeforeLoad = function(param){
             {$this->buildJsOnBeforeLoadScript('param')}
             {$this->buildJsOnBeforeLoadAddConfiguratorData('param')}
-        }(param);
+            return {$linkedFiltersValidJs};
+        }.call(jqComments[0], param);
 
         if (checkOnBeforeLoad === false) {
+            jqComments.data('_exfData', {oId: '{$widget->getMetaObject()->getId()}', rows: []});
+            {$successJs}([]);
+            jqComments.find('.commenting-field.main').hide();
+            if (!({$linkedFiltersValidJs})) {
+                jqComments.find('.no-comments').text({$this->escapeString($saveParentHint)});
+            } else {
+                {$this->buildJsAutoloadDisabledMessageShow($widget->getEmptyTextIfInvalidFilters())}
+            }
+            jqComments.closest('.grid').masonry('layout');
             return;
         }
 
         param = $.extend(param, ({$oParamsJs} || {}));
-        // param.data.filters = {
-        //     "operator": "AND",
-        //     "ignore_empty_values": true,
-        //     "conditions": [
-        //         {
-        //             "expression": "OffenePunkte__Nummer",
-        //             "value": "OP-1530",
-        //             "comparator": "==",
-        //             "object_alias": "my.App.OffenePunkteKommentare",
-        //             "apply_to_aggregates": "true"
-        //         }
-        //     ],
-        //     "nested_groups": []
-        // };
-        // console.log('AJAX request', param);
+        jqComments.data('_loading', true);
         
-        $.ajax({
-        url: "{$this->getAjaxUrl()}",
-        data: param,
-        method: 'POST',
-        success: function(json){
-                var aRowsMod = [];
-                try {
-
-                    {$this->buildJsLoadFilterHandleWidgetLinks('json.rows')}
-                        
-                    json.rows.forEach(function(oRow, i){
-                        var oRowMod = oRow;
-                        oRowMod._modified = oRow['{$this->getWidget()->getCommentEditedDateColumn()->getDataColumnName()}'];
-                        aRowsMod.push(oRowMod);
-                    });
-                    {$successJs} (aRowsMod);
-                    
-                    $('#{$this->getId()}').data('_loading', 0);
-
-                } catch (err) {
-                    console.error(err);
+        return $.ajax({
+            url: "{$this->getAjaxUrl()}",
+            data: param,
+            method: 'POST',
+            dataType: 'json',
+            {$headersJs}
+            success: function(json){
+                if (!Array.isArray(json.rows)) {
+                    {$this->buildJsShowError('json.error || JSON.stringify(json)', '"Server error"')}
+                    if (typeof {$errorJs} === 'function') { {$errorJs}(); }
+                    return;
                 }
+                json.rows.forEach(function(oRow){
+                    oRow._modified = oRow['{$widget->getCommentEditedDateColumn()->getDataColumnName()}'] === oRow['{$widget->getCommentCreatedDateColumn()->getDataColumnName()}']
+                        ? null : oRow['{$widget->getCommentEditedDateColumn()->getDataColumnName()}'];
+                });
+                jqComments.data('_exfData', json);
+                {$successJs}(json.rows);
+                {$this->getOnLoadSuccess()}
+                jqComments.closest('.grid').masonry('layout');
             },
             error: function(jqXHR, textStatus, errorThrown){
-                $('#{$this->getId()}').data('_loading', 0);
                 {$this->buildJsShowErrorAjax('jqXHR')}
-                //TODO call error callback
-                {$errorJs} (jqXHR, textStatus, errorThrown);
+                if (typeof {$errorJs} === 'function') { {$errorJs}(jqXHR, textStatus, errorThrown); }
+            },
+            complete: function(){
+                jqComments.data('_loading', false);
+                if (jqComments.data('_exfRefreshPending')) {
+                    jqComments.removeData('_exfRefreshPending');
+                    {$this->buildJsRefresh()}
+                }
             }
         });
 	
 JS;
     }
 
-    protected function buildJsCommentsData() : string
+    /**
+     * Register callbacks before generating the hidden action buttons.
+     *
+     * @return void
+     */
+    protected function registerCommentActionCallbacks() : void
     {
-        // TODO
-        return '';
+        foreach ([$this->getWidget()->getButtonCreate(), $this->getWidget()->getButtonEdit(), $this->getWidget()->getButtonDelete()] as $button) {
+            $button->setRefreshInput(false);
+            $element = $this->getFacade()->getElement($button);
+            $element->addOnErrorScript("var fnError = $('#{$this->getId()}').data('_exfError'); if (fnError) { fnError(); }");
+            $element->addOnSuccessScript($this->buildJsRefresh());
+        }
     }
-    
+
     /**
      *
      * @see SlickGalleryTrait::buildJsUploadSend()
@@ -355,23 +486,44 @@ JS;
     }
 		   
     /**
+     * Show the plugin's inline spinner on the active comment action.
      *
      * {@inheritDoc}
      * @see \exface\JEasyUIFacade\Facades\Elements\EuiAbstractElement::buildJsBusyIconShow()
      */
     public function buildJsBusyIconShow()
     {
-        return $this->buildJsBusyIconHide() . "$('#{$this->getId()}').prepend('<div class=\"imagecarousel-loading\"><div class=\"datagrid-mask\" style=\"display:block\"></div><div class=\"datagrid-mask-msg\" style=\"display: block; left: 50%; height: 16px; margin-left: -107.555px; line-height: 16px;\"></div></div>');";
+        return <<<JS
+            (function(jqComments) {
+                var jqButton = jqComments.data('_exfBusyButton');
+                if (jqButton) {
+                    jqComments.data('comments').setButtonState(jqButton, false, true);
+                    var jqSpinner = jqButton.children().detach();
+                    jqButton.html(jqButton.data('original-content')).find('.l-btn-text').empty().append(jqSpinner);
+                    jqButton.linkbutton('disable').attr('aria-disabled', 'true');
+                }
+            })($('#{$this->getId()}'));
+JS;
     }
     
     /**
+     * Restore the comment action control without changing global progress UI.
      *
      * {@inheritDoc}
      * @see \exface\JEasyUIFacade\Facades\Elements\EuiAbstractElement::buildJsBusyIconHide()
      */
     public function buildJsBusyIconHide()
     {
-        return "$('#{$this->getId()} .imagecarousel-loading').remove();";
+        return <<<JS
+            (function(jqComments) {
+                var jqButton = jqComments.data('_exfBusyButton');
+                if (jqButton) {
+                    jqComments.data('comments').setButtonState(jqButton, true, false);
+                    jqButton.linkbutton('enable').attr('aria-disabled', 'false');
+                    jqComments.removeData('_exfBusyButton');
+                }
+            })($('#{$this->getId()}'));
+JS;
     }
     
     /**
@@ -392,6 +544,60 @@ JS;
     {
         return $this->buildJsResizeInnerWidget();
     }
+
+    /**
+     * Let an auto-height feed grow with its comments instead of collapsing to a fitted panel.
+     *
+     * @see EuiDataElementTrait::buildJsResizeInnerWidget()
+     */
+    protected function buildJsResizeInnerWidget(string $elementId = null) : string
+    {
+        if ($this->getHeight() === 'auto') {
+            return '';
+        }
+
+        return <<<JS
+            $('#{$this->getId()}').height($('#{$this->getId()}_wrapper').innerHeight() - ($('#{$this->getIdOfToolbar()}').outerHeight() || 0));
+JS;
+    }
+
+    /**
+     * Reload authoritative rows after an action supplies potentially partial result data.
+     *
+     * {@inheritDoc}
+     * @see EuiAbstractElement::buildJsDataSetter()
+     */
+    public function buildJsDataSetter(string $jsData) : string
+    {
+        return $this->buildJsRefresh();
+    }
+
+    /**
+     * Find scalar relation filters that attach this feed's comments to its parent record.
+     *
+     * @return Filter[]
+     */
+    protected function getParentRelationFilters() : array
+    {
+        $parent = $this->getWidget()->getParent();
+        $filters = [];
+        if ($parent === null) {
+            return $filters;
+        }
+        foreach ($this->getWidget()->getFilters() as $filter) {
+            $attribute = $filter->getAttribute();
+            if ($attribute !== null
+                && $attribute->isRelation()
+                && $attribute->getRelationPath()->isEmpty()
+                && $attribute->getRelation()->getRightObject()->is($parent->getMetaObject())
+                && in_array($filter->getComparator(), [null, '', '=', '=='], true)
+                && ! $filter->hasCustomConditionGroup()
+            ) {
+                $filters[] = $filter;
+            }
+        }
+        return $filters;
+    }
     
     /**
      * 
@@ -400,9 +606,14 @@ JS;
     public function buildJsDataGetter(ActionInterface $action = null)
     {
         $widget = $this->getWidget();
-        $dataObj = $this->getMetaObjectForDataGetter($action);
-        // Determine the columns we need in the actions data
-        $colNamesList = implode(',', $widget->getActionDataColumnNames());
+        $parentValuesJs = '';
+        if ($action === $widget->getButtonCreate()->getAction()) {
+            foreach ($this->getParentRelationFilters() as $filter) {
+                $name = json_encode($filter->getAttributeAlias());
+                $valueJs = $this->getFacade()->getElement($filter)->buildJsValueGetter();
+                $parentValuesJs .= "oData.rows[0][{$name}] = {$valueJs};\n";
+            }
+        }
         
         if ($action !== null && $action->isDefinedInWidget() && $action->getWidgetDefinedIn() instanceof DataButton) {
             $customMode = $action->getWidgetDefinedIn()->getInputRows();
@@ -432,8 +643,8 @@ JS;
                                 oInputData
                             ]
                         };
+                        {$parentValuesJs}
                         {$this->buildJsLoadFilterHandleWidgetLinks('oData')};  
-                        console.log('data getter', oInputData);
                         return oData;
                     })($('#{$this->getId()}'))
 JS;
@@ -441,12 +652,21 @@ JS;
     }
 
     /**
-     * Function to refresh the chart
+     * Reload comments without failing when the plugin has not been initialized yet.
      *
      * @return string
      */
     public function buildJsRefresh() : string
     {
-        return "$('#{$this->getId()}').data('comments').fetchDataAndRender()";
+        return <<<JS
+            (function(jqComments){
+                if (!jqComments.data('comments')) return;
+                if (jqComments.data('_loading')) {
+                    jqComments.data('_exfRefreshPending', true);
+                } else {
+                    jqComments.data('comments').fetchDataAndRender();
+                }
+            })($('#{$this->getId()}'));
+JS;
     }
 }

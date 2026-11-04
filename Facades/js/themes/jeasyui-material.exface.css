@@ -43,7 +43,7 @@ ul.nav_menu a:hover {background-color: #6200ee; color: white}
 .l-btn-plain.exf-svg-icon svg {fill: #6200ee;}
 
 /* Inputs */
-.exf-inputtext, .exf-input-markdown {--exf-input-focus-color: #6200ee;}
+.exf-inputtext, .exf-input-markdown, .exf-commentsfeed {--exf-input-focus-color: #6200ee;}
 .exf-input-markdown .markian {
 	--exf-markian-border: #dfdfdf;
 	--exf-markian-field-border: #c2c2c2;

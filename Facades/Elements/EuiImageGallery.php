@@ -16,7 +16,7 @@ use exface\JEasyUIFacade\Facades\Elements\Traits\EuiDataElementTrait;
  * 
  * @author Andrej Kabachnik
  * 
- * @method \exface\Core\Widgets\Imagegallery getWidget()
+ * @method \exface\Core\Widgets\ImageGallery getWidget()
  *        
  */
 class EuiImageGallery extends EuiData

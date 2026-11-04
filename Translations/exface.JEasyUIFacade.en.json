@@ -11,6 +11,7 @@
 	"MESSAGE.FILL_REQUIRED_ATTRIBUTES": "Please fill in these fields correctly:",
 	
 	"WIDGET.INPUTPASSWORD.CONFIRM": "Confirm password",
+	"WIDGET.COMMENTSFEED.SAVE_PARENT": "Save this record before adding comments.",
 	
 	"WIDGET.DATATABLE.CONFIGURATOR_EXPAND_COLLAPSE": "Collapse/expand quick filters",
 	"WIDGET.DATATABLE.HEADER_FILTER_TOGGLE": "Show/hide column filters",

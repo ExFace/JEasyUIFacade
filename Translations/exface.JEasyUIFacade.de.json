@@ -11,6 +11,7 @@
 	"MESSAGE.FILL_REQUIRED_ATTRIBUTES": "Bitte füllen Sie diese Felder korrekt aus:",
 	
 	"WIDGET.INPUTPASSWORD.CONFIRM": "Passwort bestätigen",
+	"WIDGET.COMMENTSFEED.SAVE_PARENT": "Speichern Sie diesen Datensatz, bevor Sie Kommentare hinzufuegen.",
 	
 	"WIDGET.DATATABLE.CONFIGURATOR_EXPAND_COLLAPSE": "Filter ein bzw. ausklappen",
 	"WIDGET.DATATABLE.HEADER_FILTER_TOGGLE": "Spaltenfilter ein- bzw. ausblenden",
