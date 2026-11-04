@@ -59,16 +59,22 @@ class EuiCommentsFeed extends EuiData
     }
 
     /**
-     * Load the local plugin assets; disabled mention support needs no textcomplete dependency.
+     * Load the local comments plugin, Markdown viewer and shared lifecycle adapter.
      *
      * @return string[]
      */
     protected function buildHtmlHeadTagsForComments() : array
     {
-        return [
+        $headers = [
             '<script type="text/javascript" src="vendor/bower-asset/jquery-comments/js/jquery-comments.js"></script>',
             '<link rel="stylesheet" type="text/css" href="vendor/bower-asset/jquery-comments/css/jquery-comments.css">'
         ];
+        if ($this->getWidget()->getEnableMarkdown()) {
+            $headers[] = '<script src="' . $this->getFacade()->buildUrlToSource('LIBS.MARKIAN.VIEWER.JS') . '"></script>';
+            $headers[] = '<link rel="stylesheet" href="' . $this->getFacade()->buildUrlToSource('LIBS.MARKIAN.VIEWER.CSS') . '">';
+            $headers[] = '<script src="' . $this->getFacade()->buildUrlToSource('LIBS.MARKIAN.BRIDGE.JS') . '"></script>';
+        }
+        return $headers;
     }
 
     /**
@@ -156,9 +162,18 @@ JS;
             }
         } 
         $dateFormatJs = $this->escapeString($this->getWorkbench()->getCoreApp()->getTranslator()->translate('LOCALIZATION.DATE.DATETIME_FORMAT'), true, false);
+        $markdownOptionsJs = '';
+        if ($this->getWidget()->getEnableMarkdown()) {
+            $markdownOptionsJs = 'var oMarkdownOptions = ' . json_encode([
+                'markdownCssUrls' => [$this->getFacade()->buildUrlToSource('LIBS.MARKIAN.MARKDOWN.CSS')],
+                'markdownCssClasses' => $this->getFacade()->getConfig()->getOption('LIBS.MARKIAN.MARKDOWN.CSS_CLASSES')->toArray(),
+                'softbreaks' => true
+            ], JSON_HEX_TAG | JSON_HEX_AMP | JSON_HEX_APOS | JSON_HEX_QUOT | JSON_THROW_ON_ERROR) . ';';
+        }
         return <<<JS
 
             $(function() {
+                {$markdownOptionsJs}
 				$('#{$this->getId()}').comments({
 					currentUserId: '{$this->getWorkbench()->getSecurity()->getAuthenticatedUser()->getUid()}',
 					roundProfilePictures: true,
@@ -205,6 +220,7 @@ JS;
                         });
                     },
 					getComments: function(success, error) {
+                        {$this->buildJsCommentsMarkdownInit()}
                         var oParams={};
 						{$this->buildJsDataLoadFunctionBody('oParams')};
 					},
@@ -312,6 +328,40 @@ JS;
                         }
                     });
 			});
+JS;
+    }
+
+    /**
+     * Render displayed comments as Markdown while keeping the plugin's source editor unchanged.
+     *
+     * The plugin inserts the returned mount synchronously. The shared adapter disposes
+     * viewers when sorting, refreshing or removing comments detaches their mounts.
+     *
+     * @return string
+     */
+    protected function buildJsCommentsMarkdownInit() : string
+    {
+        if (!$this->getWidget()->getEnableMarkdown()) {
+            return '';
+        }
+        return <<<JS
+
+                        var oComments = $('#{$this->getId()}').data('comments');
+                        if (!oComments._exfMarkdownFormatter) {
+                            var fnFormat = oComments.getFormattedCommentContent;
+                            oComments.getFormattedCommentContent = function(oComment, bReplaceNewLines) {
+                                if (bReplaceNewLines) {
+                                    return fnFormat.call(this, oComment, bReplaceNewLines);
+                                }
+                                var jqContent = $('<div>').css('white-space', 'normal');
+                                MarkianAdapter.mount(jqContent[0], Object.assign({}, oMarkdownOptions, {
+                                    markdown: oComment.content
+                                }), true);
+                                return jqContent;
+                            };
+                            oComments._exfMarkdownFormatter = true;
+                        }
+
 JS;
     }
     

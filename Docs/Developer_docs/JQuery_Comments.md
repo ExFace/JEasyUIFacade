@@ -16,6 +16,16 @@ refresh and may show their own busy indicators, independently of the feed.
 The comment composer has padding around its user icon and input. Replies, voting,
 mentions and attachments are not supported.
 
+Comments display as plain text by default. Set `"enable_markdown": true` on the
+`CommentsFeed` widget to display Markdown using Markian's lightweight viewer and the
+configured `LIBS.MARKIAN.MARKDOWN.CSS` stylesheet and CSS classes. Ordinary line
+breaks remain visible. Raw HTML is not trusted, and unsafe links are not activated.
+Code fences display as code without syntax highlighting or Mermaid rendering.
+The composer and edit fields continue to work with Markdown source; rendering
+does not change saved text. Edited timestamps remain outside the viewer.
+The shared Markian adapter releases viewers when comments are replaced or removed.
+With Markdown disabled, the feed does not load Markian assets or install its formatter.
+
 After typing a comment, press Tab to focus Send, then Enter or Space to submit it.
 The same keyboard controls work with Save and Delete when editing a comment.
 Send and Save use the current EasyUI template's promoted button style; Delete uses
