@@ -23,6 +23,7 @@ use exface\Core\Widgets\DataToolbar;
 use exface\Core\Widgets\DataTable;
 use exface\Core\Widgets\InputComboTable;
 use exface\Core\DataTypes\StringDataType;
+use exface\Core\Widgets\Data;
 
 /**
  * Implementation of a basic grid.
@@ -52,6 +53,12 @@ class EuiData extends EuiAbstractElement
     
     private $headers_rowspan = array();
 
+    /**
+     * Register refresh links for Data widgets and their iUseData wrappers, but not maps.
+     *
+     * {@inheritDoc}
+     * @see \exface\Core\Facades\AbstractAjaxFacade\Elements\AbstractJqueryElement::init()
+     */
     protected function init()
     {
         parent::init();
@@ -59,7 +66,7 @@ class EuiData extends EuiAbstractElement
         $dataWidget = $widget instanceof iUseData ? $widget->getData() : $widget;
 
         // Take care of refresh links
-        if ($refresh_link = $dataWidget->getRefreshWithWidget()) {
+        if ($dataWidget instanceof Data && ($refresh_link = $dataWidget->getRefreshWithWidget())) {
             if ($refresh_link_element = $this->getFacade()->getElement($refresh_link->getTargetWidget())) {
                 if ($refresh_link_element instanceof EuiData) {
                     $refresh_link_element->addOnBeforeLoad("setTimeout(function(){ {$this->buildJsRefresh()} }, 0);");
