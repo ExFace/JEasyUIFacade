@@ -546,6 +546,10 @@ table.jexcel .jdropdown-default.jdropdown-focus .jdropdown-header {
 /* Cards */
 .exf-card > .panel > .easyui-panel > .panel > .easyui-panel > .easyui-menu.menu {padding: 1px;}
 
+/* Panel headers, including cards and forms */
+.panel-icon.exf-svg-icon > svg {width: 100%; height: 100%;}
+.panel-icon.exf-svg-icon:not(.exf-svg-colored) > svg {fill: currentColor;}
+
 
 /* Tabs */
 .tabs-panels > .panel {width: 100% !important}
