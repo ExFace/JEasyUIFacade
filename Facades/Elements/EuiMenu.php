@@ -2,6 +2,7 @@
 namespace exface\JEasyUIFacade\Facades\Elements;
 
 use exface\Core\Widgets\Menu;
+use exface\Core\CommonLogic\Constants\Icons;
 
 /**
  * 
@@ -42,13 +43,29 @@ HTML;
         return $buttons_js;
     }
     
+    /**
+     * Builds menu entries and group separators, including each button's font or SVG icon.
+     *
+     * @return string
+     */
     public function buildHtmlButtons()
     {
         $buttons_html = '';
         $last_parent = null;
         $hasGroups = (count($this->getWidget()->getButtonGroups()) > 1);
         foreach ($this->getWidget()->getButtons() as $b) {
-            $icon = $b->getIcon() && $b->getShowIcon(true) ? ' iconCls="' . $this->buildCssIconClass($b->getIcon()) . '"' : '';
+            $buttonElement = $this->getFacade()->getElement($b);
+            $icon = '';
+            $iconHtml = '';
+            if ($b->getIcon() && $b->getShowIcon(true)) {
+                $iconClass = $buttonElement->buildCssIconClass($b->getIcon());
+                if (Icons::isIconSetSVG($b->getIconSet())) {
+                    // A span survives EasyUI's menu-text wrapper without being treated as a submenu.
+                    $iconHtml = '<span class="menu-icon ' . $iconClass . '">' . $b->getIcon() . '</span>';
+                } else {
+                    $icon = ' iconCls="' . $iconClass . '"';
+                }
+            }
             
             // Insert separators between button groups (neighbouring buttons with
             // different parents.
@@ -57,7 +74,7 @@ HTML;
                     $buttons_html .= <<<HTML
 
                 <div {$icon} disabled=true title="{$this->buildHintText($b->getParent()->getHint())}" class="exf-menu-group-title">
-    				{$grpCaption}
+                    {$iconHtml}{$grpCaption}
     			</div>
                 <div class="menu-sep" style="margin-top: 0; maring-bottom: 0;"></div>
 HTML;
@@ -71,8 +88,8 @@ HTML;
             $disabled = $b->isDisabled() ? ' disabled=true' : '';
             $buttons_html .= <<<HTML
 
-                <div {$icon} {$disabled} title="{$this->buildHintText($b->getHint())}" id="{$this->getFacade()->getElement($b)->getId()}" onclick="{$this->getFacade()->getElement($b)->buildJsClickFunctionName()}()">
-    				{$b->getCaption()}
+                <div {$icon} {$disabled} title="{$this->buildHintText($b->getHint())}" id="{$buttonElement->getId()}" onclick="{$buttonElement->buildJsClickFunctionName()}()">
+                    {$iconHtml}{$b->getCaption()}
     			</div>
 HTML;
         }

@@ -40,6 +40,8 @@ ul.nav_menu li.active a.current {color: white; background: #6caef5}
 
 /* SVG iconss */
 .easyui-menu > .exf-svg-icon .l-btn-icon {margin-left: -24px}
+.menu-icon.exf-svg-icon > svg {display: block; width: 100%; height: 100%;}
+.menu-icon.exf-svg-icon:not(.exf-svg-colored) > svg {fill: currentColor;}
 
 /* Context bar */
 .toolbar-element {height: 30px; display:inline-block; line-height: 30px; vertical-align: top; }
