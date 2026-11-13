@@ -62,7 +62,7 @@
         "npm-asset/dexie": "^4.4.6"
     },
     "suggest": {
-        "bower-asset/jeasyui": "Free (GPL) version of jEasyUI up-to 1.4.3. Otherwise provide your own!"
+        "bower-asset/jeasyui": "Free version of jEasyUI (GPL up-to 1.4.3, proprietary freeware license later). Otherwise provide your own!"
     },
     "extra": {
         "app": {

@@ -104,7 +104,7 @@
     "LIBS.JEASYUI.EXTENSIONS.TREEGRID_DND": "exface/jeasyuifacade/Facades/js/jeasyui/extensions/treegrid-dnd/treegrid-dnd.js",
     "LIBS.JEASYUI.EXTENSIONS.CONDITIONBUILDER": "exface/jeasyuifacade/Facades/js/jeasyui/extensions/conditionbuilder/jquery.conditionbuilder.js",
     "LIBS.JEASYUI.EXTENSIONS.SORTERBUILDER": "exface/jeasyuifacade/Facades/js/jeasyui/extensions/sorterbuilder/jquery.sorterbuilder.js",
-    "LIBS.JEASYUI.PATCHES": "exface/jeasyuifacade/Facades/js/jquery.easyui.patch.1.43.js",
+    "LIBS.JEASYUI.PATCHES": "",
 	"LIBS.JEASYUI.FACADE_ADDONS.JS": "exface/jeasyuifacade/Facades/js/jeasyui.facade.js",
 	
 	"LIBS.JEXCEL.JS": "npm-asset/jspreadsheet-ce/dist/index.js",
@@ -176,7 +176,7 @@
 	"LIBS.CODEMIRROR.JS": "npm-asset/codemirror/lib/codemirror.js",
 	"LIBS.CODEMIRROR.CSS": "npm-asset/codemirror/lib/codemirror.css",
     
-  "LIBS.ECHARTS.ECHARTS_JS": "exface/core/Facades/AbstractAjaxFacade/js/echarts/echarts.custom.min.js",
+  	"LIBS.ECHARTS.ECHARTS_JS": "exface/core/Facades/AbstractAjaxFacade/js/echarts/echarts.custom.min.js",
 	"LIBS.TINYCOLOR.JS": "npm-asset/tinycolor2/dist/tinycolor-min.js",
 	"LIBS.TINYGRADIENT.JS": "npm-asset/tinygradient/browser.js",
 
