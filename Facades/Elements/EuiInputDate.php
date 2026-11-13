@@ -75,6 +75,10 @@ $(function() {
         {$this->buildJsDataOptions()}
     });
 
+    $("#{$this->getId()}").{$this->getElementType()}("calendar").calendar({
+        firstDay: {$this->getWidget()->getFirstDayOfWeek()}
+    });
+
     {$this->buildJsEventScripts()}
         
 });
