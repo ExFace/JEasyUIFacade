@@ -20,7 +20,7 @@ test('shared code formatter settings use Markian highlighting alongside Mermaid'
         window.codeConfig = config;
         window.editor = MarkianAdapter.mount(document.getElementById('editor'), {
             markdown, extensions: {code: {enabled: true, config}}
-        }, false, '/exface/core/Facades/AbstractAjaxFacade/js/mermaid/mermaid.min.js');
+        }, false, '/npm-asset/pele/dist/pele.global.js');
         await editor.ready;
     }, markdown);
     await expect(page.locator('#editor .tok-keyword').first()).toHaveText('const');
@@ -76,7 +76,7 @@ test('Markdown display highlights mixed fences without an editor and retains vie
             colorize: true, languageBase: '/axenox/markian/dist/extensions/languages/?v=display'
         });
         window.display = MarkianAdapter.mount(host, {markdown, renderers}, true,
-            '/exface/core/Facades/AbstractAjaxFacade/js/mermaid/mermaid.min.js');
+            '/npm-asset/pele/dist/pele.global.js');
         await display.ready;
     }, markdown);
     const viewer = page.locator('#code-display');
@@ -687,14 +687,14 @@ test('AJAX factory replacement registers Mermaid for the next dialog', async ({p
     await page.addScriptTag({url: '/axenox/markian/dist/extensions/mermaid.min.js'});
     await page.evaluate(async () => {
         editor.destroy();
-        const source = '/exface/core/Facades/AbstractAjaxFacade/js/mermaid/mermaid.min.js';
+        const source = '/npm-asset/pele/dist/pele.global.js';
         window.editor = MarkianAdapter.mount(document.getElementById('editor'), {markdown: '# First dialog'}, false, source);
         await editor.ready;
         editor.destroy();
     });
     await page.addScriptTag({url: '/axenox/markian/dist/markian.min.js'});
     await page.evaluate(async () => {
-        const source = '/exface/core/Facades/AbstractAjaxFacade/js/mermaid/mermaid.min.js';
+        const source = '/npm-asset/pele/dist/pele.global.js';
         window.editor = MarkianAdapter.mount(document.getElementById('editor'), {markdown: '```mermaid\nflowchart LR\n  A[Start] --> B[Finish]\n```'}, false, source);
         await editor.ready;
     });
@@ -703,10 +703,10 @@ test('AJAX factory replacement registers Mermaid for the next dialog', async ({p
     expect(await page.evaluate(() => editor.get())).toContain('flowchart LR');
 });
 
-for (const [runtime, source] of [
-    ['Core', '/exface/core/Facades/AbstractAjaxFacade/js/mermaid/mermaid.min.js'],
-    ['Mermaid 12', '/axenox/markian/node_modules/mermaid/dist/mermaid.min.js']
-]) test(`Mermaid keeps the ${runtime} runtime default presentation in editor and viewer`, async ({page}) => {
+test('Pele renders themed editor and viewer diagrams without Mermaid.js', async ({page}) => {
+    const source = '/npm-asset/pele/dist/pele.global.js';
+    const requests = [];
+    page.on('request', request => requests.push(request.url()));
     await page.addScriptTag({url: '/axenox/markian/dist/extensions/mermaid.min.js'});
     await page.addScriptTag({url: '/axenox/markian/dist/extensions/viewer-mermaid.min.js'});
     await page.addStyleTag({url: '/axenox/markian/dist/extensions/mermaid.css'});
@@ -722,44 +722,35 @@ for (const [runtime, source] of [
     }, source);
     await expect(page.locator('#editor .markian-diagram[data-state=ready]')).toHaveCount(1);
     await expect(page.locator('#viewer svg')).toHaveCount(1);
+    const fills = [];
     for (const theme of ['light', 'dark']) {
         await page.evaluate(async theme => {
             editor.instance.setTheme(theme);
             await viewer.instance.setTheme(theme);
         }, theme);
         await expect(page.locator('#editor .markian-diagram[data-state=ready]')).toHaveCount(1);
-        const compared = await page.evaluate(async ({theme, source}) => {
+        const compared = await page.evaluate(source => {
             const runtimeUrl = new URL(source, location.href).href;
             const frame = [...document.querySelectorAll('.markian-mermaid-runtime')].find(frame =>
-                frame.contentWindow.mermaid && [...frame.contentDocument.scripts].some(script => script.src === runtimeUrl));
-            const local = frame.contentDocument;
-            const api = frame.contentWindow.mermaid;
-            api.initialize({startOnLoad: false, securityLevel: 'strict', theme: theme === 'dark' ? 'dark' : 'default', htmlLabels: false});
-            const container = local.createElement('div');
-            local.body.append(container);
-            try {
-                const result = await api.render('direct-mermaid-baseline', diagramSource, container);
-                container.innerHTML = result.svg;
-                const properties = ['fill', 'stroke', 'stroke-width', 'font-family', 'font-size', 'text-anchor', 'stop-color', 'stop-opacity'];
-                const selectors = ['.node rect', '.node text', '.cluster rect', '.edgeLabel text', '.edgeLabel rect', '.flowchart-link', 'marker path', 'linearGradient stop'];
-                const capture = root => Object.fromEntries(selectors.map(selector => [selector, [...root.querySelectorAll(selector)].map(element => {
-                    const style = element.ownerDocument.defaultView.getComputedStyle(element);
-                    return Object.fromEntries(properties.map(property => [property, style.getPropertyValue(property).replaceAll(root.id, 'diagram')]));
-                })]));
-                return {
-                    expected: capture(container.querySelector('svg')),
-                    editor: capture(document.querySelector('#editor .markian-diagram-canvas > svg')),
-                    viewer: capture(document.querySelector('#viewer svg'))
-                };
-            } finally { container.remove(); }
-        }, {theme, source});
-        expect(compared.expected['.node rect'].length).toBeGreaterThanOrEqual(3);
-        expect(compared.expected['.edgeLabel text'].length).toBeGreaterThan(0);
-        expect(compared.editor).toEqual(compared.expected);
-        expect(compared.viewer).toEqual(compared.expected);
-        await expect(page.locator('#viewer svg style')).toHaveCount(1);
-        await expect(page.locator('#editor .markian-diagram-canvas > svg style')).toHaveCount(1);
+                frame.contentWindow.pele && [...frame.contentDocument.scripts].some(script => script.src === runtimeUrl));
+            const capture = root => [...root.querySelectorAll('.pele-node rect')].map(element => getComputedStyle(element).fill);
+            return {
+                pele: typeof frame.contentWindow.pele.render,
+                mermaid: typeof frame.contentWindow.mermaid,
+                editor: capture(document.querySelector('#editor .markian-diagram-canvas > svg')),
+                viewer: capture(document.querySelector('#viewer svg'))
+            };
+        }, source);
+        expect(compared.pele).toBe('function');
+        expect(compared.mermaid).toBe('undefined');
+        expect(compared.editor.length).toBeGreaterThanOrEqual(3);
+        expect(compared.viewer.length).toBe(compared.editor.length);
+        expect(compared.editor).toContain('rgb(255, 244, 204)');
+        expect(compared.viewer).toContain('rgb(255, 244, 204)');
+        fills.push(compared.editor[0]);
     }
+    expect(fills[0]).not.toBe(fills[1]);
+    expect(requests.some(url => url.includes('/js/mermaid/') || url.includes('/node_modules/mermaid/'))).toBe(false);
     await page.evaluate(async () => { editor.instance.setTheme('light'); await viewer.instance.setTheme('light'); });
     await expect(page.locator('#editor .markian-diagram[data-state=ready]')).toHaveCount(1);
     for (const width of [1100, 390]) {
@@ -772,8 +763,8 @@ test('Mermaid retains original CSS while removing active SVG content', async ({p
     const external = [];
     page.on('request', request => { if (request.url().startsWith('https://example.test/')) external.push(request.url()); });
     await page.route('**/mermaid-styles-test.js', route => route.fulfill({contentType: 'text/javascript', body: `
-        window.mermaid = {initialize() {}, async render(id) {
-            return {svg: '<svg xmlns="http://www.w3.org/2000/svg" id="' + id + '" viewBox="0 0 100 50">'
+        window.pele = {render(source, options) {
+            return {svg: '<svg xmlns="http://www.w3.org/2000/svg" id="' + options.idPrefix + '" viewBox="0 0 100 50">'
                 + '<style>body{--markian-mermaid-style-probe:retained} rect{fill:#ececff}</style>'
                 + '<rect width="90" height="40" style="fill:#fff4cc;stroke:#bb6600" onload="parent.compromised=true"/>'
                 + '<text x="5" y="20">Safe</text><image href="https://example.test/track"/><use href="https://example.test/use.svg#x"/>'
@@ -795,14 +786,14 @@ test('Mermaid retains original CSS while removing active SVG content', async ({p
     expect(external).toEqual([]);
 });
 
-test('editor and viewer render diagrams using the actual Core Mermaid runtime', async ({page}) => {
+test('editor and viewer render diagrams using the installed Pele runtime', async ({page}) => {
     await page.addScriptTag({url: '/axenox/markian/dist/extensions/mermaid.min.js'});
     await page.addScriptTag({url: '/axenox/markian/dist/extensions/viewer-mermaid.min.js'});
     await page.evaluate(async () => {
         editor.destroy();
         viewer.destroy();
         const markdown = '```mermaid\nflowchart LR\n  A[Start] --> B[Finish]\n```';
-        const source = '/exface/core/Facades/AbstractAjaxFacade/js/mermaid/mermaid.min.js';
+        const source = '/npm-asset/pele/dist/pele.global.js';
         window.editor = MarkianAdapter.mount(document.getElementById('editor'), {markdown}, false, source);
         window.viewer = MarkianAdapter.mount(document.getElementById('viewer'), {markdown}, true, source);
         await Promise.all([editor.ready, viewer.ready]);

@@ -14,9 +14,9 @@ jEasyUI uses Markian directly for Markdown inputs and displays. There is no back
 | `LIBS.MARKIAN.CODE.LANGUAGES` | `axenox/markian/dist/extensions/languages/` | Explicit lazy grammar base, resolved through the facade asset resolver for AJAX-evaluated scripts. |
 | `LIBS.MARKIAN.MERMAID.JS` / `.CSS` | `axenox/markian/dist/extensions/mermaid.min.js` / `mermaid.css` | Optional editing extension. |
 | `LIBS.MARKIAN.VIEWER_MERMAID.JS` / `.CSS` | `axenox/markian/dist/extensions/viewer-mermaid.min.js` / `viewer-mermaid.css` | Optional rendering-only adapter. |
-| `LIBS.MERMAID.JS` | Core Mermaid script URL | Passed as the Mermaid `source` string; no duplicated version setting is needed. |
+| `LIBS.PELE.JS` | `npm-asset/pele/dist/pele.global.js` | Pele-only runtime, passed as the Mermaid extension's `source` string. |
 
-Install the declared `axenox/markian` Composer dependency alongside a Core containing `MarkianTrait`. There is no npm/build step on the PHP host. Source URLs use the facade asset resolver, including installation subdirectories. The former bundled Toast UI Editor assets and their dependency inventory entry have been removed; this facade ships only the libraries it uses itself.
+Install the declared `axenox/markian` and `npm-asset/pele` Composer dependencies alongside a Core containing `MarkianTrait`. There is no npm/build step on the PHP host. Source URLs use the facade asset resolver, including installation subdirectories. Markian uses Pele only; custom runtime overrides must now set `LIBS.PELE.JS`, not `LIBS.MERMAID.JS`. Existing `mermaid` fences and widget flags remain unchanged. The former bundled Toast UI Editor assets and their dependency inventory entry have been removed; this facade ships only the libraries it uses itself.
 
 ## Input Widgets
 

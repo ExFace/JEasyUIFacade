@@ -98,7 +98,7 @@ Object.assign({$optionsJs}, {onLinkOpen: function(context){
 JS;
         }
         $sourceJs = $widget->hasRenderMermaidDiagrams()
-            ? $this->escapeMarkdownForInlineJavaScript($this->getFacade()->buildUrlToSource('LIBS.MERMAID.JS'))
+            ? $this->escapeMarkdownForInlineJavaScript($this->getFacade()->buildUrlToSource('LIBS.PELE.JS'))
             : 'null';
         return 'MarkianAdapter.mount(document.getElementById(' . json_encode($this->getId()) . '), ' . $optionsJs . ', true, ' . $sourceJs . ');'
             . $this->buildJsEventScripts();
