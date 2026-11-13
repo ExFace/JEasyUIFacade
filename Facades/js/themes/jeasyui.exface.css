@@ -620,7 +620,7 @@ table.jexcel .jdropdown-default.jdropdown-focus .jdropdown-header {
 /* ProgressBar */
 .exf-progressbar {width: 100%; padding: 0 3px; border:1px solid #ccc; position:relative; overflow: hidden; white-space:nowrap; color:transparent; box-sizing: border-box;}
 .exf-progressbar-bar {position: absolute; left:0; top:0;}
-.exf-progressbar-text {position:absolute; left:0; top:0; z-index:100; padding:0 2px; width:100%; color:initial; overflow: hidden; text-overflow: ellipsis;}
+.exf-progressbar-text {position:absolute; left:0; top:0; z-index:100; padding:0 2px; width:100%; color:initial; overflow: hidden; text-overflow: ellipsis; box-sizing: border-box;}
 
 /* Debug */
 table.debug-profiler {border-collapse: collapse}
