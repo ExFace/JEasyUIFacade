@@ -47,6 +47,13 @@ class EuiInputSelect extends EuiInput
             $options .= '
 					<option value="' . $value . '"' . ($selected ? ' selected="selected"' : '') . '>' . $text . '</option>';
         }
+        
+        // Show a current value, that is not among the selectable options (hidden in the panel, see buildJsOptionHiddenFallback())
+        $fallbackValue = $this->getFallbackValue();
+        if ($fallbackValue !== null) {
+            $options .= '
+					<option value="' . htmlspecialchars($fallbackValue) . '" selected="selected">' . htmlspecialchars($this->getFallbackText($fallbackValue)) . '</option>';
+        }
 
         $output = '	<select style="height: 100%; width: 100%;"
 						name="' . $widget->getAttributeAlias() . '"  
@@ -137,9 +144,72 @@ JS;
             {$this->buildJsOptionMultiple()}
             {$this->buildJsOptionHeight()}
             {$this->buildJsOptionValue()}
+            {$this->buildJsOptionHiddenFallback()}
             
 JS;
         return rtrim(trim($options), ",");
+    }
+    
+    /**
+     * Returns the current value of a single-select if it is not among the selectable options (NULL otherwise)
+     * 
+     * @return string|NULL
+     */
+    protected function getFallbackValue() : ?string
+    {
+        $widget = $this->getWidget();
+        if ($widget->getMultiSelect()) {
+            return null;
+        }
+        $val = $widget->getValueWithDefaults();
+        if ($val === null || $val === '' || is_array($val) || is_bool($val)) {
+            return null;
+        }
+        $val = (string) $val;
+        foreach (array_keys($widget->getSelectableOptions()) as $key) {
+            if (strcasecmp($val, (string) $key) === 0) {
+                return null;
+            }
+        }
+        return $val;
+    }
+    
+    /**
+     * Returns the label of a value from the enum data type or the value itself if there is no label
+     * 
+     * @param string $value
+     * @return string
+     */
+    protected function getFallbackText(string $value) : string
+    {
+        $dataType = $this->getWidget()->getValueDataType();
+        if ($dataType instanceof EnumDataTypeInterface) {
+            $label = $dataType->getLabels()[$value] ?? null;
+            if ($label !== null && $label !== '') {
+                return (string) $label;
+            }
+        }
+        return $value;
+    }
+    
+    /**
+     * Hides the fallback option in the drop-down panel, so it is displayed, but cannot be selected
+     * 
+     * @return string
+     */
+    protected function buildJsOptionHiddenFallback() : string
+    {
+        $fallbackValue = $this->getFallbackValue();
+        if ($fallbackValue === null) {
+            return '';
+        }
+        $valueJs = json_encode($fallbackValue);
+        return <<<JS
+            , onShowPanel: function() {
+                var jqSelf = $(this);
+                jqSelf.{$this->getElementType()}('options').finder.getEl(this, {$valueJs}).hide();
+            }
+JS;
     }
     
     protected function buildJsOptionFormatter() : string
