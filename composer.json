@@ -22,6 +22,7 @@
         "exface/core": "^1.0",
         "axenox/markian": "^0.1.0||^1.0",
         "npm-asset/pele": "^1.13",
+        "npm-asset/svg-pan-zoom": "^3.6.2",
         "bower-asset/masonry": "^4",
         "bower-asset/blueimp-file-upload": "^9.12",
         "bower-asset/paste.js": "^0.0.15",
