@@ -5,6 +5,7 @@ jEasyUI use Markian directly for Markdown inputs and displays.
 | Setting | Default | Meaning |
 | --- | --- | --- |
 | `LIBS.MARKIAN.EDITOR.JS` / `.CSS` | `axenox/markian/dist/markian.min.js` / `markian.css` | Prebuilt editor assets. |
+| `LIBS.MARKIAN.TRANSLATIONS` | `axenox/markian/Translations/` | Vendor-relative editor JSON dictionary directory. |
 | `LIBS.MARKIAN.MARKDOWN.CSS` | `npm-asset/github-markdown-css/github-markdown-light.css` | Explicit editor content CSS, including AJAX-evaluated startup. |
 | `LIBS.MARKIAN.MARKDOWN.CSS_CLASSES` | `["markdown-body"]` | Additional editor document-wrapper classes; controls are not given these classes. |
 | `LIBS.MARKDOWN.CSS` | `npm-asset/github-markdown-css/github-markdown-light.css` | Original display-widget content stylesheet, passed to the viewer. |
@@ -19,6 +20,13 @@ jEasyUI use Markian directly for Markdown inputs and displays.
 Install the declared `axenox/markian` and `npm-asset/pele` Composer dependencies alongside a Core containing `MarkianTrait`. There is no npm/build step on the PHP host. Source URLs use the facade asset resolver, including installation subdirectories. Markian uses Pele only; custom runtime overrides must now set `LIBS.PELE.JS`, not `LIBS.MERMAID.JS`. Existing `mermaid` fences and widget flags remain unchanged. The former bundled Toast UI Editor assets and their dependency inventory entry have been removed; this facade ships only the libraries it uses itself.
 
 ## Input Widgets
+
+Editor labels, menus and Help use the current session language. `LocaleDataType`
+reduces the session locale to its language, so `de_DE` loads only `de.json` when
+the file exists. English is embedded and is never requested; it remains
+the fallback for unavailable translations; selected file loading errors reject
+readiness. A locale change requires a new editor instance. Viewer content and
+saved Markdown are not translated.
 
 `EuiInputMarkdown` uses Markian without an opt-in setting. All inputs request visual startup, regardless of legacy `editor_mode`. Unsupported visual Markdown can still fall back to source mode under the library's preservation policy. Configured mentions support suggestions and compact chips in Visual mode. Stencil insertion controls remain unfinished and emit a console warning; they never switch editors.
 

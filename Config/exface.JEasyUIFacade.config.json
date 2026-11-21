@@ -162,6 +162,7 @@
 
 	"LIBS.MARKIAN.EDITOR.JS": "axenox/markian/dist/markian.min.js",
 	"LIBS.MARKIAN.EDITOR.CSS": "axenox/markian/dist/markian.css",
+	"LIBS.MARKIAN.TRANSLATIONS": "axenox/markian/Translations/",
 	"LIBS.MARKIAN.MARKDOWN.CSS": "npm-asset/github-markdown-css/github-markdown-light.css",
 	"LIBS.MARKIAN.MARKDOWN.CSS_CLASSES": ["markdown-body"],
 	"LIBS.MARKIAN.VIEWER.JS": "axenox/markian/dist/markian-viewer.min.js",
