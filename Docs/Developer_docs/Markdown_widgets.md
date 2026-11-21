@@ -1,6 +1,6 @@
 # Markdown Widgets
 
-jEasyUI uses Markian directly for Markdown inputs and displays. There is no backend selector or Toast UI fallback. UI5 and other facades are unaffected: Core's legacy `ToastUIEditorTrait` remains unchanged for those consumers.
+jEasyUI use Markian directly for Markdown inputs and displays.
 
 | Setting | Default | Meaning |
 | --- | --- | --- |
