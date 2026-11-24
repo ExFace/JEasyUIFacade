@@ -2,6 +2,10 @@
 
 namespace exface\JEasyUIFacade\Facades\Elements;
 
+use exface\Core\Factories\WidgetLinkFactory;
+
+use exface\Core\Interfaces\Widgets\WidgetLinkCoordinateInterface;
+
 use exface\Core\Interfaces\DataTypes\EnumDataTypeInterface;
 use exface\Core\Widgets\InputSelect;
 
@@ -91,8 +95,10 @@ JS;
      *
      * @see \exface\Core\Facades\AbstractAjaxFacade\Elements\AbstractJqueryElement::buildJsValueGetter()
      */
-    public function buildJsValueGetter()
+    public function buildJsValueGetter(string|WidgetLinkCoordinateInterface|null $coord = null): string
     {
+        $coord = WidgetLinkFactory::createCoordinateFromAnything($coord);
+        $this->validateValueGetterCoordinate($coord);
         if ($this->getWidget()->getMultiSelect()) {
             $value_getter = <<<JS
 return $("#{$this->getId()}").{$this->getElementType()}("getValues").join();

@@ -1,6 +1,9 @@
 <?php
 namespace exface\JEasyUIFacade\Facades\Elements;
 
+use exface\Core\Factories\WidgetLinkFactory;
+use exface\Core\Interfaces\Widgets\WidgetLinkCoordinateInterface;
+
 use exface\Core\CommonLogic\Constants\Icons;
 use exface\Core\CommonLogic\UxonObject;
 use exface\Core\DataTypes\ComparatorDataType;
@@ -33,6 +36,94 @@ class EuiDataTable extends EuiData
     use EuiDataTableSetupTrait;
     
     private $collapseConfiguratorButton = null;
+
+    private array $coordinateChangeScripts = [];
+
+    /**
+     * Adds edit notifications only for bindings with an explicit row coordinate.
+     *
+     * {@inheritDoc}
+     * @see \exface\Core\Facades\AbstractAjaxFacade\Elements\AbstractJqueryElement::addOnChangeAtCoordinateScript()
+     */
+    public function addOnChangeAtCoordinateScript(string $scriptJs, ?WidgetLinkCoordinateInterface $coord)
+    {
+        parent::addOnChangeAtCoordinateScript($scriptJs, $coord);
+        if ($coord !== null && $coord->getRowCoordinate() !== null) {
+            $this->coordinateChangeScripts[trim($scriptJs)] = trim($scriptJs);
+        }
+        return $this;
+    }
+
+    /**
+     * Preserves existing editor callbacks and notifies coordinate bindings after a live edit.
+     *
+     * @param string $optionsJs
+     * @param string $columnName
+     * @return string
+     */
+    protected function buildJsCoordinateEditorOptions(string $optionsJs, string $columnName): string
+    {
+        $columnJs = json_encode($columnName, JSON_THROW_ON_ERROR);
+        $scriptsJs = implode(";\n", $this->coordinateChangeScripts);
+        return <<<JS
+(function(oOptions){
+    var fnOnChange = oOptions.onChange;
+    oOptions.onChange = function(newValue, oldValue){
+        if (typeof fnOnChange === 'function') {
+            fnOnChange.apply(this, arguments);
+        }
+        if (newValue === oldValue) {
+            return;
+        }
+        var jqTable = $('#{$this->getId()}');
+        var sIndex = $(this).closest('tr.datagrid-row').attr('datagrid-row-index');
+        if (sIndex === undefined) {
+            return;
+        }
+        var oEditor = jqTable.{$this->getElementType()}('getEditor', {index: Number(sIndex), field: {$columnJs}});
+        if (oEditor) {
+            (function(){
+                {$scriptsJs}
+            }).call(jqTable[0]);
+        }
+    };
+    return oOptions;
+})({{$optionsJs}})
+JS;
+    }
+
+    /**
+     * Handles native checkbox changes and committed edits without ordinary refresh hooks.
+     *
+     * @return string
+     */
+    protected function buildJsCoordinateAfterEditOption(): string
+    {
+        if ($this->coordinateChangeScripts === []) {
+            return '';
+        }
+        $scriptsJs = implode(";\n", $this->coordinateChangeScripts);
+        return <<<JS
+, onBeginEdit: function(index, row){
+    var jqTable = $(this);
+    var aEditors = jqTable.{$this->getElementType()}('getEditors', index);
+    aEditors.forEach(function(oEditor){
+        if (oEditor.type === 'checkbox') {
+            $(oEditor.target).off('change.exfCoordinate').on('change.exfCoordinate', function(){
+                (function(){
+                    {$scriptsJs}
+                }).call(jqTable[0]);
+            });
+        }
+    });
+}
+, onAfterEdit: function(index, row, changes){
+    if (changes && Object.keys(changes).length > 0) {
+        {$scriptsJs}
+    }
+}
+JS;
+    }
 
     /**
      * 
@@ -213,42 +304,48 @@ JS;
     }
 
     /**
-     * The getter will return the value of the UID column of the selected row by default.
-     * If the parameter row is
-     * specified, it will return the UID column of that row. Specifying the column parameter will result in returning
-     * the value of that column in the specified row or (if row is not set) the selected row.
-     * IDEA perhaps it should return an entire row as an array if the column is not specified. Just have a feeling, it
-     * might be better...
+     * Returns the first selected value by default, or the addressed loaded row.
+     * Explicit selected/loaded-row coordinates aggregate decoded column values.
      *
+     * {@inheritDoc}
      * @see EuiAbstractElement::buildJsValueGetter()
      */
-    public function buildJsValueGetter($column = null, $row = null)
+    public function buildJsValueGetter(string|WidgetLinkCoordinateInterface|null $coord = null): string
     {
-        if (is_null($row)) {
-            $getSelectedRowsDataJs = $this->getElementType() . "('getSelected')";
-        } else {
-            $getSelectedRowsDataJs = $this->getElementType() . "('getSelections')[{$row}]";
-        }
-
-        if (is_null($column)) {
-            if ($this->getWidget()->hasUidColumn() === true) {
-                $column = $this->getWidget()->getUidColumn()->getDataColumnName();
-            } else {
+        $coord = WidgetLinkFactory::createCoordinateFromAnything($coord);
+        $this->validateValueGetterCoordinate($coord);
+        $col = $coord->findColumn($this->getWidget());
+        if ($col === null) {
+            if ($coord->getColumnCoordinate() === null) {
                 throw new FacadeOutputError('Cannot create a value getter for a data widget without a UID column: either specify a column to get the value from or a UID column for the table.');
             }
-        } else {
-            if (! $col = $this->getWidget()->getColumnByDataColumnName($column)) {
-                if ($col = $this->getWidget()->getColumnByAttributeAlias($column)) {
-                    $column = $col->getDataColumnName();
-                }
-            }
+            throw new FacadeOutputError('Cannot create a value getter: column "' . $coord->getColumnCoordinate() . '" not found.');
         }
-        
-        // TODO need to list values if multi_select is on instead of just returning the value
-        // of the first row (becuase getSelection returns the first row in jEasyUI datagrid)
-        
-        // NOTE: Table data has HTML characters escaped - see. JEasyUIFacade::buildResponseData()
-        
+        $columnJs = json_encode($col->getDataColumnName());
+        $aggregate = $coord->hasAggregator() || $coord->isTargetingSelection() === true || $coord->isTargetingLoadedRows() === true;
+        if ($coord->isTargetingRowNumber()) {
+            $getRowsJs = "[jqSelf.{$this->getElementType()}('getRows')[{$coord->getRowCoordinate()}]].filter(function(oRow) { return oRow !== undefined; })";
+        } elseif ($coord->isTargetingLoadedRows() === true) {
+            $getRowsJs = "jqSelf.{$this->getElementType()}('getRows')";
+        } else {
+            $getRowsJs = "jqSelf.{$this->getElementType()}('getSelections')";
+        }
+        $valueJs = $aggregate
+            ? $this->buildJsAggregateColumnValues('aRows', $col, $coord)
+            : "(aRows[0] === undefined || aRows[0][{$columnJs}] === undefined || aRows[0][{$columnJs}] === null ? '' : aRows[0][{$columnJs}])";
+        $editorValueJs = '';
+        if ($coord->getRowCoordinate() !== null && $this->isEditable()) {
+            $editorValueJs = <<<JS
+        var iRow = jqSelf.{$this->getElementType()}('getRowIndex', oRow);
+        var oEditor = iRow < 0 ? null : jqSelf.{$this->getElementType()}('getEditor', {index: iRow, field: {$columnJs}});
+        if (oEditor && oEditor.actions && typeof oEditor.actions.getValue === 'function') {
+            oDecoded[{$columnJs}] = oEditor.actions.getValue(oEditor.target);
+            return oDecoded;
+        }
+JS;
+        }
+
+        // Table data is HTML-escaped. Decode strings before aggregation without coercing numbers/booleans.
         // NOTE: there are cases, when the datagrid is only partially initialized, so `.datagrid`
         // is not undefined, but the row getters still result in errors. This is why the specific
         // error thrown in this situation is caught and turned into an empty response below.
@@ -257,22 +354,38 @@ JS;
 (function(){
     var jqSelf = $('#{$this->getId()}');
     var aRows = [];
-    var sVal;
     if (jqSelf.{$this->getElementType()} === undefined) {
         return '';
     }
     try {
-        aRows = jqSelf.{$getSelectedRowsDataJs};
+        aRows = {$getRowsJs} || [];
     } catch (e) {
         if (e.message === "Cannot read properties of undefined (reading 'options')") {
             return '';
         }
         throw e;
     }
-    sVal = (jqSelf.{$getSelectedRowsDataJs} || {})['{$column}'] || '';
-    return sVal === '' ? sVal : exfTools.string.htmlUnescape(sVal);
+    aRows = aRows.map(function(oRow) {
+        var oDecoded = Object.assign({}, oRow);
+        {$editorValueJs}
+        var mValue = oDecoded[{$columnJs}];
+        if (typeof mValue === 'string') {
+            oDecoded[{$columnJs}] = exfTools.string.htmlUnescape(mValue);
+        }
+        return oDecoded;
+    });
+    return {$valueJs};
 })()
 JS;
+    }
+
+    /**
+     * {@inheritDoc}
+     * @see \exface\Core\Facades\AbstractAjaxFacade\Elements\AbstractJqueryElement::validateValueGetterCoordinate()
+     */
+    protected function validateValueGetterCoordinate(WidgetLinkCoordinateInterface $coord) : void
+    {
+        $this->validateDataValueGetterCoordinate($coord);
     }
 
     public function buildJsChangesGetter(bool $onlyVisible = false) : string
@@ -602,8 +715,15 @@ JS;
     protected function buildJsInitOptionsColumn(DataColumn $col){
         $editor = $this->getEditors()[$col->getId()] ?? null;
         $output = parent::buildJsInitOptionsColumn($col);
-        $output .= "\n
-                        " . ($editor ? ', editor: {type: "' . $editor->getElementType() . '"' . ($editor->buildJsInitOptions() ? ', options: {' . $editor->buildJsInitOptions() . '}' : '') . '}' : '');
+        if ($editor) {
+            $optionsJs = $editor->buildJsInitOptions();
+            if ($this->coordinateChangeScripts !== []) {
+                $optionsJs = $this->buildJsCoordinateEditorOptions($optionsJs, $col->getDataColumnName());
+            } elseif ($optionsJs !== '') {
+                $optionsJs = '{' . $optionsJs . '}';
+            }
+            $output .= "\n                        " . ', editor: {type: "' . $editor->getElementType() . '"' . ($optionsJs !== '' ? ', options: ' . $optionsJs : '') . '}';
+        }
         return $output;
     }
     
@@ -669,6 +789,7 @@ JS;
         
         $onChangeScript = $this->buildJsOnChangeScript('row', 'index');
         $grid_head .= ($this->getOnChangeScript() ? ", onClickRow: function(index, row){{$onChangeScript}}, onSelect: function(index, row){{$onChangeScript}}" : '');
+        $grid_head .= $this->buildJsCoordinateAfterEditOption();
         $configurator = $widget->getConfiguratorWidget();
         $showSetupCaption = ! $widget->getHideCaption() && $configurator instanceof iSupportWidgetSetups && $configurator->hasSetups();
         $caption = $widget->getCaption() ?: $widget->getMetaObject()->getName();

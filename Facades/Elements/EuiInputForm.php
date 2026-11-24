@@ -41,7 +41,7 @@ class EuiInputForm extends EuiInput
                 break;
             case $widget->isFormConfigBoundByReference():
                 $link = $widget->getFormConfigExpression()->getWidgetLink($widget);
-                $formConfigJs = $this->getFacade()->getElement($link->getTargetWidget())->buildJsValueGetter();
+                $formConfigJs = $this->getFacade()->getElement($link->getTargetWidget())->buildJsValueGetter($link->getTargetCoordinate());
                 break;
             default: 
                 $formConfigJs = $widget->getFormConfig() ?? '{}';

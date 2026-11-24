@@ -1,6 +1,10 @@
 <?php
 namespace exface\JEasyUIFacade\Facades\Elements;
 
+use exface\Core\Factories\WidgetLinkFactory;
+
+use exface\Core\Interfaces\Widgets\WidgetLinkCoordinateInterface;
+
 use exface\Core\Interfaces\Actions\ActionInterface;
 
 /**
@@ -178,8 +182,14 @@ JS;
         return $includes;
     }
     
-    public function buildJsValueGetter()
+    /**
+     * {@inheritDoc}
+     * @see \exface\Core\Facades\AbstractAjaxFacade\Elements\AbstractJqueryElement::buildJsValueGetter()
+     */
+    public function buildJsValueGetter(string|WidgetLinkCoordinateInterface|null $coord = null): string
     {
+        $coord = WidgetLinkFactory::createCoordinateFromAnything($coord);
+        $this->validateValueGetterCoordinate($coord);
         return <<<JS
 (function(){
     var aData = $('#{$this->getId()}').jexcel('getData', false);

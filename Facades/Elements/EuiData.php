@@ -2,6 +2,7 @@
 namespace exface\JEasyUIFacade\Facades\Elements;
 
 use exface\Core\Actions\ResetWidget;
+use exface\Core\Facades\AbstractAjaxFacade\Elements\JsDataValueTrait;
 use exface\Core\Interfaces\Widgets\iUseData;
 use exface\Core\Widgets\DataColumnGroup;
 use exface\Core\Exceptions\Configuration\ConfigOptionNotFoundError;
@@ -35,6 +36,8 @@ use exface\Core\Widgets\Data;
  */
 class EuiData extends EuiAbstractElement
 {
+    use JsDataValueTrait;
+
     use JqueryToolbarsTrait;
     
     use JqueryAlignmentTrait;
@@ -478,7 +481,7 @@ JS;
         return $this->headers_rowspan[$column_id];
     }
     
-    protected function buildJsInitOptionsColumn(\exface\Core\Widgets\DataColumn $col)
+    protected function buildJsInitOptionsColumn(DataColumn $col)
     {
         $colspan = $this->getColumnHeaderColspan($col->getId());
         $rowspan = $this->getColumnHeaderRowspan($col->getId());
@@ -618,11 +621,12 @@ JS;
             }
             $valueExpr = $cellWidget->getValueExpression();
             if ($valueExpr->isReference() === true) {
-                $linkedEl = $this->getFacade()->getElement($valueExpr->getWidgetLink($cellWidget)->getTargetWidget());
+                $link = $valueExpr->getWidgetLink($cellWidget);
+                $linkedEl = $this->getFacade()->getElement($link->getTargetWidget());
                 $linkedEls[] = $linkedEl;
                 $addLocalValuesToRowJs .= <<<JS
                 
-                            {$oRowJs}["{$col->getDataColumnName()}"] = {$linkedEl->buildJsValueGetter()};
+                            {$oRowJs}["{$col->getDataColumnName()}"] = {$linkedEl->buildJsValueGetter($link->getTargetCoordinate())};
 JS;
             } elseif ($valueExpr->isConstant()) {
                 $addLocalValuesToRowJs .= <<<JS

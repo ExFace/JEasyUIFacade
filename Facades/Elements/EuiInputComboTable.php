@@ -1,6 +1,10 @@
 <?php
 namespace exface\JEasyUIFacade\Facades\Elements;
 
+use exface\Core\Factories\WidgetLinkFactory;
+use exface\Core\Facades\AbstractAjaxFacade\Elements\JsDataValueTrait;
+use exface\Core\Interfaces\Widgets\WidgetLinkCoordinateInterface;
+
 use exface\Core\Exceptions\Widgets\WidgetConfigurationError;
 use exface\Core\Exceptions\InvalidArgumentException;
 use exface\Core\DataTypes\UrlDataType;
@@ -15,6 +19,7 @@ use exface\Core\Interfaces\Actions\ActionInterface;
  */
 class EuiInputComboTable extends EuiInput
 {
+    use JsDataValueTrait;
 
     /**
      * Folgende privaten Variablen sind im data-Objekt des Elements gespeichert und wichtig
@@ -42,6 +47,15 @@ class EuiInputComboTable extends EuiInput
      * _resultSetChanged ist gesetzt wenn die geladenen Daten veraendert wurden
      */
     private $js_debug_level = 0;
+
+    /**
+     * {@inheritDoc}
+     * @see \exface\Core\Facades\AbstractAjaxFacade\Elements\AbstractJqueryElement::validateValueGetterCoordinate()
+     */
+    protected function validateValueGetterCoordinate(WidgetLinkCoordinateInterface $coord) : void
+    {
+        $this->validateDataValueGetterCoordinate($coord);
+    }
 
     /**
      *
@@ -462,22 +476,48 @@ JS;
      *
      * {@inheritdoc}
      *
+     * Reads loaded rows for numeric/loaded coordinates and aggregates explicit selections.
+     * Omitted row coordinates retain the combo's prefilled-value fallback.
+     *
      * @see \exface\Core\Facades\AbstractAjaxFacade\Elements\AbstractJqueryElement::buildJsValueGetter()
      */
-    function buildJsValueGetter($column = null, $row = null)
+    public function buildJsValueGetter(string|WidgetLinkCoordinateInterface|null $coord = null): string
     {
-        $params = '';
-        if ($column !== null) {
-            $table = $this->getWidget()->getTable();
-            if ($col = $table->getColumn($column)) {
-                $column = $col->getDataColumnName();
-            } elseif ($col = $table->getColumnByAttributeAlias($column)) {
-                $column = $col->getDataColumnName();
-            }
-            $params = '"' . $column . '"';
+        $coord = WidgetLinkFactory::createCoordinateFromAnything($coord);
+        $this->validateValueGetterCoordinate($coord);
+        $col = $coord->findColumn($this->getWidget()->getTable());
+        if ($col === null) {
+            throw new \exface\Core\Exceptions\Facades\FacadeOutputError('Cannot create a combo value getter for coordinate "' . $coord->getColumnCoordinate() . '".');
         }
-        $params = $row ? ($params ? $params . ', ' . $row : $row) : $params;
-        return $this->buildJsFunctionPrefix() . 'valueGetter(' . $params . ')';
+        $columnJs = json_encode($col->getDataColumnName());
+        if ($coord->getRowCoordinate() === null && !$coord->hasAggregator()) {
+            return $this->buildJsFunctionPrefix() . 'valueGetter(' . $columnJs . ')';
+        }
+        $rowGetter = $coord->isTargetingLoadedRows() === true || $coord->isTargetingRowNumber() ? 'getRows' : 'getSelections';
+        $rowsJs = "{$this->getId()}_datagrid.datagrid('{$rowGetter}')";
+        if ($coord->isTargetingRowNumber()) {
+            $rowsJs = "[{$rowsJs}[{$coord->getRowCoordinate()}]].filter(function(oRow) { return oRow !== undefined; })";
+        }
+        $valueJs = $coord->isTargetingRowNumber() && !$coord->hasAggregator()
+            ? "(aRows[0] === undefined || aRows[0][{$columnJs}] === undefined || aRows[0][{$columnJs}] === null ? '' : aRows[0][{$columnJs}])"
+            : $this->buildJsAggregateColumnValues('aRows', $col, $coord);
+        return <<<JS
+(function(){
+    {$this->buildJsFunctionPrefix()}initGlobals();
+    if (!{$this->getId()}_jquery.data('combogrid')) {
+        return '';
+    }
+    var aRows = ({$rowsJs} || []).map(function(oRow) {
+        var oDecoded = Object.assign({}, oRow);
+        var mValue = oDecoded[{$columnJs}];
+        if (typeof mValue === 'string') {
+            oDecoded[{$columnJs}] = exfTools.string.htmlUnescape(mValue);
+        }
+        return oDecoded;
+    });
+    return {$valueJs};
+})()
+JS;
     }
 
     /**
