@@ -2,7 +2,14 @@
 namespace exface\JEasyUIFacade\Facades\Elements;
 
 /**
- *
+ * Generates a panel to be placed inside a jEasyUI Tabs element.
+ * 
+ * ## Hiding tabs
+ * 
+ * Tab `hidden_if` conditions hide both the header and its content without changing tab
+ * indexes. If the selected tab becomes hidden, the first non-hidden, enabled tab is
+ * selected. Showing a tab does not change an existing selection or its disabled state.
+ * 
  * @author Andrej Kabachnik
  *        
  * @method exface\Core\Widgets\Tab getWidget()
@@ -166,6 +173,36 @@ JS;
             return "$('#{$this->getFacade()->getElement($widget->getParent())->getId()}').tabs('enableTab', {$widget->getTabIndex()})";
         }
     }
+
+    /**
+     * {@inheritDoc}
+     * @see \exface\Core\Facades\AbstractAjaxFacade\Elements\AbstractJqueryElement::buildJsSetHidden()
+     */
+    protected function buildJsSetHidden(bool $hidden) : string
+    {
+        $tabsId = $this->getFacade()->getElement($this->getWidget()->getParent())->getId();
+        return <<<JS
+        (function(jqTabs, jqTab) {
+            var options = jqTab.panel('options');
+            options.tab.toggleClass('exf-hidden', {$this->escapeBool($hidden)});
+            var selected = jqTabs.tabs('getSelected');
+            if ({$this->escapeBool($hidden)} && selected && selected[0] === jqTab[0]) {
+                jqTab.panel('close');
+            }
+            if (!jqTabs.tabs('getSelected')) {
+                jqTabs.tabs('tabs').some(function(tab, index) {
+                    var tabOptions = tab.panel('options');
+                    if (!tabOptions.disabled && !tabOptions.tab.hasClass('exf-hidden')) {
+                        jqTabs.tabs('select', index);
+                        return true;
+                    }
+                    return false;
+                });
+            }
+            jqTabs.tabs('resize');
+        })($('#{$tabsId}'), $('#{$this->getId()}'));
+JS;
+    }
     
     /**
      * 
@@ -176,6 +213,11 @@ JS;
     {
         $widget = $this->getWidget();
         $op = $trueOrFalse === true ? 'select' : 'unselect';
+        if ($trueOrFalse === true) {
+            return "if (!$('#{$this->getId()}').panel('options').tab.hasClass('exf-hidden')) {
+                $('#{$this->getFacade()->getElement($widget->getParent())->getId()}').tabs('{$op}', {$widget->getTabIndex()});
+            }";
+        }
         return "$('#{$this->getFacade()->getElement($widget->getParent())->getId()}').tabs('{$op}', {$widget->getTabIndex()})";
     }
     
