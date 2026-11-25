@@ -1,6 +1,7 @@
 <?php
 namespace exface\JEasyUIFacade\Facades\Elements;
 
+use exface\Core\Exceptions\Widgets\WidgetCoordinateUnresolvableError;
 use exface\Core\Factories\WidgetLinkFactory;
 use exface\Core\Interfaces\Widgets\WidgetLinkCoordinateInterface;
 
@@ -317,9 +318,9 @@ JS;
         $col = $coord->findColumn($this->getWidget());
         if ($col === null) {
             if ($coord->getColumnCoordinate() === null) {
-                throw new FacadeOutputError('Cannot create a value getter for a data widget without a UID column: either specify a column to get the value from or a UID column for the table.');
+                throw new WidgetCoordinateUnresolvableError($this->getWidget(), $coord, 'Cannot get value from coordinate "' . $coord->__toString() .'" - no column specified and widget has no default UID column.');
             }
-            throw new FacadeOutputError('Cannot create a value getter: column "' . $coord->getColumnCoordinate() . '" not found.');
+            throw new WidgetCoordinateUnresolvableError($this->getWidget(), $coord, 'Cannot create a value getter: column "' . $coord->getColumnCoordinate() . '" not found.');
         }
         $columnJs = json_encode($col->getDataColumnName());
         $aggregate = $coord->hasAggregator() || $coord->isTargetingSelection() === true || $coord->isTargetingLoadedRows() === true;

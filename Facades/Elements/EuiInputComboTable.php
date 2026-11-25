@@ -4,6 +4,7 @@ namespace exface\JEasyUIFacade\Facades\Elements;
 use exface\Core\Factories\WidgetLinkFactory;
 use exface\Core\Facades\AbstractAjaxFacade\Elements\JsDataValueTrait;
 use exface\Core\Interfaces\Widgets\WidgetLinkCoordinateInterface;
+use exface\Core\Exceptions\Widgets\WidgetCoordinateUnresolvableError;
 
 use exface\Core\Exceptions\Widgets\WidgetConfigurationError;
 use exface\Core\Exceptions\InvalidArgumentException;
@@ -487,7 +488,7 @@ JS;
         $this->validateValueGetterCoordinate($coord);
         $col = $coord->findColumn($this->getWidget()->getTable());
         if ($col === null) {
-            throw new \exface\Core\Exceptions\Facades\FacadeOutputError('Cannot create a combo value getter for coordinate "' . $coord->getColumnCoordinate() . '".');
+            throw new WidgetCoordinateUnresolvableError($this->getWidget(), $coord, 'Cannot create a combo value getter for coordinate "' . $coord->getColumnCoordinate() . '".');
         }
         $columnJs = json_encode($col->getDataColumnName());
         if ($coord->getRowCoordinate() === null && !$coord->hasAggregator()) {
