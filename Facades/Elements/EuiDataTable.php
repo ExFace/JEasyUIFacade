@@ -227,7 +227,7 @@ HTML;
         $setupInitJs = '';
         $configurator = $widget->getConfiguratorWidget();
         if ($configurator instanceof iSupportWidgetSetups && $configurator->hasSetups()) {
-            $setupInitJs = 'exfSetupManager.init(' . $this->escapeString($this->getWorkbench()->getInstallationName()) . ');';
+            $setupInitJs = 'exfSetupManager.init?.(' . $this->escapeString($this->getWorkbench()->getInstallationName()) . ');';
         }
         
         $this->addOnBeforeLoad($this->buildJsOnBeforeLoadAddConfiguratorData());
