@@ -11,7 +11,23 @@
 
     var manager = {
         _databaseName: 'exf-ui5-widgets',
+        _sInstallationName: null,
 
+        /**
+         * Sets the installation identity before accessing local setup preferences.
+         * @param {string} sInstallationName Workbench installation name
+         */
+        init: function (sInstallationName) {
+            if (typeof sInstallationName !== 'string' || sInstallationName === '') {
+                throw new Error('An installation name is required for widget setup storage.');
+            }
+            manager._sInstallationName = sInstallationName;
+        },
+
+        /**
+         * Opens historical schemas and the same installation-scoped schema used by UI5.
+         * @returns {Dexie} Database connection
+         */
         _openDatabase: function () {
             var database = new Dexie(manager._databaseName);
             database.version(1).stores({
@@ -23,7 +39,40 @@
             database.version(3).stores({
                 setups: '[slug+widget_id+object_id], setup_uid, date_last_applied'
             });
+            database.version(4).stores({
+                setups: '[slug+widget_id+object_id], setup_uid, date_last_applied',
+                current_setups: '[installation+slug+widget_id+object_id], setup_uid, date_last_applied',
+                installations: 'installation'
+            });
             return database;
+        },
+
+        /**
+         * Imports legacy preferences once per installation and runs a scoped operation.
+         * One transaction prevents concurrent migration from undoing a save or reset.
+         * @param {function(Dexie, string): Promise} fnOperation Storage operation
+         * @returns {Promise} Operation result
+         */
+        _withSetupsDb: function (fnOperation) {
+            const sInstallationName = manager._sInstallationName;
+            if (sInstallationName === null) {
+                return Promise.reject(new Error('Widget setup storage has not been initialized.'));
+            }
+            const oDb = manager._openDatabase();
+            return oDb.transaction('rw', oDb.setups, oDb.current_setups, oDb.installations, async function () {
+                if (!await oDb.installations.get(sInstallationName)) {
+                    const aLegacySetups = await oDb.setups.toArray();
+                    if (aLegacySetups.length > 0) {
+                        await oDb.current_setups.bulkPut(aLegacySetups.map(oSetup => Object.assign({}, oSetup, {
+                            installation: sInstallationName
+                        })));
+                    }
+                    await oDb.installations.put({installation: sInstallationName});
+                }
+                return fnOperation(oDb, sInstallationName);
+            }).finally(() => {
+                oDb.close();
+            });
         },
 
         _isDexieAvailable: function () {
@@ -54,16 +103,11 @@
                 if (!manager._isDexieAvailable()) {
                     return Promise.resolve(null);
                 }
-                var database = manager._openDatabase();
-                return database.setups.get([slug, widgetId, objectId]).catch(function (error) {
+                return manager._withSetupsDb((oDb, sInstallationName) =>
+                    oDb.current_setups.get([sInstallationName, slug, widgetId, objectId])
+                ).catch(function (error) {
                     console.error('Error reading widget setup from IndexedDB:', error);
                     return null;
-                }).then(function (entry) {
-                    database.close();
-                    return entry;
-                }, function (error) {
-                    database.close();
-                    throw error;
                 });
             },
 
@@ -71,11 +115,9 @@
                 if (!manager._isDexieAvailable()) {
                     return Promise.resolve();
                 }
-                var database = manager._openDatabase();
-                return database.setups.delete([slug, widgetId, objectId]).then(function () {
-                    database.close();
-                }, function (error) {
-                    database.close();
+                return manager._withSetupsDb((oDb, sInstallationName) =>
+                    oDb.current_setups.delete([sInstallationName, slug, widgetId, objectId])
+                ).catch(function (error) {
                     console.error('Error deleting widget setup from IndexedDB:', error);
                 });
             },
@@ -84,8 +126,8 @@
                 if (!manager._isDexieAvailable()) {
                     return Promise.resolve();
                 }
-                var database = manager._openDatabase();
-                return database.setups.put({
+                return manager._withSetupsDb((oDb, sInstallationName) => oDb.current_setups.put({
+                    installation: sInstallationName,
                     slug: slug,
                     widget_id: widgetId,
                     object_id: objectId,
@@ -93,10 +135,7 @@
                     setup_uxon: setupUxon,
                     setup_name: setupName,
                     date_last_applied: new Date().toISOString()
-                }).then(function () {
-                    database.close();
-                }, function (error) {
-                    database.close();
+                })).catch(function (error) {
                     console.error('Error saving widget setup to IndexedDB:', error);
                 });
             }

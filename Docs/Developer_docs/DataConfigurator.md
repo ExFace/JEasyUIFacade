@@ -161,6 +161,19 @@ is initialized. Reset removes that local preference, and deleting the currently 
 the table as well. The storage implementation is in
 [`Facades/js/exfSetupManager.js`](../../Facades/js/exfSetupManager.js).
 
+The manager is initialized with `$this->getWorkbench()->getInstallationName()` before the
+configurator is created. Schema version 4 of `exf-ui5-widgets` stores current preferences in
+`current_setups`, keyed by `[installation+slug+widget_id+object_id]`. Installations sharing an
+origin must have distinct names. The schema matches UI5, but storage logic remains owned by each
+facade.
+
+On the first storage operation per installation, legacy `setups` entries are copied once,
+atomically with that operation. Existing setups therefore still auto-apply. Legacy entries have
+no installation identity, so each installation initially inherits them; later applies and resets
+are independent, and reset cannot resurrect a legacy entry. Server-loaded setups are unchanged.
+
+See the [test instructions](../../Tests/README.md) for setup storage regression coverage.
+
 The setups table's `SETUP_APPLIED` column is client-only. After every table load,
 `markCurrentSetupAsActive()` compares each row UID with the active setup UID in IndexedDB and places
 a check icon on the matching row. Applying another setup moves the marker without reloading data.

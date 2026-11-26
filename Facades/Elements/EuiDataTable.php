@@ -224,6 +224,11 @@ HTML;
         $widget = $this->getWidget();
         
         $configurator_element = $this->getFacade()->getElement($widget->getConfiguratorWidget());
+        $setupInitJs = '';
+        $configurator = $widget->getConfiguratorWidget();
+        if ($configurator instanceof iSupportWidgetSetups && $configurator->hasSetups()) {
+            $setupInitJs = 'exfSetupManager.init(' . $this->escapeString($this->getWorkbench()->getInstallationName()) . ');';
+        }
         
         $this->addOnBeforeLoad($this->buildJsOnBeforeLoadAddConfiguratorData());
         
@@ -264,6 +269,8 @@ HTML;
         $grid_head = $this->buildJsInitOptions() . $grid_head;
         
         return parent::buildJs() . <<<JS
+
+{$setupInitJs}
 
 // Add Scripts for the configurator widget first as they may be needed for the others   
 {$configurator_element->buildJsForPanelHeader()}
