@@ -613,6 +613,11 @@ table.jexcel .jdropdown-default.jdropdown-focus .jdropdown-header {
 .layout-split-south {border-color: transparent !important}
 .layout-panel > .exf-splitpanel {border: 0}
 .layout-split-north > .panel-body, .layout-panel-center > .panel-body {border-width: 0;}
+/* Let chat panes shrink below the inline minimum widths of the input wrapper and sizing element. */
+.exf-splitpanel > .exf-inputcustom:has(> .deep-chat-wrapper),
+.exf-splitpanel > .exf-inputcustom:has(> .deep-chat-wrapper) + [id$="_sizer"] {
+    min-width: 0 !important;
+}
 
 .easyui-dialog {border-width: 0 !important}
 .easyui-dialog + .exf-dialog-footer {border-left-width: 0; border-right-width: 0; border-bottom-width: 0;}
