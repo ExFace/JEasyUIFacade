@@ -616,9 +616,21 @@ table.jexcel .jdropdown-default.jdropdown-focus .jdropdown-header {
 .layout-panel > .exf-splitpanel {border: 0}
 .layout-split-north > .panel-body, .layout-panel-center > .panel-body {border-width: 0;}
 /* Let chat panes shrink below the inline minimum widths of the input wrapper and sizing element. */
-.exf-splitpanel > .exf-inputcustom:has(> .deep-chat-wrapper),
-.exf-splitpanel > .exf-inputcustom:has(> .deep-chat-wrapper) + [id$="_sizer"] {
+.exf-splitpanel > .exf-inputcustom:has(.deep-chat-wrapper),
+.exf-splitpanel > .exf-inputcustom:has(.deep-chat-wrapper) + [id$="_sizer"] {
     min-width: 0 !important;
+}
+
+.exf-inputcustom-panel {
+    display: flex;
+    flex-direction: column;
+}
+.exf-inputcustom-panel > .datagrid-toolbar {
+    flex: none;
+}
+.exf-inputcustom-content {
+    flex: 1;
+    min-height: 0;
 }
 
 .easyui-dialog {border-width: 0 !important}

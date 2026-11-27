@@ -9,6 +9,8 @@
     - [JSpreadsheet for DataSpreadSheet and DataImporter widgets](Developer_docs/JSpreadsheet.md)
     - [Markdown Widgets](Developer_docs/Markdown_widgets.md)
     - [jEasyUI data configurator](Developer_docs/DataConfigurator.md)
+    - Widgets
+      - [InputCustom widget in jEasyUI](Developer_docs/Widgets/InputCustom.md)
 
 
 <!-- END SubPageList -->
