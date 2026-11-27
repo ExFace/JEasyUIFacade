@@ -300,11 +300,13 @@ div.messager-body{overflow-y: auto;}
 .exf-input-markdown .markian-panel button:focus-visible {outline: 1px dotted var(--exf-markian-accent); outline-offset: -2px;}
 .exf-input-markdown .markian-panel button:disabled {opacity: .5; cursor: default;}
 /* github-markdown-css 5.x paints .markdown-body white - keep the background of the surrounding panel */
-.markdown-body {font-size: 14px !important; background-color: transparent;}
+.markdown-body,
+deep-chat.exf-aichat::part(markdown-body) {font-size: 14px !important; background-color: transparent;}
 .exf-markdown .markian-viewer, .exf-markdown .markdown-body {background-color: transparent;}
 .easyui-dialog > .markdown-body {padding: 20px 10px 10px 10px}
 .exf-markdown.markdown-body table > thead > tr,
-.exf-markdown .markdown-body table > thead > tr {background-color: #f2f2f2;}
+.exf-markdown .markdown-body table > thead > tr,
+deep-chat.exf-aichat::part(markdown-table-heading) {background-color: #f2f2f2;}
 /* github-markdown-css 5.x sizes tables to their content (width: max-content) - keep them full width */
 .exf-markdown.markdown-body table,
 .exf-markdown .markdown-body table {display: table; width: 100%;}
